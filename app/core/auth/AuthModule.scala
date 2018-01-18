@@ -14,14 +14,11 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package core.auth
 
-import core.auth.AuthenticatedRequest
-import play.api.mvc.{Request, Result}
+import com.google.inject.AbstractModule
+import controllers.actions.{AuthAction, AuthActionImpl}
 
-import scala.concurrent.Future
-
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id"))
+class AuthModule extends AbstractModule {
+  def configure(): Unit = bind(classOf[AuthAction]).to(classOf[AuthActionImpl])
 }

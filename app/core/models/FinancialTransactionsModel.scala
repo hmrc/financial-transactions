@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
-package models.requests
+package core.models
 
-import play.api.mvc.{Request, WrappedRequest}
+import java.time.LocalDateTime
 
-case class AuthenticatedRequest[A] (request: Request[A], externalId: String) extends WrappedRequest[A](request)
+import play.api.libs.json.{Format, Json}
+
+case class FinancialTransactionsModel(idType: String,
+                                      idNumber: String,
+                                      regimeType: String,
+                                      processingDate: LocalDateTime,
+                                      financialTransactions: List[TransactionModel]
+                                     )
+
+object FinancialTransactionsModel {
+  implicit val format: Format[FinancialTransactionsModel] = Json.format[FinancialTransactionsModel]
+}

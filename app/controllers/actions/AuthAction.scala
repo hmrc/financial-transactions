@@ -19,7 +19,7 @@ package controllers.actions
 import javax.inject.Singleton
 
 import com.google.inject.Inject
-import models.requests.AuthenticatedRequest
+import core.auth.AuthenticatedRequest
 import play.api.mvc.Results._
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import uk.gov.hmrc.auth.core._

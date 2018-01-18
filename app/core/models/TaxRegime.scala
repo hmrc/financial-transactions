@@ -14,14 +14,22 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package core.models
 
-import core.auth.AuthenticatedRequest
-import play.api.mvc.{Request, Result}
-
-import scala.concurrent.Future
-
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id"))
+trait TaxRegime {
+  val idType: String
+  val id: String
+  val regimeType: String
 }
+
+case class VAT(id: String) extends TaxRegime {
+  override val idType = "VRN"
+  override val regimeType = "VATC"
+}
+
+case class IncomeTax(id: String) extends TaxRegime {
+  override val idType = "VRN"
+  override val regimeType = "ITSA"
+}
+
+

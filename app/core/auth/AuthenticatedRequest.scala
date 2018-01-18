@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package core.auth
 
-import core.auth.AuthenticatedRequest
-import play.api.mvc.{Request, Result}
+import play.api.mvc.{Request, WrappedRequest}
 
-import scala.concurrent.Future
-
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id"))
-}
+case class AuthenticatedRequest[A] (request: Request[A], externalId: String) extends WrappedRequest[A](request)
