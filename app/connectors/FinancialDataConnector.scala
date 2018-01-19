@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package core.connectors
+package connectors
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
-import core.config.MicroserviceAppConfig
-import core.connectors.httpParsers.FinancialTransactionsHttpParser._
-import core.models.{FinancialTransactionsModel, PeriodModel, TaxRegime}
+import config.MicroserviceAppConfig
+import connectors.httpParsers.FinancialTransactionsHttpParser._
+import models.{FinancialTransactions, TaxRegime}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.Authorization
@@ -36,19 +36,20 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
   def getFinancialTransactions(regime: TaxRegime,
-                               period: Option[PeriodModel],
+                               fromDate: Option[LocalDate],
+                               toDate: Option[LocalDate],
                                onlyOpenItems: Option[Boolean],
                                includeLocks: Option[Boolean],
                                calculateAccruedInterest: Option[Boolean],
                                customerPaymentInformation: Option[Boolean]
-                              )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactionsModel]] = {
+                              )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
     val url = financialDataUrl(regime)
     val desHC = headerCarrier.copy(authorization = Some(Authorization(s"Bearer ${appConfig.desToken}")))
       .withExtraHeaders("Environment" -> appConfig.desEnvironment)
     val queryParams = Seq(
-      period.map("dateFrom" -> _.from.toString),
-      period.map("dateTo" -> _.to.toString),
+      fromDate.map("dateFrom" -> _.toString),
+      toDate.map("dateTo" -> _.toString),
       onlyOpenItems.map("onlyOpenItems" -> _.toString),
       includeLocks.map("includeLocks" -> _.toString),
       calculateAccruedInterest.map("calculateAccruedInterest" -> _.toString),

@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package core.models
+package auth
 
-import java.time.LocalDate
+import com.google.inject.AbstractModule
+import controllers.actions.{AuthAction, AuthActionImpl}
 
-case class PeriodModel(from: LocalDate, to: LocalDate)
+class AuthModule extends AbstractModule {
+  def configure(): Unit = bind(classOf[AuthAction]).to(classOf[AuthActionImpl])
+}

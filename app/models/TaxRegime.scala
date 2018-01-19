@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package core.models
+package models
 
-import java.time.LocalDateTime
+trait TaxRegime {
+  val idType: String
+  val id: String
+  val regimeType: String
+}
 
-import play.api.libs.json.{Format, Json}
+case class IncomeTaxRegime(id: String) extends TaxRegime {
+  override val idType = "NINO"
+  override val regimeType = "ITSA"
+}
 
-case class FinancialTransactionsModel(idType: String,
-                                      idNumber: String,
-                                      regimeType: String,
-                                      processingDate: LocalDateTime,
-                                      financialTransactions: List[TransactionModel]
-                                     )
-
-object FinancialTransactionsModel {
-  implicit val format: Format[FinancialTransactionsModel] = Json.format[FinancialTransactionsModel]
+case class VatRegime(id: String) extends TaxRegime {
+  override val idType = "VRN"
+  override val regimeType = "VATC"
 }

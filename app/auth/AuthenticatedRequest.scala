@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package core.models
+package auth
 
-trait TaxRegime {
-  val idType: String
-  val id: String
-  val regimeType: String
-}
+import play.api.mvc.{Request, WrappedRequest}
 
-case class VAT(id: String) extends TaxRegime {
-  override val idType = "VRN"
-  override val regimeType = "VATC"
-}
-
-case class IncomeTax(id: String) extends TaxRegime {
-  override val idType = "VRN"
-  override val regimeType = "ITSA"
-}
-
-
+case class AuthenticatedRequest[A] (request: Request[A], externalId: String) extends WrappedRequest[A](request)

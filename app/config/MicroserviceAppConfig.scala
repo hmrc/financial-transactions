@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package core.config
+package config
 
 import javax.inject.{Inject, Singleton}
 
@@ -29,7 +29,7 @@ class MicroserviceAppConfig @Inject()(val environment: Environment, val conf: Co
   override protected def mode: Mode = environment.mode
 
   val desEnvironment: String = getString("microservice.services.des.environment")
-  val desToken: String = getString("microservice.services.des.authorization-token")
+  val desToken: String = getString("microservice.services.des.auth-token")
   val desUrl: String = getString("microservice.services.des.url")
 
 }

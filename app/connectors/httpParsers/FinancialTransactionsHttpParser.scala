@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package core.connectors.httpParsers
+package connectors.httpParsers
 
-import core.models.{FinancialTransactionsModel, ServerSideError, UnexpectedStatusError}
+import models.{FinancialTransactions, ServerSideError, UnexpectedStatusError}
 import play.api.http.Status.{BAD_REQUEST, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object FinancialTransactionsHttpParser extends ResponseHttpParsers {
 
-  implicit object FinancialTransactionsReads extends HttpReads[HttpGetResult[FinancialTransactionsModel]] {
-    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactionsModel] = {
+  implicit object FinancialTransactionsReads extends HttpReads[HttpGetResult[FinancialTransactions]] {
+    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactions] = {
       response.status match {
-        case OK => Right(response.json.as[FinancialTransactionsModel])
+        case OK => Right(response.json.as[FinancialTransactions])
         case BAD_REQUEST => handleBadRequest(response.json)
         case status if status >= 500 && status < 600 => Left(ServerSideError)
         case status => Left(UnexpectedStatusError(status))
