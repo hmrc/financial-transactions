@@ -16,31 +16,16 @@
 
 package models
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZonedDateTime
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 case class FinancialTransactions(idType: String,
                                  idNumber: String,
                                  regimeType: String,
-                                 processingDate: LocalDateTime,
+                                 processingDate: ZonedDateTime,
                                  financialTransactions: List[Transaction])
 
 object FinancialTransactions {
-  implicit val reads: Reads[FinancialTransactions] = Json.reads[FinancialTransactions]
-  implicit val writes: Writes[FinancialTransactions] = (
-    (__ \ "idType").write[String] and
-      (__ \ "idNumber").write[String] and
-      (__ \ "regimeType").write[String] and
-      (__ \ "processingDate").write[LocalDateTime](LocalDateTimeDes.Writes) and
-      (__ \ "financialTransactions").write[List[Transaction]]
-    )(unlift(FinancialTransactions.unapply))
-}
-
-object LocalDateTimeDes {
-  implicit object Writes extends Writes[LocalDateTime] {
-    override def writes(dateTime: LocalDateTime): JsValue = JsString(dateTime format DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
-  }
+  implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]
 }

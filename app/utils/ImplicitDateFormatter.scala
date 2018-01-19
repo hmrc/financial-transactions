@@ -16,19 +16,16 @@
 
 package utils
 
-import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.TextStyle._
-import java.util.Locale._
+import java.time.{LocalDate, ZonedDateTime}
 
 object ImplicitDateFormatter {
 
-  implicit def toLocalDate(s: String): LocalDate = localDate(s).toLocalDate
-  implicit def toLocalDateTime(s: String): LocalDateTime = localDate(s).toLocalDateTime
+  implicit def toLocalDate(s: String): LocalDate = stringToDate(s).toLocalDate
+  implicit def toZonedDateTime(s: String): ZonedDateTime = stringToDate(s).toZonedDateTime
 
-  implicit class localDate(s: String) {
+  implicit class stringToDate(s: String) {
     def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
-    def toLocalDateTime: LocalDateTime = LocalDateTime.parse(s, DateTimeFormatter.ISO_DATE_TIME)
+    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
   }
 }
