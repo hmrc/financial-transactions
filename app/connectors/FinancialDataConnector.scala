@@ -59,9 +59,9 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     Logger.debug(s"[FinancialDataConnector][getFinancialTransactions] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParams")
     http.GET(url, queryParams)(FinancialTransactionsReads, desHC, ec).map {
       case financialTransactions@Right(_) => financialTransactions
-      case httpError@Left(error) =>
-        Logger.warn("[FinancialDataConnector][getFinancialTransactions] received error: " + error.message)
-        httpError
+      case error@Left(message) =>
+        Logger.warn("[FinancialDataConnector][getFinancialTransactions] DES Error Received. Message: " + message)
+        error
     }
   }
 }

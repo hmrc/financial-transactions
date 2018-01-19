@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,23 @@
 
 package models
 
-import java.time.ZonedDateTime
+import play.api.libs.json.{Format, Json}
 
-import play.api.libs.json._
+sealed trait DesErrors
 
-case class FinancialTransactions(idType: String,
-                                 idNumber: String,
-                                 regimeType: String,
-                                 processingDate: ZonedDateTime,
-                                 financialTransactions: Seq[Transaction])
+case class DesError(code: String, reason: String) extends DesErrors
 
-object FinancialTransactions {
-  implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]
+object DesError {
+  implicit val format: Format[DesError] = Json.format[DesError]
 }
+
+case class DesMultiError(failures: Seq[DesError]) extends DesErrors
+
+object DesMultiError {
+  implicit val format: Format[DesMultiError] = Json.format[DesMultiError]
+}
+
+object UnexpectedDesResponse extends DesError(
+  code = "UNEXPECTED_DES_RESPONSE",
+  reason = s"The DES response did not match the expected format"
+)

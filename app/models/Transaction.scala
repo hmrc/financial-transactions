@@ -40,7 +40,7 @@ case class Transaction(chargeType: Option[String],
                        outstandingAmount: Option[BigDecimal],
                        clearedAmount: Option[BigDecimal],
                        accruedInterest: Option[BigDecimal],
-                       items: List[SubItem])
+                       items: Seq[SubItem])
 
 object Transaction {
   implicit val format: Format[Transaction] = Json.format[Transaction]

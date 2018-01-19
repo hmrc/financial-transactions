@@ -27,7 +27,7 @@ class FinancialTransactionsSpec extends SpecBase {
     idNumber = "XQIT00000000001",
     regimeType = "ITSA",
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = List(Transaction(
+    financialTransactions = Seq(Transaction(
       chargeType = Some("PAYE"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
@@ -48,7 +48,7 @@ class FinancialTransactionsSpec extends SpecBase {
       outstandingAmount = Some(1400.0),
       clearedAmount = Some(2000.0),
       accruedInterest = Some(0.23),
-      items = List(SubItem(
+      items = Seq(SubItem(
         subItem = Some("000"),
         dueDate = Some("2018-2-14"),
         amount = Some(3400.00),

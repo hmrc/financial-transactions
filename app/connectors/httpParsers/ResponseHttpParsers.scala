@@ -16,16 +16,17 @@
 
 package connectors.httpParsers
 
-import models.{HttpError, HttpErrorModel, UnknownHttpError}
+import models._
 import play.api.libs.json.JsValue
 
 trait ResponseHttpParsers {
 
-  type HttpGetResult[T] = Either[HttpError, T]
+  type HttpGetResult[T] = Either[DesErrors, T]
 
-  protected def handleBadRequest(json: JsValue): Left[HttpError, Nothing] =
-    json.validate[HttpErrorModel].fold(
-      _ => Left(UnknownHttpError),
-      error => Left(error)
-    )
+  protected def handleErrorResponse(json: JsValue): Left[DesErrors, Nothing] = {
+    json.asOpt[DesMultiError].orElse(json.asOpt[DesError]) match {
+      case Some(error) => Left(error)
+      case _ => Left(UnexpectedDesResponse)
+    }
+  }
 }

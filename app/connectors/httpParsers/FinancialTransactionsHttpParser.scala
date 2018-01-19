@@ -16,8 +16,8 @@
 
 package connectors.httpParsers
 
-import models.{FinancialTransactions, ServerSideError, UnexpectedStatusError}
-import play.api.http.Status.{BAD_REQUEST, OK}
+import models.FinancialTransactions
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object FinancialTransactionsHttpParser extends ResponseHttpParsers {
@@ -26,9 +26,7 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactions] = {
       response.status match {
         case OK => Right(response.json.as[FinancialTransactions])
-        case BAD_REQUEST => handleBadRequest(response.json)
-        case status if status >= 500 && status < 600 => Left(ServerSideError)
-        case status => Left(UnexpectedStatusError(status))
+        case _ => handleErrorResponse(response.json)
       }
     }
   }
