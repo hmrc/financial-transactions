@@ -46,31 +46,28 @@ class SubItemSpec extends SpecBase {
   )
 
   val subItemJson: JsValue =
-    Json.parse(
-      """
-        |{
-        |  "subItem": "000",
-        |  "dueDate": "2018-02-14",
-        |  "amount": 3400,
-        |  "clearingDate": "2018-02-17",
-        |  "clearingReason": "A",
-        |  "outgoingPaymentMethod": "B",
-        |  "paymentLock": "C",
-        |  "clearingLock": "D",
-        |  "interestLock": "E",
-        |  "dunningLock": "1",
-        |  "returnFlag": false,
-        |  "paymentReference": "F",
-        |  "paymentAmount": 2000,
-        |  "paymentMethod": "G",
-        |  "paymentLot": "H",
-        |  "paymentLotItem": "112",
-        |  "clearingSAPDocument": "3350000253",
-        |  "statisticalDocument": "I",
-        |  "returnReason": "J",
-        |  "promiseToPay": "K"
-        |}
-      """.stripMargin)
+    Json.obj(
+      "subItem" -> "000",
+      "dueDate" -> "2018-02-14",
+      "amount" -> 3400,
+      "clearingDate" -> "2018-02-17",
+      "clearingReason" -> "A",
+      "outgoingPaymentMethod" -> "B",
+      "paymentLock" -> "C",
+      "clearingLock" -> "D",
+      "interestLock" -> "E",
+      "dunningLock" -> "1",
+      "returnFlag" -> false,
+      "paymentReference" -> "F",
+      "paymentAmount" -> 2000,
+      "paymentMethod" -> "G",
+      "paymentLot" -> "H",
+      "paymentLotItem" -> "112",
+      "clearingSAPDocument" -> "3350000253",
+      "statisticalDocument" -> "I",
+      "returnReason" -> "J",
+      "promiseToPay" -> "K"
+    )
 
   "SubItem" should {
 

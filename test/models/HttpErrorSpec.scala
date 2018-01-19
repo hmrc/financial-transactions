@@ -24,7 +24,7 @@ class HttpErrorSpec extends SpecBase {
   "The HttpErrorModel" should {
 
     val httpErrorModel = HttpErrorModel("CODE","ERROR MESSAGE")
-    val httpErrorJson: JsValue = Json.parse("""{"code":"CODE","message":"ERROR MESSAGE"}""")
+    val httpErrorJson: JsValue = Json.obj("code"->"CODE","message"->"ERROR MESSAGE")
 
     "Serialize to Json as expected" in {
       Json.toJson(httpErrorModel) shouldBe httpErrorJson

@@ -68,53 +68,52 @@ class TransactionSpec extends SpecBase {
   )
 
   val transactionJson: JsValue =
-    Json.parse(
-      """
-        |{
-        |  "chargeType": "PAYE",
-        |  "mainType": "2100",
-        |  "periodKey": "13RL",
-        |  "periodKeyDescription": "abcde",
-        |  "taxPeriodFrom": "2017-04-06",
-        |  "taxPeriodTo": "2018-04-05",
-        |  "businessPartner": "6622334455",
-        |  "contractAccountCategory": "02",
-        |  "contractAccount": "X",
-        |  "contractObjectType": "ABCD",
-        |  "contractObject": "00000003000000002757",
-        |  "sapDocumentNumber": "1040000872",
-        |  "sapDocumentNumberItem": "XM00",
-        |  "chargeReference": "XM002610011594",
-        |  "mainTransaction": "1234",
-        |  "subTransaction": "5678",
-        |  "originalAmount": 3400,
-        |  "outstandingAmount": 1400,
-        |  "clearedAmount": 2000,
-        |  "accruedInterest": 0.23,
-        |  "items": [{
-        |    "subItem": "000",
-        |    "dueDate": "2018-02-14",
-        |    "amount": 3400,
-        |    "clearingDate": "2018-02-17",
-        |    "clearingReason": "A",
-        |    "outgoingPaymentMethod": "B",
-        |    "paymentLock": "C",
-        |    "clearingLock": "D",
-        |    "interestLock": "E",
-        |    "dunningLock": "1",
-        |    "returnFlag": false,
-        |    "paymentReference": "F",
-        |    "paymentAmount": 2000,
-        |    "paymentMethod": "G",
-        |    "paymentLot": "H",
-        |    "paymentLotItem": "112",
-        |    "clearingSAPDocument": "3350000253",
-        |    "statisticalDocument": "I",
-        |    "returnReason": "J",
-        |    "promiseToPay": "K"
-        |  }]
-        |}
-      """.stripMargin)
+    Json.obj(
+      "chargeType" -> "PAYE",
+      "mainType" -> "2100",
+      "periodKey" -> "13RL",
+      "periodKeyDescription" -> "abcde",
+      "taxPeriodFrom" -> "2017-04-06",
+      "taxPeriodTo" -> "2018-04-05",
+      "businessPartner" -> "6622334455",
+      "contractAccountCategory" -> "02",
+      "contractAccount" -> "X",
+      "contractObjectType" -> "ABCD",
+      "contractObject" -> "00000003000000002757",
+      "sapDocumentNumber" -> "1040000872",
+      "sapDocumentNumberItem" -> "XM00",
+      "chargeReference" -> "XM002610011594",
+      "mainTransaction" -> "1234",
+      "subTransaction" -> "5678",
+      "originalAmount" -> 3400,
+      "outstandingAmount" -> 1400,
+      "clearedAmount" -> 2000,
+      "accruedInterest" -> 0.23,
+      "items" -> Json.arr(
+        Json.obj(
+          "subItem" -> "000",
+          "dueDate" -> "2018-02-14",
+          "amount" -> 3400,
+          "clearingDate" -> "2018-02-17",
+          "clearingReason" -> "A",
+          "outgoingPaymentMethod" -> "B",
+          "paymentLock" -> "C",
+          "clearingLock" -> "D",
+          "interestLock" -> "E",
+          "dunningLock" -> "1",
+          "returnFlag" -> false,
+          "paymentReference" -> "F",
+          "paymentAmount" -> 2000,
+          "paymentMethod" -> "G",
+          "paymentLot" -> "H",
+          "paymentLotItem" -> "112",
+          "clearingSAPDocument" -> "3350000253",
+          "statisticalDocument" -> "I",
+          "returnReason" -> "J",
+          "promiseToPay" -> "K"
+        )
+      )
+    )
 
   "Transaction" should {
 
