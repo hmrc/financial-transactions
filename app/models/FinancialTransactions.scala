@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-package models.requests
+package models
 
-import play.api.mvc.{Request, WrappedRequest}
+import java.time.ZonedDateTime
 
-case class AuthenticatedRequest[A] (request: Request[A], externalId: String) extends WrappedRequest[A](request)
+import play.api.libs.json._
+
+case class FinancialTransactions(idType: String,
+                                 idNumber: String,
+                                 regimeType: String,
+                                 processingDate: ZonedDateTime,
+                                 financialTransactions: Seq[Transaction])
+
+object FinancialTransactions {
+  implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]
+}

@@ -14,19 +14,8 @@
  * limitations under the License.
  */
 
-package controllers
+package auth
 
-import javax.inject.{Inject, Singleton}
+import play.api.mvc.{Request, WrappedRequest}
 
-import controllers.actions.AuthAction
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
-
-@Singleton()
-class SampleController @Inject()(authenticate: AuthAction) extends BaseController {
-
-	def index(): Action[AnyContent] = authenticate { implicit request =>
-		Ok("Hello world")
-	}
-
-}
+case class AuthenticatedRequest[A] (request: Request[A], externalId: String) extends WrappedRequest[A](request)

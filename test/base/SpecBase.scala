@@ -16,16 +16,25 @@
 
 package base
 
+import config.MicroserviceAppConfig
 import org.scalatestplus.play.guice._
 import play.api.inject.Injector
 import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+
+import scala.concurrent.ExecutionContext
 
 trait SpecBase extends UnitSpec with GuiceOneAppPerSuite {
 
   def injector: Injector = app.injector
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
+
+  lazy val mockAppConfig: MicroserviceAppConfig = injector.instanceOf[MicroserviceAppConfig]
+
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }

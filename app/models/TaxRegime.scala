@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import base.SpecBase
-import controllers.actions.FakeAuthAction
-import play.api.http.Status
+sealed trait TaxRegime {
+  val idType: String
+  val id: String
+  val regimeType: String
+}
 
-class SampleControllerSpec extends SpecBase {
+case class IncomeTaxRegime(id: String) extends TaxRegime {
+  override val idType = "NINO"
+  override val regimeType = "ITSA"
+}
 
-  "GET /" should {
-    "return 200" in {
-      val controller = new SampleController(FakeAuthAction)
-      val result = controller.index()(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
-  }
-
+case class VatRegime(id: String) extends TaxRegime {
+  override val idType = "VRN"
+  override val regimeType = "VATC"
 }
