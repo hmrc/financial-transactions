@@ -36,12 +36,12 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
   def getFinancialTransactions(regime: TaxRegime,
-                               fromDate: Option[LocalDate],
-                               toDate: Option[LocalDate],
-                               onlyOpenItems: Option[Boolean],
-                               includeLocks: Option[Boolean],
-                               calculateAccruedInterest: Option[Boolean],
-                               customerPaymentInformation: Option[Boolean]
+                               fromDate: Option[LocalDate] = None,
+                               toDate: Option[LocalDate] = None,
+                               onlyOpenItems: Option[Boolean] = None,
+                               includeLocks: Option[Boolean] = None,
+                               calculateAccruedInterest: Option[Boolean] = None,
+                               customerPaymentInformation: Option[Boolean] = None
                               )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
     val url = financialDataUrl(regime)

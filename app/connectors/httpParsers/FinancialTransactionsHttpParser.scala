@@ -16,7 +16,8 @@
 
 package connectors.httpParsers
 
-import models.FinancialTransactions
+import models.{DesError, FinancialTransactions}
+import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
@@ -25,8 +26,20 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
   implicit object FinancialTransactionsReads extends HttpReads[HttpGetResult[FinancialTransactions]] {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactions] = {
       response.status match {
-        case OK => Right(response.json.as[FinancialTransactions])
-        case _ => handleErrorResponse(response.json)
+        case OK => {
+          response.json.validate[FinancialTransactions].fold(
+            invalid => {
+              Logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful DES Response")
+              Logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
+              Left(DesError("JSON_PARSE_EXCEPTION",s"Failed to Parse Success Response from DES. Response received: ${response.json}"))
+            },
+            valid => Right(valid)
+          )
+        }
+        case _ => {
+          Logger.debug("Error Response")
+          handleErrorResponse(response.json)
+        }
       }
     }
   }
