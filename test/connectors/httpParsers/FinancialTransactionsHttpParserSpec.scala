@@ -28,7 +28,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
   "The FinancialTransactionsHttpParser" when {
 
-    "the http response status is 200 OK" should {
+    "the http response status is 200 OK and matches expected Schema" should {
 
       val httpResponse = HttpResponse(Status.OK, responseJson = Some(
         Json.obj(
@@ -141,6 +141,20 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
       "return a FinancialTransactions instance" in {
+        result shouldEqual expected
+      }
+
+    }
+
+    "the http response status is 200 OK but the response is not as expected" should {
+
+      val httpResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj("foo" -> "bar")))
+
+      val expected = Left(UnexpectedDesResponse)
+
+      val result = FinancialTransactionsReads.read("", "", httpResponse)
+
+      "return an UnexpectedDesResponse instance" in {
         result shouldEqual expected
       }
 

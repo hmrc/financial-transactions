@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{DesError, FinancialTransactions}
+import models.{FinancialTransactions, UnexpectedDesResponse}
 import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -31,17 +31,13 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
             invalid => {
               Logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful DES Response")
               Logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
-              Left(DesError("JSON_PARSE_EXCEPTION",s"Failed to Parse Success Response from DES. Response received: ${response.json}"))
+              Left(UnexpectedDesResponse)
             },
             valid => Right(valid)
           )
         }
-        case _ => {
-          Logger.debug("Error Response")
-          handleErrorResponse(response.json)
-        }
+        case _ => handleErrorResponse(response.json)
       }
     }
   }
-
 }
