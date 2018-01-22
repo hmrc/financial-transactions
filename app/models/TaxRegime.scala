@@ -16,7 +16,7 @@
 
 package models
 
-trait TaxRegime {
+sealed trait TaxRegime {
   val idType: String
   val id: String
   val regimeType: String
