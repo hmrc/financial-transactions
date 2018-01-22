@@ -34,7 +34,7 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite {
 
   lazy val mockAppConfig: MicroserviceAppConfig = injector.instanceOf[MicroserviceAppConfig]
 
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-  implicit val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }

@@ -21,7 +21,7 @@ import javax.inject.{Inject, Singleton}
 
 import config.MicroserviceAppConfig
 import connectors.httpParsers.FinancialTransactionsHttpParser._
-import models.{FinancialTransactions, TaxRegime}
+import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.Authorization
@@ -35,29 +35,15 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
-  def getFinancialTransactions(regime: TaxRegime,
-                               fromDate: Option[LocalDate] = None,
-                               toDate: Option[LocalDate] = None,
-                               onlyOpenItems: Option[Boolean] = None,
-                               includeLocks: Option[Boolean] = None,
-                               calculateAccruedInterest: Option[Boolean] = None,
-                               customerPaymentInformation: Option[Boolean] = None
-                              )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
+  def getFinancialTransactions(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+                              (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
     val url = financialDataUrl(regime)
-    val desHC = headerCarrier.copy(authorization = Some(Authorization(s"Bearer ${appConfig.desToken}")))
+    val desHC = headerCarrier.copy(authorization =Some(Authorization(s"Bearer ${appConfig.desToken}")))
       .withExtraHeaders("Environment" -> appConfig.desEnvironment)
-    val queryParams = Seq(
-      fromDate.map("dateFrom" -> _.toString),
-      toDate.map("dateTo" -> _.toString),
-      onlyOpenItems.map("onlyOpenItems" -> _.toString),
-      includeLocks.map("includeLocks" -> _.toString),
-      calculateAccruedInterest.map("calculateAccruedInterest" -> _.toString),
-      customerPaymentInformation.map("customerPaymentInformation" -> _.toString)
-    ).flatten
 
-    Logger.debug(s"[FinancialDataConnector][getFinancialTransactions] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParams")
-    http.GET(url, queryParams)(FinancialTransactionsReads, desHC, ec).map {
+    Logger.debug(s"[FinancialDataConnector][getFinancialTransactions] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParameters")
+    http.GET(url, queryParameters.toSeqQueryParams)(FinancialTransactionsReads, desHC, ec).map {
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(message) =>
         Logger.warn("[FinancialDataConnector][getFinancialTransactions] DES Error Received. Message: " + message)
