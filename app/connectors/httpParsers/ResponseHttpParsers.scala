@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package connectors.httpParsers
 
-import auth.AuthenticatedRequest
-import play.api.mvc.{Request, Result}
+import models._
+import play.api.libs.json.JsValue
 
-import scala.concurrent.Future
+trait ResponseHttpParsers {
 
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id"))
+  type HttpGetResult[T] = Either[DesErrors, T]
+
+  protected def handleErrorResponse(json: JsValue): Left[DesErrors, Nothing] = {
+    json.asOpt[DesMultiError].orElse(json.asOpt[DesError]) match {
+      case Some(error) => Left(error)
+      case _ => Left(UnexpectedDesResponse)
+    }
+  }
 }

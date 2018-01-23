@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package modules
+package auth
 
 import com.google.inject.AbstractModule
 import controllers.actions.{AuthAction, AuthActionImpl}

@@ -18,12 +18,12 @@ package controllers.actions
 
 import javax.inject.Singleton
 
+import auth.AuthenticatedRequest
 import com.google.inject.Inject
-import models.requests.AuthenticatedRequest
-import play.api.mvc.Results._
+import play.api.mvc.Results.{Forbidden, Unauthorized}
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
