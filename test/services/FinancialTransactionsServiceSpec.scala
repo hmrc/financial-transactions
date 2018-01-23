@@ -28,7 +28,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
   lazy val regime = VatRegime("123456")
 
-  "The FinancialTransactionService.getFinancialTransactions method" should {
+  "The FinancialTransactionService.getFinancialData method" should {
 
     "Return FiniancialTransactions when a DesError is returned from the Connector" in {
 

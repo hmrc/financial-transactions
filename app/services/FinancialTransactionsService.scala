@@ -36,7 +36,7 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
                                calculateAccruedInterest: Option[Boolean] = None,
                                customerPaymentInformation: Option[Boolean] = None
                               )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[DesErrors, FinancialTransactions]] = {
-    financialDataConnector.getFinancialTransactions(
+    financialDataConnector.getFinancialData(
       regime,
       FinancialDataQueryParameters(
         fromDate,

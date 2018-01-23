@@ -41,7 +41,7 @@ trait MockFinancialDataConnector extends UnitSpec with MockitoSugar with BeforeA
   def setupMockGetFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
                                (response: Future[HttpGetResult[FinancialTransactions]]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
     when(
-      mockFinancialDataConnector.getFinancialTransactions(
+      mockFinancialDataConnector.getFinancialData(
         ArgumentMatchers.eq(regime),
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())

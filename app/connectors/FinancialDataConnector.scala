@@ -16,7 +16,6 @@
 
 package connectors
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 import config.MicroserviceAppConfig
@@ -35,18 +34,18 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
-  def getFinancialTransactions(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
-                              (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
+  def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+                      (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
     val url = financialDataUrl(regime)
     val desHC = headerCarrier.copy(authorization =Some(Authorization(s"Bearer ${appConfig.desToken}")))
       .withExtraHeaders("Environment" -> appConfig.desEnvironment)
 
-    Logger.debug(s"[FinancialDataConnector][getFinancialTransactions] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParameters")
+    Logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParameters")
     http.GET(url, queryParameters.toSeqQueryParams)(FinancialTransactionsReads, desHC, ec).map {
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(message) =>
-        Logger.warn("[FinancialDataConnector][getFinancialTransactions] DES Error Received. Message: " + message)
+        Logger.warn("[FinancialDataConnector][getFinancialData] DES Error Received. Message: " + message)
         error
     }
   }

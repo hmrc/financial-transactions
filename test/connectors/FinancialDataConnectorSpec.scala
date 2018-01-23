@@ -106,7 +106,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
       actualUrl shouldBe expectedUrl
     }
 
-    "when calling the getFinancialTransactions" when {
+    "when calling the getFinancialData" when {
 
       "calling for a VAT user with all Query Parameters defined and a success response received" should {
 
@@ -119,7 +119,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             "calculateAccruedInterest" -> "false",
             "customerPaymentInformation" -> "false"
           ))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               fromDate = Some("2017-04-06"),
@@ -140,7 +140,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq(
             "dateFrom" -> "2017-04-06"
           ))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               fromDate = Some("2017-04-06")
@@ -154,7 +154,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq("dateTo" -> "2018-04-05"))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               toDate = Some("2018-04-05")
@@ -168,7 +168,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq("onlyOpenItems" -> "true"))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               onlyOpenItems = Some(true)
@@ -182,7 +182,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq("includeLocks" -> "true"))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               includeLocks = Some(true)
@@ -196,7 +196,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq("calculateAccruedInterest" -> "false"))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               calculateAccruedInterest = Some(false)
@@ -210,7 +210,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq("customerPaymentInformation" -> "false"))(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(
+          val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
             queryParameters = FinancialDataQueryParameters(
               customerPaymentInformation = Some(false)
@@ -224,7 +224,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(successResponse)
-          val result = TestFinancialDataConnector.getFinancialTransactions(regime = vatRegime, FinancialDataQueryParameters())
+          val result = TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialDataQueryParameters())
           await(result) shouldBe successResponse
         }
       }
@@ -233,7 +233,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a DesError model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(badRequestSingleError)
-          val result = TestFinancialDataConnector.getFinancialTransactions(regime = vatRegime, FinancialDataQueryParameters())
+          val result = TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialDataQueryParameters())
           await(result) shouldBe badRequestSingleError
         }
       }
@@ -242,7 +242,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a DesMultiError model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(badRequestMultiError)
-          val result = TestFinancialDataConnector.getFinancialTransactions(regime = vatRegime, FinancialDataQueryParameters())
+          val result = TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialDataQueryParameters())
           await(result) shouldBe badRequestMultiError
         }
       }
