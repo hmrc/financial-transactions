@@ -30,7 +30,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
   "The FinancialTransactionService.getFinancialData method" should {
 
-    "Return FiniancialTransactions when a DesError is returned from the Connector" in {
+    "Return FinancialTransactions when a success response is returned from the Connector" in {
 
       val successResponse = Right(FinancialTransactions(
         idType = "MTDBSA",
@@ -106,7 +106,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     }
 
-    "Return an error when a DesError is returned from the Connector" in {
+    "Return DesError when a single error is returned from the Connector" in {
 
       val singleErrorResponse = Left(DesError("CODE","REASON"))
 
@@ -133,7 +133,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     }
 
-    "Return a DesMultiError when a multiple error response is returned from the Connector" in {
+    "Return a DesMultiError when multiple error responses are returned from the Connector" in {
 
       val multiErrorResponse = Left(DesMultiError(Seq(
         DesError("CODE 1","REASON 1"),
