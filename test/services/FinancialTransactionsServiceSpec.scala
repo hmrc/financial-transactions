@@ -19,6 +19,7 @@ package services
 import base.SpecBase
 import mocks.connectors.MockFinancialDataConnector
 import models._
+import play.api.http.Status
 import utils.ImplicitDateFormatter._
 
 class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector {
@@ -94,21 +95,23 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       val actual = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2018-04-05"),
-        onlyOpenItems = Some(false),
-        includeLocks = Some(true),
-        calculateAccruedInterest = Some(false),
-        customerPaymentInformation = Some(false)
+        FinancialDataQueryParameters(
+          fromDate = Some("2017-04-06"),
+          toDate = Some("2018-04-05"),
+          onlyOpenItems = Some(false),
+          includeLocks = Some(true),
+          calculateAccruedInterest = Some(false),
+          customerPaymentInformation = Some(false)
+        )
       ))
 
       actual shouldBe successResponse
 
     }
 
-    "Return DesError when a single error is returned from the Connector" in {
+    "Return Error when a single error is returned from the Connector" in {
 
-      val singleErrorResponse = Left(DesError("CODE","REASON"))
+      val singleErrorResponse = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE","REASON")))
 
       setupMockGetFinancialData(regime, FinancialDataQueryParameters(
         fromDate = Some("2017-04-06"),
@@ -121,24 +124,26 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       val actual = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2018-04-05"),
-        onlyOpenItems = Some(false),
-        includeLocks = Some(true),
-        calculateAccruedInterest = Some(false),
-        customerPaymentInformation = Some(false)
+        FinancialDataQueryParameters(
+          fromDate = Some("2017-04-06"),
+          toDate = Some("2018-04-05"),
+          onlyOpenItems = Some(false),
+          includeLocks = Some(true),
+          calculateAccruedInterest = Some(false),
+          customerPaymentInformation = Some(false)
+        )
       ))
 
       actual shouldBe singleErrorResponse
 
     }
 
-    "Return a DesMultiError when multiple error responses are returned from the Connector" in {
+    "Return a MultiError when multiple error responses are returned from the Connector" in {
 
-      val multiErrorResponse = Left(DesMultiError(Seq(
-        DesError("CODE 1","REASON 1"),
-        DesError("CODE 2","REASON 2")
-      )))
+      val multiErrorResponse = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(Seq(
+        Error("CODE 1","REASON 1"),
+        Error("CODE 2","REASON 2")
+      ))))
 
       setupMockGetFinancialData(regime, FinancialDataQueryParameters(
         fromDate = Some("2017-04-06"),
@@ -151,12 +156,14 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       val actual = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2018-04-05"),
-        onlyOpenItems = Some(false),
-        includeLocks = Some(true),
-        calculateAccruedInterest = Some(false),
-        customerPaymentInformation = Some(false)
+        FinancialDataQueryParameters(
+          fromDate = Some("2017-04-06"),
+          toDate = Some("2018-04-05"),
+          onlyOpenItems = Some(false),
+          includeLocks = Some(true),
+          calculateAccruedInterest = Some(false),
+          customerPaymentInformation = Some(false)
+        )
       ))
 
       actual shouldBe multiErrorResponse

@@ -14,34 +14,33 @@
  * limitations under the License.
  */
 
-package mocks.connectors
+package mocks.services
 
-import connectors.FinancialDataConnector
 import connectors.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
 import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito._
+import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
+import services.FinancialTransactionsService
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
+trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
-trait MockFinancialDataConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
-
-  val mockFinancialDataConnector: FinancialDataConnector = mock[FinancialDataConnector]
+  val mockFinancialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFinancialDataConnector)
+    reset(mockFinancialTransactionsService)
   }
 
-  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+  def setupMockGetFinancialTransactions(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
                                (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
     when(
-      mockFinancialDataConnector.getFinancialData(
+      mockFinancialTransactionsService.getFinancialTransactions(
         ArgumentMatchers.eq(regime),
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())

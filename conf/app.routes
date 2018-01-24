@@ -1,1 +1,3 @@
 # microservice specific routes
+
+GET /:idType/:idValue   @controllers.FinancialTransactionsController.getFinancialTransactions(idType: String, idValue: String, queryParams: models.FinancialDataQueryParameters)

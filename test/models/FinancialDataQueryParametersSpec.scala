@@ -21,6 +21,33 @@ import utils.ImplicitDateFormatter._
 
 class FinancialDataQueryParametersSpec extends SpecBase {
 
+  "The FinancialDataQueryParameters object" should {
+
+    "have the correct key value for 'dateFrom'" in {
+      FinancialDataQueryParameters.dateFromKey shouldBe "dateFrom"
+    }
+
+    "have the correct key value for 'dateTo'" in {
+      FinancialDataQueryParameters.dateToKey shouldBe "dateTo"
+    }
+
+    "have the correct key value for 'onlyOpenItems'" in {
+      FinancialDataQueryParameters.onlyOpenItemsKey shouldBe "onlyOpenItems"
+    }
+
+    "have the correct key value for 'includeLocks'" in {
+      FinancialDataQueryParameters.includeLocksKey shouldBe "includeLocks"
+    }
+
+    "have the correct key value for 'calculateAccruedInterest'" in {
+      FinancialDataQueryParameters.calculateAccruedInterestKey shouldBe "calculateAccruedInterest"
+    }
+
+    "have the correct key value for 'customerPaymentInformation'" in {
+      FinancialDataQueryParameters.customerPaymentInformationKey shouldBe "customerPaymentInformation"
+    }
+  }
+
   "The FinancialDataQueryParameters.toSeqQueryParams method" should {
 
     "output the expected sequence of key-value pairs" which {

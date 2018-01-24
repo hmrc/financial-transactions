@@ -19,27 +19,27 @@ package models
 import base.SpecBase
 import play.api.libs.json.{JsValue, Json}
 
-class DesErrorsSpec extends SpecBase {
+class ErrorsSpec extends SpecBase {
 
-  "The DesError model" should {
+  "The Error model" should {
 
-    val desErrorModel = DesError("CODE","ERROR MESSAGE")
+    val desErrorModel = Error("CODE","ERROR MESSAGE")
     val desErrorJson: JsValue = Json.obj("code"->"CODE","reason"->"ERROR MESSAGE")
 
     "Serialize to Json as expected" in {
       Json.toJson(desErrorModel) shouldBe desErrorJson
     }
 
-    "Deserialize to a DesError as expected" in {
-      desErrorJson.as[DesError] shouldBe desErrorModel
+    "Deserialize to a Error as expected" in {
+      desErrorJson.as[Error] shouldBe desErrorModel
     }
   }
 
-  "The DesMultiError model" should {
+  "The MultiError model" should {
 
-    val desMultiErrorModel = DesMultiError(failures = Seq(
-      DesError("CODE 1","ERROR MESSAGE 1"),
-      DesError("CODE 2","ERROR MESSAGE 2")
+    val desMultiErrorModel = MultiError(failures = Seq(
+      Error("CODE 1","ERROR MESSAGE 1"),
+      Error("CODE 2","ERROR MESSAGE 2")
     ))
     val desMultiErrorJson: JsValue =
       Json.obj("failures" ->
@@ -59,21 +59,21 @@ class DesErrorsSpec extends SpecBase {
       Json.toJson(desMultiErrorModel) shouldBe desMultiErrorJson
     }
 
-    "Deserialize to a DesMultiError as expected" in {
-      desMultiErrorJson.as[DesMultiError] shouldBe desMultiErrorModel
+    "Deserialize to a MultiError as expected" in {
+      desMultiErrorJson.as[MultiError] shouldBe desMultiErrorModel
     }
 
   }
 
-  "The UnexpectedDesResponse object" should {
+  "The UnexpectedResponse object" should {
 
-    "Have the error code 'UNEXPECTED_DES_RESPONSE'" in {
-      UnexpectedDesResponse.code shouldBe "UNEXPECTED_DES_RESPONSE"
-    }
-
-    "Have the error reason 'The DES response did not match the expected format'" in {
-      UnexpectedDesResponse.reason shouldBe "The DES response did not match the expected format"
-    }
+//    "Have the error code 'UNEXPECTED_DES_RESPONSE'" in {
+//      UnexpectedResponse.code shouldBe "UNEXPECTED_DES_RESPONSE"
+//    }
+//
+//    "Have the error reason 'The DES response did not match the expected format'" in {
+//      UnexpectedResponse.reason shouldBe "The DES response did not match the expected format"
+//    }
 
   }
 }

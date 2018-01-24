@@ -20,6 +20,9 @@ import javax.inject.Singleton
 
 import auth.AuthenticatedRequest
 import com.google.inject.Inject
+import models.Error
+import play.api.http.Status
+import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Unauthorized}
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
@@ -41,12 +44,8 @@ class AuthActionImpl @Inject()(override val authConnector: AuthConnector)(implic
         externalId => block(AuthenticatedRequest(request, externalId))
       }.getOrElse(throw new UnauthorizedException("Unable to retrieve external Id"))
     } recover {
-      case _: NoActiveSession => Unauthorized("not authenticated")
-      case _: InsufficientEnrolments => Forbidden("not authorised")
-      case _: InsufficientConfidenceLevel => Forbidden("not authorised")
-      case _: UnsupportedAuthProvider => Forbidden("not authorised")
-      case _: UnsupportedAffinityGroup => Forbidden("not authorised")
-      case _: UnsupportedCredentialRole => Forbidden("not authorised")
+      case _: NoActiveSession => Unauthorized(Json.toJson(Error(Status.UNAUTHORIZED.toString, "Not Authenticated")))
+      case _ => Forbidden(Json.toJson(Error(Status.FORBIDDEN.toString, "Not Authorised")))
     }
   }
 }

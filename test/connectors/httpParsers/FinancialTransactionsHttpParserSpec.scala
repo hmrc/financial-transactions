@@ -150,11 +150,11 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val httpResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj("foo" -> "bar")))
 
-      val expected = Left(UnexpectedDesResponse)
+      val expected = Left(UnexpectedJsonFormat)
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedDesResponse instance" in {
+      "return an UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
@@ -169,14 +169,17 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
         ))
       )
 
-      val expected = Left(DesError(
-        code = "CODE",
-        reason = "ERROR MESSAGE"
+      val expected = Left(ErrorResponse(
+        Status.BAD_REQUEST,
+        Error(
+          code = "CODE",
+          reason = "ERROR MESSAGE"
+        )
       ))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return a DesError instance" in {
+      "return a Error instance" in {
         result shouldEqual expected
       }
 
@@ -199,35 +202,72 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
         ))
       )
 
-      val expected = Left(DesMultiError(
-        failures = Seq(
-          DesError(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
-          DesError(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
+      val expected = Left(ErrorResponse(
+        Status.BAD_REQUEST,
+        MultiError(
+          failures = Seq(
+            Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
+            Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
+          )
         )
       ))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return a DesMultiError" in {
+      "return a MultiError" in {
         result shouldEqual expected
       }
 
     }
 
-    "the http response status is 400 BAD_REQUEST (unknown DES error json)" should {
+    "the http response status is 400 BAD_REQUEST (Unexpected Json Returned)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST,
-        responseJson = Some(Json.obj(
-          "foo" -> "foo?",
-          "bar" -> "bar?"
-        ))
-      )
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, responseJson = Some(Json.obj("foo" -> "bar")))
 
-      val expected = Left(UnexpectedDesResponse)
+      val expected = Left(UnexpectedJsonFormat)
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return a UnknownError" in {
+      "return an UnexpectedJsonFormat instance" in {
+        result shouldEqual expected
+      }
+
+    }
+
+    "the http response status is 500 ISE" should {
+
+      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR,
+        responseJson = Some(Json.obj(
+          "code" -> "code",
+          "reason" -> "message"
+        ))
+      )
+
+      val expected = Left(ErrorResponse(
+        Status.INTERNAL_SERVER_ERROR,
+        Error(
+          code = "code",
+          reason = "message"
+        )
+      ))
+
+      val result = FinancialTransactionsReads.read("", "", httpResponse)
+
+      "return an ISE" in {
+        result shouldEqual expected
+      }
+
+    }
+
+    "the http response status is unexpected" should {
+
+      val httpResponse = HttpResponse(Status.SEE_OTHER)
+
+      val expected = Left(UnexpectedResponse)
+
+      val result = FinancialTransactionsReads.read("", "", httpResponse)
+
+      "return an ISE" in {
         result shouldEqual expected
       }
 

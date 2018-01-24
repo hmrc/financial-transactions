@@ -18,10 +18,16 @@ package controllers.actions
 
 import auth.AuthenticatedRequest
 import play.api.mvc.{Request, Result}
+import uk.gov.hmrc.auth.core.MissingBearerToken
 
 import scala.concurrent.Future
 
 object FakeAuthAction extends AuthAction {
   override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
     block(AuthenticatedRequest(request, "id"))
+}
+
+object FakeUnauthenticatedAction extends AuthAction {
+  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
+    Future.failed(throw new MissingBearerToken)
 }
