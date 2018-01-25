@@ -39,12 +39,12 @@ object FinancialTransactionsBinders {
 
         val queryParams = Seq(bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindCalculateAccruedInterest, bindCustomerPaymentInformation)
 
-        if (queryParams.exists(_.isInstanceOf[Left[String, _]])) {
-          Some(Left(queryParams.collect { case _@Left(errorMessage) => errorMessage }.mkString))
-        } else {
-          (bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindCalculateAccruedInterest, bindCustomerPaymentInformation) match {
+        queryParams.collect { case _@Left(errorMessage) => errorMessage } match {
+          case x if x.nonEmpty => Some(Left(x.mkString(", "))) //Return the sequence of errors as a single concatenated string
+          case _ => (bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindCalculateAccruedInterest, bindCustomerPaymentInformation) match {
             case (Right(from), Right(to), Right(onlyOpenItems), Right(includeLocks), Right(calculateAccruedInterest), Right(customerPaymentInfo)) =>
               Some(Right(FinancialDataQueryParameters(from, to, onlyOpenItems, includeLocks, calculateAccruedInterest, customerPaymentInfo)))
+            case _ => throw new RuntimeException("Unexpected Runtime Error when Parsing/Binding Query Parameters")
           }
         }
       }

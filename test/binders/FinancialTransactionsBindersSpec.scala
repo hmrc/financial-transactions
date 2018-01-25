@@ -259,11 +259,11 @@ class FinancialTransactionsBindersSpec extends SpecBase {
         "return a bad request error message with details of the error" in {
 
           val expected = Some(Left(
-            s"Failed to bind '$dateFromKey=banana' valid date format should be 'YYYY-MM-DD'." +
-              s"Failed to bind '$dateToKey=banana2' valid date format should be 'YYYY-MM-DD'." +
-              s"Failed to bind '$onlyOpenItemsKey=banana3' valid values are 'true' or 'false'." +
-              s"Failed to bind '$includeLocksKey=banana4' valid values are 'true' or 'false'." +
-              s"Failed to bind '$calculateAccruedInterestKey=banana5' valid values are 'true' or 'false'." +
+            s"Failed to bind '$dateFromKey=banana' valid date format should be 'YYYY-MM-DD'., " +
+              s"Failed to bind '$dateToKey=banana2' valid date format should be 'YYYY-MM-DD'., " +
+              s"Failed to bind '$onlyOpenItemsKey=banana3' valid values are 'true' or 'false'., " +
+              s"Failed to bind '$includeLocksKey=banana4' valid values are 'true' or 'false'., " +
+              s"Failed to bind '$calculateAccruedInterestKey=banana5' valid values are 'true' or 'false'., " +
               s"Failed to bind '$customerPaymentInformationKey=banana6' valid values are 'true' or 'false'."))
 
           val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
