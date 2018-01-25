@@ -234,6 +234,20 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     }
 
+    "the http response status is 400 BAD_REQUEST (Bad Json Returned)" should {
+
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Banana"))
+
+      val expected = Left(InvalidJsonResponse)
+
+      val result = FinancialTransactionsReads.read("", "", httpResponse)
+
+      "return an UnexpectedJsonFormat instance" in {
+        result shouldEqual expected
+      }
+
+    }
+
     "the http response status is 500 ISE" should {
 
       val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR,

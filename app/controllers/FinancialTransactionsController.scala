@@ -36,8 +36,8 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
                                                 val financialTransactionsService: FinancialTransactionsService) extends BaseController {
 
   def getFinancialTransactions(idType: String, idValue: String, queryParams: FinancialDataQueryParameters): Action[AnyContent] =
-    Action.async {
-      implicit request =>
+    authenticate.async {
+      implicit authorisedUser =>
         idType.toUpperCase match {
           case RegimeKeys.VAT => retrieveFinancialTransactions(VatRegime(idValue), queryParams)
           case RegimeKeys.IT => retrieveFinancialTransactions(IncomeTaxRegime(idValue), queryParams)

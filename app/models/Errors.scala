@@ -35,6 +35,10 @@ object MultiError {
 
 case class ErrorResponse(status: Int, error: Errors)
 
+
+object UnauthenticatedError extends Error(Status.UNAUTHORIZED.toString, "Not authenticated")
+object ForbiddenError extends Error(Status.FORBIDDEN.toString, "Not authorised")
+
 object InvalidJsonResponse extends ErrorResponse(
   status = Status.INTERNAL_SERVER_ERROR,
   error = Error(

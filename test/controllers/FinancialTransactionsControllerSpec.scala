@@ -17,14 +17,15 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.FakeAuthAction
+import controllers.actions.AuthActionImpl
+import mocks.auth.MockMicroserviceAuthorisedFunctions
 import mocks.services.MockFinancialTransactionsService
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 import utils.ImplicitDateFormatter._
 
-class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTransactionsService {
+class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTransactionsService with MockMicroserviceAuthorisedFunctions {
 
   val success = FinancialTransactions(
     idType = "MTDBSA",
@@ -92,7 +93,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
     "called by an authenticated user" which {
 
-      object TestFinancialTransactionController extends FinancialTransactionsController(FakeAuthAction, mockFinancialTransactionsService)
+      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth), mockFinancialTransactionsService)
 
       "is requesting VAT details" should {
 
@@ -102,11 +103,10 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a successful response from the FinancialTransactionsService" should {
 
-          setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(successResponse)
-
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, vrn, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, vrn, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 200 (OK)" in {
+            setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(successResponse)
             status(result) shouldBe Status.OK
           }
 
@@ -118,11 +118,10 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a bad request with single error from the FinancialTransactionsService" should {
 
-          setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(badRequestSingleError)
-
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, vrn, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, vrn, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 400 (BAD_REQUEST)" in {
+            setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(badRequestSingleError)
             status(result) shouldBe Status.BAD_REQUEST
           }
 
@@ -134,16 +133,14 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a bad request with multiple errors from the FinancialTransactionsService" should {
 
-          setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(badRequestMultiError)
-
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, vrn, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, vrn, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 400 (BAD_REQUEST)" in {
+            setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(badRequestMultiError)
             status(result) shouldBe Status.BAD_REQUEST
           }
 
           "return a json body with the multiple error messages" in {
-
             jsonBodyOf(result) shouldBe Json.toJson(multiError)
           }
         }
@@ -158,11 +155,10 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a successful response from the FinancialTransactionsService" should {
 
-          setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(successResponse)
-
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, mtditid, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, mtditid, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 200 (OK)" in {
+            setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(successResponse)
             status(result) shouldBe Status.OK
           }
 
@@ -174,11 +170,10 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a bad request with single error from the FinancialTransactionsService" should {
 
-          setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(badRequestSingleError)
-
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, mtditid, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, mtditid, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 400 (BAD_REQUEST)" in {
+            setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(badRequestSingleError)
             status(result) shouldBe Status.BAD_REQUEST
           }
 
@@ -190,11 +185,10 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a bad request with multiple errors from the FinancialTransactionsService" should {
 
-          setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(badRequestMultiError)
-
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, mtditid, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, mtditid, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 400 (BAD_REQUEST)" in {
+            setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(badRequestMultiError)
             status(result) shouldBe Status.BAD_REQUEST
           }
 
@@ -213,7 +207,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a successful response from the FinancialTransactionsService" should {
 
-          val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, id, FinancialDataQueryParameters())(fakeRequest))
+          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, id, FinancialDataQueryParameters())(fakeRequest))
 
           "return a status of 400 (BAD_REQUEST)" in {
             status(result) shouldBe Status.BAD_REQUEST
@@ -225,6 +219,23 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
               "reason" -> "The supplied Tax Regime is invalid."
             )
           }
+        }
+      }
+    }
+
+    "called by an unauthenticated user" should {
+
+      val regimeType = "VAT"
+      val id = "123456"
+      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth), mockFinancialTransactionsService)
+
+      "Return an UNAUTHORISED response" which {
+
+        lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, id, FinancialDataQueryParameters())(fakeRequest))
+
+        "has status UNAUTHORISED (401)" in {
+          setupMockAuthorisationException()
+          status(result) shouldBe Status.UNAUTHORIZED
         }
       }
     }
