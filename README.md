@@ -1,5 +1,3 @@
-
-
 # Financial-Transactions
 
 [![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
@@ -19,12 +17,14 @@ The service currently supports the following Tax Regimes:
 
 **Method**: GET
 **URL**: /financial-transactions/`regime`/`identifier`
+
 |Path Parameter|Description|
 |-|-|
 |`regime`|Used to specify the Tax Regime to retrieve Financial Transactions for. Valid values are: `vat` and `it`|
 |`identifier`|Regime Identifier for the Taxpayer. For `it` the MTDITID. For `vat` the VRN|
 
 **Query Parameters**:
+
 |Query Parameter|Mandatory|Description|Format/Valid Values|Default Value|
 |-|-|-|-|-|
 |`fromDate`|**false**|Used to filter the response to only include items from this date|YYYY-MM-DD|none|
@@ -39,9 +39,11 @@ The service currently supports the following Tax Regimes:
 **Status**: OK (200)
 
 #### Definition
+
 ##### Response Object
+
 |Data Item|Type|Mandatory|
-|-|-|-|-|-|
+|-|-|-|
 |idType|`String`|**true**
 |idNumber|`String`|**true**
 |regimeType|`String`|**true**
@@ -49,54 +51,57 @@ The service currently supports the following Tax Regimes:
 |financialTransactions|`Array[FinancialTransactionObject]` *see below*|**false**
 
 ##### Financial Transaction Object
+
 |Data Item|Type|Mandatory|
-|-|-|-|-|-|
-|chargeType|`String`|**false**
-|mainType|`String`|**false**
-|periodKey|`String`|**false**
-|periodKeyDescription|`String`|**false**
-|taxPeriodFrom|`Date`|**false**
-|taxPeriodTo|`Date`|**false**
-|businessPartner|`String`|**false**
-|contractAccountCategory|`String`|**false**
-|contractAccount|`String`|**false**
-|contractObjectType|`String`|**false**
-|contractObject|`String`|**false**
-|sapDocumentNumber|`String`|**false**
-|sapDocumentNumberItem|`String`|**false**
-|chargeReference|`String`|**false**
-|mainTransaction|`String`|**false**
-|subTransaction|`String`|**false**
-|originalAmount|`Decimal`|**false**
-|outstandingAmount|`Decimal`|**false**
-|clearedAmount|`Decimal`|**false**
-|accruedInterest|`Decimal`|**false**
-|items|`Array[SubItemObject]` *see below*|**false**
+|-|-|-|
+|chargeType|`String`|**false**|
+|mainType|`String`|**false**|
+|periodKey|`String`|**false**|
+|periodKeyDescription|`String`|**false**|
+|taxPeriodFrom|`Date`|**false**|
+|taxPeriodTo|`Date`|**false**|
+|businessPartner|`String`|**false**|
+|contractAccountCategory|`String`|**false**|
+|contractAccount|`String`|**false**|
+|contractObjectType|`String`|**false**|
+|contractObject|`String`|**false**|
+|sapDocumentNumber|`String`|**false**|
+|sapDocumentNumberItem|`String`|**false**|
+|chargeReference|`String`|**false**|
+|mainTransaction|`String`|**false**|
+|subTransaction|`String`|**false**|
+|originalAmount|`Decimal`|**false**|
+|outstandingAmount|`Decimal`|**false**|
+|clearedAmount|`Decimal`|**false**|
+|accruedInterest|`Decimal`|**false**|
+|items|`Array[SubItemObject]` *see below*|**false**|
 
 ##### Sub-Item Object
+
 |Data Item|Type|Mandatory|
-|-|-|-|-|-|
-|subItem|`String`|**false**
-|dueDate|`Date`|**false**
-|amount|`Decimal`|**false**
-|clearingDate|`Date`|**false**
-|clearingReason|`String`|**false**
-|outgoingPaymentMethod|`String`|**false**
-|paymentLock|`String`|**false**
-|clearingLock|`String`|**false**
-|interestLock|`String`|**false**
-|dunningLock|`String`|**false**
-|returnFlag|`Boolean`|**false**
-|paymentReference|`String`|**false**
-|paymentAmount|`Decimal`|**false**
-|paymentMethod|`String`|**false**
-|paymentLot|`String`|**false**
-|paymentLotItem|`String`|**false**
-|clearingSAPDocument|`String`|**false**
-|statisticalDocument|`String`|**false**
+|-|-|-|
+|subItem|`String`|**false**|
+|dueDate|`Date`|**false**|
+|amount|`Decimal`|**false**|
+|clearingDate|`Date`|**false**|
+|clearingReason|`String`|**false**|
+|outgoingPaymentMethod|`String`|**false**|
+|paymentLock|`String`|**false**|
+|clearingLock|`String`|**false**|
+|interestLock|`String`|**false**|
+|dunningLock|`String`|**false**|
+|returnFlag|`Boolean`|**false**|
+|paymentReference|`String`|**false**|
+|paymentAmount|`Decimal`|**false**|
+|paymentMethod|`String`|**false**|
+|paymentLot|`String`|**false**|
+|paymentLotItem|`String`|**false**|
+|clearingSAPDocument|`String`|**false**|
+|statisticalDocument|`String`|**false**|
 
 
 #### Example
+
 **Status**: OK (200)
 **Json Body**: 
 ```
@@ -155,8 +160,11 @@ The service currently supports the following Tax Regimes:
 ```
 
 ### Single-Error Response
+
 #### Definition
+
 ##### Response Object
+
 |Data Item|Type|Mandatory|
 |-|-|-|
 |code|`String`|**true**
@@ -171,8 +179,11 @@ The service currently supports the following Tax Regimes:
 ```
 
 ### Multi-Error Response
+
 #### Definition
+
 ##### Response Object
+
 |Data Item|Type|Mandatory|
 |-|-|-|
 |failures|`Array[SingleErrorObject]` *see above*|**true** *(min items 2)*|
