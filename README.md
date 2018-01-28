@@ -16,6 +16,7 @@ The service currently supports the following Tax Regimes:
 ## Get Taxpayer Financial Transactions for Tax Regime
 
 **Method**: GET
+
 **URL**: /financial-transactions/`regime`/`identifier`
 
 |Path Parameter|Description|
