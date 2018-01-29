@@ -20,7 +20,7 @@ import binders.FinancialTransactionsBinders
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper._
 import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 object DesFinancialDataStub {
 
@@ -34,8 +34,8 @@ object DesFinancialDataStub {
     }
   }
 
-  def stubGetFinancialData(regime: TaxRegime, queryParams: FinancialDataQueryParameters)(status: Int, response: FinancialTransactions): StubMapping =
-    stubGet(financialDataUrl(regime, queryParams), status, Json.toJson(response).toString())
+  def stubGetFinancialData(regime: TaxRegime, queryParams: FinancialDataQueryParameters)(status: Int, response: JsValue): StubMapping =
+    stubGet(financialDataUrl(regime, queryParams), status, response.toString())
 
   def verifyGetDesBusinessDetails(regime: TaxRegime, queryParams: FinancialDataQueryParameters): Unit =
     verifyGet(financialDataUrl(regime, queryParams))

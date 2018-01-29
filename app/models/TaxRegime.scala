@@ -23,7 +23,7 @@ sealed trait TaxRegime {
 }
 
 case class IncomeTaxRegime(id: String) extends TaxRegime {
-  override val idType = "NINO"
+  override val idType = "MTDBSA"
   override val regimeType = "ITSA"
 }
 

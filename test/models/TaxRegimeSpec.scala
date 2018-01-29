@@ -23,14 +23,14 @@ class TaxRegimeSpec extends SpecBase {
 
   "The IncomeTaxRegime" should {
 
-    val incomeTaxRegime = IncomeTaxRegime("AA111111A")
+    val incomeTaxRegime = IncomeTaxRegime("XAIT000000123456")
 
-    "have the correct regimeId type of 'NINO'" in {
-      incomeTaxRegime.idType shouldBe "NINO"
+    "have the correct regimeId type of 'MTDBSA'" in {
+      incomeTaxRegime.idType shouldBe "MTDBSA"
     }
 
-    "have the correct regimeId value of 'AA111111A'" in {
-      incomeTaxRegime.id shouldBe "AA111111A"
+    "have the correct regimeId value of 'XAIT000000123456'" in {
+      incomeTaxRegime.id shouldBe "XAIT000000123456"
     }
 
     "have the correct regimeType of 'ITSA'" in {
