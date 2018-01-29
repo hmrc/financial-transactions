@@ -16,9 +16,11 @@
 
 package binders
 
+import java.net.URLEncoder
 import java.time.LocalDate
 
 import models.FinancialDataQueryParameters
+import models.FinancialDataQueryParameters._
 import play.api.mvc.QueryStringBindable
 
 import scala.util.{Failure, Success, Try}
@@ -29,7 +31,6 @@ object FinancialTransactionsBinders {
                                         stringBinder: QueryStringBindable[String]): QueryStringBindable[FinancialDataQueryParameters] = {
     new QueryStringBindable[FinancialDataQueryParameters] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, FinancialDataQueryParameters]] = {
-        import FinancialDataQueryParameters._
         val bindFrom = dateBind(dateFromKey, params)
         val bindTo = dateBind(dateToKey, params)
         val bindOnlyOpenItems = boolBind(onlyOpenItemsKey, params)
@@ -49,14 +50,12 @@ object FinancialTransactionsBinders {
         }
       }
 
-      override def unbind(key: String, params: FinancialDataQueryParameters): String = {
-        import FinancialDataQueryParameters._
-        params.fromDate.map(from => stringBinder.unbind(dateFromKey, from.toString)).getOrElse("") +
-          params.toDate.map(to => "&" + stringBinder.unbind(dateToKey, to.toString)).getOrElse("") +
-          params.onlyOpenItems.map("&" + boolBinder.unbind(onlyOpenItemsKey, _)).getOrElse("") +
-          params.includeLocks.map("&" + boolBinder.unbind(includeLocksKey, _)).getOrElse("") +
-          params.calculateAccruedInterest.map("&" + boolBinder.unbind(calculateAccruedInterestKey, _)).getOrElse("") +
-          params.customerPaymentInformation.map("&" + boolBinder.unbind(customerPaymentInformationKey, _)).getOrElse("")
+      override def unbind(key: String, params: FinancialDataQueryParameters): String = params.toSeqQueryParams match {
+        case parameters if parameters.nonEmpty =>
+          parameters.map {
+            case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
+          }.mkString("&")
+        case _ => ""
       }
 
       private[binders] def dateBind(key: String, params: Map[String, Seq[String]]) = params.get(key) match {

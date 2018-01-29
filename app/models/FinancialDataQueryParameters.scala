@@ -35,6 +35,7 @@ case class FinancialDataQueryParameters(fromDate: Option[LocalDate] = None,
     calculateAccruedInterest.map(calculateAccruedInterestKey -> _.toString),
     customerPaymentInformation.map(customerPaymentInformationKey -> _.toString)
   ).flatten
+  val hasQueryParameters: Boolean = toSeqQueryParams.nonEmpty
 }
 
 object FinancialDataQueryParameters {
