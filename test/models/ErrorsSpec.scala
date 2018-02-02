@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 
 class ErrorsSpec extends SpecBase {
@@ -67,13 +68,76 @@ class ErrorsSpec extends SpecBase {
 
   "The UnexpectedResponse object" should {
 
-//    "Have the error code 'UNEXPECTED_DES_RESPONSE'" in {
-//      UnexpectedResponse.code shouldBe "UNEXPECTED_DES_RESPONSE"
-//    }
-//
-//    "Have the error reason 'The DES response did not match the expected format'" in {
-//      UnexpectedResponse.reason shouldBe "The DES response did not match the expected format"
-//    }
+    "Have the error status ISE (500)'" in {
+      UnexpectedResponse.status shouldBe Status.INTERNAL_SERVER_ERROR
+    }
 
+    "Have the error reason 'The DES response did not match the expected format'" in {
+      UnexpectedResponse.error shouldBe Error(
+        code = Status.INTERNAL_SERVER_ERROR.toString,
+        reason = "The downstream service responded with an unexpected response.")
+    }
+
+  }
+
+  "The InvalidJsonResponse object" should {
+
+    "Have the error status ISE (500)'" in {
+      InvalidJsonResponse.status shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+    "Have the error reason 'The response did not contain valid json.'" in {
+      InvalidJsonResponse.error shouldBe Error(
+        code = Status.INTERNAL_SERVER_ERROR.toString,
+        reason = "The response did not contain valid json.")
+    }
+
+  }
+
+  "The UnexpectedJsonFormat object" should {
+
+    "Have the error status ISE (500)'" in {
+      UnexpectedJsonFormat.status shouldBe Status.INTERNAL_SERVER_ERROR
+    }
+
+    "Have the error reason 'The DES response did not match the expected format'" in {
+      UnexpectedJsonFormat.error shouldBe Error(
+        code = Status.INTERNAL_SERVER_ERROR.toString,
+        reason = "The downstream service responded with json which did not match the expected format.")
+    }
+
+  }
+
+  "The InvalidTaxRegime object" should {
+
+    "Have the error status BAD_REQUEST (400)'" in {
+      InvalidTaxRegime.code shouldBe Status.BAD_REQUEST.toString
+    }
+
+    "Have the error reason 'The supplied Tax Regime is invalid.'" in {
+      InvalidTaxRegime.reason shouldBe "The supplied Tax Regime is invalid."
+    }
+  }
+
+  "The UnauthenticatedError object" should {
+
+    "Have the error status UNAUTHORIZED (401)'" in {
+      UnauthenticatedError.code shouldBe Status.UNAUTHORIZED.toString
+    }
+
+    "Have the error reason 'Not authenticated'" in {
+      UnauthenticatedError.reason shouldBe "Not authenticated"
+    }
+  }
+
+  "The ForbiddenError object" should {
+
+    "Have the error status FORBIDDEN (403)'" in {
+      ForbiddenError.code shouldBe Status.FORBIDDEN.toString
+    }
+
+    "Have the error reason 'Not authorised'" in {
+      ForbiddenError.reason shouldBe "Not authorised"
+    }
   }
 }
