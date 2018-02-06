@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import javax.inject.{Inject, Singleton}
+sealed trait TaxRegime {
+  val idType: String
+  val id: String
+  val regimeType: String
+}
 
-import controllers.actions.AuthAction
-import play.api.mvc._
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+case class IncomeTaxRegime(id: String) extends TaxRegime {
+  override val idType = "MTDBSA"
+  override val regimeType = "ITSA"
+}
 
-@Singleton()
-class SampleController @Inject()(authenticate: AuthAction) extends BaseController {
-
-	def index(): Action[AnyContent] = authenticate { implicit request =>
-		Ok("Hello world")
-	}
-
+case class VatRegime(id: String) extends TaxRegime {
+  override val idType = "VRN"
+  override val regimeType = "VATC"
 }

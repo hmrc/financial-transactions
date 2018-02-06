@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package modules
+package config
 
-import com.google.inject.AbstractModule
-import controllers.actions.{AuthAction, AuthActionImpl}
+import base.SpecBase
 
-class AuthModule extends AbstractModule {
-  def configure(): Unit = bind(classOf[AuthAction]).to(classOf[AuthActionImpl])
+class RegimeKeysSpec extends SpecBase {
+
+  "The VAT key" should {
+    "have the value 'VAT'" in {
+      RegimeKeys.VAT shouldBe "VAT"
+    }
+  }
+
+  "The IT key" should {
+    "have the value 'IT'" in {
+      RegimeKeys.IT shouldBe "IT"
+    }
+  }
 }

@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package controllers
+package helpers.servicemocks
 
-import base.SpecBase
-import controllers.actions.FakeAuthAction
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import helpers.WiremockHelper
 import play.api.http.Status
 
-class SampleControllerSpec extends SpecBase {
+object AuthStub {
 
-  "GET /" should {
-    "return 200" in {
-      val controller = new SampleController(FakeAuthAction)
-      val result = controller.index()(fakeRequest)
-      status(result) shouldBe Status.OK
-    }
-  }
+  val postAuthoriseUrl = "/auth/authorise"
 
+  def stubAuthorised(): StubMapping =
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK, """{"externalId": "1234"}""")
+
+  def stubUnauthorised(): StubMapping =
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED, """{"externalId": "1234"}""")
 }

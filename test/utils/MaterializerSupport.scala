@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-package models.requests
+package utils
 
-import play.api.mvc.{Request, WrappedRequest}
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 
-case class AuthenticatedRequest[A] (request: Request[A], externalId: String) extends WrappedRequest[A](request)
+trait MaterializerSupport {
+  implicit val system = ActorSystem("Sys")
+  implicit val materializer = ActorMaterializer()
+}

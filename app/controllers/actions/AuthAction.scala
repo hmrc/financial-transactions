@@ -18,35 +18,39 @@ package controllers.actions
 
 import javax.inject.Singleton
 
+import auth.AuthenticatedRequest
 import com.google.inject.Inject
-import models.requests.AuthenticatedRequest
-import play.api.mvc.Results._
+import models.{Error, ForbiddenError, UnauthenticatedError}
+import play.api.Logger
+import play.api.http.Status
+import play.api.libs.json.Json
+import play.api.mvc.Results.{Forbidden, Unauthorized}
 import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
-import uk.gov.hmrc.http.{HeaderCarrier, UnauthorizedException}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class AuthActionImpl @Inject()(override val authConnector: AuthConnector)(implicit ec: ExecutionContext)
-  extends AuthAction with AuthorisedFunctions {
+class AuthActionImpl @Inject()(val authorisedFunctions: AuthorisedFunctions)(implicit ec: ExecutionContext) extends AuthAction {
 
   override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
-    authorised().retrieve(Retrievals.externalId) {
-      _.map {
-        externalId => block(AuthenticatedRequest(request, externalId))
-      }.getOrElse(throw new UnauthorizedException("Unable to retrieve external Id"))
+    authorisedFunctions.authorised().retrieve(Retrievals.externalId) {
+      case Some (externalId) => block(AuthenticatedRequest(request, externalId))
+      case _ =>
+        Logger.debug("[AuthActionImpl][invokeBlock] Did not retrieve externalID, returning Unauthorised - Unauthenticated Error")
+        Future.successful(Unauthorized(Json.toJson(UnauthenticatedError)))
     } recover {
-      case _: NoActiveSession => Unauthorized("not authenticated")
-      case _: InsufficientEnrolments => Forbidden("not authorised")
-      case _: InsufficientConfidenceLevel => Forbidden("not authorised")
-      case _: UnsupportedAuthProvider => Forbidden("not authorised")
-      case _: UnsupportedAffinityGroup => Forbidden("not authorised")
-      case _: UnsupportedCredentialRole => Forbidden("not authorised")
+      case _: NoActiveSession =>
+        Logger.debug("[AuthActionImpl][invokeBlock] Request did not have an Active Session, returning Unauthorised - Unauthenticated Error")
+        Unauthorized(Json.toJson(UnauthenticatedError))
+      case _ =>
+        Logger.debug("[AuthActionImpl][invokeBlock] Request has an active session but was not authorised, returning Forbidden - Not Authorised Error")
+        Forbidden(Json.toJson(ForbiddenError))
     }
   }
 }
