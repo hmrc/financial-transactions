@@ -43,7 +43,7 @@ class TransactionSpec extends SpecBase {
     outstandingAmount = Some(1400.0),
     clearedAmount = Some(2000.0),
     accruedInterest = Some(0.23),
-    items = Seq(SubItem(
+    items = Some(Seq(SubItem(
       subItem = Some("000"),
       dueDate = Some("2018-2-14"),
       amount = Some(3400.00),
@@ -64,7 +64,7 @@ class TransactionSpec extends SpecBase {
       statisticalDocument = Some("I"),
       returnReason = Some("J"),
       promiseToPay = Some("K")
-    ))
+    )))
   )
 
   val transactionJson: JsValue =

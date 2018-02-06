@@ -274,4 +274,5 @@ class FinancialTransactionsBindersSpec extends SpecBase {
     }
 
   }
+
 }

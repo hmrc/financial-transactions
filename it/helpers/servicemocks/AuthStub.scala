@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package helpers.servicemocks
 
-sealed trait TaxRegime {
-  val idType: String
-  val id: String
-  val regimeType: String
-}
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import helpers.WiremockHelper
+import play.api.http.Status
 
-case class IncomeTaxRegime(id: String) extends TaxRegime {
-  override val idType = "MTDBSA"
-  override val regimeType = "ITSA"
-}
+object AuthStub {
 
-case class VatRegime(id: String) extends TaxRegime {
-  override val idType = "VRN"
-  override val regimeType = "VATC"
+  val postAuthoriseUrl = "/auth/authorise"
+
+  def stubAuthorised(): StubMapping =
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.OK, """{"externalId": "1234"}""")
+
+  def stubUnauthorised(): StubMapping =
+    WiremockHelper.stubPost(postAuthoriseUrl, Status.UNAUTHORIZED, """{"externalId": "1234"}""")
 }
