@@ -50,13 +50,9 @@ object FinancialTransactionsBinders {
         }
       }
 
-      override def unbind(key: String, params: FinancialDataQueryParameters): String = params.toSeqQueryParams match {
-        case parameters if parameters.nonEmpty =>
-          parameters.map {
-            case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
-          }.mkString("&")
-        case _ => ""
-      }
+      override def unbind(key: String, params: FinancialDataQueryParameters): String = params.toSeqQueryParams.map {
+        case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
+      }.mkString("&")
 
       private[binders] def dateBind(key: String, params: Map[String, Seq[String]]) = params.get(key) match {
         case Some(values) => Try(LocalDate.parse(values.head)) match {
