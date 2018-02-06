@@ -16,11 +16,11 @@
 
 package services
 
-import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 
 import connectors.FinancialDataConnector
-import models.{DesErrors, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import models._
+import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,23 +29,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinancialTransactionsService @Inject()(val financialDataConnector: FinancialDataConnector) {
 
   def getFinancialTransactions(regime: TaxRegime,
-                               fromDate: Option[LocalDate] = None,
-                               toDate: Option[LocalDate] = None,
-                               onlyOpenItems: Option[Boolean] = None,
-                               includeLocks: Option[Boolean] = None,
-                               calculateAccruedInterest: Option[Boolean] = None,
-                               customerPaymentInformation: Option[Boolean] = None
-                              )(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[DesErrors, FinancialTransactions]] = {
-    financialDataConnector.getFinancialData(
-      regime,
-      FinancialDataQueryParameters(
-        fromDate,
-        toDate,
-        onlyOpenItems,
-        includeLocks,
-        calculateAccruedInterest,
-        customerPaymentInformation
-      )
-    )
+                               queryParameters: FinancialDataQueryParameters)
+                              (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
+
+    Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
+    financialDataConnector.getFinancialData(regime, queryParameters)
   }
 }

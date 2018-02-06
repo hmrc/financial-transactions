@@ -18,18 +18,33 @@ package models
 
 import java.time.LocalDate
 
+import play.api.libs.json.{Format, Json}
+
 case class FinancialDataQueryParameters(fromDate: Option[LocalDate] = None,
                                         toDate: Option[LocalDate] = None,
                                         onlyOpenItems: Option[Boolean] = None,
                                         includeLocks: Option[Boolean] = None,
                                         calculateAccruedInterest: Option[Boolean] = None,
                                         customerPaymentInformation: Option[Boolean] = None) {
+  import FinancialDataQueryParameters._
   val toSeqQueryParams: Seq[(String, String)] = Seq(
-    fromDate.map("dateFrom" -> _.toString),
-    toDate.map("dateTo" -> _.toString),
-    onlyOpenItems.map("onlyOpenItems" -> _.toString),
-    includeLocks.map("includeLocks" -> _.toString),
-    calculateAccruedInterest.map("calculateAccruedInterest" -> _.toString),
-    customerPaymentInformation.map("customerPaymentInformation" -> _.toString)
+    fromDate.map(dateFromKey -> _.toString),
+    toDate.map(dateToKey -> _.toString),
+    onlyOpenItems.map(onlyOpenItemsKey -> _.toString),
+    includeLocks.map(includeLocksKey -> _.toString),
+    calculateAccruedInterest.map(calculateAccruedInterestKey -> _.toString),
+    customerPaymentInformation.map(customerPaymentInformationKey -> _.toString)
   ).flatten
+}
+
+object FinancialDataQueryParameters {
+
+  val dateFromKey = "dateFrom"
+  val dateToKey = "dateTo"
+  val onlyOpenItemsKey = "onlyOpenItems"
+  val includeLocksKey = "includeLocks"
+  val calculateAccruedInterestKey = "calculateAccruedInterest"
+  val customerPaymentInformationKey = "customerPaymentInformation"
+
+  implicit val format: Format[FinancialDataQueryParameters] = Json.format[FinancialDataQueryParameters]
 }

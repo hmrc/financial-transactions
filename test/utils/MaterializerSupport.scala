@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package controllers.actions
+package utils
 
-import auth.AuthenticatedRequest
-import play.api.mvc.{Request, Result}
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 
-import scala.concurrent.Future
-
-object FakeAuthAction extends AuthAction {
-  override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] =
-    block(AuthenticatedRequest(request, "id"))
+trait MaterializerSupport {
+  implicit val system = ActorSystem("Sys")
+  implicit val materializer = ActorMaterializer()
 }

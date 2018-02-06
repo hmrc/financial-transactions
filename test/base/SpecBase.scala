@@ -23,10 +23,11 @@ import play.api.mvc.AnyContentAsEmpty
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import utils.MaterializerSupport
 
 import scala.concurrent.ExecutionContext
 
-trait SpecBase extends UnitSpec with GuiceOneAppPerSuite {
+trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MaterializerSupport {
 
   def injector: Injector = app.injector
 

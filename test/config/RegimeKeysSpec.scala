@@ -14,25 +14,21 @@
  * limitations under the License.
  */
 
-package models
+package config
 
-import play.api.libs.json.{Format, Json}
+import base.SpecBase
 
-sealed trait DesErrors
+class RegimeKeysSpec extends SpecBase {
 
-case class DesError(code: String, reason: String) extends DesErrors
+  "The VAT key" should {
+    "have the value 'VAT'" in {
+      RegimeKeys.VAT shouldBe "VAT"
+    }
+  }
 
-object DesError {
-  implicit val format: Format[DesError] = Json.format[DesError]
+  "The IT key" should {
+    "have the value 'IT'" in {
+      RegimeKeys.IT shouldBe "IT"
+    }
+  }
 }
-
-case class DesMultiError(failures: Seq[DesError]) extends DesErrors
-
-object DesMultiError {
-  implicit val format: Format[DesMultiError] = Json.format[DesMultiError]
-}
-
-object UnexpectedDesResponse extends DesError(
-  code = "UNEXPECTED_DES_RESPONSE",
-  reason = s"The DES response did not match the expected format"
-)

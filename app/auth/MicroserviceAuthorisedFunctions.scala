@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 HM Revenue & Customs
+ * Copyright 2018 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@
 
 package auth
 
-import com.google.inject.AbstractModule
-import controllers.actions.{AuthAction, AuthActionImpl}
-import uk.gov.hmrc.auth.core.AuthorisedFunctions
+import javax.inject.{Inject, Singleton}
 
-class AuthModule extends AbstractModule {
-  def configure(): Unit = {
-    bind(classOf[AuthAction]).to(classOf[AuthActionImpl])
-    bind(classOf[AuthorisedFunctions]).to(classOf[MicroserviceAuthorisedFunctions])
-  }
-}
+import uk.gov.hmrc.auth.core.{AuthConnector, AuthorisedFunctions}
+
+@Singleton
+class MicroserviceAuthorisedFunctions @Inject()(val authConnector: AuthConnector) extends AuthorisedFunctions
