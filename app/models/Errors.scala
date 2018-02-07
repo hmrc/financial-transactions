@@ -36,21 +36,28 @@ object MultiError {
 case class ErrorResponse(status: Int, error: Errors)
 
 
-object UnauthenticatedError extends Error(Status.UNAUTHORIZED.toString, "Not authenticated")
-object ForbiddenError extends Error(Status.FORBIDDEN.toString, "Not authorised")
+object UnauthenticatedError extends Error(
+  code = "UNAUTHENTICATED",
+  reason = "Not authenticated"
+)
+
+object ForbiddenError extends Error(
+  code = "UNAUTHORISED",
+  reason = "Not authorised"
+)
 
 object InvalidJsonResponse extends ErrorResponse(
   status = Status.INTERNAL_SERVER_ERROR,
   error = Error(
-    code = Status.INTERNAL_SERVER_ERROR.toString,
-    reason = "The response did not contain valid json."
+    code = "INVALID_JSON",
+    reason = "The downstream service responded with invalid json."
   )
 )
 
 object UnexpectedJsonFormat extends ErrorResponse(
   status = Status.INTERNAL_SERVER_ERROR,
   error = Error(
-    code = Status.INTERNAL_SERVER_ERROR.toString,
+    code = "UNEXPECTED_JSON_FORMAT",
     reason = "The downstream service responded with json which did not match the expected format."
   )
 )
@@ -58,12 +65,12 @@ object UnexpectedJsonFormat extends ErrorResponse(
 object UnexpectedResponse extends ErrorResponse(
   status = Status.INTERNAL_SERVER_ERROR,
   error = Error(
-    code = Status.INTERNAL_SERVER_ERROR.toString,
+    code = "UNEXPECTED_DOWNSTREAM_ERROR",
     reason = "The downstream service responded with an unexpected response."
   )
 )
 
 object InvalidTaxRegime extends Error(
-  code = Status.BAD_REQUEST.toString,
+  code = "INVALID_TAX_REGIME",
   reason = "The supplied Tax Regime is invalid."
 )

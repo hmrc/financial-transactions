@@ -44,7 +44,7 @@ class ErrorHandlerSpec extends SpecBase {
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.NOT_FOUND.toString, s"URI '${request.path}' not found"))
+          jsonBodyOf(result) shouldBe Json.toJson(Error("NOT_FOUND", s"URI '${request.path}' not found"))
         }
       }
 
@@ -62,7 +62,7 @@ class ErrorHandlerSpec extends SpecBase {
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.BAD_REQUEST.toString, s"Bad Request. Message: 'Invalid Banana'"))
+          jsonBodyOf(result) shouldBe Json.toJson(Error("BAD_REQUEST", s"Bad Request. Message: 'Invalid Banana'"))
         }
       }
 

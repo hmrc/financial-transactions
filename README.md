@@ -205,6 +205,46 @@ The service currently supports the following Tax Regimes:
 }
 ```
 
+
+### Error Responses
+
+#### Client Triggered Exceptions
+
+|HTTP Code|Code|Reason|
+|-|-|-|
+|400|BAD_REQUEST|Bad Request. Message: '{error messages}'|
+|400|INVALID_TAX_REGIME|The supplied Tax Regime is invalid.|
+|401|UNAUTHENTICATED|Not authenticated|
+|403|UNAUTHORISED|Not authorised|
+|404|NOT_FOUND|URI '{requested path}' not found|
+
+#### Downstream Triggered Exceptions
+
+|HTTP Code|Code|Reason|
+|-|-|-|
+|400|INVALID_IDTYPE|Submission has not passed validation. Invalid parameter idType.|
+|400|INVALID_IDNUMBER|Submission has not passed validation. Invalid parameter idNumber.|
+|400|INVALID_REGIMETYPE|Submission has not passed validation. Invalid parameter regimeType.|
+|400|INVALID_ONLYOPENITEMS|Submission has not passed validation. Invalid parameter onlyOpenItems.|
+|400|INVALID_INCLUDELOCKS|Submission has not passed validation. Invalid parameter includeLocks.|
+|400|INVALID_CALCULATEACCRUEDINTEREST|Submission has not passed validation. Invalid parameter calculateAccruedInterest.|
+|400|INVALID_CUSTOMERPAYMENTINFORMATION|Submission has not passed validation. Invalid parameter customerPaymentInformation.|
+|400|INVALID_DATEFROM|Submission has not passed validation. Invalid parameter dateFrom|
+|400|INVALID_DATETO|Submission has not passed validation. Invalid parameter dateTo|
+|404|NOT_FOUND|The remote endpoint has indicated that no data can be found|
+|422|INVALID_DATA|The remote endpoint has indicated that the request contains invalid data|
+|500|SERVER_ERROR|DES is currently experiencing problems that require live service intervention|
+|500|INVALID_JSON|The downstream service responded with invalid json.|
+|500|UNEXPECTED_JSON_FORMAT|The downstream service responded with json which did not match the expected format.|
+|500|UNEXPECTED_DOWNSTREAM_ERROR|The downstream service responded with an unexpected response.|
+|503|SERVICE_UNAVAILABLE|Dependent systems are currently not responding|
+
+#### Catch All (e.g. runtime exceptions)
+
+|HTTP Code|Code|Reason|
+|-|-|-|
+|{status}|{status}|{error message}|
+
 Requirements
 ------------
 
