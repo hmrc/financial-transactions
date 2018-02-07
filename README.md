@@ -211,7 +211,7 @@ The service currently supports the following Tax Regimes:
 #### Client Triggered Exceptions
 
 |HTTP Code|Code|Reason|
-|-|-|-|-|
+|-|-|-|
 |400|BAD_REQUEST|Bad Request. Message: '{error messages}'|
 |400|INVALID_TAX_REGIME|The supplied Tax Regime is invalid.|
 |401|UNAUTHENTICATED|Not authenticated|
@@ -221,7 +221,7 @@ The service currently supports the following Tax Regimes:
 #### Downstream Triggered Exceptions
 
 |HTTP Code|Code|Reason|
-|-|-|-|-|
+|-|-|-|
 |400|INVALID_IDTYPE|Submission has not passed validation. Invalid parameter idType.|
 |400|INVALID_IDNUMBER|Submission has not passed validation. Invalid parameter idNumber.|
 |400|INVALID_REGIMETYPE|Submission has not passed validation. Invalid parameter regimeType.|
@@ -242,7 +242,7 @@ The service currently supports the following Tax Regimes:
 #### Catch All (e.g. runtime exceptions)
 
 |HTTP Code|Code|Reason|
-|-|-|-|-|
+|-|-|-|
 |{status}|{status}|{error message}|
 
 Requirements
