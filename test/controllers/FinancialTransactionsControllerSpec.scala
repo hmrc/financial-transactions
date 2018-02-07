@@ -205,20 +205,14 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
         val regimeType = "BANANA"
         val id = "123456"
 
-        "for a successful response from the FinancialTransactionsService" should {
+        lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, id, FinancialDataQueryParameters())(fakeRequest))
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, id, FinancialDataQueryParameters())(fakeRequest))
+        "return a status of 400 (BAD_REQUEST)" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
 
-          "return a status of 400 (BAD_REQUEST)" in {
-            status(result) shouldBe Status.BAD_REQUEST
-          }
-
-          "return a json body with an Invalid Tax Regime message" in {
-            jsonBodyOf(result) shouldBe Json.obj(
-              "code" -> Status.BAD_REQUEST.toString,
-              "reason" -> "The supplied Tax Regime is invalid."
-            )
-          }
+        "return a json body with an Invalid Tax Regime message" in {
+          jsonBodyOf(result) shouldBe Json.toJson(InvalidTaxRegime)
         }
       }
     }

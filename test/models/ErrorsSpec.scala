@@ -72,9 +72,9 @@ class ErrorsSpec extends SpecBase {
       UnexpectedResponse.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
-    "Have the error reason 'The DES response did not match the expected format'" in {
+    "Have the error reason 'The downstream service responded with an unexpected response.'" in {
       UnexpectedResponse.error shouldBe Error(
-        code = Status.INTERNAL_SERVER_ERROR.toString,
+        code = "UNEXPECTED_DOWNSTREAM_ERROR",
         reason = "The downstream service responded with an unexpected response.")
     }
 
@@ -88,8 +88,8 @@ class ErrorsSpec extends SpecBase {
 
     "Have the error reason 'The response did not contain valid json.'" in {
       InvalidJsonResponse.error shouldBe Error(
-        code = Status.INTERNAL_SERVER_ERROR.toString,
-        reason = "The response did not contain valid json.")
+        code = "INVALID_JSON",
+        reason = "The downstream service responded with invalid json.")
     }
 
   }
@@ -102,7 +102,7 @@ class ErrorsSpec extends SpecBase {
 
     "Have the error reason 'The DES response did not match the expected format'" in {
       UnexpectedJsonFormat.error shouldBe Error(
-        code = Status.INTERNAL_SERVER_ERROR.toString,
+        code = "UNEXPECTED_JSON_FORMAT",
         reason = "The downstream service responded with json which did not match the expected format.")
     }
 
@@ -111,7 +111,7 @@ class ErrorsSpec extends SpecBase {
   "The InvalidTaxRegime object" should {
 
     "Have the error status BAD_REQUEST (400)'" in {
-      InvalidTaxRegime.code shouldBe Status.BAD_REQUEST.toString
+      InvalidTaxRegime.code shouldBe "INVALID_TAX_REGIME"
     }
 
     "Have the error reason 'The supplied Tax Regime is invalid.'" in {
@@ -122,7 +122,7 @@ class ErrorsSpec extends SpecBase {
   "The UnauthenticatedError object" should {
 
     "Have the error status UNAUTHORIZED (401)'" in {
-      UnauthenticatedError.code shouldBe Status.UNAUTHORIZED.toString
+      UnauthenticatedError.code shouldBe "UNAUTHENTICATED"
     }
 
     "Have the error reason 'Not authenticated'" in {
@@ -133,7 +133,7 @@ class ErrorsSpec extends SpecBase {
   "The ForbiddenError object" should {
 
     "Have the error status FORBIDDEN (403)'" in {
-      ForbiddenError.code shouldBe Status.FORBIDDEN.toString
+      ForbiddenError.code shouldBe "UNAUTHORISED"
     }
 
     "Have the error reason 'Not authorised'" in {

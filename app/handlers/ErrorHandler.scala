@@ -50,10 +50,10 @@ class ErrorHandler @Inject()(val configuration: Configuration, auditConnector: A
     statusCode match {
       case play.mvc.Http.Status.NOT_FOUND =>
         auditConnector.sendEvent(dataEvent("ResourceNotFound", "Resource Endpoint Not Found", request))
-        Future.successful(NotFound(Json.toJson(Error(NOT_FOUND.toString, s"URI '${Some(request.path).get}' not found"))))
+        Future.successful(NotFound(Json.toJson(Error("NOT_FOUND", s"URI '${Some(request.path).get}' not found"))))
       case play.mvc.Http.Status.BAD_REQUEST =>
         auditConnector.sendEvent(dataEvent("ServerValidationError", "Request bad format exception", request))
-        Future.successful(BadRequest(Json.toJson(Error(BAD_REQUEST.toString, s"Bad Request. Message: '$message'"))))
+        Future.successful(BadRequest(Json.toJson(Error("BAD_REQUEST", s"Bad Request. Message: '$message'"))))
       case _ =>
         auditConnector.sendEvent(dataEvent("ClientError", s"A client error occurred, status: $statusCode", request))
         Future.successful(Status(statusCode)(Json.toJson(Error(statusCode.toString, message))))
