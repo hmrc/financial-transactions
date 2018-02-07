@@ -49,7 +49,7 @@ The service currently supports the following Tax Regimes:
 |idNumber|`String`|**true**
 |regimeType|`String`|**true**
 |processingDate|`ZonedDateTime`|**true**
-|financialTransactions|`Array[FinancialTransactionObject]` *see below*|**false**
+|financialTransactions|`Array[FinancialTransactionObject]` *see below*|**true** *but can be 0 elements in array*|
 
 ##### Financial Transaction Object
 
