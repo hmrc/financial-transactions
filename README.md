@@ -230,7 +230,7 @@ The service currently supports the following Tax Regimes:
 |400|INVALID_CALCULATEACCRUEDINTEREST|Submission has not passed validation. Invalid parameter calculateAccruedInterest.|
 |400|INVALID_CUSTOMERPAYMENTINFORMATION|Submission has not passed validation. Invalid parameter customerPaymentInformation.|
 |400|INVALID_DATEFROM|Submission has not passed validation. Invalid parameter dateFrom|
-|400|INVALID_DATETOM|Submission has not passed validation. Invalid parameter dateTo|
+|400|INVALID_DATETO|Submission has not passed validation. Invalid parameter dateTo|
 |404|NOT_FOUND|The remote endpoint has indicated that no data can be found|
 |422|INVALID_DATA|The remote endpoint has indicated that the request contains invalid data|
 |500|SERVER_ERROR|DES is currently experiencing problems that require live service intervention|
