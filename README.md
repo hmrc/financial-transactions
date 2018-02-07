@@ -209,6 +209,7 @@ The service currently supports the following Tax Regimes:
 ### Error Responses
 
 #### Client Triggered Exceptions
+
 |HTTP Code|Code|Reason|
 |-|-|-|-|
 |400|BAD_REQUEST|Bad Request. Message: '{error messages}'|
@@ -218,8 +219,18 @@ The service currently supports the following Tax Regimes:
 |404|NOT_FOUND|URI '{requested path}' not found|
 
 #### Downstream Triggered Exceptions
+
 |HTTP Code|Code|Reason|
 |-|-|-|-|
+|400|INVALID_IDTYPE|Submission has not passed validation. Invalid parameter idType.|
+|400|INVALID_IDNUMBER|Submission has not passed validation. Invalid parameter idNumber.|
+|400|INVALID_REGIMETYPE|Submission has not passed validation. Invalid parameter regimeType.|
+|400|INVALID_ONLYOPENITEMS|Submission has not passed validation. Invalid parameter onlyOpenItems.|
+|400|INVALID_INCLUDELOCKS|Submission has not passed validation. Invalid parameter includeLocks.|
+|400|INVALID_CALCULATEACCRUEDINTEREST|Submission has not passed validation. Invalid parameter calculateAccruedInterest.|
+|400|INVALID_CUSTOMERPAYMENTINFORMATION|Submission has not passed validation. Invalid parameter customerPaymentInformation.|
+|400|INVALID_DATEFROM|Submission has not passed validation. Invalid parameter dateFrom|
+|400|INVALID_DATETOM|Submission has not passed validation. Invalid parameter dateTo|
 |404|NOT_FOUND|The remote endpoint has indicated that no data can be found|
 |422|INVALID_DATA|The remote endpoint has indicated that the request contains invalid data|
 |500|SERVER_ERROR|DES is currently experiencing problems that require live service intervention|
@@ -229,6 +240,7 @@ The service currently supports the following Tax Regimes:
 |503|SERVICE_UNAVAILABLE|Dependent systems are currently not responding|
 
 #### Catch All (e.g. runtime exceptions)
+
 |HTTP Code|Code|Reason|
 |-|-|-|-|
 |{status}|{status}|{error message}|
