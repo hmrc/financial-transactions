@@ -35,7 +35,7 @@ The service currently supports the following Tax Regimes:
 |`calculateAccruedInterest`|**false**|Calculate accrued interest for overdue debits and include it in the response|`true` \| `false`|**true**|
 |`customerPaymentInformation`|**false**|Include Taxpayer Payment Information in the response|`true` \| `false`|**true**|
 
-**\***If `onlyOpenItems` is **false** then these fields are mandatory.
+**\*** If `onlyOpenItems` is **false** then these fields are mandatory.
 
 ### Success Response
 
