@@ -28,11 +28,11 @@ import utils.ImplicitDateFormatter._
 class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTransactionsService with MockMicroserviceAuthorisedFunctions {
 
   val success = FinancialTransactions(
-    idType = "MTDBSA",
-    idNumber = "XQIT00000000001",
-    regimeType = "ITSA",
+    idType = Some("MTDBSA"),
+    idNumber = Some("XQIT00000000001"),
+    regimeType = Some("ITSA"),
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Seq(Transaction(
+    financialTransactions = Some(Seq(Transaction(
       chargeType = Some("PAYE"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
@@ -75,7 +75,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
         returnReason = Some("J"),
         promiseToPay = Some("K")
       )))
-    ))
+    )))
   )
   val singleError = Error(code = "CODE", reason = "ERROR MESSAGE")
   val multiError = MultiError(

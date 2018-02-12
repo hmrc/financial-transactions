@@ -36,10 +36,7 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
             valid => Right(valid)
           )
         }
-        case BAD_REQUEST =>
-          Logger.debug(s"[FinancialTransactionsReads][read] Bad Request Returned from DES")
-          handleErrorResponse(response)
-        case status if status >= 500 && status < 600 =>
+        case status if status >= 400 && status < 600 =>
           Logger.debug(s"[FinancialTransactionsReads][read] $status returned from DES")
           handleErrorResponse(response)
         case _ =>
