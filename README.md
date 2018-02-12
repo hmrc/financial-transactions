@@ -34,7 +34,8 @@ The service currently supports the following Tax Regimes:
 |`includeLocks`|**false**|Used to filter the response to include items that have locks|`true` \| `false`|**true**|
 |`calculateAccruedInterest`|**false**|Calculate accrued interest for overdue debits and include it in the response|`true` \| `false`|**true**|
 |`customerPaymentInformation`|**false**|Include Taxpayer Payment Information in the response|`true` \| `false`|**true**|
-\*If `onlyOpenItems` is **false** then these fields are mandatory.
+
+**\***If `onlyOpenItems` is **false** then these fields are mandatory.
 
 ### Success Response
 
@@ -46,11 +47,11 @@ The service currently supports the following Tax Regimes:
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|idType|`String`|**true**
-|idNumber|`String`|**true**
-|regimeType|`String`|**true**
+|idType|`String`|**false**
+|idNumber|`String`|**false**
+|regimeType|`String`|**false**
 |processingDate|`ZonedDateTime`|**true**
-|financialTransactions|`Array[FinancialTransactionObject]` *see below*|**true** *but can be 0 elements in array*|
+|financialTransactions|`Array[FinancialTransactionObject]` *see below*|**false**|
 
 ##### Financial Transaction Object
 
