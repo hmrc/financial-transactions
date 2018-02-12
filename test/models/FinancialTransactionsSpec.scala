@@ -23,11 +23,11 @@ import utils.ImplicitDateFormatter._
 class FinancialTransactionsSpec extends SpecBase {
 
   val financialTransactionsModel = FinancialTransactions(
-    idType = "MTDBSA",
-    idNumber = "XQIT00000000001",
-    regimeType = "ITSA",
+    idType = Some("MTDBSA"),
+    idNumber = Some("XQIT00000000001"),
+    regimeType = Some("ITSA"),
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Seq(Transaction(
+    financialTransactions = Some(Seq(Transaction(
       chargeType = Some("PAYE"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
@@ -70,7 +70,7 @@ class FinancialTransactionsSpec extends SpecBase {
         returnReason = Some("J"),
         promiseToPay = Some("K")
       )))
-    ))
+    )))
   )
 
   val financialTransactionsJson: JsValue =
