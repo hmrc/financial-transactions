@@ -28,7 +28,7 @@ The service currently supports the following Tax Regimes:
 
 |Query Parameter|Mandatory|Description|Format/Valid Values|Default Value|
 |-|-|-|-|-|
-|`fromDate`|**false**|Used to filter the response to only include items from this date|YYYY-MM-DD|none|
+|`fromDate`|**false\***|Used to filter the response to only include items from this date|YYYY-MM-DD|none|
 |`toDate`|**false**|Used to filter the response to only include items before this date|YYYY-MM-DD|none|
 |`onlyOpenItems`|**false**|Used to filter the response to only include items that are outstanding/open|`true` \| `false`|**false**|
 |`includeLocks`|**false**|Used to filter the response to include items that have locks|`true` \| `false`|**true**|
