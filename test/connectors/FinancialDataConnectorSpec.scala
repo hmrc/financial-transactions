@@ -27,11 +27,11 @@ import models.FinancialDataQueryParameters._
 class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
   val successResponse = Right(FinancialTransactions(
-    idType = "MTDBSA",
-    idNumber = "XQIT00000000001",
-    regimeType = "ITSA",
+    idType = Some("MTDBSA"),
+    idNumber = Some("XQIT00000000001"),
+    regimeType = Some("ITSA"),
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Seq(Transaction(
+    financialTransactions = Some(Seq(Transaction(
       chargeType = Some("PAYE"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
@@ -74,7 +74,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
         returnReason = Some("J"),
         promiseToPay = Some("K")
       )))
-    ))
+    )))
   ))
   val badRequestSingleError = Left(ErrorResponse(Status.BAD_REQUEST, Error(code = "CODE", reason = "ERROR MESSAGE")))
   val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(
