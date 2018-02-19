@@ -26,16 +26,16 @@ The service currently supports the following Tax Regimes:
 
 **Query Parameters**:
 
-|Query Parameter|Mandatory|Description|Format/Valid Values|Default Value|
-|-|-|-|-|-|
-|`fromDate`|**false\***|Used to filter the response to only include items from this date|YYYY-MM-DD|none|
-|`toDate`|**false\***|Used to filter the response to only include items before this date|YYYY-MM-DD|none|
-|`onlyOpenItems`|**false**|Used to filter the response to only include items that are outstanding/open|`true` \| `false`|**false**|
-|`includeLocks`|**false**|Used to filter the response to include items that have locks|`true` \| `false`|**true**|
-|`calculateAccruedInterest`|**false**|Calculate accrued interest for overdue debits and include it in the response|`true` \| `false`|**true**|
-|`customerPaymentInformation`|**false**|Include Taxpayer Payment Information in the response|`true` \| `false`|**true**|
+|Query Parameter|Mandatory|Description|Format/Valid Values|
+|-|-|-|-|
+|`fromDate`|**false\***|Used to filter the response to only include items from this date|YYYY-MM-DD|
+|`toDate`|**false\***|Used to filter the response to only include items before this date|YYYY-MM-DD|
+|`onlyOpenItems`|**false**|Used to filter the response to only include items that are outstanding/open|`true` \| `false`|
+|`includeLocks`|**false**|Used to filter the response to include items that have locks|`true` \| `false`|
+|`calculateAccruedInterest`|**false**|Calculate accrued interest for overdue debits and include it in the response|`true` \| `false`|
+|`customerPaymentInformation`|**false**|Include Taxpayer Payment Information in the response|`true` \| `false`|
 
-**\*** If `onlyOpenItems` is **false** then `fromDate` and `toDate` become mandatory.
+**\*** If `onlyOpenItems` is supplied as a query parameter and its value is **false** then `fromDate` and `toDate` become mandatory.
 
 ### Success Response
 
