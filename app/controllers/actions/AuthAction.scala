@@ -20,12 +20,11 @@ import javax.inject.Singleton
 
 import auth.AuthenticatedRequest
 import com.google.inject.Inject
-import models.{Error, ForbiddenError, UnauthenticatedError}
+import models.{ForbiddenError, UnauthenticatedError}
 import play.api.Logger
-import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Unauthorized}
-import play.api.mvc.{ActionBuilder, ActionFunction, Request, Result}
+import play.api.mvc._
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Retrievals
 import uk.gov.hmrc.http.HeaderCarrier
@@ -37,7 +36,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class AuthActionImpl @Inject()(val authorisedFunctions: AuthorisedFunctions)(implicit ec: ExecutionContext) extends AuthAction {
 
   override def invokeBlock[A](request: Request[A], block: (AuthenticatedRequest[A]) => Future[Result]): Future[Result] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+
+    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers)
 
     authorisedFunctions.authorised().retrieve(Retrievals.externalId) {
       case Some (externalId) => block(AuthenticatedRequest(request, externalId))
