@@ -20,9 +20,8 @@ import javax.inject.Singleton
 
 import auth.AuthenticatedRequest
 import com.google.inject.Inject
-import models.{Error, ForbiddenError, UnauthenticatedError}
+import models.{ForbiddenError, UnauthenticatedError}
 import play.api.Logger
-import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Unauthorized}
 import play.api.mvc._
