@@ -28,8 +28,10 @@ class MicroserviceAppConfig @Inject()(val environment: Environment, val conf: Co
   override protected def runModeConfiguration: Configuration = conf
   override protected def mode: Mode = environment.mode
 
-  val desEnvironment: String = getString("microservice.services.des.environment")
-  val desToken: String = getString("microservice.services.des.auth-token")
-  val desUrl: String = getString("microservice.services.des.url")
+  lazy val appName: String = getString("appName")
+
+  lazy val desEnvironment: String = getString("microservice.services.des.environment")
+  lazy val desToken: String = getString("microservice.services.des.auth-token")
+  lazy val desUrl: String = getString("microservice.services.des.url")
 
 }

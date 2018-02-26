@@ -16,16 +16,18 @@
 
 package services
 
+import audit.mocks.MockAuditingService
+import audit.models.FinancialTransactionsResponseAuditModel
 import base.SpecBase
 import mocks.connectors.MockFinancialDataConnector
 import models._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
 
-class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector {
+class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector with MockAuditingService {
 
 
-  object TestFinancialTransactionService extends FinancialTransactionsService(mockFinancialDataConnector)
+  object TestFinancialTransactionService extends FinancialTransactionsService(mockFinancialDataConnector, mockAuditingService)
 
   lazy val regime = VatRegime("123456")
 
@@ -33,7 +35,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     "Return FinancialTransactions when a success response is returned from the Connector" in {
 
-      val successResponse = Right(FinancialTransactions(
+      val financialTransactions = FinancialTransactions(
         idType = Some("MTDBSA"),
         idNumber = Some("XQIT00000000001"),
         regimeType = Some("ITSA"),
@@ -82,7 +84,8 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
             promiseToPay = Some("K")
           )))
         )))
-      ))
+      )
+      val successResponse = Right(financialTransactions)
 
       setupMockGetFinancialData(regime, FinancialDataQueryParameters(
         fromDate = Some("2017-04-06"),
@@ -92,6 +95,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
         calculateAccruedInterest = Some(false),
         customerPaymentInformation = Some(false)
       ))(successResponse)
+      setupMockAuditEventResponse(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
 
       val actual = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
@@ -106,6 +110,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
       ))
 
       actual shouldBe successResponse
+      verifyAuditEvent(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
 
     }
 

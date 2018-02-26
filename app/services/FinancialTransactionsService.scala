@@ -18,6 +18,8 @@ package services
 
 import javax.inject.{Inject, Singleton}
 
+import audit.AuditingService
+import audit.models.FinancialTransactionsResponseAuditModel
 import connectors.FinancialDataConnector
 import models._
 import play.api.Logger
@@ -26,13 +28,18 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialTransactionsService @Inject()(val financialDataConnector: FinancialDataConnector) {
+class FinancialTransactionsService @Inject()(val financialDataConnector: FinancialDataConnector, val auditingService: AuditingService) {
 
   def getFinancialTransactions(regime: TaxRegime,
                                queryParameters: FinancialDataQueryParameters)
                               (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
 
     Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
-    financialDataConnector.getFinancialData(regime, queryParameters)
+    financialDataConnector.getFinancialData(regime, queryParameters).map {
+      case success@Right(financialTransactions) =>
+        auditingService.audit(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
+        success
+      case error@Left(_) => error
+    }
   }
 }
