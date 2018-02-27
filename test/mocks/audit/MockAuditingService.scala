@@ -14,39 +14,45 @@
  * limitations under the License.
  */
 
-package audit.mocks
+package mocks.audit
 
+import audit.AuditingService
+import audit.models.AuditModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
 
-trait MockAuditingConnector extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockAuditingService extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockAuditConnector)
+    reset(mockAuditingService)
   }
 
-  val mockAuditConnector: AuditConnector = mock[AuditConnector]
+  val mockAuditingService: AuditingService = mock[AuditingService]
 
-  def mockSendAuditEvent(data: DataEvent)(result: AuditResult): OngoingStubbing[Future[AuditResult]] = {
-    when(mockAuditConnector.sendEvent(ArgumentMatchers.refEq(data, "eventId", "generatedAt"))(
+  def setupMockAuditEventResponse(data: AuditModel): OngoingStubbing[Future[AuditResult]] =
+    when(mockAuditingService.audit(
+      ArgumentMatchers.eq(data)
+    )(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext]
-    )) thenReturn Future.successful(result)
-  }
+    )).thenReturn(Future.successful(Success))
 
-  def verifySendAuditEvent(data: DataEvent): Unit =
-    verify(mockAuditConnector).sendEvent(ArgumentMatchers.refEq(data, "eventId", "generatedAt"))(
+  def verifyAuditEvent(data: AuditModel): Unit =
+    verify(mockAuditingService).audit(
+      ArgumentMatchers.eq(data)
+    )(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext]
     )
+
 }

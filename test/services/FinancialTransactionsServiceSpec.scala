@@ -16,9 +16,9 @@
 
 package services
 
-import audit.mocks.MockAuditingService
 import audit.models.FinancialTransactionsResponseAuditModel
 import base.SpecBase
+import mocks.audit.MockAuditingService
 import mocks.connectors.MockFinancialDataConnector
 import models._
 import play.api.http.Status

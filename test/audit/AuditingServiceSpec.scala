@@ -16,11 +16,11 @@
 
 package audit
 
-import audit.mocks.MockAuditingConnector
 import audit.models.AuditModel
 import base.SpecBase
+import mocks.audit.MockAuditingConnector
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Success, Failure, Disabled}
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.model.DataEvent
 
 class AuditingServiceSpec extends SpecBase with MockAuditingConnector {
