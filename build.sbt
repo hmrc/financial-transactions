@@ -63,8 +63,8 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
   "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.mockito" % "mockito-core" % "2.7.17" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.5.1" % scope,
+  "org.mockito" % "mockito-core" % "2.13.0" % scope,
+  "com.github.tomakehurst" % "wiremock" % "2.6.0" % scope,
   "org.jsoup" % "jsoup" % "1.10.2" % scope
 )
 
