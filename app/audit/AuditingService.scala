@@ -56,16 +56,11 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
     }
   }
 
-  def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent = {
-    val auditType: String = auditModel.auditType
-    val transactionName: String = auditModel.transactionName
-    val detail: Map[String, String] = auditModel.detail
-
+  def toDataEvent(appName: String, auditModel: AuditModel, path: String)(implicit hc: HeaderCarrier): DataEvent =
     DataEvent(
       auditSource = appName,
-      auditType = auditType,
-      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(transactionName, path),
-      detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(detail.toSeq: _*)
+      auditType = auditModel.auditType,
+      tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditModel.transactionName, path),
+      detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(auditModel.detail.toSeq: _*)
     )
-  }
 }
