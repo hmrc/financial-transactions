@@ -16,7 +16,6 @@
 
 package audit.mocks
 
-import audit.models.AuditModel
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -24,7 +23,6 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
 import uk.gov.hmrc.play.audit.model.DataEvent
 import uk.gov.hmrc.play.test.UnitSpec
 
@@ -39,11 +37,11 @@ trait MockAuditingConnector extends UnitSpec with MockitoSugar with BeforeAndAft
 
   val mockAuditConnector: AuditConnector = mock[AuditConnector]
 
-  def mockSendAuditEvent(data: DataEvent): OngoingStubbing[Future[AuditResult]] = {
+  def mockSendAuditEvent(data: DataEvent)(result: AuditResult): OngoingStubbing[Future[AuditResult]] = {
     when(mockAuditConnector.sendEvent(ArgumentMatchers.refEq(data, "eventId", "generatedAt"))(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext]
-    )) thenReturn Future.successful(Success)
+    )) thenReturn Future.successful(result)
   }
 
   def verifySendAuditEvent(data: DataEvent): Unit =

@@ -20,7 +20,7 @@ import audit.mocks.MockAuditingConnector
 import audit.models.AuditModel
 import base.SpecBase
 import uk.gov.hmrc.play.audit.AuditExtensions
-import uk.gov.hmrc.play.audit.http.connector.AuditResult.Success
+import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Success, Failure, Disabled}
 import uk.gov.hmrc.play.audit.model.DataEvent
 
 class AuditingServiceSpec extends SpecBase with MockAuditingConnector {
@@ -64,9 +64,21 @@ class AuditingServiceSpec extends SpecBase with MockAuditingConnector {
 
     "Provided with an AuditModel" should {
 
-      "extract the data and pass it into the AuditConnector" in {
-        mockSendAuditEvent(testAuditData)
+      "and a success response is mocked should extract the data and pass it into the AuditConnector" in {
+        mockSendAuditEvent(testAuditData)(Success)
         await(TestAuditingService.audit(TestAuditModel)) shouldBe Success
+        verifySendAuditEvent(testAuditData)
+      }
+
+      "and a failure response is mocked should extract the data and pass it into the AuditConnector" in {
+        mockSendAuditEvent(testAuditData)(Failure("Oh no, an error!"))
+        await(TestAuditingService.audit(TestAuditModel)) shouldBe Failure("Oh no, an error!")
+        verifySendAuditEvent(testAuditData)
+      }
+
+      "and auditing is disabled response is mocked should extract the data and pass it into the AuditConnector" in {
+        mockSendAuditEvent(testAuditData)(Disabled)
+        await(TestAuditingService.audit(TestAuditModel)) shouldBe Disabled
         verifySendAuditEvent(testAuditData)
       }
     }
