@@ -19,7 +19,7 @@ package services
 import javax.inject.{Inject, Singleton}
 
 import audit.AuditingService
-import audit.models.FinancialTransactionsResponseAuditModel
+import audit.models.{FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
 import connectors.FinancialDataConnector
 import models._
 import play.api.Logger
@@ -34,9 +34,13 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
                                queryParameters: FinancialDataQueryParameters)
                               (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
 
+    Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions request")
+    auditingService.audit(FinancialTransactionsRequestAuditModel(regime, queryParameters))
+
     Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
     financialDataConnector.getFinancialData(regime, queryParameters).map {
       case success@Right(financialTransactions) =>
+        Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions response")
         auditingService.audit(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
         success
       case error@Left(_) => error
