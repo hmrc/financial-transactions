@@ -24,6 +24,7 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
 import utils.MaterializerSupport
+import play.api.http.HeaderNames.REFERER
 
 import scala.concurrent.ExecutionContext
 
@@ -35,7 +36,7 @@ trait SpecBase extends UnitSpec with GuiceOneAppPerSuite with MaterializerSuppor
 
   lazy val mockAppConfig: MicroserviceAppConfig = injector.instanceOf[MicroserviceAppConfig]
 
-  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders(REFERER -> "/dummy/referer/path")
   implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]
 
 }
