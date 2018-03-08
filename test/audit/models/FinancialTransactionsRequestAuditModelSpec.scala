@@ -51,7 +51,7 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
       }
 
       "Have the correct details for the audit event" in {
-        TestFinancialTransactionsRequestAuditModel.detail shouldBe Map(
+        TestFinancialTransactionsRequestAuditModel.detail shouldBe Seq(
           "taxRegime" -> testRegime.regimeType,
           "taxIdentifier" -> testRegime.id,
           dateFromKey -> testQueryParams.fromDate.get.toString,
@@ -70,15 +70,9 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
       object TestFinancialTransactionsRequestAuditModel extends FinancialTransactionsRequestAuditModel(testRegime, noQueryParams)
 
       "Have the correct details for the audit event" in {
-        TestFinancialTransactionsRequestAuditModel.detail shouldBe Map(
+        TestFinancialTransactionsRequestAuditModel.detail shouldBe Seq(
           "taxRegime" -> testRegime.regimeType,
-          "taxIdentifier" -> testRegime.id,
-          dateFromKey -> "-",
-          dateToKey -> "-",
-          onlyOpenItemsKey -> "-",
-          includeLocksKey -> "-",
-          calculateAccruedInterestKey -> "-",
-          customerPaymentInformationKey -> "-"
+          "taxIdentifier" -> testRegime.id
         )
       }
     }
