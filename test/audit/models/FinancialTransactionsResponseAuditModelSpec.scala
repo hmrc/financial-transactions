@@ -117,7 +117,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
       }
 
       "Have the correct details for the audit event" in {
-        TestFinancialTransactionsResponseAuditModel.detail shouldBe Map(
+        TestFinancialTransactionsResponseAuditModel.detail shouldBe Seq(
           "taxRegime" -> testRegime.regimeType,
           "taxIdentifier" -> testRegime.id,
           "processingDate" -> testTransactions.processingDate.toString,
@@ -132,7 +132,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
       object TestFinancialTransactionsResponseAuditModel extends FinancialTransactionsResponseAuditModel(testRegime, noTransactions)
 
       "Have the correct details for the audit event" in {
-        TestFinancialTransactionsResponseAuditModel.detail shouldBe Map(
+        TestFinancialTransactionsResponseAuditModel.detail shouldBe Seq(
           "taxRegime" -> testRegime.regimeType,
           "taxIdentifier" -> testRegime.id,
           "processingDate" -> noTransactions.processingDate.toString,

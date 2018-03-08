@@ -37,7 +37,7 @@ case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, transactio
 
   override val transactionName: String = "financial-transactions-response"
   override val auditType: String = "financialTransactionsResponse"
-  override val detail: Map[String, String] = Map(
+  override val detail: Seq[(String, String)] = Seq(
     "taxRegime" -> regime.regimeType,
     "taxIdentifier" -> regime.id,
     "processingDate" -> transactions.processingDate.toString,

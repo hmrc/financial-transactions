@@ -30,7 +30,7 @@ class AuditingServiceSpec extends SpecBase with MockAuditingConnector {
   object TestAuditModel extends AuditModel {
     override val auditType: String = "testEvent"
     override val transactionName: String = "testTransaction"
-    override val detail: Map[String, String] = Map(
+    override val detail: Seq[(String, String)] = Seq(
       "testDetailA" -> "foo",
       "testDetailB" -> "bar"
     )

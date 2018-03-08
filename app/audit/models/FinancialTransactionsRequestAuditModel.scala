@@ -23,14 +23,14 @@ case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams
 
   override val transactionName: String = "financial-transactions-request"
   override val auditType: String = "financialTransactionsRequest"
-  override val detail: Map[String, String] = Map(
-    "taxRegime" -> regime.regimeType,
-    "taxIdentifier" -> regime.id,
-    dateFromKey -> auditHandleOption(queryParams.fromDate),
-    dateToKey -> auditHandleOption(queryParams.toDate),
-    onlyOpenItemsKey -> auditHandleOption(queryParams.onlyOpenItems),
-    includeLocksKey -> auditHandleOption(queryParams.includeLocks),
-    calculateAccruedInterestKey -> auditHandleOption(queryParams.calculateAccruedInterest),
-    customerPaymentInformationKey -> auditHandleOption(queryParams.customerPaymentInformation)
-  )
+  override val detail: Seq[(String, String)] = Seq(
+    Some("taxRegime" -> regime.regimeType),
+    Some("taxIdentifier" -> regime.id),
+    queryParams.fromDate.map(dateFromKey -> _.toString),
+    queryParams.toDate.map(dateToKey -> _.toString),
+    queryParams.onlyOpenItems.map(onlyOpenItemsKey -> _.toString),
+    queryParams.includeLocks.map(includeLocksKey -> _.toString),
+    queryParams.calculateAccruedInterest.map(calculateAccruedInterestKey -> _.toString),
+    queryParams.customerPaymentInformation.map(customerPaymentInformationKey -> _.toString)
+  ).flatten
 }

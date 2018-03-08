@@ -18,8 +18,6 @@ package audit.models
 
 trait AuditModel {
   val transactionName: String
-  val detail: Map[String, String]
+  val detail: Seq[(String, String)]
   val auditType: String
-
-  def auditHandleOption[A]: Option[A] => String = _.fold("-")(_.toString)
 }
