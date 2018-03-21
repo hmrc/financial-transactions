@@ -16,15 +16,20 @@
 
 package audit.models
 
-import models.{FinancialTransactions, SubItem, TaxRegime, Transaction}
+import models.{FinancialTransactions, SubItem, TaxRegime}
 import play.api.libs.json.{JsValue, Json}
 
-case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, transactions: FinancialTransactions) extends AuditModel {
+case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, ftTransactions: FinancialTransactions) extends ExtendedAuditModel {
 
   private val paymentReferences: Seq[SubItem] => Seq[String] = _.flatMap(_.paymentReference)
 
-  val toTransactionsAuditJson: Seq[Transaction] => JsValue = transactions =>
-    Json.toJson(transactions.map(transaction =>
+  override val transactionName: String = "financial-transactions-response"
+  override val auditType: String = "financialTransactionsResponse"
+  override val detail: JsValue = Json.obj(
+    "taxRegime" -> regime.regimeType,
+    "taxIdentifier" -> regime.id,
+    "processingDate" -> ftTransactions.processingDate.toString,
+    "transactions" -> Json.toJson(ftTransactions.financialTransactions.fold(Seq.empty[TransactionsAuditModel])(_.map(transaction =>
       TransactionsAuditModel(
         chargeReference = transaction.chargeReference,
         originalAmount = transaction.originalAmount,
@@ -33,14 +38,6 @@ case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, transactio
         accruedInterest = transaction.accruedInterest,
         paymentReferences = transaction.items.map(paymentReferences)
       )
-    ))
-
-  override val transactionName: String = "financial-transactions-response"
-  override val auditType: String = "financialTransactionsResponse"
-  override val detail: Seq[(String, String)] = Seq(
-    "taxRegime" -> regime.regimeType,
-    "taxIdentifier" -> regime.id,
-    "processingDate" -> transactions.processingDate.toString,
-    "transactions" -> transactions.financialTransactions.fold("[]")(toTransactionsAuditJson(_).toString)
+    )))
   )
 }

@@ -23,7 +23,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.mockito.MockitoSugar
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-import uk.gov.hmrc.play.audit.model.DataEvent
+import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
 import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,6 +46,19 @@ trait MockAuditingConnector extends UnitSpec with MockitoSugar with BeforeAndAft
 
   def verifySendAuditEvent(data: DataEvent): Unit =
     verify(mockAuditConnector).sendEvent(ArgumentMatchers.refEq(data, "eventId", "generatedAt"))(
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext]
+    )
+
+  def mockSendAuditEvent(data: ExtendedDataEvent)(result: AuditResult): OngoingStubbing[Future[AuditResult]] = {
+    when(mockAuditConnector.sendExtendedEvent(ArgumentMatchers.refEq(data, "eventId", "generatedAt"))(
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext]
+    )) thenReturn Future.successful(result)
+  }
+
+  def verifySendAuditEvent(data: ExtendedDataEvent): Unit =
+    verify(mockAuditConnector).sendExtendedEvent(ArgumentMatchers.refEq(data, "eventId", "generatedAt"))(
       ArgumentMatchers.any[HeaderCarrier],
       ArgumentMatchers.any[ExecutionContext]
     )

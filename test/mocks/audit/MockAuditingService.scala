@@ -17,7 +17,7 @@
 package mocks.audit
 
 import audit.AuditingService
-import audit.models.AuditModel
+import audit.models.{AuditModel, ExtendedAuditModel}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -39,6 +39,14 @@ trait MockAuditingService extends UnitSpec with MockitoSugar with BeforeAndAfter
 
   val mockAuditingService: AuditingService = mock[AuditingService]
 
+  def setupMockAuditEventResponse(data: ExtendedAuditModel): OngoingStubbing[Future[AuditResult]] =
+    when(mockAuditingService.audit(
+      ArgumentMatchers.eq(data)
+    )(
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext]
+    )).thenReturn(Future.successful(Success))
+
   def setupMockAuditEventResponse(data: AuditModel): OngoingStubbing[Future[AuditResult]] =
     when(mockAuditingService.audit(
       ArgumentMatchers.eq(data)
@@ -48,6 +56,14 @@ trait MockAuditingService extends UnitSpec with MockitoSugar with BeforeAndAfter
     )).thenReturn(Future.successful(Success))
 
   def verifyAuditEvent(data: AuditModel): Unit =
+    verify(mockAuditingService).audit(
+      ArgumentMatchers.eq(data)
+    )(
+      ArgumentMatchers.any[HeaderCarrier],
+      ArgumentMatchers.any[ExecutionContext]
+    )
+
+  def verifyAuditEvent(data: ExtendedAuditModel): Unit =
     verify(mockAuditingService).audit(
       ArgumentMatchers.eq(data)
     )(
