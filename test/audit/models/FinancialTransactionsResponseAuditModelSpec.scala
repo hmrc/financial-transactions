@@ -80,10 +80,20 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
       )
       object TestFinancialTransactionsResponseAuditModel extends FinancialTransactionsResponseAuditModel(testRegime, testTransactions)
 
-      "when calling the toTransactionsAuditJson method" should {
+      s"Have the correct transaction name of '$transactionName'" in {
+        TestFinancialTransactionsResponseAuditModel.transactionName shouldBe transactionName
+      }
 
-        "use the correct Audit Details taken from the Financial Transactions Model" in {
-          val expected = Json.arr(
+      s"Have the correct audit event type of '$auditEvent'" in {
+        TestFinancialTransactionsResponseAuditModel.auditType shouldBe auditEvent
+      }
+
+      "Have the correct details for the audit event" in {
+        val expected = Json.obj(
+          "taxRegime" -> testRegime.regimeType,
+          "taxIdentifier" -> testRegime.id,
+          "processingDate" -> "2018-03-07T22:55:56.987Z",
+          "transactions" -> Json.arr(
             Json.toJson(TransactionsAuditModel(
               chargeReference = Some("XM002610011594"),
               originalAmount = Some(3400),
@@ -101,28 +111,9 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
               paymentReferences = Some(Seq())
             ))
           )
-
-          val actual = TestFinancialTransactionsResponseAuditModel.toTransactionsAuditJson(testTransactions.financialTransactions.get)
-
-          actual shouldBe expected
-        }
-      }
-
-      s"Have the correct transaction name of '$transactionName'" in {
-        TestFinancialTransactionsResponseAuditModel.transactionName shouldBe transactionName
-      }
-
-      s"Have the correct audit event type of '$auditEvent'" in {
-        TestFinancialTransactionsResponseAuditModel.auditType shouldBe auditEvent
-      }
-
-      "Have the correct details for the audit event" in {
-        TestFinancialTransactionsResponseAuditModel.detail shouldBe Seq(
-          "taxRegime" -> testRegime.regimeType,
-          "taxIdentifier" -> testRegime.id,
-          "processingDate" -> testTransactions.processingDate.toString,
-          "transactions" -> TestFinancialTransactionsResponseAuditModel.toTransactionsAuditJson(testTransactions.financialTransactions.get).toString
         )
+
+        TestFinancialTransactionsResponseAuditModel.detail shouldBe expected
       }
     }
 
@@ -132,12 +123,13 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
       object TestFinancialTransactionsResponseAuditModel extends FinancialTransactionsResponseAuditModel(testRegime, noTransactions)
 
       "Have the correct details for the audit event" in {
-        TestFinancialTransactionsResponseAuditModel.detail shouldBe Seq(
+        val expected = Json.obj(
           "taxRegime" -> testRegime.regimeType,
           "taxIdentifier" -> testRegime.id,
-          "processingDate" -> noTransactions.processingDate.toString,
-          "transactions" -> "[]"
+          "processingDate" -> "2018-03-07T22:55:56.987Z",
+          "transactions" -> Json.arr()
         )
+        TestFinancialTransactionsResponseAuditModel.detail shouldBe expected
       }
     }
   }
