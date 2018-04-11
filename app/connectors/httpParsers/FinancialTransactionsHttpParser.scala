@@ -33,7 +33,11 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
               Logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
               Left(UnexpectedJsonFormat)
             },
-            valid => Right(valid)
+            valid => {
+              Logger.debug(s"[FinancialTransactionsReads][read] DES Response: \n\n${response.json}")
+              Logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
+              Right(valid)
+            }
           )
         }
         case status if status >= 400 && status < 600 =>
