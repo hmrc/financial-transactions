@@ -287,7 +287,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       "calling check direct debit exists with success response received" should {
 
-        "return a FinancialTransactions model" in {
+        "return a Boolean" in {
           setupMockHttpGet(TestFinancialDataConnector.directDebitUrl(vrn = vrn))(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[Boolean]] =
             TestFinancialDataConnector.checkDirectDebitExists(vrn = vrn)
