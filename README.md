@@ -247,6 +247,132 @@ The service currently supports the following Tax Regimes:
 |-|-|-|
 |{status}|{status}|{error message}|
 
+
+## Check Direct Debit exists for VRN
+
+**Method**: GET
+
+**URL**: /has-direct-debit/`vrn`
+
+|Path Parameter|Description|
+|-|-|
+|`vrn`|VAT Registration Number, a 9-digit number|
+
+
+
+### Success Response
+
+**Status**: OK (200)
+
+#### Definition
+
+##### Response Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|directDebitMandateFound|`String`|**true**
+|directDebitDetails|`Array[DirectDebitDetailsObject]` *see below*|**false**|
+
+##### Financial Transaction Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|directDebitInstructionNumber|`Boolean`|**true**|
+|directDebitPlanType|`String`|**true**|
+|dateCreated|`String`|**true**|
+|accountHolderName|`String`|**true**|
+|sortCode|`String`|**true**|
+|accountNumber|`String`|**true**|
+
+
+#### Example
+
+**Status**: OK (200)
+
+The service responds with a simple true or false response depending on whether a direct debit mandate is found for the vrn specified.
+**Json Body**: 
+```
+true
+```
+
+### Single-Error Response
+
+#### Definition
+
+##### Response Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|code|`String`|**true**
+|reason|`String`|**true**
+
+#### Example
+```
+{
+  "code": "SERVICE_UNAVAILABLE",
+  "reason": "Dependent systems are currently not responding"
+}
+```
+
+### Multi-Error Response
+
+#### Definition
+
+##### Response Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|failures|`Array[SingleErrorObject]` *see above*|**true** *(min items 2)*|
+
+#### Example
+```
+{
+  "failures": [
+    {
+      "code": "INVALID_IDTYPE",
+      "reason": "Submission has not passed validation. Invalid parameter idType."
+    },
+    {
+      "code": "INVALID_IDNUMBER",
+      "reason": "Submission has not passed validation. Invalid parameter idNumber."
+    }
+  ]
+}
+```
+
+
+### Error Responses
+
+#### Client Triggered Exceptions
+
+|HTTP Code|Code|Reason|
+|-|-|-|
+|400|BAD_REQUEST|Bad Request. Message: '{error messages}'|
+|401|UNAUTHENTICATED|Not authenticated|
+|403|UNAUTHORISED|Not authorised|
+|404|NOT_FOUND|URI '{requested path}' not found|
+
+#### Downstream Triggered Exceptions
+
+|HTTP Code|Code|Reason|
+|-|-|-|
+|400|INVALID_VRN|Submission has not passed validation. Invalid idType/idValue.|
+|400|INVALID_VRN|Submission has not passed validation. Invalid parameter idNumber.|
+|400|INVALID_REGIME|Request has not passed validation. Invalid regime.|
+|404|NOT_FOUND|The back end has indicated that there is no match found for the given identifier|
+|500|SERVER_ERROR|DES is currently experiencing problems that require live service intervention|
+|500|INVALID_JSON|The downstream service responded with invalid json.|
+|500|UNEXPECTED_JSON_FORMAT|The downstream service responded with json which did not match the expected format.|
+|500|UNEXPECTED_DOWNSTREAM_ERROR|The downstream service responded with an unexpected response.|
+|503|SERVICE_UNAVAILABLE|Dependent systems are currently not responding|
+
+#### Catch All (e.g. runtime exceptions)
+
+|HTTP Code|Code|Reason|
+|-|-|-|
+|{status}|{status}|{error message}|
+
+
 Requirements
 ------------
 

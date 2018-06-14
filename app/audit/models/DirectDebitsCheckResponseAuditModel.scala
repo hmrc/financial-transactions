@@ -16,8 +16,6 @@
 
 package audit.models
 
-import models.SubItem
-
 case class DirectDebitsCheckResponseAuditModel(vrn: String, hasDirectDebit: Boolean) extends AuditModel {
 
   override val transactionName: String = "direct-debit-check-response"
