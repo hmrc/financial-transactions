@@ -57,4 +57,18 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
       }
     }
   }
+
+  def checkDirectDebitExists(vrn: String): Action[AnyContent] =
+    authenticate.async {
+      implicit authorisedUser =>
+        Logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] Calling FinancialTransactionsService.getFinancialTransactions")
+        financialTransactionsService.checkDirectDebitExists(vrn).map {
+          case _@Right(directDebitExists) =>
+            Ok(Json.toJson(directDebitExists))
+          case _@Left(error) => error.error match {
+            case singleError: Error => Status(error.status)(Json.toJson(singleError))
+            case multiError: MultiError => Status(error.status)(Json.toJson(multiError))
+          }
+        }
+    }
 }

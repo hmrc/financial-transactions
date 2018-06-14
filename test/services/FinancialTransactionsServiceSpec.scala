@@ -16,7 +16,8 @@
 
 package services
 
-import audit.models.{FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
+import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel,
+  FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
 import base.SpecBase
 import mocks.audit.MockAuditingService
 import mocks.connectors.MockFinancialDataConnector
@@ -29,13 +30,13 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
   object TestFinancialTransactionService extends FinancialTransactionsService(mockFinancialDataConnector, mockAuditingService)
 
-  lazy val regime = VatRegime("123456")
+  lazy val regime: TaxRegime = VatRegime("123456")
 
   "The FinancialTransactionService.getFinancialData method" should {
 
     "Return FinancialTransactions when a success response is returned from the Connector" in {
 
-      val financialTransactions = FinancialTransactions(
+      val financialTransactions: FinancialTransactions = FinancialTransactions(
         idType = Some("MTDBSA"),
         idNumber = Some("XQIT00000000001"),
         regimeType = Some("ITSA"),
@@ -85,8 +86,8 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
           )))
         )))
       )
-      val successResponse = Right(financialTransactions)
-      val queryParams = FinancialDataQueryParameters(
+      val successResponse: Either[Nothing, FinancialTransactions] = Right(financialTransactions)
+      val queryParams: FinancialDataQueryParameters = FinancialDataQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
         onlyOpenItems = Some(false),
@@ -96,11 +97,10 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
       )
 
       setupMockGetFinancialData(regime, queryParams)(successResponse)
-
       setupMockAuditEventResponse(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
       setupMockAuditEventResponse(FinancialTransactionsRequestAuditModel(regime, queryParams))
 
-      val actual = await(TestFinancialTransactionService.getFinancialTransactions(
+      val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
         FinancialDataQueryParameters(
           fromDate = Some("2017-04-06"),
@@ -121,7 +121,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     "Return Error when a single error is returned from the Connector" in {
 
-      val singleErrorResponse = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE","REASON")))
+      val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
 
       setupMockGetFinancialData(regime, FinancialDataQueryParameters(
         fromDate = Some("2017-04-06"),
@@ -132,7 +132,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
         customerPaymentInformation = Some(false)
       ))(singleErrorResponse)
 
-      val actual = await(TestFinancialTransactionService.getFinancialTransactions(
+      val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
         FinancialDataQueryParameters(
           fromDate = Some("2017-04-06"),
@@ -150,9 +150,9 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     "Return a MultiError when multiple error responses are returned from the Connector" in {
 
-      val multiErrorResponse = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(Seq(
-        Error("CODE 1","REASON 1"),
-        Error("CODE 2","REASON 2")
+      val multiErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(Seq(
+        Error("CODE 1", "REASON 1"),
+        Error("CODE 2", "REASON 2")
       ))))
 
       setupMockGetFinancialData(regime, FinancialDataQueryParameters(
@@ -164,7 +164,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
         customerPaymentInformation = Some(false)
       ))(multiErrorResponse)
 
-      val actual = await(TestFinancialTransactionService.getFinancialTransactions(
+      val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
         FinancialDataQueryParameters(
           fromDate = Some("2017-04-06"),
@@ -175,6 +175,55 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
           customerPaymentInformation = Some(false)
         )
       ))
+
+      actual shouldBe multiErrorResponse
+
+    }
+  }
+
+  "The FinancialTransactionService.checkDirectDebitExists method" should {
+
+    val vrn = "123456"
+
+    "CheckDirectDebitExists Return true when a success response is returned from the Connector" in {
+
+      val successResponse: Either[Nothing, Boolean] = Right(true)
+      setupMockCheckDirectDebitExists(vrn)(successResponse)
+
+      setupMockAuditEventResponse(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit = true))
+      setupMockAuditEventResponse(DirectDebitCheckRequestAuditModel(vrn))
+
+      val actual: Either[ErrorResponse, Boolean] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
+
+      actual shouldBe successResponse
+
+      verifyAuditEvent(DirectDebitCheckRequestAuditModel(vrn))
+      verifyAuditEvent(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit = true))
+
+    }
+
+    "CheckDirectDebitExists Return Error when a single error is returned from the Connector" in {
+
+      val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
+
+      setupMockCheckDirectDebitExists(vrn)(singleErrorResponse)
+
+      val actual: Either[ErrorResponse, Boolean] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
+
+      actual shouldBe singleErrorResponse
+
+    }
+
+    "CheckDirectDebitExists Return a MultiError when multiple error responses are returned from the Connector" in {
+
+      val multiErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(Seq(
+        Error("CODE 1", "REASON 1"),
+        Error("CODE 2", "REASON 2")
+      ))))
+
+      setupMockCheckDirectDebitExists(vrn)(multiErrorResponse)
+
+      val actual: Either[ErrorResponse, Boolean] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
 
       actual shouldBe multiErrorResponse
 

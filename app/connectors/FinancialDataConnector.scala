@@ -17,8 +17,8 @@
 package connectors
 
 import javax.inject.{Inject, Singleton}
-
 import config.MicroserviceAppConfig
+import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import connectors.httpParsers.FinancialTransactionsHttpParser._
 import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import play.api.Logger
@@ -34,6 +34,9 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
+  private[connectors] def directDebitUrl(vrn: String) =
+    s"${appConfig.desUrl}/cross-regime/direct-debits/vatc/vrn/$vrn"
+
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
                       (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
@@ -46,6 +49,22 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(message) =>
         Logger.warn("[FinancialDataConnector][getFinancialData] DES Error Received. Message: " + message)
+        error
+    }
+  }
+
+  def checkDirectDebitExists(vrn: String)
+                            (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[Boolean]] = {
+
+    val url = directDebitUrl(vrn)
+    val desHC = headerCarrier.copy(authorization =Some(Authorization(s"Bearer ${appConfig.desToken}")))
+      .withExtraHeaders("Environment" -> appConfig.desEnvironment)
+
+    Logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $url \nHeaders: $desHC\n Vrn: $vrn")
+    http.GET(url)(DirectDebitCheckReads, desHC, ec).map {
+      case directDebitStatus@Right(_) => directDebitStatus
+      case error@Left(message) =>
+        Logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
         error
     }
   }
