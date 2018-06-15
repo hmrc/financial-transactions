@@ -46,4 +46,12 @@ trait MockFinancialDataConnector extends UnitSpec with MockitoSugar with BeforeA
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(response))
+
+  def setupMockCheckDirectDebitExists(vrn: String)
+                               (response: HttpGetResult[Boolean]): OngoingStubbing[Future[HttpGetResult[Boolean]]] =
+    when(
+      mockFinancialDataConnector.checkDirectDebitExists(
+        ArgumentMatchers.eq(vrn)
+      )(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(response))
 }

@@ -19,7 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import config.RegimeKeys
-import controllers.actions.{AuthAction, AuthActionImpl}
+import controllers.actions.AuthAction
 import models._
 import play.api.Logger
 import play.api.libs.json.Json
@@ -57,4 +57,18 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
       }
     }
   }
+
+  def checkDirectDebitExists(vrn: String): Action[AnyContent] =
+    authenticate.async {
+      implicit authorisedUser =>
+        Logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] Calling FinancialTransactionsService.checkDirectDebitExists")
+        financialTransactionsService.checkDirectDebitExists(vrn).map {
+          case _@Right(directDebitExists) =>
+            Ok(Json.toJson(directDebitExists))
+          case _@Left(error) => error.error match {
+            case singleError: Error => Status(error.status)(Json.toJson(singleError))
+            case multiError: MultiError => Status(error.status)(Json.toJson(multiError))
+          }
+        }
+    }
 }

@@ -27,7 +27,7 @@ import utils.ImplicitDateFormatter._
 
 class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTransactionsService with MockMicroserviceAuthorisedFunctions {
 
-  val success = FinancialTransactions(
+  val successFinancialTransactions = FinancialTransactions(
     idType = Some("MTDBSA"),
     idNumber = Some("XQIT00000000001"),
     regimeType = Some("ITSA"),
@@ -85,11 +85,11 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
     )
   )
 
-  val successResponse = Right(success)
-  val badRequestSingleError = Left(ErrorResponse(Status.BAD_REQUEST, singleError))
-  val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, multiError))
-
   "The GET FinancialTransactionsController.financialTransactions method" when {
+
+    val successResponse = Right(successFinancialTransactions)
+    val badRequestSingleError = Left(ErrorResponse(Status.BAD_REQUEST, singleError))
+    val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, multiError))
 
     "called by an authenticated user" which {
 
@@ -111,7 +111,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the financial transaction information" in {
-            jsonBodyOf(result) shouldBe Json.toJson(success)
+            jsonBodyOf(result) shouldBe Json.toJson(successFinancialTransactions)
           }
 
         }
@@ -163,7 +163,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the financial transaction information" in {
-            jsonBodyOf(result) shouldBe Json.toJson(success)
+            jsonBodyOf(result) shouldBe Json.toJson(successFinancialTransactions)
           }
 
         }
@@ -234,4 +234,86 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
       }
     }
   }
+
+
+  "The GET FinancialTransactionsController.checkDirectDebitExists method" when {
+
+    val successResponse = Right(true)
+    val badRequestSingleError = Left(ErrorResponse(Status.BAD_REQUEST, singleError))
+    val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, multiError))
+
+    "called by an authenticated user" which {
+
+      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth),
+        mockFinancialTransactionsService)
+
+      "is requesting check direct debit" should {
+        val vrn = "123456"
+
+        "for a successful response from the FinancialTransactionsService" should {
+
+          lazy val result = await(TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest))
+
+          "return a status of 200 (OK)" in {
+            setupMockCheckDirectDebitExists(vrn)(successResponse)
+            status(result) shouldBe Status.OK
+          }
+
+          "return a json body with the financial transaction information" in {
+            jsonBodyOf(result) shouldBe Json.toJson(true)
+          }
+
+        }
+
+        "checkDirectDebitExists for a bad request with single error from the FinancialTransactionsService" should {
+
+          lazy val result = await(TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest))
+
+          "return a status of 400 (BAD_REQUEST)" in {
+            setupMockCheckDirectDebitExists(vrn)(badRequestSingleError)
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+
+          "return a json body with the single error message" in {
+
+            jsonBodyOf(result) shouldBe Json.toJson(singleError)
+          }
+        }
+
+        "checkDirectDebitExists for a bad request with multiple errors from the FinancialTransactionsService" should {
+
+          lazy val result = await(TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest))
+
+          "return a status of 400 (BAD_REQUEST)" in {
+            setupMockCheckDirectDebitExists(vrn)(badRequestMultiError)
+            status(result) shouldBe Status.BAD_REQUEST
+          }
+
+          "return a json body with the multiple error messages" in {
+            jsonBodyOf(result) shouldBe Json.toJson(multiError)
+          }
+        }
+
+      }
+
+    }
+
+    "checkDirectDebitExists called by an unauthenticated user" should {
+
+      val regimeType = "VAT"
+      val id = "123456"
+      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth), mockFinancialTransactionsService)
+
+      "Return an UNAUTHORISED response" which {
+
+        lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(regimeType, id, FinancialDataQueryParameters())(fakeRequest))
+
+        "has status UNAUTHORISED (401)" in {
+          setupMockAuthorisationException()
+          status(result) shouldBe Status.UNAUTHORIZED
+        }
+      }
+    }
+  }
+
 }

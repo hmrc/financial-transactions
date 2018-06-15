@@ -45,4 +45,13 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(response))
+
+  def setupMockCheckDirectDebitExists(vrn: String)
+                                       (response: HttpGetResult[Boolean]):
+                            OngoingStubbing[Future[HttpGetResult[Boolean]]] =
+    when(
+      mockFinancialTransactionsService.checkDirectDebitExists(
+        ArgumentMatchers.eq(vrn)
+      )(ArgumentMatchers.any(), ArgumentMatchers.any())
+    ).thenReturn(Future.successful(response))
 }

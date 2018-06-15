@@ -17,9 +17,9 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-
 import audit.AuditingService
-import audit.models.{FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
+import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel,
+  FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
 import connectors.FinancialDataConnector
 import models._
 import play.api.Logger
@@ -42,6 +42,24 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
       case success@Right(financialTransactions) =>
         Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions response")
         auditingService.audit(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
+        success
+      case error@Left(_) => error
+    }
+  }
+
+
+  def checkDirectDebitExists(vrn: String)
+                            (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorResponse, Boolean]] = {
+
+    Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions request")
+
+    auditingService.audit(DirectDebitCheckRequestAuditModel(vrn))
+
+    Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Calling directDebitConnector with vrn: $vrn")
+    financialDataConnector.checkDirectDebitExists(vrn).map {
+      case success@Right(hasDirectDebit) =>
+        Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions response")
+        auditingService.audit(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit))
         success
       case error@Left(_) => error
     }
