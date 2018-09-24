@@ -10,7 +10,8 @@ The service currently supports the following Tax Regimes:
   * Making Tax Digital - Income Tax Self-Assessment (ITSA)
   * Making Tax Digital - VAT (VATC)
   
-
+  
+  
 # Endpoint Definitions (APIs)
 
 ## Get Taxpayer Financial Transactions for Tax Regime
