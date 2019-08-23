@@ -21,6 +21,7 @@ import config.MicroserviceAppConfig
 import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import connectors.httpParsers.FinancialTransactionsHttpParser._
 import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import play.api.http.Status.NOT_FOUND
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.Authorization
@@ -47,9 +48,14 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     Logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParameters")
     http.GET(url, queryParameters.toSeqQueryParams)(FinancialTransactionsReads, desHC, ec).map {
       case financialTransactions@Right(_) => financialTransactions
-      case error@Left(message) =>
-        Logger.warn("[FinancialDataConnector][getFinancialData] DES Error Received. Message: " + message)
-        error
+      case error@Left(response) => response.status match {
+        case NOT_FOUND =>
+          Logger.debug("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          error
+        case _ =>
+          Logger.warn("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          error
+      }
     }
   }
 
