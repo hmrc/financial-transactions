@@ -23,17 +23,17 @@ import controllers.actions.AuthAction
 import models._
 import play.api.Logger
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.FinancialTransactionsService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 @Singleton
 class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
-                                                val financialTransactionsService: FinancialTransactionsService) extends BaseController {
+                                                val financialTransactionsService: FinancialTransactionsService, cc: ControllerComponents) extends BackendController(cc) {
 
   def getFinancialTransactions(idType: String, idValue: String, queryParams: FinancialDataQueryParameters): Action[AnyContent] =
     authenticate.async {
