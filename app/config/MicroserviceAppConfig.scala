@@ -17,21 +17,24 @@
 package config
 
 import javax.inject.{Inject, Singleton}
-
-import play.api.Mode.Mode
 import play.api.{Configuration, Environment}
-import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+
+trait AppConfig {
+  val desEnvironment: String
+  val desToken: String
+  val desUrl: String
+}
 
 @Singleton
-class MicroserviceAppConfig @Inject()(val environment: Environment, val conf: Configuration) extends ServicesConfig {
+class MicroserviceAppConfig @Inject()(val environment: Environment, val conf: Configuration, servicesConfig: ServicesConfig) extends AppConfig {
 
-  override protected def runModeConfiguration: Configuration = conf
-  override protected def mode: Mode = environment.mode
+  private def loadConfig(key: String) = servicesConfig.getString(key)
 
-  lazy val appName: String = getString("appName")
+  lazy val appName: String = loadConfig("appName")
 
-  lazy val desEnvironment: String = getString("microservice.services.des.environment")
-  lazy val desToken: String = getString("microservice.services.des.auth-token")
-  lazy val desUrl: String = getString("microservice.services.des.url")
+  lazy val desEnvironment: String = servicesConfig.getString("microservice.services.des.environment")
+  lazy val desToken: String = servicesConfig.getString("microservice.services.des.auth-token")
+  lazy val desUrl: String = servicesConfig.getString("microservice.services.des.url")
 
 }

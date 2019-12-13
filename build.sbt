@@ -55,17 +55,18 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-play-25" % "5.0.0"
+  "uk.gov.hmrc" %% "bootstrap-play-26" % "1.3.0",
+  "com.typesafe.play" %% "play-json-joda" % "2.6.10"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-25" % scope,
+  "uk.gov.hmrc" %% "hmrctest" % "3.9.0-play-26" % scope,
   "org.scalatest" %% "scalatest" % "3.0.8" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.1" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.mockito" % "mockito-core" % "2.28.2" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.23.2" % scope,
+  "org.mockito" % "mockito-core" % "3.2.0" % scope,
+  "com.github.tomakehurst" % "wiremock-jre8" % "2.25.1" % scope,
   "org.jsoup" % "jsoup" % "1.12.1" % scope
 )
 

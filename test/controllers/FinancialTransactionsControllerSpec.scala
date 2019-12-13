@@ -85,6 +85,8 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
     )
   )
 
+  val authActionImpl = new AuthActionImpl(mockAuth, controllerComponents)
+
   "The GET FinancialTransactionsController.financialTransactions method" when {
 
     val successResponse = Right(successFinancialTransactions)
@@ -93,7 +95,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
     "called by an authenticated user" which {
 
-      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth), mockFinancialTransactionsService)
+      object TestFinancialTransactionController extends FinancialTransactionsController(authActionImpl, mockFinancialTransactionsService, controllerComponents)
 
       "is requesting VAT details" should {
 
@@ -221,7 +223,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
       val regimeType = "VAT"
       val id = "123456"
-      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth), mockFinancialTransactionsService)
+      object TestFinancialTransactionController extends FinancialTransactionsController(authActionImpl, mockFinancialTransactionsService, controllerComponents)
 
       "Return an UNAUTHORISED response" which {
 
@@ -244,8 +246,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
     "called by an authenticated user" which {
 
-      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth),
-        mockFinancialTransactionsService)
+      object TestFinancialTransactionController extends FinancialTransactionsController(authActionImpl, mockFinancialTransactionsService, controllerComponents)
 
       "is requesting check direct debit" should {
         val vrn = "123456"
@@ -302,7 +303,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
       val regimeType = "VAT"
       val id = "123456"
-      object TestFinancialTransactionController extends FinancialTransactionsController(new AuthActionImpl(mockAuth), mockFinancialTransactionsService)
+      object TestFinancialTransactionController extends FinancialTransactionsController(authActionImpl, mockFinancialTransactionsService, controllerComponents)
 
       "Return an UNAUTHORISED response" which {
 
