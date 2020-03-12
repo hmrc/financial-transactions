@@ -17,68 +17,19 @@
 package models
 
 import base.SpecBase
-import play.api.libs.json.{JsValue, Json}
-import utils.ImplicitDateFormatter._
+import play.api.libs.json.Json
+import utils.TestConstants.{fullSubItem, fullSubItemJson}
 
 class SubItemSpec extends SpecBase {
-
-  val subItemModel = SubItem(
-    subItem = Some("000"),
-    dueDate = Some("2018-2-14"),
-    amount = Some(3400.00),
-    clearingDate = Some("2018-2-17"),
-    clearingReason = Some("A"),
-    outgoingPaymentMethod = Some("B"),
-    paymentLock = Some("C"),
-    clearingLock = Some("D"),
-    interestLock = Some("E"),
-    dunningLock = Some("1"),
-    returnFlag = Some(false),
-    paymentReference = Some("F"),
-    paymentAmount = Some(2000.00),
-    paymentMethod = Some("G"),
-    paymentLot = Some("H"),
-    paymentLotItem = Some("112"),
-    clearingSAPDocument = Some("3350000253"),
-    statisticalDocument = Some("I"),
-    returnReason = Some("J"),
-    promiseToPay = Some("K")
-  )
-
-  val subItemJson: JsValue =
-    Json.obj(
-      "subItem" -> "000",
-      "dueDate" -> "2018-02-14",
-      "amount" -> 3400,
-      "clearingDate" -> "2018-02-17",
-      "clearingReason" -> "A",
-      "outgoingPaymentMethod" -> "B",
-      "paymentLock" -> "C",
-      "clearingLock" -> "D",
-      "interestLock" -> "E",
-      "dunningLock" -> "1",
-      "returnFlag" -> false,
-      "paymentReference" -> "F",
-      "paymentAmount" -> 2000,
-      "paymentMethod" -> "G",
-      "paymentLot" -> "H",
-      "paymentLotItem" -> "112",
-      "clearingSAPDocument" -> "3350000253",
-      "statisticalDocument" -> "I",
-      "returnReason" -> "J",
-      "promiseToPay" -> "K"
-    )
 
   "SubItem" should {
 
     "serialize to Json successfully" in {
-      Json.toJson(subItemModel) shouldBe subItemJson
+      Json.toJson(fullSubItem) shouldBe fullSubItemJson
     }
 
     "deserialize to a SubItem model successfully" in {
-      subItemJson.as[SubItem] shouldBe subItemModel
+      fullSubItemJson.as[SubItem] shouldBe fullSubItem
     }
-
   }
-
 }

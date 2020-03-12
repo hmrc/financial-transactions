@@ -18,7 +18,7 @@ package connectors.httpParsers
 
 import models.{FinancialTransactions, UnexpectedJsonFormat, UnexpectedResponse}
 import play.api.Logger
-import play.api.http.Status.{BAD_REQUEST, OK}
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object FinancialTransactionsHttpParser extends ResponseHttpParsers {
@@ -26,7 +26,7 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
   implicit object FinancialTransactionsReads extends HttpReads[HttpGetResult[FinancialTransactions]] {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactions] = {
       response.status match {
-        case OK => {
+        case OK =>
           response.json.validate[FinancialTransactions].fold(
             invalid => {
               Logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful DES Response")
@@ -39,7 +39,6 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
               Right(valid)
             }
           )
-        }
         case status if status >= 400 && status < 600 =>
           Logger.debug(s"[FinancialTransactionsReads][read] $status returned from DES")
           handleErrorResponse(response)

@@ -28,16 +28,19 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialTransactionsService @Inject()(val financialDataConnector: FinancialDataConnector, val auditingService: AuditingService) {
+class FinancialTransactionsService @Inject()(val financialDataConnector: FinancialDataConnector,
+                                             val auditingService: AuditingService) {
 
   def getFinancialTransactions(regime: TaxRegime,
                                queryParameters: FinancialDataQueryParameters)
-                              (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
+                              (implicit headerCarrier: HeaderCarrier,
+                               ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
 
     Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions request")
     auditingService.audit(FinancialTransactionsRequestAuditModel(regime, queryParameters))
 
-    Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
+    Logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +
+      s"Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
     financialDataConnector.getFinancialData(regime, queryParameters).map {
       case success@Right(financialTransactions) =>
         Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions response")
@@ -49,7 +52,8 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
 
 
   def checkDirectDebitExists(vrn: String)
-                            (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[Either[ErrorResponse, Boolean]] = {
+                            (implicit headerCarrier: HeaderCarrier,
+                             ec: ExecutionContext): Future[Either[ErrorResponse, Boolean]] = {
 
     Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions request")
 

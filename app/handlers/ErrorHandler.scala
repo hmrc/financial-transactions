@@ -31,8 +31,7 @@ import uk.gov.hmrc.play.HeaderCarrierConverter
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Based on uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
@@ -40,12 +39,14 @@ import scala.concurrent.Future
   */
 
 @Singleton
-class ErrorHandler @Inject()(val appConfig: MicroserviceAppConfig, auditConnector: AuditConnector)
-  extends HttpErrorHandler with HttpAuditEvent {
+class ErrorHandler @Inject()(val appConfig: MicroserviceAppConfig,
+                             auditConnector: AuditConnector)
+                            (implicit ec: ExecutionContext) extends HttpErrorHandler with HttpAuditEvent {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
-    implicit val headerCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val headerCarrier: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     statusCode match {
       case play.mvc.Http.Status.NOT_FOUND =>
@@ -61,14 +62,15 @@ class ErrorHandler @Inject()(val appConfig: MicroserviceAppConfig, auditConnecto
   }
 
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {
-    implicit val headerCarrier = HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
+    implicit val headerCarrier: HeaderCarrier =
+      HeaderCarrierConverter.fromHeadersAndSession(request.headers, Some(request.session))
 
     Logger.error(s"! Internal server error, for (${request.method}) [${request.uri}] -> ", ex)
 
     val code = ex match {
-      case e: NotFoundException => "ResourceNotFound"
-      case e: AuthorisationException => "ClientError"
-      case jsError: JsValidationException => "ServerValidationError"
+      case _: NotFoundException => "ResourceNotFound"
+      case _: AuthorisationException => "ClientError"
+      case _: JsValidationException => "ServerValidationError"
       case _ => "ServerInternalError"
     }
 
