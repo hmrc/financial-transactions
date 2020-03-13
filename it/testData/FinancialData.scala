@@ -66,6 +66,7 @@ object FinancialData {
         paymentLotItem = Some("112"),
         clearingSAPDocument = Some("3350000253"),
         statisticalDocument = Some("I"),
+        DDCollectionInProgress = Some(true),
         returnReason = Some("J"),
         promiseToPay = Some("K")
       )))

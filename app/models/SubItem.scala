@@ -38,6 +38,7 @@ case class SubItem(subItem: Option[String] = None,
                    paymentLotItem: Option[String] = None,
                    clearingSAPDocument: Option[String] = None,
                    statisticalDocument: Option[String] = None,
+                   DDCollectionInProgress: Option[Boolean] = None,
                    returnReason: Option[String] = None,
                    promiseToPay: Option[String] = None)
 

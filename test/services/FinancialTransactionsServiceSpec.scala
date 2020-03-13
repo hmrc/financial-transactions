@@ -24,9 +24,9 @@ import mocks.connectors.MockFinancialDataConnector
 import models._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
+import utils.TestConstants.fullFinancialTransactions
 
 class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector with MockAuditingService {
-
 
   object TestFinancialTransactionService extends FinancialTransactionsService(mockFinancialDataConnector, mockAuditingService)
 
@@ -36,57 +36,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     "Return FinancialTransactions when a success response is returned from the Connector" in {
 
-      val financialTransactions: FinancialTransactions = FinancialTransactions(
-        idType = Some("MTDBSA"),
-        idNumber = Some("XQIT00000000001"),
-        regimeType = Some("ITSA"),
-        processingDate = "2017-03-07T22:55:56.987Z",
-        financialTransactions = Some(Seq(Transaction(
-          chargeType = Some("PAYE"),
-          mainType = Some("2100"),
-          periodKey = Some("13RL"),
-          periodKeyDescription = Some("abcde"),
-          taxPeriodFrom = Some("2017-4-6"),
-          taxPeriodTo = Some("2018-4-5"),
-          businessPartner = Some("6622334455"),
-          contractAccountCategory = Some("02"),
-          contractAccount = Some("X"),
-          contractObjectType = Some("ABCD"),
-          contractObject = Some("00000003000000002757"),
-          sapDocumentNumber = Some("1040000872"),
-          sapDocumentNumberItem = Some("XM00"),
-          chargeReference = Some("XM002610011594"),
-          mainTransaction = Some("1234"),
-          subTransaction = Some("5678"),
-          originalAmount = Some(3400.0),
-          outstandingAmount = Some(1400.0),
-          clearedAmount = Some(2000.0),
-          accruedInterest = Some(0.23),
-          items = Some(Seq(SubItem(
-            subItem = Some("000"),
-            dueDate = Some("2018-2-14"),
-            amount = Some(3400.00),
-            clearingDate = Some("2018-2-17"),
-            clearingReason = Some("A"),
-            outgoingPaymentMethod = Some("B"),
-            paymentLock = Some("C"),
-            clearingLock = Some("D"),
-            interestLock = Some("E"),
-            dunningLock = Some("1"),
-            returnFlag = Some(false),
-            paymentReference = Some("F"),
-            paymentAmount = Some(2000.00),
-            paymentMethod = Some("G"),
-            paymentLot = Some("H"),
-            paymentLotItem = Some("112"),
-            clearingSAPDocument = Some("3350000253"),
-            statisticalDocument = Some("I"),
-            returnReason = Some("J"),
-            promiseToPay = Some("K")
-          )))
-        )))
-      )
-      val successResponse: Either[Nothing, FinancialTransactions] = Right(financialTransactions)
+      val successResponse: Either[Nothing, FinancialTransactions] = Right(fullFinancialTransactions)
       val queryParams: FinancialDataQueryParameters = FinancialDataQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
@@ -97,7 +47,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
       )
 
       setupMockGetFinancialData(regime, queryParams)(successResponse)
-      setupMockAuditEventResponse(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
+      setupMockAuditEventResponse(FinancialTransactionsResponseAuditModel(regime, fullFinancialTransactions))
       setupMockAuditEventResponse(FinancialTransactionsRequestAuditModel(regime, queryParams))
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
@@ -115,7 +65,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
       actual shouldBe successResponse
 
       verifyAuditEvent(FinancialTransactionsRequestAuditModel(regime, queryParams))
-      verifyAuditEvent(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
+      verifyAuditEvent(FinancialTransactionsResponseAuditModel(regime, fullFinancialTransactions))
 
     }
 
