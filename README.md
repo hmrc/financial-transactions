@@ -102,7 +102,7 @@ The service currently supports the following Tax Regimes:
 |paymentLotItem|`String`|**false**|
 |clearingSAPDocument|`String`|**false**|
 |statisticalDocument|`String`|**false**|
-|DDcollectionInProgress|`Boolean`|**false**|
+|DDCollectionInProgress|`Boolean`|**false**|
 |returnReason|`String`|**false**|
 |promiseToPay|`String`|**false**|
 
@@ -159,7 +159,7 @@ The service currently supports the following Tax Regimes:
            "paymentLotItem": "000001",
            "clearingSAPDocument": "3350000253",
            "statisticalDocument": "A",
-           "DDcollectionInProgress": true,
+           "DDCollectionInProgress": true,
            "returnReason": "ABCA",
            "promiseToPay": "123456789101"
          }
