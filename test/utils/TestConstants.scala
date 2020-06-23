@@ -41,7 +41,7 @@ object TestConstants {
     paymentLotItem = Some("112"),
     clearingSAPDocument = Some("3350000253"),
     statisticalDocument = Some("I"),
-    DDCollectionInProgress = Some(true),
+    DDcollectionInProgress = Some(true),
     returnReason = Some("J"),
     promiseToPay = Some("K")
   )
@@ -65,7 +65,7 @@ object TestConstants {
     "paymentLotItem" -> "112",
     "clearingSAPDocument" -> "3350000253",
     "statisticalDocument" -> "I",
-    "DDCollectionInProgress" -> true,
+    "DDcollectionInProgress" -> true,
     "returnReason" -> "J",
     "promiseToPay" -> "K"
   )
