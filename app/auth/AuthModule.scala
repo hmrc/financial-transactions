@@ -21,7 +21,7 @@ import controllers.actions.{AuthAction, AuthActionImpl}
 import uk.gov.hmrc.auth.core.AuthorisedFunctions
 
 class AuthModule extends AbstractModule {
-  def configure(): Unit = {
+  override def configure(): Unit = {
     bind(classOf[AuthAction]).to(classOf[AuthActionImpl])
     bind(classOf[AuthorisedFunctions]).to(classOf[MicroserviceAuthorisedFunctions])
   }
