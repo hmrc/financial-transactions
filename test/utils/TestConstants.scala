@@ -16,7 +16,7 @@
 
 package utils
 
-import models.{FinancialTransactions, SubItem, Transaction}
+import models.{DirectDebitDetail, DirectDebits, FinancialTransactions, SubItem, Transaction}
 import ImplicitDateFormatter._
 import play.api.libs.json.{JsObject, Json}
 
@@ -132,5 +132,51 @@ object TestConstants {
     "regimeType" -> "ITSA",
     "processingDate" -> "2017-03-07T22:55:56.987Z",
     "financialTransactions" -> Json.arr(fullTransactionJson)
+  )
+
+  val fullDirectDebitDetail: DirectDebitDetail = DirectDebitDetail(
+    directDebitInstructionNumber = "000000001234567898",
+    directDebitPlanType = "VPP",
+    dateCreated = "2018-04-08",
+    accountHolderName = "A PERSON",
+    sortCode = "0000000",
+    accountNumber = "000000001"
+  )
+
+  val fullDirectDebitDetailJson: JsObject = Json.obj(
+    "directDebitInstructionNumber" -> "000000001234567898",
+    "directDebitPlanType" -> "VPP",
+    "dateCreated" -> "2018-04-08",
+    "accountHolderName" -> "A PERSON",
+    "sortCode" -> "0000000",
+    "accountNumber" -> "000000001"
+  )
+
+  val multipleDirectDebits: DirectDebits = DirectDebits(
+    directDebitMandateFound = true,
+    directDebitDetails = Some(Seq(fullDirectDebitDetail,fullDirectDebitDetail))
+  )
+
+  val multipleDirectDebitsJson: JsObject = Json.obj(
+    "directDebitMandateFound" -> true,
+    "directDebitDetails" -> Json.arr(fullDirectDebitDetailJson,fullDirectDebitDetailJson)
+  )
+
+  val singleDirectDebits: DirectDebits = DirectDebits(
+    directDebitMandateFound = true,
+    directDebitDetails = Some(Seq(fullDirectDebitDetail))
+  )
+
+  val singleDirectDebitsJson: JsObject = Json.obj(
+    "directDebitMandateFound" -> true,
+    "directDebitDetails" -> Json.arr(fullDirectDebitDetailJson)
+  )
+
+  val noDirectDebits: DirectDebits = DirectDebits(
+    directDebitMandateFound = false
+  )
+
+  val noDirectDebitsJson: JsObject = Json.obj(
+    "directDebitMandateFound" -> false
   )
 }

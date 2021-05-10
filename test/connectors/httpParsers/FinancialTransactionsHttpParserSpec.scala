@@ -30,7 +30,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and matches expected Schema" should {
 
-      val httpResponse = HttpResponse(Status.OK, responseJson = Some(fullFinancialTransactionsJson))
+      val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsJson.toString)
 
       val expected = Right(fullFinancialTransactions)
 
@@ -44,7 +44,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK but the response is not as expected" should {
 
-      val httpResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj("foo" -> "bar")))
+      val httpResponse = HttpResponse(Status.OK, Json.obj("foo" -> "bar").toString)
 
       val expected = Left(UnexpectedJsonFormat)
 
@@ -58,11 +58,10 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (single error)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST,
-        responseJson = Some(Json.obj(
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj(
           "code" -> "CODE",
           "reason" -> "ERROR MESSAGE"
-        ))
+        ).toString
       )
 
       val expected = Left(ErrorResponse(
@@ -83,8 +82,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (multiple errors)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST,
-        responseJson = Some(Json.obj(
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj(
           "failures" -> Json.arr(
             Json.obj(
               "code" -> "ERROR CODE 1",
@@ -95,7 +93,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
               "reason" -> "ERROR MESSAGE 2"
             )
           )
-        ))
+        ).toString
       )
 
       val expected = Left(ErrorResponse(
@@ -118,7 +116,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (Unexpected Json Returned)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, responseJson = Some(Json.obj("foo" -> "bar")))
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj("foo" -> "bar").toString)
 
       val expected = Left(UnexpectedJsonFormat)
 
@@ -132,7 +130,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (Bad Json Returned)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Banana"))
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, "Banana")
 
       val expected = Left(InvalidJsonResponse)
 
@@ -146,11 +144,10 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 500 ISE" should {
 
-      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR,
-        responseJson = Some(Json.obj(
+      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, Json.obj(
           "code" -> "code",
           "reason" -> "message"
-        ))
+        ).toString
       )
 
       val expected = Left(ErrorResponse(
@@ -171,7 +168,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is unexpected" should {
 
-      val httpResponse = HttpResponse(Status.SEE_OTHER)
+      val httpResponse = HttpResponse(Status.SEE_OTHER,"")
 
       val expected = Left(UnexpectedResponse)
 

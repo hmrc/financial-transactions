@@ -24,7 +24,7 @@ import mocks.connectors.MockFinancialDataConnector
 import models._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.fullFinancialTransactions
+import utils.TestConstants.{fullFinancialTransactions,multipleDirectDebits}
 
 class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector with MockAuditingService {
 
@@ -135,15 +135,15 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     val vrn = "123456"
 
-    "CheckDirectDebitExists Return true when a success response is returned from the Connector" in {
+    "CheckDirectDebitExists Returns direct debit details when a success response is returned from the Connector" in {
 
-      val successResponse: Either[Nothing, Boolean] = Right(true)
+      val successResponse: Either[Nothing, DirectDebits] = Right(multipleDirectDebits)
       setupMockCheckDirectDebitExists(vrn)(successResponse)
 
       setupMockAuditEventResponse(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit = true))
       setupMockAuditEventResponse(DirectDebitCheckRequestAuditModel(vrn))
 
-      val actual: Either[ErrorResponse, Boolean] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
+      val actual: Either[ErrorResponse, DirectDebits] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
 
       actual shouldBe successResponse
 
@@ -158,7 +158,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       setupMockCheckDirectDebitExists(vrn)(singleErrorResponse)
 
-      val actual: Either[ErrorResponse, Boolean] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
+      val actual: Either[ErrorResponse, DirectDebits] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
 
       actual shouldBe singleErrorResponse
 
@@ -173,7 +173,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       setupMockCheckDirectDebitExists(vrn)(multiErrorResponse)
 
-      val actual: Either[ErrorResponse, Boolean] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
+      val actual: Either[ErrorResponse, DirectDebits] = await(TestFinancialTransactionService.checkDirectDebitExists(vrn))
 
       actual shouldBe multiErrorResponse
 

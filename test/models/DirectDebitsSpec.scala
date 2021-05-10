@@ -17,49 +17,36 @@
 package models
 
 import base.SpecBase
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
+import utils.TestConstants.{singleDirectDebits, singleDirectDebitsJson, multipleDirectDebits, multipleDirectDebitsJson
+  , noDirectDebits, noDirectDebitsJson}
 
 class DirectDebitsSpec extends SpecBase {
 
-  val directDebitDetail = Seq(
-    DirectDebitDetail(directDebitInstructionNumber = "000000001234567898", directDebitPlanType = "VPP",
-      dateCreated = "2018-04-08", accountHolderName = "A PERSON", sortCode = "000000", accountNumber = "000000001"),
-    DirectDebitDetail(directDebitInstructionNumber = "000000001234567899", directDebitPlanType = "VPP",
-      dateCreated = "2018-04-09", accountHolderName = "ANOTHER PERSON", sortCode = "000001", accountNumber = "000000002"))
-
-  val directDebitsModel: DirectDebits = DirectDebits(directDebitMandateFound = true, Some(directDebitDetail))
-
-  val directDebitsModelJson: JsValue =
-    Json.obj(
-      "directDebitMandateFound" -> true,
-      "directDebitDetails" -> Json.arr(
-        Json.obj(
-          "directDebitInstructionNumber" -> "000000001234567898",
-          "directDebitPlanType" -> "VPP",
-          "dateCreated" -> "2018-04-08",
-          "accountHolderName" -> "A PERSON",
-          "sortCode" -> "000000",
-          "accountNumber" -> "000000001"
-        ),
-        Json.obj(
-          "directDebitInstructionNumber" -> "000000001234567899",
-          "directDebitPlanType" -> "VPP",
-          "dateCreated" -> "2018-04-09",
-          "accountHolderName" -> "ANOTHER PERSON",
-          "sortCode" -> "000001",
-          "accountNumber" -> "000000002"
-        )
-      )
-    )
-
   "DirectDebits" should {
 
-    "serialize to Json successfully" in {
-      Json.toJson(directDebitsModel) shouldBe directDebitsModelJson
+    "serialize to Json successfully for more than one direct debit" in {
+      Json.toJson(multipleDirectDebits) shouldBe multipleDirectDebitsJson
     }
 
-    "deserialize to a Direct debit model successfully" in {
-      directDebitsModelJson.as[DirectDebits] shouldBe directDebitsModel
+    "deserialize to a Direct debit model successfully for more than one direct debit" in {
+      multipleDirectDebitsJson.as[DirectDebits] shouldBe multipleDirectDebits
+    }
+
+    "serialize to Json successfully for one direct debit" in {
+      Json.toJson(singleDirectDebits) shouldBe singleDirectDebitsJson
+    }
+
+    "deserialize to a Direct debit model successfully one direct debit" in {
+      singleDirectDebitsJson.as[DirectDebits] shouldBe singleDirectDebits
+    }
+
+    "serialize to Json successfully when there are no direct debits" in {
+      Json.toJson(noDirectDebits) shouldBe noDirectDebitsJson
+    }
+
+    "deserialize to a Direct debit model successfully there are no direct debits" in {
+      noDirectDebitsJson.as[DirectDebits] shouldBe noDirectDebits
     }
 
   }

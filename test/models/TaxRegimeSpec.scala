@@ -17,7 +17,6 @@
 package models
 
 import base.SpecBase
-import play.api.libs.json.{JsValue, Json}
 
 class TaxRegimeSpec extends SpecBase {
 
