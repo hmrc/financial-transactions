@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.FinancialTransactionsService
 import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -46,7 +46,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
           case RegimeKeys.IT => retrieveFinancialTransactions(IncomeTaxRegime(idValue), queryParams)
           case _ =>
             Logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
-              "Invalid Tax Regime '$idType' received in request.")
+              "Invalid Tax Regime '$$idType' received in request.")
             Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
         }
     }

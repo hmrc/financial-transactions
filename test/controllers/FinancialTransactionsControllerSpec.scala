@@ -16,7 +16,7 @@
 
 package controllers
 
-import utils.TestConstants.fullFinancialTransactions
+import utils.TestConstants.{fullFinancialTransactions,multipleDirectDebits}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
@@ -207,7 +207,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
   "The GET FinancialTransactionsController.checkDirectDebitExists method" when {
 
-    val successResponse = Right(true)
+    val successResponse = Right(multipleDirectDebits)
     val badRequestSingleError = Left(ErrorResponse(Status.BAD_REQUEST, singleError))
     val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, multiError))
 
@@ -226,7 +226,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the financial transaction information" in {
-            jsonBodyOf(result) shouldBe Json.toJson(true)
+            jsonBodyOf(result) shouldBe Json.toJson(multipleDirectDebits)
           }
         }
 

@@ -23,8 +23,8 @@ import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 
 object DirectDebitCheckHttpParser extends ResponseHttpParsers {
 
-  implicit object DirectDebitCheckReads extends HttpReads[HttpGetResult[Boolean]] {
-    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[Boolean] = {
+  implicit object DirectDebitCheckReads extends HttpReads[HttpGetResult[DirectDebits]] {
+    override def read(method: String, url: String, response: HttpResponse): HttpGetResult[DirectDebits] = {
       response.status match {
         case OK =>
           response.json.validate[DirectDebits].fold(
@@ -36,7 +36,7 @@ object DirectDebitCheckHttpParser extends ResponseHttpParsers {
             valid => {
               Logger.debug(s"[DirectDebitCheckReads][read] DES Response: \n\n${response.json}")
               Logger.debug(s"[DirectDebitCheckReads][read] Direct Debits Model: \n\n$valid")
-              Right(valid.directDebitMandateFound)
+              Right(valid)
             }
           )
         case status if status >= 400 && status < 600 =>

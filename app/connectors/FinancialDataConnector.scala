@@ -20,12 +20,12 @@ import javax.inject.{Inject, Singleton}
 import config.MicroserviceAppConfig
 import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import connectors.httpParsers.FinancialTransactionsHttpParser._
-import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import play.api.http.Status.NOT_FOUND
 import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.play.bootstrap.http.HttpClient
+import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -60,7 +60,7 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   }
 
   def checkDirectDebitExists(vrn: String)
-                            (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[Boolean]] = {
+                            (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[DirectDebits]] = {
 
     val url = directDebitUrl(vrn)
     val desHC = headerCarrier.copy(authorization =Some(Authorization(s"Bearer ${appConfig.desToken}")))

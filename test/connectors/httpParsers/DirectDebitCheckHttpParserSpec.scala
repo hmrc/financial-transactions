@@ -22,6 +22,7 @@ import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
+import utils.TestConstants.{multipleDirectDebits, multipleDirectDebitsJson}
 
 class DirectDebitCheckHttpParserSpec extends SpecBase {
 
@@ -29,31 +30,9 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and matches expected Schema" should {
 
-      val httpResponse = HttpResponse(Status.OK, responseJson = Some(
-        Json.obj(
-          "directDebitMandateFound" -> true,
-          "directDebitDetails" -> Json.arr(
-            Json.obj(
-              "directDebitInstructionNumber" -> "000000001234567898",
-              "directDebitPlanType" -> "VPP",
-              "dateCreated" -> "2018-04-08",
-              "accountHolderName" -> "A PERSON",
-              "sortCode" -> "0000000",
-              "accountNumber" -> "000000001"
-            ),
-            Json.obj(
-              "directDebitInstructionNumber" -> "000000001234567898",
-              "directDebitPlanType" -> "VPP",
-              "dateCreated" -> "2018-04-08",
-              "accountHolderName" -> "ANOTHER PERSON",
-              "sortCode" -> "000000",
-              "accountNumber" -> "000000002"
-            )
-          )
-        )
-      ))
+      val httpResponse = HttpResponse(Status.OK, multipleDirectDebitsJson.toString)
 
-      val expected: Either[Nothing, Boolean] = Right(true)
+      val expected: Either[Nothing, DirectDebits] = Right(multipleDirectDebits)
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
@@ -65,7 +44,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK but the response is not as expected" should {
 
-      val httpResponse = HttpResponse(Status.OK, responseJson = Some(Json.obj("foo" -> "bar")))
+      val httpResponse = HttpResponse(Status.OK, Json.obj("foo" -> "bar").toString)
 
       val expected = Left(UnexpectedJsonFormat)
 
@@ -79,11 +58,10 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (single error)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST,
-        responseJson = Some(Json.obj(
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj(
           "code" -> "CODE",
           "reason" -> "ERROR MESSAGE"
-        ))
+        ).toString
       )
 
       val expected = Left(ErrorResponse(
@@ -104,8 +82,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (multiple errors)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST,
-        responseJson = Some(Json.obj(
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj(
           "failures" -> Json.arr(
             Json.obj(
               "code" -> "ERROR CODE 1",
@@ -116,7 +93,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
               "reason" -> "ERROR MESSAGE 2"
             )
           )
-        ))
+        ).toString
       )
 
       val expected = Left(ErrorResponse(
@@ -139,7 +116,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (Unexpected Json Returned)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, responseJson = Some(Json.obj("foo" -> "bar")))
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj("foo" -> "bar").toString)
 
       val expected = Left(UnexpectedJsonFormat)
 
@@ -153,7 +130,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (Bad Json Returned)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, responseString = Some("Banana"))
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, "Banana")
 
       val expected = Left(InvalidJsonResponse)
 
@@ -167,11 +144,10 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is 500 Internal Server Error" should {
 
-      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR,
-        responseJson = Some(Json.obj(
+      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, Json.obj(
           "code" -> "code",
           "reason" -> "message"
-        ))
+        ).toString
       )
 
       val expected = Left(ErrorResponse(
@@ -192,7 +168,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
     "the http response status is unexpected" should {
 
-      val httpResponse = HttpResponse(Status.SEE_OTHER)
+      val httpResponse = HttpResponse(Status.SEE_OTHER,"")
 
       val expected = Left(UnexpectedResponse)
 

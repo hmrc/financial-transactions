@@ -53,7 +53,7 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
 
   def checkDirectDebitExists(vrn: String)
                             (implicit headerCarrier: HeaderCarrier,
-                             ec: ExecutionContext): Future[Either[ErrorResponse, Boolean]] = {
+                             ec: ExecutionContext): Future[Either[ErrorResponse, DirectDebits]] = {
 
     Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions request")
 
@@ -63,7 +63,7 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
     financialDataConnector.checkDirectDebitExists(vrn).map {
       case success@Right(hasDirectDebit) =>
         Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions response")
-        auditingService.audit(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit))
+        auditingService.audit(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit.directDebitMandateFound))
         success
       case error@Left(_) => error
     }

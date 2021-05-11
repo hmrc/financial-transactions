@@ -17,7 +17,7 @@
 package mocks.services
 
 import connectors.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
-import models.{FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -47,8 +47,8 @@ trait MockFinancialTransactionsService extends UnitSpec with MockitoSugar with B
     ).thenReturn(Future.successful(response))
 
   def setupMockCheckDirectDebitExists(vrn: String)
-                                       (response: HttpGetResult[Boolean]):
-                            OngoingStubbing[Future[HttpGetResult[Boolean]]] =
+                                       (response: HttpGetResult[DirectDebits]):
+                            OngoingStubbing[Future[HttpGetResult[DirectDebits]]] =
     when(
       mockFinancialTransactionsService.checkDirectDebitExists(
         ArgumentMatchers.eq(vrn)

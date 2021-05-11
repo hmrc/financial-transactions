@@ -236,9 +236,9 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       "calling check direct debit exists with success response received" should {
 
-        "return a Boolean" in {
+        "return a that a direct debit was found" in {
           setupMockHttpGet(TestFinancialDataConnector.directDebitUrl(vrn = vrn))(successResponse)
-          val result: Future[FinancialTransactionsHttpParser.HttpGetResult[Boolean]] =
+          val result: Future[FinancialTransactionsHttpParser.HttpGetResult[DirectDebits]] =
             TestFinancialDataConnector.checkDirectDebitExists(vrn = vrn)
           await(result) shouldBe successResponse
         }
@@ -248,7 +248,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a Error model" in {
           setupMockHttpGet(TestFinancialDataConnector.directDebitUrl(vrn = vrn))(badRequestSingleError)
-          val result: Future[FinancialTransactionsHttpParser.HttpGetResult[Boolean]] =
+          val result: Future[FinancialTransactionsHttpParser.HttpGetResult[DirectDebits]] =
             TestFinancialDataConnector.checkDirectDebitExists(vrn = vrn)
           await(result) shouldBe badRequestSingleError
         }
@@ -258,7 +258,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
         "return a MultiError model" in {
           setupMockHttpGet(TestFinancialDataConnector.directDebitUrl(vrn = vrn))(badRequestMultiError)
-          val result: Future[FinancialTransactionsHttpParser.HttpGetResult[Boolean]] =
+          val result: Future[FinancialTransactionsHttpParser.HttpGetResult[DirectDebits]] =
             TestFinancialDataConnector.checkDirectDebitExists(vrn = vrn)
           await(result) shouldBe badRequestMultiError
         }
