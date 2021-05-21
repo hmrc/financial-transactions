@@ -80,7 +80,8 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
       detail = AuditExtensions.auditHeaderCarrier(hc).toAuditDetails(auditModel.detail: _*)
     )
 
-  def toDataEvent(appName: String, auditModel: ExtendedAuditModel, path: String)(implicit hc: HeaderCarrier): ExtendedDataEvent = {
+  def toDataEvent(appName: String, auditModel: ExtendedAuditModel, path: String)
+                 (implicit hc: HeaderCarrier): ExtendedDataEvent = {
 
     val details: JsValue =
       Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(auditModel.detail.as[JsObject])
@@ -93,5 +94,5 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
     )
   }
 
-  private def path(implicit hc: HeaderCarrier) = hc.headers.find(_._1 == REFERER).map(_._2).getOrElse("-")
+  private def path(implicit hc: HeaderCarrier) = hc.extraHeaders.find(_._1 == REFERER).map(_._2).getOrElse("-")
 }
