@@ -23,9 +23,7 @@ import connectors.httpParsers.FinancialTransactionsHttpParser._
 import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import play.api.http.Status.NOT_FOUND
 import play.api.Logger
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.http.logging.Authorization
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,15 +36,16 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   private[connectors] def directDebitUrl(vrn: String) =
     s"${appConfig.desUrl}/cross-regime/direct-debits/vatc/vrn/$vrn"
 
+  val desHeaders = Seq("Authorization" -> s"Bearer ${appConfig.desToken}", "Environment" -> appConfig.desEnvironment)
+
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
                       (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
     val url = financialDataUrl(regime)
-    val desHC = headerCarrier.copy(authorization =Some(Authorization(s"Bearer ${appConfig.desToken}")))
-      .withExtraHeaders("Environment" -> appConfig.desEnvironment)
+    val hc = headerCarrier.copy(authorization = None)
 
-    Logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHC\n QueryParams: $queryParameters")
-    http.GET(url, queryParameters.toSeqQueryParams)(FinancialTransactionsReads, desHC, ec).map {
+    Logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: $queryParameters")
+    http.GET(url, queryParameters.toSeqQueryParams, desHeaders)(FinancialTransactionsReads, hc, ec).map {
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(response) => response.status match {
         case NOT_FOUND =>
@@ -63,11 +62,10 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
                             (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[DirectDebits]] = {
 
     val url = directDebitUrl(vrn)
-    val desHC = headerCarrier.copy(authorization =Some(Authorization(s"Bearer ${appConfig.desToken}")))
-      .withExtraHeaders("Environment" -> appConfig.desEnvironment)
+    val hc = headerCarrier.copy(authorization = None)
 
-    Logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $url \nHeaders: $desHC\n Vrn: $vrn")
-    http.GET(url)(DirectDebitCheckReads, desHC, ec).map {
+    Logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $url \nHeaders: $desHeaders\n Vrn: $vrn")
+    http.GET(url, headers = desHeaders)(DirectDebitCheckReads, hc, ec).map {
       case directDebitStatus@Right(_) => directDebitStatus
       case error@Left(message) =>
         Logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
