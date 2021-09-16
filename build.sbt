@@ -45,7 +45,7 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
-    ScoverageKeys.coverageMinimum := 95,
+    ScoverageKeys.coverageMinimumStmtTotal := 95,
     ScoverageKeys.coverageHighlighting := true,
     ScoverageKeys.coverageFailOnMinimum := true
   )
@@ -53,18 +53,17 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "5.12.0",
+  "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "5.13.0",
   "com.typesafe.play" %% "play-json-joda" % "2.6.10"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.10.0-play-26" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.8" % scope,
+  "org.scalatest" %% "scalatest" % "3.1.4" % scope,
   "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.3" % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0" % scope,
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % "3.2.0" % scope,
-  "com.github.tomakehurst" % "wiremock-jre8" % "2.27.1" % scope,
+  "com.github.tomakehurst" % "wiremock-jre8" % "2.26.3" % scope,
   "org.jsoup" % "jsoup" % "1.12.1" % scope
 )
 

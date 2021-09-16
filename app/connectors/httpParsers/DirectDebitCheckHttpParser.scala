@@ -17,11 +17,11 @@
 package connectors.httpParsers
 
 import models.{DirectDebits, UnexpectedJsonFormat, UnexpectedResponse}
-import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil
 
-object DirectDebitCheckHttpParser extends ResponseHttpParsers {
+object DirectDebitCheckHttpParser extends ResponseHttpParsers with LoggerUtil {
 
   implicit object DirectDebitCheckReads extends HttpReads[HttpGetResult[DirectDebits]] {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[DirectDebits] = {
@@ -29,21 +29,21 @@ object DirectDebitCheckHttpParser extends ResponseHttpParsers {
         case OK =>
           response.json.validate[DirectDebits].fold(
             invalid => {
-              Logger.warn("[DirectDebitCheckReads][read] Json Error Parsing Successful DES Response")
-              Logger.debug(s"[DirectDebitCheckReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
+              logger.warn("[DirectDebitCheckReads][read] Json Error Parsing Successful DES Response")
+              logger.debug(s"[DirectDebitCheckReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
               Left(UnexpectedJsonFormat)
             },
             valid => {
-              Logger.debug(s"[DirectDebitCheckReads][read] DES Response: \n\n${response.json}")
-              Logger.debug(s"[DirectDebitCheckReads][read] Direct Debits Model: \n\n$valid")
+              logger.debug(s"[DirectDebitCheckReads][read] DES Response: \n\n${response.json}")
+              logger.debug(s"[DirectDebitCheckReads][read] Direct Debits Model: \n\n$valid")
               Right(valid)
             }
           )
         case status if status >= 400 && status < 600 =>
-          Logger.debug(s"[DirectDebitCheckReads][read] $status returned from DES")
+          logger.debug(s"[DirectDebitCheckReads][read] $status returned from DES")
           handleErrorResponse(response)
         case _ =>
-          Logger.debug(s"[DirectDebitCheckReads][read] Unexpected Response")
+          logger.debug(s"[DirectDebitCheckReads][read] Unexpected Response")
           Left(UnexpectedResponse)
       }
     }

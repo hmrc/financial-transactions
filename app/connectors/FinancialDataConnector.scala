@@ -22,13 +22,13 @@ import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import connectors.httpParsers.FinancialTransactionsHttpParser._
 import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
 import play.api.http.Status.NOT_FOUND
-import play.api.Logger
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) {
+class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
@@ -44,15 +44,15 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     val url = financialDataUrl(regime)
     val hc = headerCarrier.copy(authorization = None)
 
-    Logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: $queryParameters")
+    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: $queryParameters")
     http.GET(url, queryParameters.toSeqQueryParams, desHeaders)(FinancialTransactionsReads, hc, ec).map {
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(response) => response.status match {
         case NOT_FOUND =>
-          Logger.debug("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          logger.debug("[FinancialDataConnector][getFinancialData] Error received: " + response)
           error
         case _ =>
-          Logger.warn("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          logger.warn("[FinancialDataConnector][getFinancialData] Error received: " + response)
           error
       }
     }
@@ -64,11 +64,11 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     val url = directDebitUrl(vrn)
     val hc = headerCarrier.copy(authorization = None)
 
-    Logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $url \nHeaders: $desHeaders\n Vrn: $vrn")
+    logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $url \nHeaders: $desHeaders\n Vrn: $vrn")
     http.GET(url, headers = desHeaders)(DirectDebitCheckReads, hc, ec).map {
       case directDebitStatus@Right(_) => directDebitStatus
       case error@Left(message) =>
-        Logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
+        logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
         error
     }
   }

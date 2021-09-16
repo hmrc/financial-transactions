@@ -17,11 +17,11 @@
 package connectors.httpParsers
 
 import models.{FinancialTransactions, UnexpectedJsonFormat, UnexpectedResponse}
-import play.api.Logger
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
+import utils.LoggerUtil
 
-object FinancialTransactionsHttpParser extends ResponseHttpParsers {
+object FinancialTransactionsHttpParser extends ResponseHttpParsers with LoggerUtil {
 
   implicit object FinancialTransactionsReads extends HttpReads[HttpGetResult[FinancialTransactions]] {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactions] = {
@@ -29,21 +29,21 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers {
         case OK =>
           response.json.validate[FinancialTransactions].fold(
             invalid => {
-              Logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful DES Response")
-              Logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
+              logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful DES Response")
+              logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
               Left(UnexpectedJsonFormat)
             },
             valid => {
-              Logger.debug(s"[FinancialTransactionsReads][read] DES Response: \n\n${response.json}")
-              Logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
+              logger.debug(s"[FinancialTransactionsReads][read] DES Response: \n\n${response.json}")
+              logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
               Right(valid)
             }
           )
         case status if status >= 400 && status < 600 =>
-          Logger.debug(s"[FinancialTransactionsReads][read] $status returned from DES")
+          logger.debug(s"[FinancialTransactionsReads][read] $status returned from DES")
           handleErrorResponse(response)
         case _ =>
-          Logger.debug(s"[FinancialTransactionsReads][read] Unexpected Response")
+          logger.debug(s"[FinancialTransactionsReads][read] Unexpected Response")
           Left(UnexpectedResponse)
       }
     }
