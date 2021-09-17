@@ -20,15 +20,16 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
-import org.scalatest.BeforeAndAfterEach
 import org.scalatestplus.mockito.MockitoSugar
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpecLike
+import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
-import uk.gov.hmrc.play.test.UnitSpec
 
 import scala.concurrent.Future
 
-trait MockHttp extends UnitSpec with MockitoSugar with BeforeAndAfterEach {
+trait MockHttp extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
 
   val mockHttpGet: HttpClient = mock[HttpClient]
 

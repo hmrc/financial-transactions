@@ -17,14 +17,16 @@
 package handlers
 
 import base.SpecBase
-import models.{Error, FinancialTransactions}
+import models.FinancialTransactions
 import config.MicroserviceAppConfig
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import models.Error
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 
 class ErrorHandlerSpec extends SpecBase {
 
@@ -37,14 +39,14 @@ class ErrorHandlerSpec extends SpecBase {
       "Return a NOT_FOUND result" which {
 
         val request = FakeRequest("","/test/path")
-        lazy val result = await(TestErrorHandler.onClientError(request, Status.NOT_FOUND, "error"))
+        lazy val result = TestErrorHandler.onClientError(request, Status.NOT_FOUND, "error")
 
         "has the status NOT_FOUND (404)" in {
           status(result) shouldBe Status.NOT_FOUND
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error("NOT_FOUND", s"URI '${request.path}' not found"))
+          contentAsJson(result) shouldBe Json.toJson(Error("NOT_FOUND", s"URI '${request.path}' not found"))
         }
       }
 
@@ -55,14 +57,14 @@ class ErrorHandlerSpec extends SpecBase {
       "Return a BAD_REQUEST result" which {
 
         val request = FakeRequest("","/test/path")
-        lazy val result = await(TestErrorHandler.onClientError(request, Status.BAD_REQUEST, "Invalid Banana"))
+        lazy val result = TestErrorHandler.onClientError(request, Status.BAD_REQUEST, "Invalid Banana")
 
         "has the status BAD_REQUEST (400)" in {
           status(result) shouldBe Status.BAD_REQUEST
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error("BAD_REQUEST", s"Bad Request. Message: 'Invalid Banana'"))
+          contentAsJson(result) shouldBe Json.toJson(Error("BAD_REQUEST", s"Bad Request. Message: 'Invalid Banana'"))
         }
       }
 
@@ -73,14 +75,14 @@ class ErrorHandlerSpec extends SpecBase {
       "Return a PRECONDITION_FAILED result" which {
 
         val request = FakeRequest("","/test/path")
-        lazy val result = await(TestErrorHandler.onClientError(request, Status.PRECONDITION_FAILED, "Precondition Error"))
+        lazy val result = TestErrorHandler.onClientError(request, Status.PRECONDITION_FAILED, "Precondition models.Error")
 
         "has the status PRECONDITION_FAILED (412)" in {
           status(result) shouldBe Status.PRECONDITION_FAILED
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.PRECONDITION_FAILED.toString, "Precondition Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.PRECONDITION_FAILED.toString, "Precondition models.Error"))
         }
       }
     }
@@ -93,15 +95,15 @@ class ErrorHandlerSpec extends SpecBase {
       "Return a NOT_FOUND result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = new NotFoundException("Not Found Error")
-        lazy val result = await(TestErrorHandler.onServerError(request, error))
+        val error = new NotFoundException("Not Found models.Error")
+        lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status NOT_FOUND (404)" in {
           status(result) shouldBe Status.NOT_FOUND
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.NOT_FOUND.toString, s"Not Found Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.NOT_FOUND.toString, s"Not Found models.Error"))
         }
       }
 
@@ -113,14 +115,14 @@ class ErrorHandlerSpec extends SpecBase {
 
         val request = FakeRequest("","/test/path")
         val error = new BearerTokenExpired
-        lazy val result = await(TestErrorHandler.onServerError(request, error))
+        lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status UNAUTHORISED (401)" in {
           status(result) shouldBe Status.UNAUTHORIZED
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.UNAUTHORIZED.toString, s"Bearer token expired"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.UNAUTHORIZED.toString, s"Bearer token expired"))
         }
       }
 
@@ -132,14 +134,14 @@ class ErrorHandlerSpec extends SpecBase {
 
         val request = FakeRequest("","/test/path")
         val error = new JsValidationException("method", "/url", FinancialTransactions.getClass, "errors")
-        lazy val result = await(TestErrorHandler.onServerError(request, error))
+        lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status ISE (500)" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString,
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString,
             "method of '/url' returned invalid json. Attempting to convert to models.FinancialTransactions$ gave errors: errors"))
         }
       }
@@ -151,15 +153,15 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an ISE (500) result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = new RuntimeException("Runtime Error")
-        lazy val result = await(TestErrorHandler.onServerError(request, error))
+        val error = new RuntimeException("Runtime models.Error")
+        lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status ISE (500)" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, s"Runtime Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, s"Runtime models.Error"))
         }
       }
 
@@ -170,15 +172,15 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an Upstream4xxResponse result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = UpstreamErrorResponse("Upstream  400 Error", Status.BAD_REQUEST, Status.BAD_REQUEST)
-        lazy val result = await(TestErrorHandler.onServerError(request, error))
+        val error = UpstreamErrorResponse("Upstream  400 models.Error", Status.BAD_REQUEST, Status.BAD_REQUEST)
+        lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status BAD_REQUEST (400)" in {
           status(result) shouldBe Status.BAD_REQUEST
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.BAD_REQUEST.toString, "Upstream  400 Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.BAD_REQUEST.toString, "Upstream  400 models.Error"))
         }
       }
 
@@ -189,15 +191,15 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an Upstream5xxResponse result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = UpstreamErrorResponse("Upstream  500 Error", Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)
-        lazy val result = await(TestErrorHandler.onServerError(request, error))
+        val error = UpstreamErrorResponse("Upstream  500 models.Error", Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)
+        lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status BAD_REQUEST (400)" in {
           status(result) shouldBe Status.INTERNAL_SERVER_ERROR
         }
 
         "has the expected error response body" in {
-          jsonBodyOf(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, "Upstream  500 Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, "Upstream  500 models.Error"))
         }
       }
 

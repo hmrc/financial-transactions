@@ -73,12 +73,12 @@ object FinancialData {
     )))
   )
 
-  val singleErrorResponse: Error = Error("CODE","ERROR MESSAGE")
+  val singleErrorResponse: Error = models.Error("CODE","ERROR MESSAGE")
 
   val multiErrorModel: MultiError = MultiError(
     failures = Seq(
-      Error("CODE 1","ERROR MESSAGE 1"),
-      Error("CODE 2","ERROR MESSAGE 2")
+      models.Error("CODE 1","ERROR MESSAGE 1"),
+      models.Error("CODE 2","ERROR MESSAGE 2")
     )
   )
 }

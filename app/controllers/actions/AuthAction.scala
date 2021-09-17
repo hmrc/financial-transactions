@@ -16,10 +16,11 @@
 
 package controllers.actions
 
+import models.UnauthenticatedError
 import javax.inject.Singleton
 import auth.AuthenticatedRequest
 import com.google.inject.Inject
-import models.{ForbiddenError, UnauthenticatedError}
+import models.ForbiddenError
 import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Unauthorized}
 import play.api.mvc._
@@ -45,14 +46,14 @@ class AuthActionImpl @Inject()(val authorisedFunctions: AuthorisedFunctions, cc:
     authorisedFunctions.authorised().retrieve(Retrievals.externalId) {
       case Some (externalId) => block(AuthenticatedRequest(request, externalId))
       case _ =>
-        logger.debug("[AuthActionImpl][invokeBlock] Did not retrieve externalID, returning Unauthorised - Unauthenticated Error")
+        logger.debug("[AuthActionImpl][invokeBlock] Did not retrieve externalID, returning Unauthorised - Unauthenticated models.Error")
         Future.successful(Unauthorized(Json.toJson(UnauthenticatedError)))
     } recover {
       case _: NoActiveSession =>
-        logger.debug("[AuthActionImpl][invokeBlock] Request did not have an Active Session, returning Unauthorised - Unauthenticated Error")
+        logger.debug("[AuthActionImpl][invokeBlock] Request did not have an Active Session, returning Unauthorised - Unauthenticated models.Error")
         Unauthorized(Json.toJson(UnauthenticatedError))
       case _ =>
-        logger.debug("[AuthActionImpl][invokeBlock] Request has an active session but was not authorised, returning Forbidden - Not Authorised Error")
+        logger.debug("[AuthActionImpl][invokeBlock] Request has an active session but was not authorised, returning Forbidden - Not Authorised models.Error")
         Forbidden(Json.toJson(ForbiddenError))
     }
   }

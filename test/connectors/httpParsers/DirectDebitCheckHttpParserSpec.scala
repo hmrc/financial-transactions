@@ -50,7 +50,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return an models.UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
@@ -74,7 +74,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
-      "return a Error instance" in {
+      "return a models.Error instance" in {
         result shouldEqual expected
       }
 
@@ -108,7 +108,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
-      "return a MultiError" in {
+      "return a models.MultiError" in {
         result shouldEqual expected
       }
 
@@ -122,7 +122,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return an models.UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
@@ -136,13 +136,13 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return an models.UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
     }
 
-    "the http response status is 500 Internal Server Error" should {
+    "the http response status is 500 Internal Server models.Error" should {
 
       val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, Json.obj(
           "code" -> "code",
@@ -160,7 +160,7 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
-      "return an Internal Server Error" in {
+      "return an Internal Server models.Error" in {
         result shouldEqual expected
       }
 

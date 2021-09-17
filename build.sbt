@@ -64,7 +64,10 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
   "org.mockito" % "mockito-core" % "3.2.0" % scope,
   "com.github.tomakehurst" % "wiremock-jre8" % "2.26.3" % scope,
-  "org.jsoup" % "jsoup" % "1.12.1" % scope
+  "org.jsoup" % "jsoup" % "1.12.1" % scope,
+  "com.vladsch.flexmark" % "flexmark-all" % "0.36.8" % scope,
+  "org.scalamock"           %% "scalamock-scalatest-support"  % "3.6.0" % scope,
+  "org.scalatestplus"      %% "scalatestplus-mockito"    % "1.0.0-M2" % scope
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]) = {

@@ -24,6 +24,7 @@ import models.FinancialDataQueryParameters._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
 import utils.TestConstants.fullFinancialTransactions
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.Future
 
@@ -209,7 +210,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       "calling for a VAT user and a non-success response received, single error" should {
 
-        "return a Error model" in {
+        "return a models.Error model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(badRequestSingleError)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialDataQueryParameters())
@@ -219,7 +220,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       "calling for a VAT user and a non-success response received, multi error" should {
 
-        "return a MultiError model" in {
+        "return a models.MultiError model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(badRequestMultiError)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialDataQueryParameters())
@@ -246,7 +247,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       "calling the checkDirectDebitExist, single error" should {
 
-        "return a Error model" in {
+        "return a models.Error model" in {
           setupMockHttpGet(TestFinancialDataConnector.directDebitUrl(vrn = vrn))(badRequestSingleError)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[DirectDebits]] =
             TestFinancialDataConnector.checkDirectDebitExists(vrn = vrn)
@@ -256,7 +257,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       "calling the checkDirectDebitExist, multi error" should {
 
-        "return a MultiError model" in {
+        "return a models.MultiError model" in {
           setupMockHttpGet(TestFinancialDataConnector.directDebitUrl(vrn = vrn))(badRequestMultiError)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[DirectDebits]] =
             TestFinancialDataConnector.checkDirectDebitExists(vrn = vrn)

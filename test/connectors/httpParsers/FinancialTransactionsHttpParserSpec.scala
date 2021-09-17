@@ -50,7 +50,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return an models.UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
@@ -74,7 +74,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return a Error instance" in {
+      "return a models.Error instance" in {
         result shouldEqual expected
       }
 
@@ -108,7 +108,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return a MultiError" in {
+      "return a models.MultiError" in {
         result shouldEqual expected
       }
 
@@ -122,7 +122,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return an models.UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
@@ -136,7 +136,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return an models.UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 

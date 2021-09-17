@@ -49,10 +49,10 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(response) => response.status match {
         case NOT_FOUND =>
-          logger.debug("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          logger.debug("[FinancialDataConnector][getFinancialData] models.Error received: " + response)
           error
         case _ =>
-          logger.warn("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          logger.warn("[FinancialDataConnector][getFinancialData] models.Error received: " + response)
           error
       }
     }
@@ -68,7 +68,7 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     http.GET(url, headers = desHeaders)(DirectDebitCheckReads, hc, ec).map {
       case directDebitStatus@Right(_) => directDebitStatus
       case error@Left(message) =>
-        logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
+        logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES models.Error Received. Message: " + message)
         error
     }
   }

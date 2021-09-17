@@ -48,7 +48,7 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
         logger.debug("Splunk Audit Successful")
         Success
       case Failure(err, _) =>
-        logger.debug(s"Splunk Audit Error, message: $err")
+        logger.debug(s"Splunk Audit models.Error, message: $err")
         Failure(err)
       case Disabled =>
         logger.debug(s"Auditing Disabled")
@@ -64,7 +64,7 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
         logger.debug("Splunk Audit Successful")
         Success
       case Failure(err, _) =>
-        logger.debug(s"Splunk Audit Error, message: $err")
+        logger.debug(s"Splunk Audit models.Error, message: $err")
         Failure(err)
       case Disabled =>
         logger.debug(s"Auditing Disabled")

@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models.{DirectDebits, UnexpectedJsonFormat, UnexpectedResponse}
+import models.{DirectDebits, UnexpectedResponse, UnexpectedJsonFormat}
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil
@@ -29,8 +29,8 @@ object DirectDebitCheckHttpParser extends ResponseHttpParsers with LoggerUtil {
         case OK =>
           response.json.validate[DirectDebits].fold(
             invalid => {
-              logger.warn("[DirectDebitCheckReads][read] Json Error Parsing Successful DES Response")
-              logger.debug(s"[DirectDebitCheckReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
+              logger.warn("[DirectDebitCheckReads][read] Json models.Error Parsing Successful DES Response")
+              logger.debug(s"[DirectDebitCheckReads][read] DES Response: ${response.json}\nJson models.Errors: $invalid")
               Left(UnexpectedJsonFormat)
             },
             valid => {
