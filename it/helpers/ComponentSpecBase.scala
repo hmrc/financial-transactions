@@ -20,7 +20,6 @@ import binders.FinancialTransactionsBinders
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.servicemocks.AuthStub
 import models.FinancialDataQueryParameters
-import org.scalatest.matchers.should.Matchers
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -30,7 +29,7 @@ import play.api.{Application, Environment, Mode}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
-  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
+  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
 
   val mockHost = WiremockHelper.wiremockHost

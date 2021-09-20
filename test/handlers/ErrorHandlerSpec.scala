@@ -75,14 +75,14 @@ class ErrorHandlerSpec extends SpecBase {
       "Return a PRECONDITION_FAILED result" which {
 
         val request = FakeRequest("","/test/path")
-        lazy val result = TestErrorHandler.onClientError(request, Status.PRECONDITION_FAILED, "Precondition models.Error")
+        lazy val result = TestErrorHandler.onClientError(request, Status.PRECONDITION_FAILED, "Precondition Error")
 
         "has the status PRECONDITION_FAILED (412)" in {
           status(result) shouldBe Status.PRECONDITION_FAILED
         }
 
         "has the expected error response body" in {
-          contentAsJson(result) shouldBe Json.toJson(Error(Status.PRECONDITION_FAILED.toString, "Precondition models.Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.PRECONDITION_FAILED.toString, "Precondition Error"))
         }
       }
     }
@@ -95,7 +95,7 @@ class ErrorHandlerSpec extends SpecBase {
       "Return a NOT_FOUND result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = new NotFoundException("Not Found models.Error")
+        val error = new NotFoundException("Not Found Error")
         lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status NOT_FOUND (404)" in {
@@ -103,7 +103,7 @@ class ErrorHandlerSpec extends SpecBase {
         }
 
         "has the expected error response body" in {
-          contentAsJson(result) shouldBe Json.toJson(Error(Status.NOT_FOUND.toString, s"Not Found models.Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.NOT_FOUND.toString, s"Not Found Error"))
         }
       }
 
@@ -153,7 +153,7 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an ISE (500) result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = new RuntimeException("Runtime models.Error")
+        val error = new RuntimeException("Runtime Error")
         lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status ISE (500)" in {
@@ -161,7 +161,7 @@ class ErrorHandlerSpec extends SpecBase {
         }
 
         "has the expected error response body" in {
-          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, s"Runtime models.Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, s"Runtime Error"))
         }
       }
 
@@ -172,7 +172,7 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an Upstream4xxResponse result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = UpstreamErrorResponse("Upstream  400 models.Error", Status.BAD_REQUEST, Status.BAD_REQUEST)
+        val error = UpstreamErrorResponse("Upstream  400 Error", Status.BAD_REQUEST, Status.BAD_REQUEST)
         lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status BAD_REQUEST (400)" in {
@@ -180,7 +180,7 @@ class ErrorHandlerSpec extends SpecBase {
         }
 
         "has the expected error response body" in {
-          contentAsJson(result) shouldBe Json.toJson(Error(Status.BAD_REQUEST.toString, "Upstream  400 models.Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.BAD_REQUEST.toString, "Upstream  400 Error"))
         }
       }
 
@@ -191,7 +191,7 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an Upstream5xxResponse result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = UpstreamErrorResponse("Upstream  500 models.Error", Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)
+        val error = UpstreamErrorResponse("Upstream  500 Error", Status.INTERNAL_SERVER_ERROR, Status.INTERNAL_SERVER_ERROR)
         lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status BAD_REQUEST (400)" in {
@@ -199,7 +199,7 @@ class ErrorHandlerSpec extends SpecBase {
         }
 
         "has the expected error response body" in {
-          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, "Upstream  500 models.Error"))
+          contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString, "Upstream  500 Error"))
         }
       }
 

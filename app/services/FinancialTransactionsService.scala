@@ -18,7 +18,7 @@ package services
 
 import javax.inject.{Inject, Singleton}
 import audit.AuditingService
-import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel, FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
+import audit.models._
 import connectors.FinancialDataConnector
 import models._
 import uk.gov.hmrc.http.HeaderCarrier

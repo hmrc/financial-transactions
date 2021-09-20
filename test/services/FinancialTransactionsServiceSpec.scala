@@ -69,7 +69,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     }
 
-    "Return models.Error when a single error is returned from the Connector" in {
+    "Return Error when a single error is returned from the Connector" in {
 
       val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
 
@@ -98,7 +98,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     }
 
-    "Return a models.MultiError when multiple error responses are returned from the Connector" in {
+    "Return a MultiError when multiple error responses are returned from the Connector" in {
 
       val multiErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(Seq(
         Error("CODE 1", "REASON 1"),
@@ -152,7 +152,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     }
 
-    "CheckDirectDebitExists Return models.Error when a single error is returned from the Connector" in {
+    "CheckDirectDebitExists Return Error when a single error is returned from the Connector" in {
 
       val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
 
@@ -164,7 +164,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
     }
 
-    "CheckDirectDebitExists Return a models.MultiError when multiple error responses are returned from the Connector" in {
+    "CheckDirectDebitExists Return a MultiError when multiple error responses are returned from the Connector" in {
 
       val multiErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(Seq(
         Error("CODE 1", "REASON 1"),

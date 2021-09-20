@@ -46,14 +46,14 @@ class AuthActionImpl @Inject()(val authorisedFunctions: AuthorisedFunctions, cc:
     authorisedFunctions.authorised().retrieve(Retrievals.externalId) {
       case Some (externalId) => block(AuthenticatedRequest(request, externalId))
       case _ =>
-        logger.debug("[AuthActionImpl][invokeBlock] Did not retrieve externalID, returning Unauthorised - Unauthenticated models.Error")
+        logger.debug("[AuthActionImpl][invokeBlock] Did not retrieve externalID, returning Unauthorised - Unauthenticated Error")
         Future.successful(Unauthorized(Json.toJson(UnauthenticatedError)))
     } recover {
       case _: NoActiveSession =>
-        logger.debug("[AuthActionImpl][invokeBlock] Request did not have an Active Session, returning Unauthorised - Unauthenticated models.Error")
+        logger.debug("[AuthActionImpl][invokeBlock] Request did not have an Active Session, returning Unauthorised - Unauthenticated Error")
         Unauthorized(Json.toJson(UnauthenticatedError))
       case _ =>
-        logger.debug("[AuthActionImpl][invokeBlock] Request has an active session but was not authorised, returning Forbidden - Not Authorised models.Error")
+        logger.debug("[AuthActionImpl][invokeBlock] Request has an active session but was not authorised, returning Forbidden - Not Authorised Error")
         Forbidden(Json.toJson(ForbiddenError))
     }
   }

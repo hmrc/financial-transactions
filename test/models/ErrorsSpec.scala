@@ -22,25 +22,25 @@ import play.api.libs.json.{JsValue, Json}
 
 class ErrorsSpec extends SpecBase {
 
-  "The models.Error model" should {
+  "The Error model" should {
 
-    val desErrorModel = models.Error("CODE","ERROR MESSAGE")
+    val desErrorModel = Error("CODE","ERROR MESSAGE")
     val desErrorJson: JsValue = Json.obj("code"->"CODE","reason"->"ERROR MESSAGE")
 
     "Serialize to Json as expected" in {
       Json.toJson(desErrorModel) shouldBe desErrorJson
     }
 
-    "Deserialize to a models.Error as expected" in {
+    "Deserialize to a Error as expected" in {
       desErrorJson.as[Error] shouldBe desErrorModel
     }
   }
 
-  "The models.MultiError model" should {
+  "The MultiError model" should {
 
     val desMultiErrorModel = MultiError(failures = Seq(
-      models.Error("CODE 1","ERROR MESSAGE 1"),
-      models.Error("CODE 2","ERROR MESSAGE 2")
+      Error("CODE 1","ERROR MESSAGE 1"),
+      Error("CODE 2","ERROR MESSAGE 2")
     ))
     val desMultiErrorJson: JsValue =
       Json.obj("failures" ->
@@ -60,27 +60,27 @@ class ErrorsSpec extends SpecBase {
       Json.toJson(desMultiErrorModel) shouldBe desMultiErrorJson
     }
 
-    "Deserialize to a models.MultiError as expected" in {
+    "Deserialize to a MultiError as expected" in {
       desMultiErrorJson.as[MultiError] shouldBe desMultiErrorModel
     }
 
   }
 
-  "The models.UnexpectedResponse object" should {
+  "The UnexpectedResponse object" should {
 
     "Have the error status ISE (500)'" in {
       UnexpectedResponse.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
     "Have the error reason 'The downstream service responded with an unexpected response.'" in {
-      UnexpectedResponse.error shouldBe models.Error(
+      UnexpectedResponse.error shouldBe Error(
         code = "UNEXPECTED_DOWNSTREAM_ERROR",
         reason = "The downstream service responded with an unexpected response.")
     }
 
   }
 
-  "The models.InvalidJsonResponse object" should {
+  "The InvalidJsonResponse object" should {
 
     "Have the error status ISE (500)'" in {
       InvalidJsonResponse.status shouldBe Status.INTERNAL_SERVER_ERROR
@@ -94,21 +94,21 @@ class ErrorsSpec extends SpecBase {
 
   }
 
-  "The models.UnexpectedJsonFormat object" should {
+  "The UnexpectedJsonFormat object" should {
 
     "Have the error status ISE (500)'" in {
       UnexpectedJsonFormat.status shouldBe Status.INTERNAL_SERVER_ERROR
     }
 
     "Have the error reason 'The DES response did not match the expected format'" in {
-      UnexpectedJsonFormat.error shouldBe models.Error(
+      UnexpectedJsonFormat.error shouldBe Error(
         code = "UNEXPECTED_JSON_FORMAT",
         reason = "The downstream service responded with json which did not match the expected format.")
     }
 
   }
 
-  "The models.InvalidTaxRegime object" should {
+  "The InvalidTaxRegime object" should {
 
     "Have the error status BAD_REQUEST (400)'" in {
       InvalidTaxRegime.code shouldBe "INVALID_TAX_REGIME"
@@ -119,7 +119,7 @@ class ErrorsSpec extends SpecBase {
     }
   }
 
-  "The models.UnauthenticatedError object" should {
+  "The UnauthenticatedError object" should {
 
     "Have the error status UNAUTHORIZED (401)'" in {
       UnauthenticatedError.code shouldBe "UNAUTHENTICATED"
@@ -130,7 +130,7 @@ class ErrorsSpec extends SpecBase {
     }
   }
 
-  "The models.ForbiddenError object" should {
+  "The ForbiddenError object" should {
 
     "Have the error status FORBIDDEN (403)'" in {
       ForbiddenError.code shouldBe "UNAUTHORISED"

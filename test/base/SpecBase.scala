@@ -25,13 +25,12 @@ import play.api.inject.Injector
 import play.api.mvc.{AnyContentAsEmpty, ControllerComponents}
 import play.api.test.FakeRequest
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.MaterializerSupport
 import play.api.http.HeaderNames.REFERER
 import play.api.test.Helpers.stubControllerComponents
 
 import scala.concurrent.ExecutionContext
 
-trait SpecBase extends AnyWordSpecLike with Matchers with OptionValues with GuiceOneAppPerSuite with MaterializerSupport {
+trait SpecBase extends AnyWordSpecLike with Matchers with OptionValues with GuiceOneAppPerSuite {
 
   def injector: Injector = app.injector
 

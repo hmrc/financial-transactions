@@ -29,8 +29,8 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers with LoggerUt
         case OK =>
           response.json.validate[FinancialTransactions].fold(
             invalid => {
-              logger.warn("[FinancialTransactionsReads][read] Json models.Error Parsing Successful DES Response")
-              logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson models.Errors: $invalid")
+              logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful DES Response")
+              logger.debug(s"[FinancialTransactionsReads][read] DES Response: ${response.json}\nJson Errors: $invalid")
               Left(UnexpectedJsonFormat)
             },
             valid => {

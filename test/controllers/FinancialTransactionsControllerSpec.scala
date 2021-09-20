@@ -29,11 +29,11 @@ import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTransactionsService with
   MockMicroserviceAuthorisedFunctions {
 
-  val singleError: Error = models.Error(code = "CODE", reason = "ERROR MESSAGE")
+  val singleError: Error = Error(code = "CODE", reason = "ERROR MESSAGE")
   val multiError: MultiError = MultiError(
     failures = Seq(
-      models.Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
-      models.Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
+      Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
+      Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
     )
   )
 

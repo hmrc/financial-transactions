@@ -36,7 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 /**
   * Based on uk.gov.hmrc.play.bootstrap.http.JsonErrorHandler
-  * Custom Implementation has been provided to ensure the Response Format is always of models.Error or models.MultiError format.
+  * Custom Implementation has been provided to ensure the Response Format is always of Error or MultiError format.
   */
 
 @Singleton

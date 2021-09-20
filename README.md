@@ -169,7 +169,7 @@ The service currently supports the following Tax Regimes:
  }
 ```
 
-### Single-models.Error Response
+### Single-Error Response
 
 #### Definition
 
@@ -188,7 +188,7 @@ The service currently supports the following Tax Regimes:
 }
 ```
 
-### Multi-models.Error Response
+### Multi-Error Response
 
 #### Definition
 
@@ -215,7 +215,7 @@ The service currently supports the following Tax Regimes:
 ```
 
 
-### models.Error Responses
+### Error Responses
 
 #### Client Triggered Exceptions
 
@@ -302,7 +302,7 @@ The service responds with a simple true or false response depending on whether a
 true
 ```
 
-### Single-models.Error Response
+### Single-Error Response
 
 #### Definition
 
@@ -321,7 +321,7 @@ true
 }
 ```
 
-### Multi-models.Error Response
+### Multi-Error Response
 
 #### Definition
 
@@ -348,7 +348,7 @@ true
 ```
 
 
-### models.Error Responses
+### Error Responses
 
 #### Client Triggered Exceptions
 

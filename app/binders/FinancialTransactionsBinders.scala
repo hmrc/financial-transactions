@@ -45,7 +45,7 @@ object FinancialTransactionsBinders {
           case _ => (bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindCalculateAccruedInterest, bindCustomerPaymentInformation) match {
             case (Right(from), Right(to), Right(onlyOpenItems), Right(includeLocks), Right(calculateAccruedInterest), Right(customerPaymentInfo)) =>
               Some(Right(FinancialDataQueryParameters(from, to, onlyOpenItems, includeLocks, calculateAccruedInterest, customerPaymentInfo)))
-            case _ => throw new RuntimeException("Unexpected Runtime models.Error when Parsing/Binding Query Parameters")
+            case _ => throw new RuntimeException("Unexpected Runtime Error when Parsing/Binding Query Parameters")
           }
         }
       }
