@@ -16,15 +16,15 @@
 
 package services
 
-import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel,
-  FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
+import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel, FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
 import base.SpecBase
 import mocks.audit.MockAuditingService
 import mocks.connectors.MockFinancialDataConnector
 import models._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.{fullFinancialTransactions,multipleDirectDebits}
+import utils.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector with MockAuditingService {
 

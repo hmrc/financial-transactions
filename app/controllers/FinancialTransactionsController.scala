@@ -17,16 +17,15 @@
 package controllers
 
 import javax.inject.{Inject, Singleton}
-
 import config.RegimeKeys
 import controllers.actions.AuthAction
 import models._
-import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.FinancialTransactionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import utils.LoggerUtil
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
@@ -34,7 +33,7 @@ import scala.concurrent.Future
 @Singleton
 class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
                                                 val financialTransactionsService: FinancialTransactionsService,
-                                                cc: ControllerComponents) extends BackendController(cc) {
+                                                cc: ControllerComponents) extends BackendController(cc) with LoggerUtil {
 
   def getFinancialTransactions(idType: String,
                                idValue: String,
@@ -45,7 +44,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
           case RegimeKeys.VAT => retrieveFinancialTransactions(VatRegime(idValue), queryParams)
           case RegimeKeys.IT => retrieveFinancialTransactions(IncomeTaxRegime(idValue), queryParams)
           case _ =>
-            Logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
+            logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
               "Invalid Tax Regime '$$idType' received in request.")
             Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
         }
@@ -53,7 +52,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
 
   private def retrieveFinancialTransactions(regime: TaxRegime, queryParams: FinancialDataQueryParameters)
                                            (implicit hc: HeaderCarrier) = {
-    Logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactions] " +
+    logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactions] " +
       "Calling FinancialTransactionsService.getFinancialTransactions")
     financialTransactionsService.getFinancialTransactions(regime, queryParams).map {
       case _@Right(financialTransactions) => Ok(Json.toJson(financialTransactions))
@@ -67,7 +66,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
   def checkDirectDebitExists(vrn: String): Action[AnyContent] =
     authenticate.async {
       implicit authorisedUser =>
-        Logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] " +
+        logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] " +
           "Calling FinancialTransactionsService.checkDirectDebitExists")
         financialTransactionsService.checkDirectDebitExists(vrn).map {
           case _@Right(directDebitExists) =>

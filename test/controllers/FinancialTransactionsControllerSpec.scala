@@ -16,7 +16,7 @@
 
 package controllers
 
-import utils.TestConstants.{fullFinancialTransactions,multipleDirectDebits}
+import utils.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
@@ -24,6 +24,7 @@ import mocks.services.MockFinancialTransactionsService
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json
+import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 
 class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTransactionsService with
   MockMicroserviceAuthorisedFunctions {
@@ -58,9 +59,9 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a successful response from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
             regimeType, vrn, FinancialDataQueryParameters()
-          )(fakeRequest))
+          )(fakeRequest)
 
           "return a status of 200 (OK)" in {
             setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(successResponse)
@@ -68,16 +69,16 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the financial transaction information" in {
-            jsonBodyOf(result) shouldBe Json.toJson(fullFinancialTransactions)
+            contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions)
           }
 
         }
 
         "for a bad request with single error from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
             regimeType, vrn, FinancialDataQueryParameters()
-          )(fakeRequest))
+          )(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
             setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(badRequestSingleError)
@@ -86,15 +87,15 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
           "return a json body with the single error message" in {
 
-            jsonBodyOf(result) shouldBe Json.toJson(singleError)
+            contentAsJson(result) shouldBe Json.toJson(singleError)
           }
         }
 
         "for a bad request with multiple errors from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
             regimeType, vrn, FinancialDataQueryParameters()
-          )(fakeRequest))
+          )(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
             setupMockGetFinancialTransactions(vatRegime, FinancialDataQueryParameters())(badRequestMultiError)
@@ -102,7 +103,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the multiple error messages" in {
-            jsonBodyOf(result) shouldBe Json.toJson(multiError)
+            contentAsJson(result) shouldBe Json.toJson(multiError)
           }
         }
 
@@ -116,9 +117,9 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a successful response from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
             regimeType, mtditid, FinancialDataQueryParameters()
-          )(fakeRequest))
+          )(fakeRequest)
 
           "return a status of 200 (OK)" in {
             setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(successResponse)
@@ -126,16 +127,16 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the financial transaction information" in {
-            jsonBodyOf(result) shouldBe Json.toJson(fullFinancialTransactions)
+            contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions)
           }
 
         }
 
         "for a bad request with single error from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
             regimeType, mtditid, FinancialDataQueryParameters()
-          )(fakeRequest))
+          )(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
             setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(badRequestSingleError)
@@ -144,15 +145,15 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
           "return a json body with the single error message" in {
 
-            jsonBodyOf(result) shouldBe Json.toJson(singleError)
+            contentAsJson(result) shouldBe Json.toJson(singleError)
           }
         }
 
         "for a bad request with multiple errors from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
             regimeType, mtditid, FinancialDataQueryParameters()
-          )(fakeRequest))
+          )(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
             setupMockGetFinancialTransactions(incomeTaxRegime, FinancialDataQueryParameters())(badRequestMultiError)
@@ -161,7 +162,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
           "return a json body with the multiple error messages" in {
 
-            jsonBodyOf(result) shouldBe Json.toJson(multiError)
+            contentAsJson(result) shouldBe Json.toJson(multiError)
           }
         }
 
@@ -172,16 +173,16 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
         val regimeType = "BANANA"
         val id = "123456"
 
-        lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+        lazy val result = TestFinancialTransactionController.getFinancialTransactions(
           regimeType, id, FinancialDataQueryParameters()
-        )(fakeRequest))
+        )(fakeRequest)
 
         "return a status of 400 (BAD_REQUEST)" in {
           status(result) shouldBe Status.BAD_REQUEST
         }
 
         "return a json body with an Invalid Tax Regime message" in {
-          jsonBodyOf(result) shouldBe Json.toJson(InvalidTaxRegime)
+          contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
         }
       }
     }
@@ -193,9 +194,9 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
       "Return an UNAUTHORISED response" which {
 
-        lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+        lazy val result = TestFinancialTransactionController.getFinancialTransactions(
           regimeType, id, FinancialDataQueryParameters()
-        )(fakeRequest))
+        )(fakeRequest)
 
         "has status UNAUTHORISED (401)" in {
           setupMockAuthorisationException()
@@ -218,7 +219,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
         "for a successful response from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest))
+          lazy val result = TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest)
 
           "return a status of 200 (OK)" in {
             setupMockCheckDirectDebitExists(vrn)(successResponse)
@@ -226,13 +227,13 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the financial transaction information" in {
-            jsonBodyOf(result) shouldBe Json.toJson(multipleDirectDebits)
+            contentAsJson(result) shouldBe Json.toJson(multipleDirectDebits)
           }
         }
 
         "checkDirectDebitExists for a bad request with single error from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest))
+          lazy val result = TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
             setupMockCheckDirectDebitExists(vrn)(badRequestSingleError)
@@ -241,13 +242,13 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
           "return a json body with the single error message" in {
 
-            jsonBodyOf(result) shouldBe Json.toJson(singleError)
+            contentAsJson(result) shouldBe Json.toJson(singleError)
           }
         }
 
         "checkDirectDebitExists for a bad request with multiple errors from the FinancialTransactionsService" should {
 
-          lazy val result = await(TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest))
+          lazy val result = TestFinancialTransactionController.checkDirectDebitExists(vrn)(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
             setupMockCheckDirectDebitExists(vrn)(badRequestMultiError)
@@ -255,7 +256,7 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
           }
 
           "return a json body with the multiple error messages" in {
-            jsonBodyOf(result) shouldBe Json.toJson(multiError)
+            contentAsJson(result) shouldBe Json.toJson(multiError)
           }
         }
       }
@@ -268,9 +269,9 @@ class FinancialTransactionsControllerSpec extends SpecBase with MockFinancialTra
 
       "Return an UNAUTHORISED response" which {
 
-        lazy val result = await(TestFinancialTransactionController.getFinancialTransactions(
+        lazy val result = TestFinancialTransactionController.getFinancialTransactions(
           regimeType, id, FinancialDataQueryParameters()
-        )(fakeRequest))
+        )(fakeRequest)
 
         "has status UNAUTHORISED (401)" in {
           setupMockAuthorisationException()

@@ -18,32 +18,31 @@ package services
 
 import javax.inject.{Inject, Singleton}
 import audit.AuditingService
-import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel,
-  FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
+import audit.models._
 import connectors.FinancialDataConnector
 import models._
-import play.api.Logger
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialTransactionsService @Inject()(val financialDataConnector: FinancialDataConnector,
-                                             val auditingService: AuditingService) {
+                                             val auditingService: AuditingService) extends LoggerUtil {
 
   def getFinancialTransactions(regime: TaxRegime,
                                queryParameters: FinancialDataQueryParameters)
                               (implicit headerCarrier: HeaderCarrier,
                                ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
 
-    Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions request")
+    logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions request")
     auditingService.audit(FinancialTransactionsRequestAuditModel(regime, queryParameters))
 
-    Logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +
+    logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +
       s"Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
     financialDataConnector.getFinancialData(regime, queryParameters).map {
       case success@Right(financialTransactions) =>
-        Logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions response")
+        logger.debug(s"[FinancialTransactionsService][getFinancialTransactions] Auditing Financial Transactions response")
         auditingService.audit(FinancialTransactionsResponseAuditModel(regime, financialTransactions))
         success
       case error@Left(_) => error
@@ -55,14 +54,14 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
                             (implicit headerCarrier: HeaderCarrier,
                              ec: ExecutionContext): Future[Either[ErrorResponse, DirectDebits]] = {
 
-    Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions request")
+    logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions request")
 
     auditingService.audit(DirectDebitCheckRequestAuditModel(vrn))
 
-    Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Calling directDebitConnector with vrn: $vrn")
+    logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Calling directDebitConnector with vrn: $vrn")
     financialDataConnector.checkDirectDebitExists(vrn).map {
       case success@Right(hasDirectDebit) =>
-        Logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions response")
+        logger.debug(s"[FinancialTransactionsService][checkDirectDebitExists] Auditing Financial Transactions response")
         auditingService.audit(DirectDebitsCheckResponseAuditModel(vrn, hasDirectDebit.directDebitMandateFound))
         success
       case error@Left(_) => error

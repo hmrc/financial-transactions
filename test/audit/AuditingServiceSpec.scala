@@ -23,6 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
 import uk.gov.hmrc.play.audit.model.{DataEvent, ExtendedDataEvent}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 class AuditingServiceSpec extends SpecBase with MockAuditingConnector {
 

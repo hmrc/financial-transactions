@@ -39,12 +39,12 @@ case class ErrorResponse(status: Int, error: Errors)
 object UnauthenticatedError extends Error(
   code = "UNAUTHENTICATED",
   reason = "Not authenticated"
-)
+){implicit val format: Format[UnauthenticatedError.type] = Json.format[UnauthenticatedError.type]}
 
 object ForbiddenError extends Error(
   code = "UNAUTHORISED",
   reason = "Not authorised"
-)
+){implicit val format: Format[ForbiddenError.type] = Json.format[ForbiddenError.type]}
 
 object InvalidJsonResponse extends ErrorResponse(
   status = Status.INTERNAL_SERVER_ERROR,
@@ -73,4 +73,4 @@ object UnexpectedResponse extends ErrorResponse(
 object InvalidTaxRegime extends Error(
   code = "INVALID_TAX_REGIME",
   reason = "The supplied Tax Regime is invalid."
-)
+){implicit val format: Format[InvalidTaxRegime.type] = Json.format[InvalidTaxRegime.type]}

@@ -26,9 +26,10 @@ import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
-  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience with Matchers
+  with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience
   with WiremockHelper with BeforeAndAfterEach with BeforeAndAfterAll with Eventually {
 
   val mockHost = WiremockHelper.wiremockHost

@@ -25,12 +25,12 @@ import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json
 import play.api.mvc.Results._
 import play.api.mvc.{RequestHeader, Result}
-import play.api.Logger
 import uk.gov.hmrc.auth.core.AuthorisationException
 import uk.gov.hmrc.http._
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import uk.gov.hmrc.play.bootstrap.config.HttpAuditEvent
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -42,7 +42,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class ErrorHandler @Inject()(val appConfig: MicroserviceAppConfig,
                              auditConnector: AuditConnector)
-                            (implicit ec: ExecutionContext) extends HttpErrorHandler with HttpAuditEvent {
+                            (implicit ec: ExecutionContext) extends HttpErrorHandler with HttpAuditEvent with LoggerUtil {
 
   override def onClientError(request: RequestHeader, statusCode: Int, message: String): Future[Result] = {
 
@@ -64,7 +64,7 @@ class ErrorHandler @Inject()(val appConfig: MicroserviceAppConfig,
   override def onServerError(request: RequestHeader, ex: Throwable): Future[Result] = {
     implicit val headerCarrier: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-    Logger.error(s"! Internal server error, for (${request.method}) [${request.uri}] -> ", ex)
+    logger.error(s"! Internal server error, for (${request.method}) [${request.uri}] -> ", ex)
 
     val code = ex match {
       case _: NotFoundException => "ResourceNotFound"
