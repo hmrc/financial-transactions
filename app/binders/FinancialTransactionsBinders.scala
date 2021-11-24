@@ -27,26 +27,24 @@ import scala.util.{Failure, Success, Try}
 
 object FinancialTransactionsBinders {
 
-  implicit def financialDataQueryBinder(implicit boolBinder: QueryStringBindable[Boolean],
-                                        stringBinder: QueryStringBindable[String]): QueryStringBindable[FinancialDataQueryParameters] = {
+  implicit def financialDataQueryBinder: QueryStringBindable[FinancialDataQueryParameters] = {
     new QueryStringBindable[FinancialDataQueryParameters] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, FinancialDataQueryParameters]] = {
         val bindFrom = dateBind(dateFromKey, params)
         val bindTo = dateBind(dateToKey, params)
         val bindOnlyOpenItems = boolBind(onlyOpenItemsKey, params)
         val bindIncludeLocks = boolBind(includeLocksKey, params)
-        val bindCalculateAccruedInterest = boolBind(calculateAccruedInterestKey, params)
-        val bindCustomerPaymentInformation = boolBind(customerPaymentInformationKey, params)
+        val bindInterest = boolBind(calculateAccruedInterestKey, params)
+        val bindPaymentInfo = boolBind(customerPaymentInformationKey, params)
 
-        val queryParams = Seq(bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindCalculateAccruedInterest, bindCustomerPaymentInformation)
+        val queryParams = (bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindInterest, bindPaymentInfo)
+        val seqParams = Seq(bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindInterest, bindPaymentInfo)
 
-        queryParams.collect { case _@Left(errorMessage) => errorMessage } match {
-          case x if x.nonEmpty => Some(Left(x.mkString(", "))) //Return the sequence of errors as a single concatenated string
-          case _ => (bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindCalculateAccruedInterest, bindCustomerPaymentInformation) match {
-            case (Right(from), Right(to), Right(onlyOpenItems), Right(includeLocks), Right(calculateAccruedInterest), Right(customerPaymentInfo)) =>
-              Some(Right(FinancialDataQueryParameters(from, to, onlyOpenItems, includeLocks, calculateAccruedInterest, customerPaymentInfo)))
-            case _ => throw new RuntimeException("Unexpected Runtime Error when Parsing/Binding Query Parameters")
-          }
+        queryParams match {
+          case (Right(from), Right(to), Right(openItems), Right(includeLocks), Right(interest), Right(paymentInfo)) =>
+            Some(Right(FinancialDataQueryParameters(from, to, openItems, includeLocks, interest, paymentInfo)))
+          case _ =>
+            Some(Left(seqParams.collect{ case _@Left(errorMessage) => errorMessage }.mkString(", ")))
         }
       }
 

@@ -25,7 +25,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
   "The FinancialTransactionsBinder.financialDataQueryBinder.bind method" should {
 
-    "If no QueryParameters are passed" should {
+    "if no QueryParameters are passed" should {
 
       val queryParams: Map[String, Seq[String]] = Map("" -> Seq())
 
@@ -39,7 +39,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
     }
 
-    "If a dateFrom query parameter is passed" which {
+    "if a dateFrom query parameter is passed" which {
 
       "is formatted correctly" should {
 
@@ -69,7 +69,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
     }
 
-    "If a dateTo query parameter is passed" which {
+    "if a dateTo query parameter is passed" which {
 
       "is formatted correctly" should {
 
@@ -99,7 +99,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
     }
 
-    "If a onlyOpenItems query parameter is passed" which {
+    "if a onlyOpenItems query parameter is passed" which {
 
       "is formatted correctly" should {
 
@@ -128,7 +128,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
       }
     }
 
-    "If a includeLocks query parameter is passed" which {
+    "if a includeLocks query parameter is passed" which {
 
       "is formatted correctly" should {
 
@@ -157,7 +157,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
       }
     }
 
-    "If a calculateAccruedInterest query parameter is passed" which {
+    "if a calculateAccruedInterest query parameter is passed" which {
 
       "is formatted correctly" should {
 
@@ -186,7 +186,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
       }
     }
 
-    "If a customerPaymentInformation query parameter is passed" which {
+    "if a customerPaymentInformation query parameter is passed" which {
 
       "is formatted correctly" should {
 
@@ -215,7 +215,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
       }
     }
 
-    "If a all query parameters are passed" which {
+    "if a all query parameters are passed" which {
 
       "are formatted correctly" should {
 
@@ -273,6 +273,17 @@ class FinancialTransactionsBindersSpec extends SpecBase {
       }
     }
 
-  }
+    "if an unrecognised query parameter is passed" should {
 
+      val queryParams: Map[String, Seq[String]] = Map("unrecognisedDateParam" -> Seq("2018-01-01"))
+
+      "ignore it and return an empty FinancialDataQueryParameters instance" in {
+
+        val expected = Some(Right(FinancialDataQueryParameters()))
+        val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
+
+        actual shouldBe expected
+      }
+    }
+  }
 }
