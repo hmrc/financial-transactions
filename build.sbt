@@ -17,10 +17,8 @@
 import play.core.PlayVersion
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings._
-import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
-import uk.gov.hmrc.versioning.SbtGitVersioning
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName: String = "financial-transactions"
@@ -36,7 +34,6 @@ lazy val coverageSettings: Seq[Setting[_]] = {
     "<empty>",
     "com.kenshoo.play.metrics.*",
     "Reverse.*",
-    "uk.gov.hmrc.BuildInfo",
     "app.*",
     "prod.*",
     "config.*",
@@ -53,8 +50,8 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "5.13.0",
-  "com.typesafe.play" %% "play-json-joda" % "2.6.10"
+  "uk.gov.hmrc" %% "bootstrap-backend-play-28" % "5.16.0",
+  "com.typesafe.play" %% "play-json-joda" % "2.9.2"
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(

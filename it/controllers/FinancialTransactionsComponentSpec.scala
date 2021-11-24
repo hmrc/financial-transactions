@@ -27,12 +27,12 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
   "Sending a request to /financial-transactions/:regime/:identifier (FinancialTransactions controller)" when {
 
-    "Requesting Income Tax transactions" should {
+    "requesting Income Tax transactions" when {
 
       lazy val mtditid = "XAIT000000123456"
       lazy val incomeTaxRegime = IncomeTaxRegime(mtditid)
 
-      "authorised with a valid request with no query parameters and a success response" should {
+      "a successful response is returned by the API" should {
 
         lazy val queryParameters = FinancialDataQueryParameters()
 
@@ -57,7 +57,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
         }
       }
 
-      "authorised with a valid request with no query parameters and an error response" should {
+      "a bad request response is returned by the API, containing one error" should {
 
         lazy val queryParameters = FinancialDataQueryParameters()
 
@@ -82,7 +82,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
         }
       }
 
-      "authorised with a valid request with no query parameters and a multi error response" should {
+      "a bad request response is returned by the API, containing multiple errors" should {
 
         lazy val queryParameters = FinancialDataQueryParameters()
 
@@ -108,7 +108,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
       }
 
 
-      "unauthorised" should {
+      "the request is unauthorised" should {
 
         "return an FORBIDDEN response" in {
 
@@ -124,12 +124,12 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
       }
     }
 
-    "Requesting VAT transactions" should {
+    "requesting VAT transactions" when {
 
       lazy val vrn = "123456"
       lazy val vatRegime = VatRegime(vrn)
 
-      "authorised with a valid request with no query parameters and a success response" should {
+      "a successful response is returned by the API" should {
 
         lazy val queryParameters = FinancialDataQueryParameters()
 
@@ -140,7 +140,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
           And("I wiremock stub a successful Get Financial Data response")
           DesFinancialDataStub.stubGetFinancialData(vatRegime, queryParameters)(OK, Json.toJson(FinancialData.successResponse))
 
-          When(s"I call GET /financial-transactions/it/$vrn")
+          When(s"I call GET /financial-transactions/vat/$vrn")
           val res = FinancialTransactions.getFinancialTransactions("vat", vrn, queryParameters)
 
           DesFinancialDataStub.verifyGetDesBusinessDetails(vatRegime, queryParameters)
@@ -154,7 +154,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
         }
       }
 
-      "authorised with a valid request with no query parameters and an error response" should {
+      "a bad request response is returned by the API, containing one error" should {
 
         lazy val queryParameters = FinancialDataQueryParameters()
 
@@ -165,7 +165,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
           And("I wiremock stub a successful Get Financial Data response")
           DesFinancialDataStub.stubGetFinancialData(vatRegime, queryParameters)(BAD_REQUEST, Json.toJson(FinancialData.singleErrorResponse))
 
-          When(s"I call GET /financial-transactions/it/$vrn")
+          When(s"I call GET /financial-transactions/vat/$vrn")
           val res = FinancialTransactions.getFinancialTransactions("vat", vrn, queryParameters)
 
           DesFinancialDataStub.verifyGetDesBusinessDetails(vatRegime, queryParameters)
@@ -179,7 +179,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
         }
       }
 
-      "authorised with a valid request with no query parameters and a multi error response" should {
+      "a bad request response is returned by the API, containing multiple errors" should {
 
         lazy val queryParameters = FinancialDataQueryParameters()
 
@@ -190,7 +190,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
           And("I wiremock stub a successful Get Financial Data response")
           DesFinancialDataStub.stubGetFinancialData(vatRegime, queryParameters)(BAD_REQUEST, Json.toJson(FinancialData.multiErrorModel))
 
-          When(s"I call GET /financial-transactions/it/$vrn")
+          When(s"I call GET /financial-transactions/vat/$vrn")
           val res = FinancialTransactions.getFinancialTransactions("vat", vrn, queryParameters)
 
           DesFinancialDataStub.verifyGetDesBusinessDetails(vatRegime, queryParameters)
@@ -203,15 +203,14 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
           )
         }
       }
-
-
-      "unauthorised" should {
+      
+      "the request is unauthorised" should {
 
         "return an FORBIDDEN response" in {
 
           isAuthorised(false)
 
-          When(s"I call GET /financial-transactions/it/$vrn")
+          When(s"I call GET /financial-transactions/vat/$vrn")
           val res = FinancialTransactions.getFinancialTransactions("vat", vrn, FinancialDataQueryParameters())
 
           res should have(
