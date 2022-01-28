@@ -30,7 +30,7 @@ class FeaturesSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter
     features.useApi1811(false)
   }
 
-  "The Auth Feature" should {
+  "A feature" should {
 
     "return its current state" in {
       features.useApi1811() mustBe false
