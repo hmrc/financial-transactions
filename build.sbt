@@ -83,10 +83,9 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     PlayKeys.playDefaultPort := 9085,
-    scalaVersion := "2.12.14",
+    scalaVersion := "2.12.15",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     routesImport += "binders.FinancialTransactionsBinders._",
     routesGenerator := InjectedRoutesGenerator
   )
