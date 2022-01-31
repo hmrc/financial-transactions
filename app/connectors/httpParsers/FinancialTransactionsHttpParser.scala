@@ -16,7 +16,8 @@
 
 package connectors.httpParsers
 
-import models.{FinancialTransactions, UnexpectedJsonFormat, UnexpectedResponse}
+import models.API1166.FinancialTransactions
+import models.API1166.{UnexpectedJsonFormat, UnexpectedResponse}
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil

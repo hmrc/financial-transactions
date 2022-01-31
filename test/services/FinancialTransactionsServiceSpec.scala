@@ -16,10 +16,11 @@
 
 package services
 
-import audit.models.{DirectDebitCheckRequestAuditModel, DirectDebitsCheckResponseAuditModel, FinancialTransactionsRequestAuditModel, FinancialTransactionsResponseAuditModel}
+import audit.models._
 import base.SpecBase
 import mocks.audit.MockAuditingService
 import mocks.connectors.MockFinancialDataConnector
+import models.API1166._
 import models._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._

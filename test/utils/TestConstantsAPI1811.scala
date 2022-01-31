@@ -16,12 +16,12 @@
 
 package utils
 
-import models.API1166.{FinancialTransactions, SubItem, Transaction}
-import models.{DirectDebitDetail, DirectDebits}
+import models.API1811.FinancialDataQueryParameters._
 import play.api.libs.json.{JsObject, Json}
+import models.API1811.{FinancialDataQueryParameters, FinancialTransactions, SubItem, Transaction}
 import utils.ImplicitDateFormatter._
 
-object TestConstants {
+object TestConstantsAPI1811 {
 
   val fullSubItem: SubItem = SubItem(
     subItem = Some("000"),
@@ -119,65 +119,48 @@ object TestConstants {
     "items" -> Json.arr(fullSubItemJson)
   )
 
-  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
-    idType = Some("MTDBSA"),
-    idNumber = Some("XQIT00000000001"),
-    regimeType = Some("ITSA"),
-    processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Some(Seq(fullTransaction))
-  )
-
   val fullFinancialTransactionsJson: JsObject = Json.obj(
-    "idType" -> "MTDBSA",
-    "idNumber" -> "XQIT00000000001",
-    "regimeType" -> "ITSA",
-    "processingDate" -> "2017-03-07T22:55:56.987Z",
     "financialTransactions" -> Json.arr(fullTransactionJson)
   )
 
-  val fullDirectDebitDetail: DirectDebitDetail = DirectDebitDetail(
-    directDebitInstructionNumber = "000000001234567898",
-    directDebitPlanType = "VPP",
-    dateCreated = "2018-04-08",
-    accountHolderName = "A PERSON",
-    sortCode = "0000000",
-    accountNumber = "000000001"
+  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
+    financialTransactions = Some(Seq(fullTransaction))
   )
 
-  val fullDirectDebitDetailJson: JsObject = Json.obj(
-    "directDebitInstructionNumber" -> "000000001234567898",
-    "directDebitPlanType" -> "VPP",
-    "dateCreated" -> "2018-04-08",
-    "accountHolderName" -> "A PERSON",
-    "sortCode" -> "0000000",
-    "accountNumber" -> "000000001"
+  val financialDataQueryParamsDefault = Seq(
+    onlyOpenItemsKey -> "false",
+    includeLocksKey -> "true",
+    calculateAccruedInterestKey -> "true",
+    removePOAKey -> "true",
+    customerPaymentInformationKey -> "true"
   )
 
-  val multipleDirectDebits: DirectDebits = DirectDebits(
-    directDebitMandateFound = true,
-    directDebitDetails = Some(Seq(fullDirectDebitDetail,fullDirectDebitDetail))
+  val financialDataQueryParamsFull = Seq(
+    dateFromKey -> "2017-04-06",
+    dateToKey -> "2018-04-05",
+    onlyOpenItemsKey -> "false",
+    includeLocksKey -> "true",
+    calculateAccruedInterestKey -> "false",
+    removePOAKey -> "false",
+    customerPaymentInformationKey -> "false"
   )
 
-  val multipleDirectDebitsJson: JsObject = Json.obj(
-    "directDebitMandateFound" -> true,
-    "directDebitDetails" -> Json.arr(fullDirectDebitDetailJson,fullDirectDebitDetailJson)
+  val financialDataQueryParamsOpenItems = Seq(
+    onlyOpenItemsKey -> "true",
+    includeLocksKey -> "true",
+    calculateAccruedInterestKey -> "true",
+    removePOAKey -> "true",
+    customerPaymentInformationKey -> "true"
   )
 
-  val singleDirectDebits: DirectDebits = DirectDebits(
-    directDebitMandateFound = true,
-    directDebitDetails = Some(Seq(fullDirectDebitDetail))
+  val financialDataQueryParamsFullObj: FinancialDataQueryParameters = FinancialDataQueryParameters(
+    fromDate = Some("2017-04-06"),
+    toDate = Some("2018-04-05"),
+    onlyOpenItems = Some(false),
+    includeLocks = Some(true),
+    calculateAccruedInterest = Some(false),
+    removePOA = Some(false),
+    customerPaymentInformation = Some(false)
   )
 
-  val singleDirectDebitsJson: JsObject = Json.obj(
-    "directDebitMandateFound" -> true,
-    "directDebitDetails" -> Json.arr(fullDirectDebitDetailJson)
-  )
-
-  val noDirectDebits: DirectDebits = DirectDebits(
-    directDebitMandateFound = false
-  )
-
-  val noDirectDebitsJson: JsObject = Json.obj(
-    "directDebitMandateFound" -> false
-  )
 }
