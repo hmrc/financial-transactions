@@ -17,7 +17,7 @@
 package appRoutes
 
 import base.SpecBase
-import models.FinancialDataQueryParameters
+import models.API1166.FinancialDataQueryParameters
 import utils.ImplicitDateFormatter._
 
 class AppRoutesSpec extends SpecBase {

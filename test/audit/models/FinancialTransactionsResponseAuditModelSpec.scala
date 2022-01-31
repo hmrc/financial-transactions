@@ -17,7 +17,8 @@
 package audit.models
 
 import base.SpecBase
-import _root_.models.{FinancialTransactions, IncomeTaxRegime, SubItem, Transaction}
+import _root_.models.IncomeTaxRegime
+import models.API1166.{FinancialTransactions, SubItem, Transaction}
 import play.api.libs.json.Json
 import utils.ImplicitDateFormatter._
 

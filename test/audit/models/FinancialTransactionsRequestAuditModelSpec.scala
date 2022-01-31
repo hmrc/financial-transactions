@@ -18,7 +18,8 @@ package audit.models
 
 import _root_.models._
 import base.SpecBase
-import models.FinancialDataQueryParameters.{calculateAccruedInterestKey, customerPaymentInformationKey, dateFromKey, dateToKey, includeLocksKey, onlyOpenItemsKey}
+import models.API1166.FinancialDataQueryParameters
+import models.API1166.FinancialDataQueryParameters._
 import utils.ImplicitDateFormatter._
 
 class FinancialTransactionsRequestAuditModelSpec extends SpecBase {

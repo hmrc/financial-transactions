@@ -20,6 +20,7 @@ import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models._
 import connectors.FinancialDataConnector
+import models.API1166._
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil

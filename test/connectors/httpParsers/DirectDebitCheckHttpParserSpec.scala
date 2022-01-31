@@ -18,6 +18,7 @@ package connectors.httpParsers
 
 import base.SpecBase
 import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
+import models.API1166._
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json

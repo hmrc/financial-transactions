@@ -18,11 +18,11 @@ package connectors.httpParsers
 
 import base.SpecBase
 import connectors.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsReads
-import models._
+import models.API1166._
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson}
+import utils.TestConstants.{fullFinancialTransactions1166 => fullFinancialTransactions, fullFinancialTransactionsJson}
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 

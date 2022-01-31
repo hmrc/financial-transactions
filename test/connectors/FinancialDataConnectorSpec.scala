@@ -19,11 +19,12 @@ package connectors
 import base.SpecBase
 import connectors.httpParsers.FinancialTransactionsHttpParser
 import mocks.MockHttp
+import models.API1166._
 import models._
-import models.FinancialDataQueryParameters._
+import models.API1166.FinancialDataQueryParameters._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.fullFinancialTransactions
+import utils.TestConstants.{fullFinancialTransactions1166 => fullFinancialTransactions}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.Future

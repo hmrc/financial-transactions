@@ -16,13 +16,41 @@
 
 package utils
 
-import models.{DirectDebitDetail, DirectDebits, FinancialTransactions, SubItem, Transaction}
+import models.{DirectDebitDetail, DirectDebits}
 import ImplicitDateFormatter._
+import models.API1166.{FinancialTransactions => FinancialTransactions1166, SubItem => SubItem1166, Transaction => Transaction1166}
+import models.API1811.{FinancialTransactions => FinancialTransactions1811, SubItem => SubItem1811, Transaction => Transaction1811}
+import models.API1811.FinancialDataQueryParameters
+import models.API1811.FinancialDataQueryParameters._
 import play.api.libs.json.{JsObject, Json}
 
 object TestConstants {
 
-  val fullSubItem: SubItem = SubItem(
+  val fullSubItem1166: SubItem1166 = SubItem1166(
+    subItem = Some("000"),
+    dueDate = Some("2018-2-14"),
+    amount = Some(3400.00),
+    clearingDate = Some("2018-2-17"),
+    clearingReason = Some("A"),
+    outgoingPaymentMethod = Some("B"),
+    paymentLock = Some("C"),
+    clearingLock = Some("D"),
+    interestLock = Some("E"),
+    dunningLock = Some("1"),
+    returnFlag = Some(false),
+    paymentReference = Some("F"),
+    paymentAmount = Some(2000.00),
+    paymentMethod = Some("G"),
+    paymentLot = Some("H"),
+    paymentLotItem = Some("112"),
+    clearingSAPDocument = Some("3350000253"),
+    statisticalDocument = Some("I"),
+    DDcollectionInProgress = Some(true),
+    returnReason = Some("J"),
+    promiseToPay = Some("K")
+  )
+
+  val fullSubItem1811: SubItem1811 = SubItem1811(
     subItem = Some("000"),
     dueDate = Some("2018-2-14"),
     amount = Some(3400.00),
@@ -49,7 +77,7 @@ object TestConstants {
   val fullSubItemJson: JsObject = Json.obj(
     "subItem" -> "000",
     "dueDate" -> "2018-02-14",
-    "amount" -> 3400,
+    "amount" -> 3400.0,
     "clearingDate" -> "2018-02-17",
     "clearingReason" -> "A",
     "outgoingPaymentMethod" -> "B",
@@ -59,7 +87,7 @@ object TestConstants {
     "dunningLock" -> "1",
     "returnFlag" -> false,
     "paymentReference" -> "F",
-    "paymentAmount" -> 2000,
+    "paymentAmount" -> 2000.0,
     "paymentMethod" -> "G",
     "paymentLot" -> "H",
     "paymentLotItem" -> "112",
@@ -70,7 +98,7 @@ object TestConstants {
     "promiseToPay" -> "K"
   )
 
-  val fullTransaction: Transaction = Transaction(
+  val fullTransaction1166: Transaction1166 = Transaction1166(
     chargeType = Some("PAYE"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
@@ -87,11 +115,35 @@ object TestConstants {
     chargeReference = Some("XM002610011594"),
     mainTransaction = Some("1234"),
     subTransaction = Some("5678"),
-    originalAmount = Some(3400.0),
-    outstandingAmount = Some(1400.0),
-    clearedAmount = Some(2000.0),
+    originalAmount = Some(3400),
+    outstandingAmount = Some(1400),
+    clearedAmount = Some(2000),
     accruedInterest = Some(0.23),
-    items = Some(Seq(fullSubItem))
+    items = Some(Seq(fullSubItem1166))
+  )
+
+  val fullTransaction1811: Transaction1811 = Transaction1811(
+    chargeType = Some("PAYE"),
+    mainType = Some("2100"),
+    periodKey = Some("13RL"),
+    periodKeyDescription = Some("abcde"),
+    taxPeriodFrom = Some("2017-4-6"),
+    taxPeriodTo = Some("2018-4-5"),
+    businessPartner = Some("6622334455"),
+    contractAccountCategory = Some("02"),
+    contractAccount = Some("X"),
+    contractObjectType = Some("ABCD"),
+    contractObject = Some("00000003000000002757"),
+    sapDocumentNumber = Some("1040000872"),
+    sapDocumentNumberItem = Some("XM00"),
+    chargeReference = Some("XM002610011594"),
+    mainTransaction = Some("1234"),
+    subTransaction = Some("5678"),
+    originalAmount = Some(3400),
+    outstandingAmount = Some(1400),
+    clearedAmount = Some(2000),
+    accruedInterest = Some(0.23),
+    items = Some(Seq(fullSubItem1811))
   )
 
   val fullTransactionJson: JsObject = Json.obj(
@@ -118,12 +170,20 @@ object TestConstants {
     "items" -> Json.arr(fullSubItemJson)
   )
 
-  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
+  val fullFinancialTransactions1166: FinancialTransactions1166 = FinancialTransactions1166(
     idType = Some("MTDBSA"),
     idNumber = Some("XQIT00000000001"),
     regimeType = Some("ITSA"),
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Some(Seq(fullTransaction))
+    financialTransactions = Some(Seq(fullTransaction1166))
+  )
+
+  val fullFinancialTransactions1811: FinancialTransactions1811 = FinancialTransactions1811(
+    idType = Some("MTDBSA"),
+    idNumber = Some("XQIT00000000001"),
+    regimeType = Some("ITSA"),
+    processingDate = "2017-03-07T22:55:56.987Z",
+    financialTransactions = Some(Seq(fullTransaction1811))
   )
 
   val fullFinancialTransactionsJson: JsObject = Json.obj(
@@ -132,6 +192,42 @@ object TestConstants {
     "regimeType" -> "ITSA",
     "processingDate" -> "2017-03-07T22:55:56.987Z",
     "financialTransactions" -> Json.arr(fullTransactionJson)
+  )
+
+  val financialDataQueryParamsDefault = Seq(
+    onlyOpenItemsKey -> "false",
+    includeLocksKey -> "true",
+    calculateAccruedInterestKey -> "true",
+    removePOAKey -> "true",
+    customerPaymentInformationKey -> "true"
+  )
+
+  val financialDataQueryParamsFull = Seq(
+    dateFromKey -> "2017-04-06",
+    dateToKey -> "2018-04-05",
+    onlyOpenItemsKey -> "false",
+    includeLocksKey -> "true",
+    calculateAccruedInterestKey -> "false",
+    removePOAKey -> "false",
+    customerPaymentInformationKey -> "false"
+  )
+
+  val financialDataQueryParamsOpenItems = Seq(
+    onlyOpenItemsKey -> "true",
+    includeLocksKey -> "true",
+    calculateAccruedInterestKey -> "true",
+    removePOAKey -> "true",
+    customerPaymentInformationKey -> "true"
+  )
+
+  val financialDataQueryParamsFullObj: FinancialDataQueryParameters = FinancialDataQueryParameters(
+    fromDate = Some("2017-04-06"),
+    toDate = Some("2018-04-05"),
+    onlyOpenItems = Some(false),
+    includeLocks = Some(true),
+    calculateAccruedInterest = Some(false),
+    removePOA = Some(false),
+    customerPaymentInformation = Some(false)
   )
 
   val fullDirectDebitDetail: DirectDebitDetail = DirectDebitDetail(

@@ -19,8 +19,8 @@ package binders
 import java.net.URLEncoder
 import java.time.LocalDate
 
-import models.FinancialDataQueryParameters
-import models.FinancialDataQueryParameters._
+import models.API1166.FinancialDataQueryParameters
+import models.API1166.FinancialDataQueryParameters._
 import play.api.mvc.QueryStringBindable
 
 import scala.util.{Failure, Success, Try}

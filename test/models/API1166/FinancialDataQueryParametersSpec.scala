@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.API1166
 
 import base.SpecBase
+import models.API1166.FinancialDataQueryParameters._
 import utils.ImplicitDateFormatter._
-import FinancialDataQueryParameters._
 
 class FinancialDataQueryParametersSpec extends SpecBase {
 
