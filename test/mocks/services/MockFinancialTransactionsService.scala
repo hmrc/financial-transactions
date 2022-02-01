@@ -17,7 +17,8 @@
 package mocks.services
 
 import connectors.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
-import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
+import models.{DirectDebits, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing

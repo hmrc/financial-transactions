@@ -17,12 +17,12 @@
 package handlers
 
 import base.SpecBase
-import models.FinancialTransactions
 import config.MicroserviceAppConfig
+import models.API1166.FinancialTransactions
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import models.Error
+import models.API1166.Error
 import uk.gov.hmrc.auth.core.BearerTokenExpired
 import uk.gov.hmrc.http.{JsValidationException, NotFoundException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
@@ -142,7 +142,7 @@ class ErrorHandlerSpec extends SpecBase {
 
         "has the expected error response body" in {
           contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString,
-            "method of '/url' returned invalid json. Attempting to convert to models.FinancialTransactions$ gave errors: errors"))
+            "method of '/url' returned invalid json. Attempting to convert to models.API1166.FinancialTransactions$ gave errors: errors"))
         }
       }
 

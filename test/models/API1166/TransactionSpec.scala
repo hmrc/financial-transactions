@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package models.API1166
 
-import java.time.ZonedDateTime
+import base.SpecBase
+import play.api.libs.json.Json
+import utils.TestConstants.{fullTransaction1166, fullTransactionJson}
 
-import play.api.libs.json._
+class TransactionSpec extends SpecBase {
 
-case class FinancialTransactions(idType: Option[String] = None,
-                                 idNumber: Option[String] = None,
-                                 regimeType: Option[String] = None,
-                                 processingDate: ZonedDateTime,
-                                 financialTransactions: Option[Seq[Transaction]] = None)
+  "Transaction" should {
 
-object FinancialTransactions {
-  implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]
+    "serialize to Json successfully" in {
+      Json.toJson(fullTransaction1166) shouldBe fullTransactionJson
+    }
+
+    "deserialize to a Transaction model successfully" in {
+      fullTransactionJson.as[Transaction] shouldBe fullTransaction1166
+    }
+  }
 }

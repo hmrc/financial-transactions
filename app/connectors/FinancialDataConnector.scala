@@ -20,7 +20,8 @@ import javax.inject.{Inject, Singleton}
 import config.MicroserviceAppConfig
 import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import connectors.httpParsers.FinancialTransactionsHttpParser._
-import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
+import models.{DirectDebits, TaxRegime}
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil

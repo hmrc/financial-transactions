@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.API1811
 
 import java.time.LocalDate
 
@@ -22,10 +22,11 @@ import play.api.libs.json.{Format, Json}
 
 case class FinancialDataQueryParameters(fromDate: Option[LocalDate] = None,
                                         toDate: Option[LocalDate] = None,
-                                        onlyOpenItems: Option[Boolean] = None,
-                                        includeLocks: Option[Boolean] = None,
-                                        calculateAccruedInterest: Option[Boolean] = None,
-                                        customerPaymentInformation: Option[Boolean] = None) {
+                                        onlyOpenItems: Option[Boolean] = Some(false),
+                                        includeLocks: Option[Boolean] = Some(true),
+                                        calculateAccruedInterest: Option[Boolean] = Some(true),
+                                        removePOA: Option[Boolean] = Some(true),
+                                        customerPaymentInformation: Option[Boolean] = Some(true)) {
   import FinancialDataQueryParameters._
   val toSeqQueryParams: Seq[(String, String)] = Seq(
     fromDate.map(dateFromKey -> _.toString),
@@ -33,6 +34,7 @@ case class FinancialDataQueryParameters(fromDate: Option[LocalDate] = None,
     onlyOpenItems.map(onlyOpenItemsKey -> _.toString),
     includeLocks.map(includeLocksKey -> _.toString),
     calculateAccruedInterest.map(calculateAccruedInterestKey -> _.toString),
+    removePOA.map(removePOAKey -> _.toString),
     customerPaymentInformation.map(customerPaymentInformationKey -> _.toString)
   ).flatten
   val hasQueryParameters: Boolean = toSeqQueryParams.nonEmpty
@@ -45,6 +47,7 @@ object FinancialDataQueryParameters {
   val onlyOpenItemsKey = "onlyOpenItems"
   val includeLocksKey = "includeLocks"
   val calculateAccruedInterestKey = "calculateAccruedInterest"
+  val removePOAKey = "removePOA"
   val customerPaymentInformationKey = "customerPaymentInformation"
 
   implicit val format: Format[FinancialDataQueryParameters] = Json.format[FinancialDataQueryParameters]

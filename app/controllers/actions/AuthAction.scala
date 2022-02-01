@@ -16,11 +16,11 @@
 
 package controllers.actions
 
-import models.UnauthenticatedError
+import models.API1166.UnauthenticatedError
 import javax.inject.Singleton
 import auth.AuthenticatedRequest
 import com.google.inject.Inject
-import models.ForbiddenError
+import models.API1166.ForbiddenError
 import play.api.libs.json.Json
 import play.api.mvc.Results.{Forbidden, Unauthorized}
 import play.api.mvc._

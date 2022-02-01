@@ -16,8 +16,9 @@
 
 package audit.models
 
+import models.API1166.FinancialDataQueryParameters
 import models._
-import models.FinancialDataQueryParameters._
+import models.API1166.FinancialDataQueryParameters._
 
 case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams: FinancialDataQueryParameters) extends AuditModel {
 

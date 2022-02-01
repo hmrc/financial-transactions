@@ -19,7 +19,7 @@ package helpers
 import binders.FinancialTransactionsBinders
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.servicemocks.AuthStub
-import models.FinancialDataQueryParameters
+import models.API1166.FinancialDataQueryParameters
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite

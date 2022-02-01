@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package models
+package models.API1811
 
 import base.SpecBase
-import play.api.libs.json.Json
-import utils.TestConstants.{fullSubItem, fullSubItemJson}
+import play.api.libs.json.{JsValue, Json}
 
-class SubItemSpec extends SpecBase {
+class ErrorsSpec extends SpecBase {
 
-  "SubItem" should {
+  "The Error model" should {
 
-    "serialize to Json successfully" in {
-      Json.toJson(fullSubItem) shouldBe fullSubItemJson
+    val desErrorModel = Error("CODE", "ERROR MESSAGE")
+    val desErrorJson: JsValue = Json.obj("code"->"CODE", "reason"->"ERROR MESSAGE")
+
+    "Serialize to Json as expected" in {
+      Json.toJson(desErrorModel) shouldBe desErrorJson
     }
 
-    "deserialize to a SubItem model successfully" in {
-      fullSubItemJson.as[SubItem] shouldBe fullSubItem
+    "Deserialize to a Error as expected" in {
+      desErrorJson.as[Error] shouldBe desErrorModel
     }
   }
 }

@@ -16,7 +16,7 @@
 
 package connectors.httpParsers
 
-import models._
+import models.API1166._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import utils.LoggerUtil
