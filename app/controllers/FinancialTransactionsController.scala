@@ -19,6 +19,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import config.RegimeKeys
 import controllers.actions.AuthAction
+import models.API1166._
 import models._
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}

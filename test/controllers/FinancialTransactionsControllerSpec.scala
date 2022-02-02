@@ -21,6 +21,8 @@ import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
 import mocks.services.MockFinancialTransactionsService
+import models.API1166.FinancialDataQueryParameters
+import models.API1166._
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json

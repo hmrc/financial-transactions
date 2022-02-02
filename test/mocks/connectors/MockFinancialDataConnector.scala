@@ -18,7 +18,8 @@ package mocks.connectors
 
 import connectors.FinancialDataConnector
 import connectors.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
-import models.{DirectDebits, FinancialDataQueryParameters, FinancialTransactions, TaxRegime}
+import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
+import models.{DirectDebits, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing

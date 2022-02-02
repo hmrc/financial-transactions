@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package models.API1166
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstants.{fullSubItem, fullSubItemJson}
+import utils.TestConstants.{fullTransaction, fullTransactionJson}
 
-class SubItemSpec extends SpecBase {
+class TransactionSpec extends SpecBase {
 
-  "SubItem" should {
+  "Transaction" should {
 
     "serialize to Json successfully" in {
-      Json.toJson(fullSubItem) shouldBe fullSubItemJson
+      Json.toJson(fullTransaction) shouldBe fullTransactionJson
     }
 
-    "deserialize to a SubItem model successfully" in {
-      fullSubItemJson.as[SubItem] shouldBe fullSubItem
+    "deserialize to a Transaction model successfully" in {
+      fullTransactionJson.as[Transaction] shouldBe fullTransaction
     }
   }
 }

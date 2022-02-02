@@ -16,7 +16,8 @@
 
 package audit.models
 
-import models.{FinancialTransactions, SubItem, TaxRegime}
+import models.API1166.{FinancialTransactions, SubItem}
+import models.TaxRegime
 import play.api.libs.json.{JsValue, Json}
 
 case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, ftTransactions: FinancialTransactions) extends ExtendedAuditModel {

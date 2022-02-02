@@ -19,7 +19,8 @@ package helpers.servicemocks
 import binders.FinancialTransactionsBinders
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper._
-import models.{FinancialDataQueryParameters, TaxRegime}
+import models.API1166.FinancialDataQueryParameters
+import models.TaxRegime
 import play.api.libs.json.JsValue
 
 object DesFinancialDataStub {

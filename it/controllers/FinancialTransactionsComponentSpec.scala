@@ -18,7 +18,8 @@ package controllers
 
 import helpers.ComponentSpecBase
 import helpers.servicemocks.DesFinancialDataStub
-import models.{Error, FinancialDataQueryParameters, FinancialTransactions, IncomeTaxRegime, MultiError, VatRegime}
+import models.API1166._
+import models.{IncomeTaxRegime, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import testData.FinancialData

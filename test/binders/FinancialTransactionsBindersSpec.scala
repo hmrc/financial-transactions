@@ -17,9 +17,9 @@
 package binders
 
 import base.SpecBase
-import models.FinancialDataQueryParameters
+import models.API1166.FinancialDataQueryParameters
+import models.API1166.FinancialDataQueryParameters._
 import utils.ImplicitDateFormatter._
-import FinancialDataQueryParameters._
 
 class FinancialTransactionsBindersSpec extends SpecBase {
 

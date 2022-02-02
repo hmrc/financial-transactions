@@ -16,7 +16,8 @@
 
 package connectors.httpParsers
 
-import models.{DirectDebits, UnexpectedResponse, UnexpectedJsonFormat}
+import models.API1166.{UnexpectedResponse, UnexpectedJsonFormat}
+import models.DirectDebits
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil

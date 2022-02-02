@@ -16,7 +16,7 @@
 
 package testData
 
-import models._
+import models.API1166._
 import utils.ImplicitDateFormatter._
 
 object FinancialData {
