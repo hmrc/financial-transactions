@@ -18,7 +18,7 @@ package models.API1811
 
 import play.api.libs.json._
 
-case class FinancialTransactions(financialTransactions: Option[Seq[Transaction]] = None)
+case class FinancialTransactions(financialDetails: Seq[Transaction])
 
 object FinancialTransactions {
   implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]

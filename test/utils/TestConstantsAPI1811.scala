@@ -92,7 +92,7 @@ object TestConstantsAPI1811 {
     outstandingAmount = Some(1400),
     clearedAmount = Some(2000),
     accruedInterest = Some(0.23),
-    items = Some(Seq(fullSubItem))
+    items = Seq(fullSubItem)
   )
 
   val fullTransactionJson: JsObject = Json.obj(
@@ -120,11 +120,11 @@ object TestConstantsAPI1811 {
   )
 
   val fullFinancialTransactionsJson: JsObject = Json.obj(
-    "financialTransactions" -> Json.arr(fullTransactionJson)
+    "financialDetails" -> Json.arr(fullTransactionJson)
   )
 
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
-    financialTransactions = Some(Seq(fullTransaction))
+    financialDetails = Seq(fullTransaction)
   )
 
   val financialDataQueryParamsDefault = Seq(
