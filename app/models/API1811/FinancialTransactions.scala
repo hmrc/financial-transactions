@@ -16,15 +16,9 @@
 
 package models.API1811
 
-import java.time.ZonedDateTime
-
 import play.api.libs.json._
 
-case class FinancialTransactions(idType: Option[String] = None,
-                                 idNumber: Option[String] = None,
-                                 regimeType: Option[String] = None,
-                                 processingDate: ZonedDateTime,
-                                 financialTransactions: Option[Seq[Transaction]] = None)
+case class FinancialTransactions(financialDetails: Seq[Transaction])
 
 object FinancialTransactions {
   implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]

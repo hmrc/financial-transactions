@@ -18,18 +18,18 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstants.{fullTransaction1811, fullTransactionJson}
+import utils.TestConstantsAPI1811.{fullTransaction, fullTransactionJson}
 
 class TransactionSpec extends SpecBase {
 
   "Transaction" should {
 
     "serialize to Json successfully" in {
-      Json.toJson(fullTransaction1811) shouldBe fullTransactionJson
+      Json.toJson(fullTransaction) shouldBe fullTransactionJson
     }
 
     "deserialize to a Transaction model successfully" in {
-      fullTransactionJson.as[Transaction] shouldBe fullTransaction1811
+      fullTransactionJson.as[Transaction] shouldBe fullTransaction
     }
   }
 }

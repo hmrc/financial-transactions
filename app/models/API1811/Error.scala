@@ -18,7 +18,7 @@ package models.API1811
 
 import play.api.libs.json.{Format, Json}
 
-case class Error(code: String, reason: String)
+case class Error(code: Int, reason: String)
 
 object Error {
   implicit val format: Format[Error] = Json.format[Error]

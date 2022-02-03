@@ -19,7 +19,7 @@ package models.API1811
 import base.SpecBase
 import models.API1811.FinancialDataQueryParameters._
 import utils.ImplicitDateFormatter._
-import utils.TestConstants._
+import utils.TestConstantsAPI1811._
 
 class FinancialDataQueryParametersSpec extends SpecBase {
 
