@@ -17,7 +17,7 @@
 package appRoutes
 
 import base.SpecBase
-import models.API1166.FinancialDataQueryParameters
+import models.RequestQueryParameters
 import utils.ImplicitDateFormatter._
 
 class AppRoutesSpec extends SpecBase {
@@ -31,7 +31,7 @@ class AppRoutesSpec extends SpecBase {
 
       "no query parameters are supplied" should {
 
-        lazy val queryParams = FinancialDataQueryParameters()
+        lazy val queryParams = RequestQueryParameters()
 
         val expected = "/financial-transactions/vat/123456"
 
@@ -43,7 +43,7 @@ class AppRoutesSpec extends SpecBase {
 
       "'dateFrom' query parameter is supplied" should {
 
-        lazy val queryParams = FinancialDataQueryParameters(Some("2018-02-01"))
+        lazy val queryParams = RequestQueryParameters(Some("2018-02-01"))
 
         val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01"
 
@@ -55,7 +55,7 @@ class AppRoutesSpec extends SpecBase {
 
       "'dateFrom, dateTo' query parameters are supplied" should {
 
-        lazy val queryParams = FinancialDataQueryParameters(Some("2018-02-01"), Some("2019-03-01"))
+        lazy val queryParams = RequestQueryParameters(Some("2018-02-01"), Some("2019-03-01"))
 
         val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01&dateTo=2019-03-01"
 
@@ -65,81 +65,17 @@ class AppRoutesSpec extends SpecBase {
         }
       }
 
-      "'dateFrom, dateTo, onlyOpenItems' query parameters are supplied" should {
+      "all query parameters are supplied" should {
 
-        lazy val queryParams = FinancialDataQueryParameters(
+        lazy val queryParams = RequestQueryParameters(
           fromDate = Some("2018-02-01"),
           toDate = Some("2019-03-01"),
           onlyOpenItems = Some(true)
         )
 
-        val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01&dateTo=2019-03-01&onlyOpenItems=true"
-
-        s"have the route '$expected'" in {
-          val route = controllers.routes.FinancialTransactionsController.getFinancialTransactions(idType, id, queryParams).url
-          route shouldBe expected
-        }
-      }
-
-      "'dateFrom, dateTo, onlyOpenItems, includeLocks' query parameters are supplied" should {
-
-        lazy val queryParams = FinancialDataQueryParameters(
-          fromDate = Some("2018-02-01"),
-          toDate = Some("2019-03-01"),
-          onlyOpenItems = Some(true),
-          includeLocks = Some(true)
-        )
-
         val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01" +
           "&dateTo=2019-03-01" +
-          "&onlyOpenItems=true" +
-          "&includeLocks=true"
-
-        s"have the route '$expected'" in {
-          val route = controllers.routes.FinancialTransactionsController.getFinancialTransactions(idType, id, queryParams).url
-          route shouldBe expected
-        }
-      }
-
-      "'dateFrom, dateTo, onlyOpenItems, includeLocks, calculateAccruedInterest' query parameters are supplied" should {
-
-        lazy val queryParams = FinancialDataQueryParameters(
-          fromDate = Some("2018-02-01"),
-          toDate = Some("2019-03-01"),
-          onlyOpenItems = Some(true),
-          includeLocks = Some(true),
-          calculateAccruedInterest = Some(true)
-        )
-
-        val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01" +
-          "&dateTo=2019-03-01" +
-          "&onlyOpenItems=true" +
-          "&includeLocks=true" +
-          "&calculateAccruedInterest=true"
-
-        s"have the route '$expected'" in {
-          val route = controllers.routes.FinancialTransactionsController.getFinancialTransactions(idType, id, queryParams).url
-          route shouldBe expected
-        }
-      }
-
-      "all query parameters are supplied" should {
-
-        lazy val queryParams = FinancialDataQueryParameters(
-          fromDate = Some("2018-02-01"),
-          toDate = Some("2019-03-01"),
-          onlyOpenItems = Some(true),
-          includeLocks = Some(true),
-          calculateAccruedInterest = Some(true),
-          customerPaymentInformation = Some(true)
-        )
-
-        val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01" +
-          "&dateTo=2019-03-01" +
-          "&onlyOpenItems=true" +
-          "&includeLocks=true" +
-          "&calculateAccruedInterest=true" +
-          "&customerPaymentInformation=true"
+          "&onlyOpenItems=true"
 
         s"have the route '$exist" in {
           val route = controllers.routes.FinancialTransactionsController.getFinancialTransactions(idType, id, queryParams).url

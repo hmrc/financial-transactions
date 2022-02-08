@@ -17,8 +17,8 @@
 package mocks.services
 
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
-import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
-import models.{DirectDebits, TaxRegime}
+import models.API1166.FinancialTransactions
+import models.{DirectDebits, RequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -26,7 +26,7 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import services.FinancialTransactionsService
+import services.API1166.FinancialTransactionsService
 
 import scala.concurrent.Future
 
@@ -39,7 +39,7 @@ trait MockFinancialTransactionsService extends AnyWordSpecLike with Matchers wit
     reset(mockFinancialTransactionsService)
   }
 
-  def setupMockGetFinancialTransactions(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+  def setupMockGetFinancialTransactions(regime: TaxRegime, queryParameters: RequestQueryParameters)
                                (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
     when(
       mockFinancialTransactionsService.getFinancialTransactions(

@@ -16,11 +16,10 @@
 
 package audit.models
 
-import models.API1166.FinancialDataQueryParameters
 import models._
-import models.API1166.FinancialDataQueryParameters._
+import models.RequestQueryParameters._
 
-case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams: FinancialDataQueryParameters) extends AuditModel {
+case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams: RequestQueryParameters) extends AuditModel {
 
   override val transactionName: String = "financial-transactions-request"
   override val auditType: String = "financialTransactionsRequest"
@@ -29,9 +28,6 @@ case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams
     Some("taxIdentifier" -> regime.id),
     queryParams.fromDate.map(dateFromKey -> _.toString),
     queryParams.toDate.map(dateToKey -> _.toString),
-    queryParams.onlyOpenItems.map(onlyOpenItemsKey -> _.toString),
-    queryParams.includeLocks.map(includeLocksKey -> _.toString),
-    queryParams.calculateAccruedInterest.map(calculateAccruedInterestKey -> _.toString),
-    queryParams.customerPaymentInformation.map(customerPaymentInformationKey -> _.toString)
+    queryParams.onlyOpenItems.map(onlyOpenItemsKey -> _.toString)
   ).flatten
 }

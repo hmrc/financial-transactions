@@ -20,8 +20,8 @@ import config.MicroserviceAppConfig
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser._
 import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import javax.inject.{Inject, Singleton}
-import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
-import models.{DirectDebits, TaxRegime}
+import models.API1166.FinancialTransactions
+import models.{DirectDebits, RequestQueryParameters, TaxRegime}
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
@@ -39,7 +39,7 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
 
   val desHeaders = Seq("Authorization" -> s"Bearer ${appConfig.desToken}", "Environment" -> appConfig.desEnvironment)
 
-  def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+  def getFinancialData(regime: TaxRegime, queryParameters: RequestQueryParameters)
                       (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[FinancialTransactions]] = {
 
     val url = financialDataUrl(regime)

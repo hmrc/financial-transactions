@@ -14,41 +14,47 @@
  * limitations under the License.
  */
 
-package models.API1811
+package models
 
 import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
-case class FinancialDataQueryParameters(fromDate: Option[LocalDate] = None,
-                                        toDate: Option[LocalDate] = None,
-                                        onlyOpenItems: Option[Boolean] = Some(false),
-                                        includeLocks: Option[Boolean] = Some(true),
-                                        calculateAccruedInterest: Option[Boolean] = Some(true),
-                                        removePOA: Option[Boolean] = Some(true),
-                                        customerPaymentInformation: Option[Boolean] = Some(true)) {
-  import FinancialDataQueryParameters._
+case class RequestQueryParameters(fromDate: Option[LocalDate] = None,
+                                  toDate: Option[LocalDate] = None,
+                                  onlyOpenItems: Option[Boolean] = None) {
+  import RequestQueryParameters._
   val toSeqQueryParams: Seq[(String, String)] = Seq(
     fromDate.map(dateFromKey -> _.toString),
     toDate.map(dateToKey -> _.toString),
-    onlyOpenItems.map(onlyOpenItemsKey -> _.toString),
-    includeLocks.map(includeLocksKey -> _.toString),
-    calculateAccruedInterest.map(calculateAccruedInterestKey -> _.toString),
-    removePOA.map(removePOAKey -> _.toString),
-    customerPaymentInformation.map(customerPaymentInformationKey -> _.toString)
+    onlyOpenItems.map(onlyOpenItemsKey -> _.toString)
   ).flatten
   val hasQueryParameters: Boolean = toSeqQueryParams.nonEmpty
+  val api1811QueryParams: Seq[(String, String)] = {
+    val openItems = if(onlyOpenItems.isDefined) {
+      Seq()
+    } else {
+      Seq(onlyOpenItemsKey -> "false")
+    }
+    toSeqQueryParams ++ openItems ++ Seq(
+      includeLocksKey -> "true",
+      calculateAccruedInterestKey -> "true",
+      removePOAKey -> "true",
+      customerPaymentInformationKey -> "true"
+    )
+  }
+
 }
 
-object FinancialDataQueryParameters {
+object RequestQueryParameters {
 
   val dateFromKey = "dateFrom"
   val dateToKey = "dateTo"
   val onlyOpenItemsKey = "onlyOpenItems"
+  val removePOAKey = "removePOA"
   val includeLocksKey = "includeLocks"
   val calculateAccruedInterestKey = "calculateAccruedInterest"
-  val removePOAKey = "removePOA"
   val customerPaymentInformationKey = "customerPaymentInformation"
 
-  implicit val format: Format[FinancialDataQueryParameters] = Json.format[FinancialDataQueryParameters]
+  implicit val format: Format[RequestQueryParameters] = Json.format[RequestQueryParameters]
 }
