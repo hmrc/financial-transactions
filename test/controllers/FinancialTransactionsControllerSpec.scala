@@ -16,7 +16,7 @@
 
 package controllers
 
-import utils.TestConstants.{fullFinancialTransactions1166 => fullFinancialTransactions, multipleDirectDebits}
+import utils.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions

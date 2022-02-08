@@ -24,7 +24,7 @@ import models._
 import models.API1166.FinancialDataQueryParameters._
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.{fullFinancialTransactions1166 => fullFinancialTransactions}
+import utils.TestConstants.fullFinancialTransactions
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.Future
@@ -68,7 +68,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
     "format the request Url correctly for Income Tax TaxRegime requests" in {
 
       val actualUrl: String = TestFinancialDataConnector.financialDataUrl(itRegime)
-      val expectedUrl: String = s"${mockAppConfig.desUrl}/enterprise/financial-data/${itRegime.idType}/${itRegime.id}/${itRegime.regimeType}"
+      val expectedUrl: String = s"${mockAppConfig.eisUrl}/enterprise/financial-data/${itRegime.idType}/${itRegime.id}/${itRegime.regimeType}"
 
       actualUrl shouldBe expectedUrl
     }

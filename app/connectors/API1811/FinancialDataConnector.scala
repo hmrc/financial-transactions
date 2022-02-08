@@ -27,20 +27,20 @@ import utils.LoggerUtil
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDetailsConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
-  private[connectors] def finanicalDataUrl(regime: TaxRegime) =
+  private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.eisUrl}/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
-  val eisHeaders = Seq("Authorization" -> s"Bearer ${appConfig.desToken}", "Environment" -> appConfig.eisEnvironment)
+  val eisHeaders = Seq("CorrelationId" -> appConfig.correlationId , "Environment" -> appConfig.eisEnvironment)
 
-  def getFinancialDetails(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+  def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
                          (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
-    val url = finanicalDataUrl(regime)
+    val url = financialDataUrl(regime)
     val hc = headerCarrier
 
-    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: $queryParameters")
-    http.GET[FinancialTransactionsResponse](url, queryParameters.toSeqQueryParams, desHeaders)(FinancialTransactionsReads,hc, ec)
+    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
+    http.GET[FinancialTransactionsResponse](url, queryParameters.toSeqQueryParams, eisHeaders)(FinancialTransactionsReads,hc, ec)
     }
 }

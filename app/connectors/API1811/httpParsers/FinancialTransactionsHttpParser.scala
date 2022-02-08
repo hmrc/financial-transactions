@@ -16,8 +16,8 @@
 
 package connectors.API1811.httpParsers
 
-import models.API1811.{Error, FinancialTransactions, UnexpectedJsonFormat}
-import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
+import models.API1811.{Error, FinancialTransactions}
+import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil
 
@@ -33,7 +33,7 @@ object FinancialTransactionsHttpParser extends LoggerUtil {
             invalid => {
               logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful EIS Response")
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: ${response.json}\nJson Errors: $invalid")
-              Left(Error(INTERNAL_SERVER_ERROR, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
+              Left(Error(BAD_REQUEST, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
             },
             valid => {
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: \n\n${response.json}")
@@ -43,9 +43,9 @@ object FinancialTransactionsHttpParser extends LoggerUtil {
           )
         case NOT_FOUND =>
           logger.debug("[FinancialDataConnector][getFinancialData] Error received: " + response)
-          Left(Error(NOT_FOUND,response.body))
+          Left(Error(response.status,response.body))
         case _ =>
-          logger.warn(s"[FinancialTransactionsReads][read] ${response.status} returned from EIS" +
+          logger.warn(s"[FinancialTransactionsReads][read] unexpected ${response.status} returned from EIS" +
           s"Status code:'${response.status}', Body: '${response.body}")
           Left(Error(response.status, response.body))
       }

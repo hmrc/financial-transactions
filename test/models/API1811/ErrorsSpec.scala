@@ -18,13 +18,14 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.{JsValue, Json}
+import play.api.http.Status._
 
 class ErrorsSpec extends SpecBase {
 
   "The Error model" should {
 
-    val desErrorModel = Error("CODE", "ERROR MESSAGE")
-    val desErrorJson: JsValue = Json.obj("code"->"CODE", "reason"->"ERROR MESSAGE")
+    val desErrorModel = Error(NOT_FOUND, "ERROR MESSAGE")
+    val desErrorJson: JsValue = Json.obj("code"->404, "reason"->"ERROR MESSAGE")
 
     "Serialize to Json as expected" in {
       Json.toJson(desErrorModel) shouldBe desErrorJson
