@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1166.httpParsers
 
 import models.API1166.{UnexpectedResponse, UnexpectedJsonFormat}
 import models.DirectDebits

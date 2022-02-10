@@ -16,8 +16,6 @@
 
 package config
 
-import java.util.UUID.randomUUID
-
 import config.featureSwitch.Features
 import javax.inject.{Inject, Singleton}
 import play.api.{Configuration, Environment}
@@ -43,7 +41,7 @@ class MicroserviceAppConfig @Inject()(val environment: Environment, servicesConf
 
   lazy val eisEnvironment: String = servicesConfig.getString("microservice.services.eis.environment")
   lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
-  lazy val correlationId : String = randomUUID.toString
+
 
   override val features = new Features
 }

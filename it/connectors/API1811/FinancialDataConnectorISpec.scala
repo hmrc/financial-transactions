@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.API1811
 
+import connectors.API1811
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import helpers.ComponentSpecBase
 import models.API1811.{Error, FinancialDataQueryParameters}
@@ -36,10 +37,13 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
 
   val regimeType = "VATC"
   val invalidRegimeType = "9"
-  val vatRegime: TaxRegime = VatRegime(id = "12345678")
+  val vatRegime: TaxRegime = VatRegime(id = "123456789")
+  val invalidRegime: TaxRegime = VatRegime(id = "9")
   val queryParameters: FinancialDataQueryParameters = FinancialDataQueryParameters()
+  val vrn = "123456789"
+  val invalidVrn = "9"
 
-  def generateUrl(regimeType: String): String =  s"/penalty/financial-data/VRN/12345678/$regimeType" +
+  def generateUrl(regimeType: String, VRN : String): String =  s"/penalty/financial-data/VRN/$VRN/$regimeType" +
     s"?onlyOpenItems=false&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"
 
   "getFinancialData" should {
@@ -49,7 +53,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
       s"an $OK response is received from financial transactions and the response can be parsed" in {
 
         stubGetRequest(
-          generateUrl(regimeType),
+          generateUrl(regimeType, vrn),
           OK,
           fullFinancialTransactionsJson.toString()
         )
@@ -67,7 +71,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
         s"a $OK response is received from financialTransactions, but the response cannot be parsed" in {
 
           stubGetRequest(
-            generateUrl(regimeType),
+            generateUrl(regimeType, vrn),
             OK,
             """{"foo":"bar"}"""
           )
@@ -83,30 +87,30 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
         s"a $BAD_REQUEST response is received from financial transactions" in {
 
           stubGetRequest(
-            generateUrl(invalidRegimeType),
+            generateUrl(regimeType, invalidVrn),
             BAD_REQUEST,
             Json.obj("code" -> 400,
               "reason" -> "BAD REQUEST").toString()
           )
 
             val expectedResult = Left(Error(BAD_REQUEST,
-              "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
+              """{"code":400,"reason":"BAD REQUEST"}"""))
 
           val result: FinancialTransactionsResponse =
-            await(connector.getFinancialData(vatRegime, queryParameters))
+            await(connector.getFinancialData(invalidRegime, queryParameters))
           result shouldBe expectedResult
         }
         s"a $NOT_FOUND response is received from Financial Transactions" in {
 
           stubGetRequest(
-            generateUrl(regimeType),
+            generateUrl(regimeType, vrn),
             NOT_FOUND,
             Json.obj("code" -> 404,
-              "reason" -> "A bad request has been made, this could be due to one or more issues with the request").toString()
+              "reason" -> "A not found error has been received from financial transactions").toString()
           )
 
           val expectedResult = Left(Error(NOT_FOUND,
-            """{"code":404,"reason":"A bad request has been made, this could be due to one or more issues with the request"}"""))
+            """{"code":404,"reason":"A not found error has been received from financial transactions"}"""))
 
           val result: FinancialTransactionsResponse =
             await(connector.getFinancialData(vatRegime, queryParameters))
@@ -115,7 +119,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
         "an unexpected response is received from financial transactions" in {
 
           stubGetRequest(
-            generateUrl(regimeType),
+            generateUrl(regimeType, vrn),
             REQUEST_TIMEOUT,
             "AN UNKNOWN ERROR HAS OCCURRED"
           )

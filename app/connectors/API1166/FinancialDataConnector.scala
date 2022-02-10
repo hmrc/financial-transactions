@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.API1166
 
-import javax.inject.{Inject, Singleton}
 import config.MicroserviceAppConfig
-import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
-import connectors.httpParsers.FinancialTransactionsHttpParser._
+import connectors.API1166.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
+import connectors.API1166.httpParsers.FinancialTransactionsHttpParser._
+import javax.inject.{Inject, Singleton}
 import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
 import models.{DirectDebits, TaxRegime}
 import play.api.http.Status.NOT_FOUND

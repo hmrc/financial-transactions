@@ -42,7 +42,7 @@ object FinancialTransactionsHttpParser extends LoggerUtil {
             }
           )
         case NOT_FOUND =>
-          logger.debug("[FinancialDataConnector][getFinancialData] Error received: " + response)
+          logger.debug("[FinancialTransactionsReads][read] Error received: " + response)
           Left(Error(response.status,response.body))
         case _ =>
           logger.warn(s"[FinancialTransactionsReads][read] unexpected ${response.status} returned from EIS" +

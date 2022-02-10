@@ -83,7 +83,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return a 400 BAD_REQUEST (Unexpected JSON returned)" in {
         result shouldEqual expected
       }
 
@@ -97,7 +97,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return a 400 BAD_REQUEST (BAD Json returned)" in {
         result shouldEqual expected
       }
 
@@ -125,7 +125,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an ISE" in {
+      "return an NOT_FOUND " in {
         result shouldEqual expected
       }
     }

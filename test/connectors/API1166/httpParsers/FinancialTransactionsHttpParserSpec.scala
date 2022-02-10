@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1166.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsReads
+import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsReads
 import models.API1166._
 import play.api.http.Status
 import play.api.libs.json.Json

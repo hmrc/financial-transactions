@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1166.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
+import connectors.API1166.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import models.API1166._
 import models._
 import play.api.http.Status

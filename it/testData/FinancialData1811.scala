@@ -15,9 +15,8 @@
  */
 package testData
 
-import models.API1811.FinancialDataQueryParameters._
 import play.api.libs.json.{JsObject, Json}
-import models.API1811.{FinancialDataQueryParameters, FinancialTransactions, SubItem, Transaction}
+import models.API1811.{FinancialTransactions, SubItem, Transaction}
 import utils.ImplicitDateFormatter._
 
 
@@ -126,42 +125,6 @@ object FinancialData1811 {
 
     val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
       financialDetails = Seq(fullTransaction)
-    )
-
-    val financialDataQueryParamsDefault = Seq(
-      onlyOpenItemsKey -> "false",
-      includeLocksKey -> "true",
-      calculateAccruedInterestKey -> "true",
-      removePOAKey -> "true",
-      customerPaymentInformationKey -> "true"
-    )
-
-    val financialDataQueryParamsFull = Seq(
-      dateFromKey -> "2017-04-06",
-      dateToKey -> "2018-04-05",
-      onlyOpenItemsKey -> "false",
-      includeLocksKey -> "true",
-      calculateAccruedInterestKey -> "false",
-      removePOAKey -> "false",
-      customerPaymentInformationKey -> "false"
-    )
-
-    val financialDataQueryParamsOpenItems = Seq(
-      onlyOpenItemsKey -> "true",
-      includeLocksKey -> "true",
-      calculateAccruedInterestKey -> "true",
-      removePOAKey -> "true",
-      customerPaymentInformationKey -> "true"
-    )
-
-    val financialDataQueryParamsFullObj: FinancialDataQueryParameters = FinancialDataQueryParameters(
-      fromDate = Some("2017-04-06"),
-      toDate = Some("2018-04-05"),
-      onlyOpenItems = Some(false),
-      includeLocks = Some(true),
-      calculateAccruedInterest = Some(false),
-      removePOA = Some(false),
-      customerPaymentInformation = Some(false)
     )
 
   }

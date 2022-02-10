@@ -16,6 +16,8 @@
 
 package connectors.API1811
 
+import java.util.UUID.randomUUID
+
 import config.MicroserviceAppConfig
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.{FinancialTransactionsReads, FinancialTransactionsResponse}
 import javax.inject.{Inject, Singleton}
@@ -32,13 +34,15 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.eisUrl}/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
-  val eisHeaders = Seq("CorrelationId" -> appConfig.correlationId , "Environment" -> appConfig.eisEnvironment)
+  lazy val correlationId : String = randomUUID.toString
+
+  val eisHeaders = Seq("CorrelationId" -> correlationId , "Environment" -> appConfig.eisEnvironment)
 
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
-                         (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
+                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
     val url = financialDataUrl(regime)
-    val hc = headerCarrier
+
 
     logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
     http.GET[FinancialTransactionsResponse](url, queryParameters.toSeqQueryParams, eisHeaders)(FinancialTransactionsReads,hc, ec)
