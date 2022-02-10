@@ -17,7 +17,8 @@
 package connectors
 
 import base.SpecBase
-import connectors.httpParsers.FinancialTransactionsHttpParser
+import connectors.API1166.FinancialDataConnector
+import connectors.API1166.httpParsers.FinancialTransactionsHttpParser
 import mocks.MockHttp
 import models.API1166._
 import models._
