@@ -19,7 +19,7 @@ package services
 import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models._
-import connectors.API1166.FinancialDataConnector
+import connectors.API1166.httpParsers.FinancialDataConnector
 import models.API1166._
 import models._
 import uk.gov.hmrc.http.HeaderCarrier

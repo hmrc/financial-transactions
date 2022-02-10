@@ -34,15 +34,12 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.eisUrl}/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
-  lazy val correlationId : String = randomUUID.toString
-
-  val eisHeaders = Seq("CorrelationId" -> correlationId , "Environment" -> appConfig.eisEnvironment)
-
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
-    val url = financialDataUrl(regime)
+    val eisHeaders = Seq("CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
 
+    val url = financialDataUrl(regime)
 
     logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
     http.GET[FinancialTransactionsResponse](url, queryParameters.toSeqQueryParams, eisHeaders)(FinancialTransactionsReads,hc, ec)

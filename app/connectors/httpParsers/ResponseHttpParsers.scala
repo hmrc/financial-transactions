@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package connectors.API1166.httpParsers
+package connectors.httpParsers
 
-import models.API1166._
+import models.API1166.{Error, ErrorResponse, InvalidJsonResponse, MultiError, UnexpectedJsonFormat}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import utils.LoggerUtil

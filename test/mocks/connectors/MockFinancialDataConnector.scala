@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.API1166.FinancialDataConnector
+import connectors.API1166.httpParsers.FinancialDataConnector
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
 import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
 import models.{DirectDebits, TaxRegime}
