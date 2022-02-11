@@ -39,5 +39,9 @@ class MicroserviceAppConfig @Inject()(val environment: Environment, servicesConf
   lazy val desToken: String = servicesConfig.getString("microservice.services.des.auth-token")
   lazy val desUrl: String = servicesConfig.getString("microservice.services.des.url")
 
+  lazy val eisEnvironment: String = servicesConfig.getString("microservice.services.eis.environment")
+  lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
+
+
   override val features = new Features
 }

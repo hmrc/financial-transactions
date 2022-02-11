@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1166.httpParsers
 
+import connectors.httpParsers.ResponseHttpParsers
 import models.API1166.FinancialTransactions
 import models.API1166.{UnexpectedJsonFormat, UnexpectedResponse}
 import play.api.http.Status.OK

@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1811.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsReads
-import models.API1166._
+import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsReads
+import models.API1811._
 import play.api.http.Status
+import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson}
+import utils.TestConstantsAPI1811.{fullFinancialTransactions, fullFinancialTransactionsJson}
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 
@@ -46,7 +47,8 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val httpResponse = HttpResponse(Status.OK, Json.obj("foo" -> "bar").toString)
 
-      val expected = Left(UnexpectedJsonFormat)
+      val expected = Left(Error(BAD_REQUEST,
+        "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
@@ -58,18 +60,11 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 400 BAD_REQUEST (single error)" should {
 
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj(
-          "code" -> "CODE",
-          "reason" -> "ERROR MESSAGE"
-        ).toString
-      )
+      val httpResponse = HttpResponse(Status.BAD_REQUEST, "ERROR MESSAGE")
 
-      val expected = Left(ErrorResponse(
-        Status.BAD_REQUEST,
-        Error(
-          code = "CODE",
-          reason = "ERROR MESSAGE"
-        )
+      val expected = Left(Error(
+        code = BAD_REQUEST,
+        reason = "ERROR MESSAGE"
       ))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
@@ -80,49 +75,15 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     }
 
-    "the http response status is 400 BAD_REQUEST (multiple errors)" should {
-
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj(
-          "failures" -> Json.arr(
-            Json.obj(
-              "code" -> "ERROR CODE 1",
-              "reason" -> "ERROR MESSAGE 1"
-            ),
-            Json.obj(
-              "code" -> "ERROR CODE 2",
-              "reason" -> "ERROR MESSAGE 2"
-            )
-          )
-        ).toString
-      )
-
-      val expected = Left(ErrorResponse(
-        Status.BAD_REQUEST,
-        MultiError(
-          failures = Seq(
-            Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
-            Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
-          )
-        )
-      ))
-
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
-
-      "return a MultiError" in {
-        result shouldEqual expected
-      }
-
-    }
-
     "the http response status is 400 BAD_REQUEST (Unexpected Json Returned)" should {
 
       val httpResponse = HttpResponse(Status.BAD_REQUEST, Json.obj("foo" -> "bar").toString)
 
-      val expected = Left(UnexpectedJsonFormat)
+      val expected = Left(Error(BAD_REQUEST, """{"foo":"bar"}"""))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return a 400 BAD_REQUEST (Unexpected JSON returned)" in {
         result shouldEqual expected
       }
 
@@ -132,11 +93,11 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val httpResponse = HttpResponse(Status.BAD_REQUEST, "Banana")
 
-      val expected = Left(InvalidJsonResponse)
+      val expected = Left(Error(BAD_REQUEST,"Banana"))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an UnexpectedJsonFormat instance" in {
+      "return a 400 BAD_REQUEST (BAD Json returned)" in {
         result shouldEqual expected
       }
 
@@ -144,19 +105,9 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 500 ISE" should {
 
-      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, Json.obj(
-          "code" -> "code",
-          "reason" -> "message"
-        ).toString
-      )
+      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, "message")
 
-      val expected = Left(ErrorResponse(
-        Status.INTERNAL_SERVER_ERROR,
-        Error(
-          code = "code",
-          reason = "message"
-        )
-      ))
+      val expected = Left(Error( code = INTERNAL_SERVER_ERROR, reason = "message"))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
@@ -166,15 +117,15 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     }
 
-    "the http response status is unexpected" should {
+    "the http response status is NOT_FOUND" should {
 
-      val httpResponse = HttpResponse(Status.SEE_OTHER,"")
+      val httpResponse = HttpResponse(Status.NOT_FOUND,"")
 
-      val expected = Left(UnexpectedResponse)
+      val expected = Left(Error(Status.NOT_FOUND,""))
 
       val result = FinancialTransactionsReads.read("", "", httpResponse)
 
-      "return an ISE" in {
+      "return an NOT_FOUND " in {
         result shouldEqual expected
       }
     }

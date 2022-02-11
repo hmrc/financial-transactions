@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package models.API1166
+package models.API1811
 
-import base.SpecBase
-import play.api.libs.json.Json
-import utils.TestConstants.{fullSubItem, fullSubItemJson}
+import play.api.libs.json.{Format, Json}
 
-class SubItemSpec extends SpecBase {
+case class Error(code: Int, reason: String)
 
-  "SubItem" should {
-
-    "serialize to Json successfully" in {
-      Json.toJson(fullSubItem) shouldBe fullSubItemJson
-    }
-
-    "deserialize to a SubItem model successfully" in {
-      fullSubItemJson.as[SubItem] shouldBe fullSubItem
-    }
-  }
+object Error {
+  implicit val format: Format[Error] = Json.format[Error]
 }

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package connectors
+package connectors.API1166
 
 import base.SpecBase
-import connectors.httpParsers.FinancialTransactionsHttpParser
+import connectors.API1166.httpParsers.FinancialTransactionsHttpParser
 import mocks.MockHttp
+import models.API1166.FinancialDataQueryParameters._
 import models.API1166._
 import models._
-import models.API1166.FinancialDataQueryParameters._
 import play.api.http.Status
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ImplicitDateFormatter._
 import utils.TestConstants.fullFinancialTransactions
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
 import scala.concurrent.Future
 
@@ -90,16 +90,16 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
           ))(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
-            regime = vatRegime,
-            queryParameters = FinancialDataQueryParameters(
-              fromDate = Some("2017-04-06"),
-              toDate = Some("2018-04-05"),
-              onlyOpenItems = Some(false),
-              includeLocks = Some(true),
-              calculateAccruedInterest = Some(false),
-              customerPaymentInformation = Some(false)
+              regime = vatRegime,
+              queryParameters = FinancialDataQueryParameters(
+                fromDate = Some("2017-04-06"),
+                toDate = Some("2018-04-05"),
+                onlyOpenItems = Some(false),
+                includeLocks = Some(true),
+                calculateAccruedInterest = Some(false),
+                customerPaymentInformation = Some(false)
+              )
             )
-          )
           await(result) shouldBe successResponse
         }
       }
@@ -112,11 +112,11 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
           ))(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
-            regime = vatRegime,
-            queryParameters = FinancialDataQueryParameters(
-              fromDate = Some("2017-04-06")
+              regime = vatRegime,
+              queryParameters = FinancialDataQueryParameters(
+                fromDate = Some("2017-04-06")
+              )
             )
-          )
           await(result) shouldBe successResponse
         }
       }
@@ -128,11 +128,11 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             Seq(dateToKey -> "2018-04-05"))(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
-            regime = vatRegime,
-            queryParameters = FinancialDataQueryParameters(
-              toDate = Some("2018-04-05")
+              regime = vatRegime,
+              queryParameters = FinancialDataQueryParameters(
+                toDate = Some("2018-04-05")
+              )
             )
-          )
           await(result) shouldBe successResponse
         }
       }
@@ -174,11 +174,11 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             Seq(calculateAccruedInterestKey -> "false"))(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
-            regime = vatRegime,
-            queryParameters = FinancialDataQueryParameters(
-              calculateAccruedInterest = Some(false)
+              regime = vatRegime,
+              queryParameters = FinancialDataQueryParameters(
+                calculateAccruedInterest = Some(false)
+              )
             )
-          )
           await(result) shouldBe successResponse
         }
       }
@@ -190,11 +190,11 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             Seq(customerPaymentInformationKey -> "false"))(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
-            regime = vatRegime,
-            queryParameters = FinancialDataQueryParameters(
-              customerPaymentInformation = Some(false)
+              regime = vatRegime,
+              queryParameters = FinancialDataQueryParameters(
+                customerPaymentInformation = Some(false)
+              )
             )
-          )
           await(result) shouldBe successResponse
         }
       }

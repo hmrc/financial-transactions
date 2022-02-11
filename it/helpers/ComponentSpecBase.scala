@@ -17,7 +17,9 @@
 package helpers
 
 import binders.FinancialTransactionsBinders
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, stubFor}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
+import config.MicroserviceAppConfig
 import helpers.servicemocks.AuthStub
 import models.API1166.FinancialDataQueryParameters
 import org.scalatest._
@@ -27,6 +29,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.HttpClient
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience
@@ -35,12 +38,22 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl = s"http://$mockHost:$mockPort"
+  val httpClient : HttpClient = app.injector.instanceOf[HttpClient]
+  val appConfig: MicroserviceAppConfig = app.injector.instanceOf[MicroserviceAppConfig]
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
-    "microservice.services.des.url" -> mockUrl
+    "microservice.services.des.url" -> mockUrl,
+    "microservice.services.eis.url" -> mockUrl
   )
+
+  def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =
+    stubFor(get(url).willReturn(
+      aResponse()
+        .withStatus(returnStatus)
+        .withBody(returnBody)
+    ))
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()
     .in(Environment.simple(mode = Mode.Dev))
