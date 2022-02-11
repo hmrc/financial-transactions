@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.API1166.httpParsers
+package connectors.httpParsers
 
 import base.SpecBase
 import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package connectors.API1166.httpParsers
+package connectors.API1166
 
 import config.MicroserviceAppConfig
-import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser._
+import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
 import javax.inject.{Inject, Singleton}
 import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
 import models.{DirectDebits, TaxRegime}
