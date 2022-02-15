@@ -33,10 +33,6 @@ class FinancialTransactionsService @Inject()(val connector: FinancialDataConnect
 
     logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +
       s"Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
-    connector.getFinancialData(regime, queryParameters).map {
-      case success@Right(_) => success
-      case error@Left(_) => error
+      connector.getFinancialData(regime, queryParameters)
     }
-
-  }
 }

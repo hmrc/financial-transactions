@@ -40,7 +40,7 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
 
     val url = financialDataUrl(regime)
 
-    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
+    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.api1811QueryParams}")
     http.GET[FinancialTransactionsResponse](url, queryParameters.api1811QueryParams, eisHeaders)(FinancialTransactionsReads,hc, ec)
     }
 }

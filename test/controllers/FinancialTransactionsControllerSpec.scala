@@ -269,52 +269,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
           }
         }
 
-        "an authenticated user requests IT details" when {
-
-          val regimeType = "IT"
-          val mtditid = "XAIT0000123456"
-          val incomeTaxRegime = IncomeTaxRegime(mtditid)
-
-          "for a successful response from the FinancialTransactionsService" should {
-
-            lazy val result = {
-              mockAppConfig.features.useApi1811(true)
-              setupMock1811GetFinancialTransactions(incomeTaxRegime, RequestQueryParameters())(successResponse)
-              TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, mtditid, RequestQueryParameters()
-              )(fakeRequest)
-            }
-
-            "return a status of 200 (OK)" in {
-              status(result) shouldBe Status.OK
-            }
-
-            "return a json body with the financial transaction information" in {
-              contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions1811)
-            }
-
-          }
-
-          "for a failure response from the FinancialTransactionsService" should {
-
-            lazy val result = {
-              mockAppConfig.features.useApi1811(true)
-              setupMock1811GetFinancialTransactions(incomeTaxRegime, RequestQueryParameters())(errorResponse)
-              TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, mtditid, RequestQueryParameters()
-              )(fakeRequest)
-            }
-
-            "return the same status as the response" in {
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return the correct error JSON" in {
-              contentAsJson(result) shouldBe Json.toJson(badRequestError)
-            }
-          }
-        }
-
         "an authenticated user requests details for an invalid tax regime" should {
 
           val regimeType = "BANANA"

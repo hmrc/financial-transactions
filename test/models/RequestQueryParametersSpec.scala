@@ -75,4 +75,43 @@ class RequestQueryParametersSpec extends SpecBase {
       }
     }
   }
+  "The FinancialDataQueryParameters.api1811QueryParams method" should {
+
+    "output the expected sequence of key value pairs" which {
+
+      "if only open items is defined it should be added to the sequence" in {
+        val queryParams = RequestQueryParameters(
+          fromDate = Some("2017-04-06"),
+          toDate = Some("2018-04-05"),
+          onlyOpenItems = Some(true)
+        )
+        queryParams.api1811QueryParams shouldBe Seq(
+          dateFromKey -> "2017-04-06",
+          dateToKey -> "2018-04-05",
+          onlyOpenItemsKey -> "true",
+          includeLocksKey -> "true",
+          calculateAccruedInterestKey -> "true",
+          removePOAKey -> "true",
+          customerPaymentInformationKey -> "true"
+        )
+      }
+      "if only open items is not defined in the request it should be added to the sequence and set to false" in {
+        val queryParams = RequestQueryParameters(
+          fromDate = Some("2017-04-06"),
+          toDate = Some("2018-04-05"),
+          None
+        )
+        queryParams.api1811QueryParams shouldBe Seq(
+          dateFromKey -> "2017-04-06",
+          dateToKey -> "2018-04-05",
+          onlyOpenItemsKey -> "false",
+          includeLocksKey -> "true",
+          calculateAccruedInterestKey -> "true",
+          removePOAKey -> "true",
+          customerPaymentInformationKey -> "true"
+        )
+      }
+    }
+
+  }
 }
