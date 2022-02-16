@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package services
+package services.API1166
 
-import javax.inject.{Inject, Singleton}
 import audit.AuditingService
 import audit.models._
 import connectors.API1166.FinancialDataConnector
+import javax.inject.{Inject, Singleton}
 import models.API1166._
 import models._
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
                                              val auditingService: AuditingService) extends LoggerUtil {
 
   def getFinancialTransactions(regime: TaxRegime,
-                               queryParameters: FinancialDataQueryParameters)
+                               queryParameters: RequestQueryParameters)
                               (implicit headerCarrier: HeaderCarrier,
                                ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
 

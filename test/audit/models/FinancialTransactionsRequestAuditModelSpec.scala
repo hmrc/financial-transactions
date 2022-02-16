@@ -16,10 +16,9 @@
 
 package audit.models
 
-import _root_.models._
+import _root_.models.{RequestQueryParameters, _}
 import base.SpecBase
-import models.API1166.FinancialDataQueryParameters
-import models.API1166.FinancialDataQueryParameters._
+import models.RequestQueryParameters._
 import utils.ImplicitDateFormatter._
 
 class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
@@ -33,13 +32,10 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
 
     "all QueryParameters are passed to it" should {
 
-      val testQueryParams = FinancialDataQueryParameters(
+      val testQueryParams = RequestQueryParameters(
         fromDate = Some("2018-01-01"),
         toDate = Some("2019-01-01"),
-        onlyOpenItems = Some(true),
-        includeLocks = Some(false),
-        calculateAccruedInterest = Some(true),
-        customerPaymentInformation = Some(false)
+        onlyOpenItems = Some(true)
       )
       object TestFinancialTransactionsRequestAuditModel extends FinancialTransactionsRequestAuditModel(testRegime, testQueryParams)
 
@@ -57,17 +53,14 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
           "taxIdentifier" -> testRegime.id,
           dateFromKey -> testQueryParams.fromDate.get.toString,
           dateToKey -> testQueryParams.toDate.get.toString,
-          onlyOpenItemsKey -> testQueryParams.onlyOpenItems.get.toString,
-          includeLocksKey -> testQueryParams.includeLocks.get.toString,
-          calculateAccruedInterestKey -> testQueryParams.calculateAccruedInterest.get.toString,
-          customerPaymentInformationKey -> testQueryParams.customerPaymentInformation.get.toString
+          onlyOpenItemsKey -> testQueryParams.onlyOpenItems.get.toString
         )
       }
     }
 
     "not passed any Query Parameters" should {
 
-      val noQueryParams = FinancialDataQueryParameters()
+      val noQueryParams = RequestQueryParameters()
       object TestFinancialTransactionsRequestAuditModel extends FinancialTransactionsRequestAuditModel(testRegime, noQueryParams)
 
       "Have the correct details for the audit event" in {

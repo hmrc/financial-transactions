@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package services
+package services.API1166
 
 import audit.models._
 import base.SpecBase
 import mocks.audit.MockAuditingService
-import mocks.connectors.MockFinancialDataConnector
+import mocks.connectors.Mock1166FinancialDataConnector
 import models.API1166._
 import models._
 import play.api.http.Status
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ImplicitDateFormatter._
 import utils.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
 
-class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataConnector with MockAuditingService {
+class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDataConnector with MockAuditingService {
 
   object TestFinancialTransactionService extends FinancialTransactionsService(mockFinancialDataConnector, mockAuditingService)
 
@@ -38,13 +38,10 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
     "Return FinancialTransactions when a success response is returned from the Connector" in {
 
       val successResponse: Either[Nothing, FinancialTransactions] = Right(fullFinancialTransactions)
-      val queryParams: FinancialDataQueryParameters = FinancialDataQueryParameters(
+      val queryParams: RequestQueryParameters = RequestQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
-        onlyOpenItems = Some(false),
-        includeLocks = Some(true),
-        calculateAccruedInterest = Some(false),
-        customerPaymentInformation = Some(false)
+        onlyOpenItems = Some(false)
       )
 
       setupMockGetFinancialData(regime, queryParams)(successResponse)
@@ -53,13 +50,10 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        FinancialDataQueryParameters(
+        RequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
-          onlyOpenItems = Some(false),
-          includeLocks = Some(true),
-          calculateAccruedInterest = Some(false),
-          customerPaymentInformation = Some(false)
+          onlyOpenItems = Some(false)
         )
       ))
 
@@ -74,24 +68,18 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
 
       val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
 
-      setupMockGetFinancialData(regime, FinancialDataQueryParameters(
+      setupMockGetFinancialData(regime, RequestQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
-        onlyOpenItems = Some(false),
-        includeLocks = Some(true),
-        calculateAccruedInterest = Some(false),
-        customerPaymentInformation = Some(false)
+        onlyOpenItems = Some(false)
       ))(singleErrorResponse)
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        FinancialDataQueryParameters(
+        RequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
-          onlyOpenItems = Some(false),
-          includeLocks = Some(true),
-          calculateAccruedInterest = Some(false),
-          customerPaymentInformation = Some(false)
+          onlyOpenItems = Some(false)
         )
       ))
 
@@ -106,24 +94,18 @@ class FinancialTransactionsServiceSpec extends SpecBase with MockFinancialDataCo
         Error("CODE 2", "REASON 2")
       ))))
 
-      setupMockGetFinancialData(regime, FinancialDataQueryParameters(
+      setupMockGetFinancialData(regime, RequestQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
-        onlyOpenItems = Some(false),
-        includeLocks = Some(true),
-        calculateAccruedInterest = Some(false),
-        customerPaymentInformation = Some(false)
+        onlyOpenItems = Some(false)
       ))(multiErrorResponse)
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        FinancialDataQueryParameters(
+        RequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
-          onlyOpenItems = Some(false),
-          includeLocks = Some(true),
-          calculateAccruedInterest = Some(false),
-          customerPaymentInformation = Some(false)
+          onlyOpenItems = Some(false)
         )
       ))
 

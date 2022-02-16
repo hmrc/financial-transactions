@@ -2,5 +2,4 @@
 
 GET /has-direct-debit/:vrn @controllers.FinancialTransactionsController.checkDirectDebitExists(vrn: String)
 
-GET /:idType/:idValue   @controllers.FinancialTransactionsController.getFinancialTransactions(idType: String, idValue: String, queryParams: models.API1166.FinancialDataQueryParameters)
-
+GET /:idType/:idValue   @controllers.FinancialTransactionsController.getFinancialTransactions(idType: String, idValue: String, queryParams: models.RequestQueryParameters)

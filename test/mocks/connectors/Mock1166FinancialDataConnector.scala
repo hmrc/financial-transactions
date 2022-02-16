@@ -18,8 +18,8 @@ package mocks.connectors
 
 import connectors.API1166.FinancialDataConnector
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
-import models.API1166.{FinancialDataQueryParameters, FinancialTransactions}
-import models.{DirectDebits, TaxRegime}
+import models.API1166.FinancialTransactions
+import models.{DirectDebits, RequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -31,7 +31,7 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import scala.concurrent.Future
 
 
-trait MockFinancialDataConnector extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
+trait Mock1166FinancialDataConnector extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
 
   val mockFinancialDataConnector: FinancialDataConnector = mock[FinancialDataConnector]
 
@@ -40,7 +40,7 @@ trait MockFinancialDataConnector extends AnyWordSpecLike with Matchers with Opti
     reset(mockFinancialDataConnector)
   }
 
-  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: FinancialDataQueryParameters)
+  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: RequestQueryParameters)
                                (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
     when(
       mockFinancialDataConnector.getFinancialData(

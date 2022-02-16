@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, stubFor}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.MicroserviceAppConfig
 import helpers.servicemocks.AuthStub
-import models.API1166.FinancialDataQueryParameters
+import models.RequestQueryParameters
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -45,7 +45,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.des.url" -> mockUrl,
-    "microservice.services.eis.url" -> mockUrl
+    "microservice.services.eis.url" -> mockUrl,
+    "feature-switch.useApi1811" -> "false"
   )
 
   def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =
@@ -72,7 +73,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   object FinancialTransactions {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
-    def getFinancialTransactions(regime: String, id: String, queryParameters: FinancialDataQueryParameters): WSResponse =
+    def getFinancialTransactions(regime: String, id: String, queryParameters: RequestQueryParameters): WSResponse =
       get(s"/financial-transactions/$regime/$id${FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters)}")
   }
 

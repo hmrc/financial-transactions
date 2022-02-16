@@ -19,36 +19,33 @@ package binders
 import java.net.URLEncoder
 import java.time.LocalDate
 
-import models.API1166.FinancialDataQueryParameters
-import models.API1166.FinancialDataQueryParameters._
+import models.RequestQueryParameters._
+import models.RequestQueryParameters
 import play.api.mvc.QueryStringBindable
 
 import scala.util.{Failure, Success, Try}
 
 object FinancialTransactionsBinders {
 
-  implicit def financialDataQueryBinder: QueryStringBindable[FinancialDataQueryParameters] = {
-    new QueryStringBindable[FinancialDataQueryParameters] {
-      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, FinancialDataQueryParameters]] = {
+  implicit def financialDataQueryBinder: QueryStringBindable[RequestQueryParameters] = {
+    new QueryStringBindable[RequestQueryParameters] {
+      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, RequestQueryParameters]] = {
         val bindFrom = dateBind(dateFromKey, params)
         val bindTo = dateBind(dateToKey, params)
         val bindOnlyOpenItems = boolBind(onlyOpenItemsKey, params)
-        val bindIncludeLocks = boolBind(includeLocksKey, params)
-        val bindInterest = boolBind(calculateAccruedInterestKey, params)
-        val bindPaymentInfo = boolBind(customerPaymentInformationKey, params)
 
-        val queryParams = (bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindInterest, bindPaymentInfo)
-        val seqParams = Seq(bindFrom, bindTo, bindOnlyOpenItems, bindIncludeLocks, bindInterest, bindPaymentInfo)
+        val queryParams = (bindFrom, bindTo, bindOnlyOpenItems)
+        val seqParams = Seq(bindFrom, bindTo, bindOnlyOpenItems)
 
         queryParams match {
-          case (Right(from), Right(to), Right(openItems), Right(includeLocks), Right(interest), Right(paymentInfo)) =>
-            Some(Right(FinancialDataQueryParameters(from, to, openItems, includeLocks, interest, paymentInfo)))
+          case (Right(from), Right(to), Right(openItems)) =>
+            Some(Right(RequestQueryParameters(from, to, openItems)))
           case _ =>
             Some(Left(seqParams.collect{ case _@Left(errorMessage) => errorMessage }.mkString(", ")))
         }
       }
 
-      override def unbind(key: String, params: FinancialDataQueryParameters): String = params.toSeqQueryParams.map {
+      override def unbind(key: String, params: RequestQueryParameters): String = params.toSeqQueryParams.map {
         case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
       }.mkString("&")
 
