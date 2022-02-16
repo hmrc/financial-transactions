@@ -70,11 +70,12 @@ class FinancialTransactionsControllerSpec extends SpecBase
           val vatRegime = VatRegime(vrn)
 
           "for a successful response from the FinancialTransactionsService" should {
-            mockAppConfig.features.useApi1811(false)
-
-            lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, vrn, RequestQueryParameters()
-            )(fakeRequest)
+            lazy val result = {
+              mockAppConfig.features.useApi1811(false)
+              TestFinancialTransactionController.getFinancialTransactions(
+                regimeType, vrn, RequestQueryParameters()
+              )(fakeRequest)
+            }
 
             "return a status of 200 (OK)" in {
               setupMockGetFinancialTransactions(vatRegime, RequestQueryParameters())(successResponse)
