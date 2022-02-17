@@ -45,8 +45,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.des.url" -> mockUrl,
-    "microservice.services.eis.url" -> mockUrl,
-    "feature-switch.useApi1811" -> "false"
+    "microservice.services.eis.url" -> mockUrl
   )
 
   def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =
@@ -73,8 +72,11 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   object FinancialTransactions {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
-    def getFinancialTransactions(regime: String, id: String, queryParameters: RequestQueryParameters): WSResponse =
-      get(s"/financial-transactions/$regime/$id${FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters)}")
+    def getFinancialTransactions(idType: String, id: String, queryParameters: RequestQueryParameters): WSResponse = {
+      val queryParamStart = if(queryParameters.hasQueryParameters) "?" else ""
+      get(s"/financial-transactions/$idType/$id$queryParamStart" +
+        FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters))
+    }
   }
 
   def isAuthorised(authorised: Boolean = true): StubMapping = {

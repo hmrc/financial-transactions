@@ -19,7 +19,7 @@ package testData
 import models.API1166._
 import utils.ImplicitDateFormatter._
 
-object FinancialData {
+object FinancialData1166 {
 
   val successResponse: FinancialTransactions = FinancialTransactions(
     idType = Some("MTDBSA"),
