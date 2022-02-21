@@ -23,7 +23,7 @@ import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstantsAPI1811.{fullFinancialTransactions, fullFinancialTransactionsJson}
+import utils.TestConstantsAPI1811.{fullFinancialTransactions, fullFinancialTransactionsJsonEIS}
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 
@@ -31,7 +31,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and matches expected Schema" should {
 
-      val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsJson.toString)
+      val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsJsonEIS.toString)
 
       val expected = Right(fullFinancialTransactions)
 

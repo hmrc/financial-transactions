@@ -44,7 +44,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
           And("I wiremock stub a successful Get Financial Data response")
           EISFinancialDataStub.stubGetFinancialData(
-            vatRegime, queryParameters)(OK, FinancialData1811.fullFinancialTransactionsJson)
+            vatRegime, queryParameters)(OK, FinancialData1811.fullFinancialTransactionsJsonEIS)
 
           When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
           val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
@@ -52,7 +52,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
           Then("a successful response is returned with expected JSON data")
           res should have(
             httpStatus(OK),
-            jsonBodyAs[models.API1811.FinancialTransactions](FinancialData1811.fullFinancialTransactions)
+            jsonBodyAs(FinancialData1811.fullFinancialTransactionsJsonOutput)
           )
         }
       }

@@ -24,7 +24,7 @@ import models.{RequestQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testData.FinancialData1811.{fullFinancialTransactions, fullFinancialTransactionsJson}
+import testData.FinancialData1811.{fullFinancialTransactions, fullFinancialTransactionsJsonEIS}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext
@@ -55,7 +55,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
         stubGetRequest(
           generateUrl(regimeType, vrn),
           OK,
-          fullFinancialTransactionsJson.toString()
+          fullFinancialTransactionsJsonEIS.toString()
         )
 
         val expectedResult = fullFinancialTransactions
