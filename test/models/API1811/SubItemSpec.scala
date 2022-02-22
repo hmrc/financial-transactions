@@ -18,7 +18,8 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstantsAPI1811.{fullSubItem, fullSubItemJson}
+import utils.TestConstants.fullSubItemJson
+import utils.TestConstantsAPI1811.{fullSubItem, fullSubItemJsonEIS}
 
 class SubItemSpec extends SpecBase {
 
@@ -29,7 +30,7 @@ class SubItemSpec extends SpecBase {
     }
 
     "deserialize to a SubItem model successfully" in {
-      fullSubItemJson.as[SubItem] shouldBe fullSubItem
+      fullSubItemJsonEIS.as[SubItem] shouldBe fullSubItem
     }
   }
 }

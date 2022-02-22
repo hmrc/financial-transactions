@@ -18,7 +18,8 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstantsAPI1811.{fullTransaction, fullTransactionJson}
+import utils.TestConstants.fullTransactionJson
+import utils.TestConstantsAPI1811.{fullTransaction, fullTransactionJsonEIS}
 
 class TransactionSpec extends SpecBase {
 
@@ -29,7 +30,7 @@ class TransactionSpec extends SpecBase {
     }
 
     "deserialize to a Transaction model successfully" in {
-      fullTransactionJson.as[Transaction] shouldBe fullTransaction
+      fullTransactionJsonEIS.as[Transaction] shouldBe fullTransaction
     }
   }
 }

@@ -19,6 +19,7 @@ package utils
 import play.api.libs.json.{JsObject, Json}
 import models.API1811.{FinancialTransactions, SubItem, Transaction}
 import utils.ImplicitDateFormatter._
+import utils.TestConstants.fullTransactionJson
 
 object TestConstantsAPI1811 {
 
@@ -46,7 +47,7 @@ object TestConstantsAPI1811 {
     promiseToPay = Some("K")
   )
 
-  val fullSubItemJson: JsObject = Json.obj(
+  val fullSubItemJsonEIS: JsObject = Json.obj(
     "subItem" -> "000",
     "dueDate" -> "2018-02-14",
     "amount" -> 3400.0,
@@ -64,10 +65,11 @@ object TestConstantsAPI1811 {
     "paymentLot" -> "H",
     "paymentLotItem" -> "112",
     "clearingSAPDocument" -> "3350000253",
+    "codingInitiationDate" -> "2018-01-01",
     "statisticalDocument" -> "I",
-    "DDcollectionInProgress" -> true,
+    "DDCollectionInProgress" -> true,
     "returnReason" -> "J",
-    "promiseToPay" -> "K"
+    "promisetoPay" -> "K"
   )
 
   val fullTransaction: Transaction = Transaction(
@@ -94,7 +96,7 @@ object TestConstantsAPI1811 {
     items = Seq(fullSubItem)
   )
 
-  val fullTransactionJson: JsObject = Json.obj(
+  val fullTransactionJsonEIS: JsObject = Json.obj(
     "chargeType" -> "PAYE",
     "mainType" -> "2100",
     "periodKey" -> "13RL",
@@ -115,11 +117,15 @@ object TestConstantsAPI1811 {
     "outstandingAmount" -> 1400,
     "clearedAmount" -> 2000,
     "accruedInterest" -> 0.23,
-    "items" -> Json.arr(fullSubItemJson)
+    "items" -> Json.arr(fullSubItemJsonEIS)
   )
 
-  val fullFinancialTransactionsJson: JsObject = Json.obj(
-    "financialDetails" -> Json.arr(fullTransactionJson)
+  val fullFinancialTransactionsJsonEIS: JsObject = Json.obj(
+    "financialDetails" -> Json.arr(fullTransactionJsonEIS)
+  )
+
+  val fullFinancialTransactionsJsonOutput: JsObject = Json.obj(
+    "financialTransactions" -> Json.arr(fullTransactionJson)
   )
 
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(

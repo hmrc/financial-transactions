@@ -21,5 +21,9 @@ import play.api.libs.json._
 case class FinancialTransactions(financialDetails: Seq[Transaction])
 
 object FinancialTransactions {
-  implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]
+  implicit val reads: Reads[FinancialTransactions] =
+    (JsPath \ "financialDetails").read[Seq[Transaction]].map(FinancialTransactions.apply)
+
+  implicit val writes: Writes[FinancialTransactions] =
+    (JsPath \ "financialTransactions").write[Seq[Transaction]].contramap(_.financialDetails)
 }
