@@ -18,7 +18,7 @@ package mocks.services
 
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
 import models.API1166.FinancialTransactions
-import models.{DirectDebits, RequestQueryParameters, TaxRegime}
+import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -39,7 +39,7 @@ trait MockFinancialTransactionsService extends AnyWordSpecLike with Matchers wit
     reset(mockFinancialTransactionsService)
   }
 
-  def setupMockGetFinancialTransactions(regime: TaxRegime, queryParameters: RequestQueryParameters)
+  def setupMockGetFinancialTransactions(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                                (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
     when(
       mockFinancialTransactionsService.getFinancialTransactions(

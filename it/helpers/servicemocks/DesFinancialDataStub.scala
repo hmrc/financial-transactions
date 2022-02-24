@@ -19,12 +19,12 @@ package helpers.servicemocks
 import binders.FinancialTransactionsBinders
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper._
-import models.{RequestQueryParameters, TaxRegime}
+import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.libs.json.JsValue
 
 object DesFinancialDataStub {
 
-  private def financialDataUrl(regime: TaxRegime, queryParameters: RequestQueryParameters): String = {
+  private def financialDataUrl(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters): String = {
     if (queryParameters.hasQueryParameters) {
       s"/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
         s"?${FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters)}"
@@ -34,10 +34,10 @@ object DesFinancialDataStub {
     }
   }
 
-  def stubGetFinancialData(regime: TaxRegime, queryParams: RequestQueryParameters)(status: Int, response: JsValue): StubMapping =
+  def stubGetFinancialData(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)(status: Int, response: JsValue): StubMapping =
     stubGet(financialDataUrl(regime, queryParams), status, response.toString())
 
-  def verifyGetDesBusinessDetails(regime: TaxRegime, queryParams: RequestQueryParameters): Unit =
+  def verifyGetDesBusinessDetails(regime: TaxRegime, queryParams: FinancialRequestQueryParameters): Unit =
     verifyGet(financialDataUrl(regime, queryParams))
 
 }

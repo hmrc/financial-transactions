@@ -32,7 +32,7 @@ class FinancialTransactionsService @Inject()(val financialDataConnector: Financi
                                              val auditingService: AuditingService) extends LoggerUtil {
 
   def getFinancialTransactions(regime: TaxRegime,
-                               queryParameters: RequestQueryParameters)
+                               queryParameters: FinancialRequestQueryParameters)
                               (implicit headerCarrier: HeaderCarrier,
                                ec: ExecutionContext): Future[Either[ErrorResponse, FinancialTransactions]] = {
 

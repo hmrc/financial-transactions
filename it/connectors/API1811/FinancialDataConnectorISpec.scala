@@ -20,7 +20,7 @@ import connectors.API1811
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import helpers.ComponentSpecBase
 import models.API1811.Error
-import models.{RequestQueryParameters, TaxRegime, VatRegime}
+import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
@@ -41,7 +41,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
   val invalidRegime: TaxRegime = VatRegime(id = "9")
   val vrn = "123456789"
   val invalidVrn = "9"
-  val queryParameters: RequestQueryParameters = RequestQueryParameters()
+  val queryParameters: FinancialRequestQueryParameters = FinancialRequestQueryParameters()
 
   def generateUrl(regimeType: String, VRN : String): String =  s"/penalty/financial-data/VRN/$VRN/$regimeType" +
     s"?onlyOpenItems=false&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"

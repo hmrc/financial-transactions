@@ -19,17 +19,17 @@ package binders
 import java.net.URLEncoder
 import java.time.LocalDate
 
-import models.RequestQueryParameters._
-import models.RequestQueryParameters
+import models.FinancialRequestQueryParameters._
+import models.FinancialRequestQueryParameters
 import play.api.mvc.QueryStringBindable
 
 import scala.util.{Failure, Success, Try}
 
 object FinancialTransactionsBinders {
 
-  implicit def financialDataQueryBinder: QueryStringBindable[RequestQueryParameters] = {
-    new QueryStringBindable[RequestQueryParameters] {
-      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, RequestQueryParameters]] = {
+  implicit def financialDataQueryBinder: QueryStringBindable[FinancialRequestQueryParameters] = {
+    new QueryStringBindable[FinancialRequestQueryParameters] {
+      override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, FinancialRequestQueryParameters]] = {
         val bindFrom = dateBind(dateFromKey, params)
         val bindTo = dateBind(dateToKey, params)
         val bindOnlyOpenItems = boolBind(onlyOpenItemsKey, params)
@@ -39,13 +39,13 @@ object FinancialTransactionsBinders {
 
         queryParams match {
           case (Right(from), Right(to), Right(openItems)) =>
-            Some(Right(RequestQueryParameters(from, to, openItems)))
+            Some(Right(FinancialRequestQueryParameters(from, to, openItems)))
           case _ =>
             Some(Left(seqParams.collect{ case _@Left(errorMessage) => errorMessage }.mkString(", ")))
         }
       }
 
-      override def unbind(key: String, params: RequestQueryParameters): String = params.toSeqQueryParams.map {
+      override def unbind(key: String, params: FinancialRequestQueryParameters): String = params.toSeqQueryParams.map {
         case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
       }.mkString("&")
 

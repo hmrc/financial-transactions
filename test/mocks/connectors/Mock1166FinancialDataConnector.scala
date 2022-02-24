@@ -19,7 +19,7 @@ package mocks.connectors
 import connectors.API1166.FinancialDataConnector
 import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
 import models.API1166.FinancialTransactions
-import models.{DirectDebits, RequestQueryParameters, TaxRegime}
+import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -40,7 +40,7 @@ trait Mock1166FinancialDataConnector extends AnyWordSpecLike with Matchers with 
     reset(mockFinancialDataConnector)
   }
 
-  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: RequestQueryParameters)
+  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                                (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
     when(
       mockFinancialDataConnector.getFinancialData(

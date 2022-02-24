@@ -17,7 +17,7 @@
 package mocks.services
 
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import models.{RequestQueryParameters, TaxRegime}
+import models.{FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
@@ -30,7 +30,7 @@ trait Mock1811FinancialTransactionsService {
 
   val mock1811FinancialTransactionsService: api1811FinancialTransactionsService = mock[api1811FinancialTransactionsService]
 
-  def setupMock1811GetFinancialTransactions(regime: TaxRegime, queryParameters: RequestQueryParameters)
+  def setupMock1811GetFinancialTransactions(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                                        (response: FinancialTransactionsResponse): OngoingStubbing[Future[FinancialTransactionsResponse]] =
     when(
       mock1811FinancialTransactionsService.getFinancialTransactions(

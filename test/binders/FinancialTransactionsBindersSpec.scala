@@ -17,8 +17,8 @@
 package binders
 
 import base.SpecBase
-import models.RequestQueryParameters._
-import models.RequestQueryParameters
+import models.FinancialRequestQueryParameters._
+import models.FinancialRequestQueryParameters
 import utils.ImplicitDateFormatter._
 
 class FinancialTransactionsBindersSpec extends SpecBase {
@@ -29,9 +29,9 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
       val queryParams: Map[String, Seq[String]] = Map("" -> Seq())
 
-      "return an empty RequestQueryParameters instance" in {
+      "return an empty FinancialRequestQueryParameters instance" in {
 
-        val expected = Some(Right(RequestQueryParameters()))
+        val expected = Some(Right(FinancialRequestQueryParameters()))
         val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
         actual shouldBe expected
@@ -45,9 +45,9 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
         val queryParams: Map[String, Seq[String]] = Map(dateFromKey -> Seq("2018-01-01"))
 
-        "return an RequestQueryParameters instance with correct parameters" in {
+        "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
-          val expected = Some(Right(RequestQueryParameters(Some("2018-01-01"))))
+          val expected = Some(Right(FinancialRequestQueryParameters(Some("2018-01-01"))))
           val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -75,9 +75,9 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
         val queryParams: Map[String, Seq[String]] = Map(dateToKey -> Seq("2018-01-01"))
 
-        "return an RequestQueryParameters instance with correct parameters" in {
+        "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
-          val expected = Some(Right(RequestQueryParameters(None, Some("2018-01-01"))))
+          val expected = Some(Right(FinancialRequestQueryParameters(None, Some("2018-01-01"))))
           val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -105,9 +105,9 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
         val queryParams: Map[String, Seq[String]] = Map(onlyOpenItemsKey -> Seq("true"))
 
-        "return an RequestQueryParameters instance with correct parameters" in {
+        "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
-          val expected = Some(Right(RequestQueryParameters(None, None, Some(true))))
+          val expected = Some(Right(FinancialRequestQueryParameters(None, None, Some(true))))
           val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -138,9 +138,9 @@ class FinancialTransactionsBindersSpec extends SpecBase {
           onlyOpenItemsKey -> Seq("true")
         )
 
-        "return an RequestQueryParameters instance with correct parameters" in {
+        "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
-          val expected = Some(Right(RequestQueryParameters(
+          val expected = Some(Right(FinancialRequestQueryParameters(
             fromDate = Some("2018-01-01"),
             toDate = Some("2018-01-01"),
             onlyOpenItems = Some(true)
@@ -179,9 +179,9 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
       val queryParams: Map[String, Seq[String]] = Map("unrecognisedDateParam" -> Seq("2018-01-01"))
 
-      "ignore it and return an empty RequestQueryParameters instance" in {
+      "ignore it and return an empty FinancialRequestQueryParameters instance" in {
 
-        val expected = Some(Right(RequestQueryParameters()))
+        val expected = Some(Right(FinancialRequestQueryParameters()))
         val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
         actual shouldBe expected
