@@ -19,7 +19,7 @@ package services.API1811
 import com.google.inject.Inject
 import connectors.API1811.FinancialDataConnector
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import models.{RequestQueryParameters, TaxRegime}
+import models.{FinancialRequestQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil
 
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class FinancialTransactionsService @Inject()(val connector: FinancialDataConnector,
                                              implicit val ec: ExecutionContext) extends LoggerUtil {
 
-  def getFinancialTransactions(regime: TaxRegime, queryParameters: RequestQueryParameters)(
+  def getFinancialTransactions(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)(
                                implicit headerCarrier: HeaderCarrier): Future[FinancialTransactionsResponse] = {
 
     logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +

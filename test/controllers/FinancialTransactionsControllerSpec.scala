@@ -25,7 +25,7 @@ import mocks.services.MockFinancialTransactionsService
 import mocks.services.Mock1811FinancialTransactionsService
 import models.API1166._
 import models.API1811.{Error => Error1811}
-import models.{RequestQueryParameters, _}
+import models.{FinancialRequestQueryParameters, _}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
@@ -73,12 +73,12 @@ class FinancialTransactionsControllerSpec extends SpecBase
             lazy val result = {
               mockAppConfig.features.useApi1811(false)
               TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, vrn, RequestQueryParameters()
+                regimeType, vrn, FinancialRequestQueryParameters()
               )(fakeRequest)
             }
 
             "return a status of 200 (OK)" in {
-              setupMockGetFinancialTransactions(vatRegime, RequestQueryParameters())(successResponse)
+              setupMockGetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(successResponse)
               status(result) shouldBe Status.OK
             }
 
@@ -91,11 +91,11 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "for a bad request with single error from the FinancialTransactionsService" should {
 
             lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, vrn, RequestQueryParameters()
+              regimeType, vrn, FinancialRequestQueryParameters()
             )(fakeRequest)
 
             "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(vatRegime, RequestQueryParameters())(badRequestSingleError)
+              setupMockGetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(badRequestSingleError)
               status(result) shouldBe Status.BAD_REQUEST
             }
 
@@ -108,11 +108,11 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "for a bad request with multiple errors from the FinancialTransactionsService" should {
 
             lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, vrn, RequestQueryParameters()
+              regimeType, vrn, FinancialRequestQueryParameters()
             )(fakeRequest)
 
             "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(vatRegime, RequestQueryParameters())(badRequestMultiError)
+              setupMockGetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(badRequestMultiError)
               status(result) shouldBe Status.BAD_REQUEST
             }
 
@@ -132,11 +132,11 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "for a successful response from the FinancialTransactionsService" should {
 
             lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, mtditid, RequestQueryParameters()
+              regimeType, mtditid, FinancialRequestQueryParameters()
             )(fakeRequest)
 
             "return a status of 200 (OK)" in {
-              setupMockGetFinancialTransactions(incomeTaxRegime, RequestQueryParameters())(successResponse)
+              setupMockGetFinancialTransactions(incomeTaxRegime, FinancialRequestQueryParameters())(successResponse)
               status(result) shouldBe Status.OK
             }
 
@@ -149,11 +149,11 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "for a bad request with single error from the FinancialTransactionsService" should {
 
             lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, mtditid, RequestQueryParameters()
+              regimeType, mtditid, FinancialRequestQueryParameters()
             )(fakeRequest)
 
             "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(incomeTaxRegime, RequestQueryParameters())(badRequestSingleError)
+              setupMockGetFinancialTransactions(incomeTaxRegime, FinancialRequestQueryParameters())(badRequestSingleError)
               status(result) shouldBe Status.BAD_REQUEST
             }
 
@@ -166,11 +166,11 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "for a bad request with multiple errors from the FinancialTransactionsService" should {
 
             lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, mtditid, RequestQueryParameters()
+              regimeType, mtditid, FinancialRequestQueryParameters()
             )(fakeRequest)
 
             "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(incomeTaxRegime, RequestQueryParameters())(badRequestMultiError)
+              setupMockGetFinancialTransactions(incomeTaxRegime, FinancialRequestQueryParameters())(badRequestMultiError)
               status(result) shouldBe Status.BAD_REQUEST
             }
 
@@ -188,7 +188,7 @@ class FinancialTransactionsControllerSpec extends SpecBase
           val id = "123456"
 
           lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-            regimeType, id, RequestQueryParameters()
+            regimeType, id, FinancialRequestQueryParameters()
           )(fakeRequest)
 
           "return a status of 400 (BAD_REQUEST)" in {
@@ -209,7 +209,7 @@ class FinancialTransactionsControllerSpec extends SpecBase
         "Return an UNAUTHORISED response" which {
 
           lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-            regimeType, id, RequestQueryParameters()
+            regimeType, id, FinancialRequestQueryParameters()
           )(fakeRequest)
 
           "has status UNAUTHORISED (401)" in {
@@ -235,9 +235,9 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
             lazy val result = {
               mockAppConfig.features.useApi1811(true)
-              setupMock1811GetFinancialTransactions(vatRegime, RequestQueryParameters())(successResponse)
+              setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(successResponse)
               TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, id, RequestQueryParameters()
+                regimeType, id, FinancialRequestQueryParameters()
               )(fakeRequest)
             }
 
@@ -254,9 +254,9 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
             lazy val result = {
               mockAppConfig.features.useApi1811(true)
-              setupMock1811GetFinancialTransactions(vatRegime, RequestQueryParameters())(errorResponse)
+              setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
               TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, id, RequestQueryParameters()
+                regimeType, id, FinancialRequestQueryParameters()
               )(fakeRequest)
             }
 
@@ -278,9 +278,9 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
           lazy val result = {
             mockAppConfig.features.useApi1811(true)
-            setupMock1811GetFinancialTransactions(vatRegime, RequestQueryParameters())(errorResponse)
+            setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
             TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, id, RequestQueryParameters()
+              regimeType, id, FinancialRequestQueryParameters()
             )(fakeRequest)
           }
 
@@ -360,7 +360,7 @@ class FinancialTransactionsControllerSpec extends SpecBase
       "Return an UNAUTHORISED response" which {
 
         lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-          regimeType, id, RequestQueryParameters()
+          regimeType, id, FinancialRequestQueryParameters()
         )(fakeRequest)
 
         "has status UNAUTHORISED (401)" in {

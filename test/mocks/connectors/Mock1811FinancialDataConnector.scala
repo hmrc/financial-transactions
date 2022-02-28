@@ -18,7 +18,7 @@ package mocks.connectors
 
 import connectors.API1811.FinancialDataConnector
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import models.{RequestQueryParameters, TaxRegime}
+import models.{FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
@@ -30,7 +30,7 @@ trait Mock1811FinancialDataConnector {
 
   val mockFinancialDataConnector: FinancialDataConnector = mock[FinancialDataConnector]
 
-  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: RequestQueryParameters)
+  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                                (response: FinancialTransactionsResponse): OngoingStubbing[Future[FinancialTransactionsResponse]] =
     when(
       mockFinancialDataConnector.getFinancialData(

@@ -18,9 +18,9 @@ package models
 
 import base.SpecBase
 import utils.ImplicitDateFormatter._
-import RequestQueryParameters._
+import FinancialRequestQueryParameters._
 
-class RequestQueryParametersSpec extends SpecBase {
+class FinancialRequestQueryParametersSpec extends SpecBase {
 
   "The FinancialDataQueryParameters object" should {
 
@@ -42,27 +42,27 @@ class RequestQueryParametersSpec extends SpecBase {
     "output the expected sequence of key-value pairs" which {
 
       "for no Query Parameters, has no values" in {
-        val queryParams = RequestQueryParameters()
+        val queryParams = FinancialRequestQueryParameters()
         queryParams.toSeqQueryParams shouldBe Seq()
       }
 
       "for fromDate Query Param, has a 'dateFrom' param with correct value" in {
-        val queryParams = RequestQueryParameters(fromDate = Some("2018-04-06"))
+        val queryParams = FinancialRequestQueryParameters(fromDate = Some("2018-04-06"))
         queryParams.toSeqQueryParams shouldBe Seq(dateFromKey -> "2018-04-06")
       }
 
       "for toDate Query Param, has a 'dateTo' param with correct value" in {
-        val queryParams = RequestQueryParameters(toDate = Some("2019-04-05"))
+        val queryParams = FinancialRequestQueryParameters(toDate = Some("2019-04-05"))
         queryParams.toSeqQueryParams shouldBe Seq(dateToKey -> "2019-04-05")
       }
 
       "for onlyOpenItems Query Param, has a 'onlyOpenItems' param with correct value" in {
-        val queryParams = RequestQueryParameters(onlyOpenItems = Some(true))
+        val queryParams = FinancialRequestQueryParameters(onlyOpenItems = Some(true))
         queryParams.toSeqQueryParams shouldBe Seq(onlyOpenItemsKey -> "true")
       }
 
       "for all Query Params, outputs them all as expected" in {
-        val queryParams = RequestQueryParameters(
+        val queryParams = FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(false)
@@ -80,7 +80,7 @@ class RequestQueryParametersSpec extends SpecBase {
     "output the expected sequence of key value pairs" which {
 
       "if only open items is defined it should be added to the sequence" in {
-        val queryParams = RequestQueryParameters(
+        val queryParams = FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(true)
@@ -96,7 +96,7 @@ class RequestQueryParametersSpec extends SpecBase {
         )
       }
       "if only open items is not defined in the request it should be added to the sequence and set to false" in {
-        val queryParams = RequestQueryParameters(
+        val queryParams = FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           None

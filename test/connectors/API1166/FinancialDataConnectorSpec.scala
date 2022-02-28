@@ -21,7 +21,7 @@ import connectors.API1166.httpParsers.FinancialTransactionsHttpParser
 import mocks.MockHttp
 import models.API1166._
 import models._
-import models.RequestQueryParameters._
+import models.FinancialRequestQueryParameters._
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ImplicitDateFormatter._
@@ -88,7 +88,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
               regime = vatRegime,
-              queryParameters = RequestQueryParameters(
+              queryParameters = FinancialRequestQueryParameters(
                 fromDate = Some("2017-04-06"),
                 toDate = Some("2018-04-05"),
                 onlyOpenItems = Some(false)
@@ -107,7 +107,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
               regime = vatRegime,
-              queryParameters = RequestQueryParameters(
+              queryParameters = FinancialRequestQueryParameters(
                 fromDate = Some("2017-04-06")
               )
             )
@@ -123,7 +123,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
             TestFinancialDataConnector.getFinancialData(
               regime = vatRegime,
-              queryParameters = RequestQueryParameters(
+              queryParameters = FinancialRequestQueryParameters(
                 toDate = Some("2018-04-05")
               )
             )
@@ -138,7 +138,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             Seq(onlyOpenItemsKey -> "true"))(successResponse)
           val result = TestFinancialDataConnector.getFinancialData(
             regime = vatRegime,
-            queryParameters = RequestQueryParameters(
+            queryParameters = FinancialRequestQueryParameters(
               onlyOpenItems = Some(true)
             )
           )
@@ -151,7 +151,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
         "return a FinancialTransactions model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(successResponse)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
-            TestFinancialDataConnector.getFinancialData(regime = vatRegime, RequestQueryParameters())
+            TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialRequestQueryParameters())
           await(result) shouldBe successResponse
         }
       }
@@ -161,7 +161,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
         "return a Error model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(badRequestSingleError)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
-            TestFinancialDataConnector.getFinancialData(regime = vatRegime, RequestQueryParameters())
+            TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialRequestQueryParameters())
           await(result) shouldBe badRequestSingleError
         }
       }
@@ -171,7 +171,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
         "return a MultiError model" in {
           setupMockHttpGet(TestFinancialDataConnector.financialDataUrl(vatRegime), Seq())(badRequestMultiError)
           val result: Future[FinancialTransactionsHttpParser.HttpGetResult[FinancialTransactions]] =
-            TestFinancialDataConnector.getFinancialData(regime = vatRegime, RequestQueryParameters())
+            TestFinancialDataConnector.getFinancialData(regime = vatRegime, FinancialRequestQueryParameters())
           await(result) shouldBe badRequestMultiError
         }
       }

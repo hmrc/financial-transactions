@@ -40,7 +40,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
 
   def getFinancialTransactions(idType: String,
                                idValue: String,
-                               queryParams: RequestQueryParameters): Action[AnyContent] =
+                               queryParams: FinancialRequestQueryParameters): Action[AnyContent] =
     authenticate.async {
       implicit authorisedUser =>
       if(appConfig.features.useApi1811()) {
@@ -63,7 +63,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
       }
     }
 
-  private def retrieveFinancialTransactions(regime: TaxRegime, queryParams: RequestQueryParameters)
+  private def retrieveFinancialTransactions(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
                                            (implicit hc: HeaderCarrier) = {
     logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactions] " +
       "Calling FinancialTransactionsService.getFinancialTransactions")
@@ -77,7 +77,7 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
     }
   }
 
-  private def retrieveFinancialTransactionsAPI1811(regime: TaxRegime, queryParams: RequestQueryParameters)
+  private def retrieveFinancialTransactionsAPI1811(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
                                                   (implicit hc: HeaderCarrier) = {
     logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactionsAPI1811] " +
       "Calling API1811.FinancialTransactionsService.getFinancialTransactions")

@@ -16,9 +16,9 @@
 
 package audit.models
 
-import _root_.models.{RequestQueryParameters, _}
+import _root_.models.{FinancialRequestQueryParameters, _}
 import base.SpecBase
-import models.RequestQueryParameters._
+import models.FinancialRequestQueryParameters._
 import utils.ImplicitDateFormatter._
 
 class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
@@ -32,7 +32,7 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
 
     "all QueryParameters are passed to it" should {
 
-      val testQueryParams = RequestQueryParameters(
+      val testQueryParams = FinancialRequestQueryParameters(
         fromDate = Some("2018-01-01"),
         toDate = Some("2019-01-01"),
         onlyOpenItems = Some(true)
@@ -60,7 +60,7 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
 
     "not passed any Query Parameters" should {
 
-      val noQueryParams = RequestQueryParameters()
+      val noQueryParams = FinancialRequestQueryParameters()
       object TestFinancialTransactionsRequestAuditModel extends FinancialTransactionsRequestAuditModel(testRegime, noQueryParams)
 
       "Have the correct details for the audit event" in {

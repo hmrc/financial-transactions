@@ -17,9 +17,9 @@
 package audit.models
 
 import models._
-import models.RequestQueryParameters._
+import models.FinancialRequestQueryParameters._
 
-case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams: RequestQueryParameters) extends AuditModel {
+case class FinancialTransactionsRequestAuditModel(regime: TaxRegime, queryParams: FinancialRequestQueryParameters) extends AuditModel {
 
   override val transactionName: String = "financial-transactions-request"
   override val auditType: String = "financialTransactionsRequest"

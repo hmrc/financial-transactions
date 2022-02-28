@@ -38,7 +38,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
     "Return FinancialTransactions when a success response is returned from the Connector" in {
 
       val successResponse: Either[Nothing, FinancialTransactions] = Right(fullFinancialTransactions)
-      val queryParams: RequestQueryParameters = RequestQueryParameters(
+      val queryParams: FinancialRequestQueryParameters = FinancialRequestQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
         onlyOpenItems = Some(false)
@@ -50,7 +50,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        RequestQueryParameters(
+        FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(false)
@@ -68,7 +68,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
 
       val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
 
-      setupMockGetFinancialData(regime, RequestQueryParameters(
+      setupMockGetFinancialData(regime, FinancialRequestQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
         onlyOpenItems = Some(false)
@@ -76,7 +76,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        RequestQueryParameters(
+        FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(false)
@@ -94,7 +94,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
         Error("CODE 2", "REASON 2")
       ))))
 
-      setupMockGetFinancialData(regime, RequestQueryParameters(
+      setupMockGetFinancialData(regime, FinancialRequestQueryParameters(
         fromDate = Some("2017-04-06"),
         toDate = Some("2018-04-05"),
         onlyOpenItems = Some(false)
@@ -102,7 +102,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
-        RequestQueryParameters(
+        FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(false)

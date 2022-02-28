@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, stubFor}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.MicroserviceAppConfig
 import helpers.servicemocks.AuthStub
-import models.RequestQueryParameters
+import models.FinancialRequestQueryParameters
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -72,7 +72,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
 
   object FinancialTransactions {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
-    def getFinancialTransactions(idType: String, id: String, queryParameters: RequestQueryParameters): WSResponse = {
+    def getFinancialTransactions(idType: String, id: String, queryParameters: FinancialRequestQueryParameters): WSResponse = {
       val queryParamStart = if(queryParameters.hasQueryParameters) "?" else ""
       get(s"/financial-transactions/$idType/$id$queryParamStart" +
         FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters))

@@ -20,10 +20,10 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
-case class RequestQueryParameters(fromDate: Option[LocalDate] = None,
-                                  toDate: Option[LocalDate] = None,
-                                  onlyOpenItems: Option[Boolean] = None) {
-  import RequestQueryParameters._
+case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
+                                           toDate: Option[LocalDate] = None,
+                                           onlyOpenItems: Option[Boolean] = None) {
+  import FinancialRequestQueryParameters._
   val toSeqQueryParams: Seq[(String, String)] = Seq(
     fromDate.map(dateFromKey -> _.toString),
     toDate.map(dateToKey -> _.toString),
@@ -46,7 +46,7 @@ case class RequestQueryParameters(fromDate: Option[LocalDate] = None,
 
 }
 
-object RequestQueryParameters {
+object FinancialRequestQueryParameters {
 
   val dateFromKey = "dateFrom"
   val dateToKey = "dateTo"
@@ -56,5 +56,5 @@ object RequestQueryParameters {
   val calculateAccruedInterestKey = "calculateAccruedInterest"
   val customerPaymentInformationKey = "customerPaymentInformation"
 
-  implicit val format: Format[RequestQueryParameters] = Json.format[RequestQueryParameters]
+  implicit val format: Format[FinancialRequestQueryParameters] = Json.format[FinancialRequestQueryParameters]
 }

@@ -19,7 +19,7 @@ package services.API1811
 import base.SpecBase
 import mocks.connectors.Mock1811FinancialDataConnector
 import models.API1811.Error
-import models.{RequestQueryParameters, TaxRegime, VatRegime}
+import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.TestConstantsAPI1811.fullFinancialTransactions
 import utils.ImplicitDateFormatter._
@@ -31,7 +31,7 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1811FinancialDa
 
   "The FinancialTransactionsService.getFinancialTransactions method" when {
 
-    val queryParams: RequestQueryParameters = RequestQueryParameters(
+    val queryParams: FinancialRequestQueryParameters = FinancialRequestQueryParameters(
       fromDate = Some("2017-04-06"),
       toDate = Some("2018-04-05"),
       onlyOpenItems = Some(false)

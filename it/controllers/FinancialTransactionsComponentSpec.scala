@@ -20,7 +20,7 @@ import config.RegimeKeys
 import helpers.ComponentSpecBase
 import helpers.servicemocks.{DesFinancialDataStub, EISFinancialDataStub}
 import models.API1166._
-import models.{IncomeTaxRegime, RequestQueryParameters, VatRegime}
+import models.{IncomeTaxRegime, FinancialRequestQueryParameters, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import testData.{FinancialData1166, FinancialData1811}
@@ -35,7 +35,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
       "a successful response is returned by the API" should {
 
-        lazy val queryParameters = RequestQueryParameters(onlyOpenItems = Some(true))
+        lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(true))
 
         "return a success response" in {
 
@@ -59,7 +59,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
       "an unsuccessful response is returned by the API" should {
 
-        lazy val queryParameters = RequestQueryParameters()
+        lazy val queryParameters = FinancialRequestQueryParameters()
 
         "return a single error response" in {
 
@@ -89,7 +89,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
         "a successful response is returned by the API" should {
 
-          lazy val queryParameters = RequestQueryParameters()
+          lazy val queryParameters = FinancialRequestQueryParameters()
 
           "return a success response" in {
 
@@ -116,7 +116,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
         "a bad request response is returned by the API, containing one error" should {
 
-          lazy val queryParameters = RequestQueryParameters()
+          lazy val queryParameters = FinancialRequestQueryParameters()
 
           "return a single error response" in {
 
@@ -142,7 +142,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
         "a bad request response is returned by the API, containing multiple errors" should {
 
-          lazy val queryParameters = RequestQueryParameters()
+          lazy val queryParameters = FinancialRequestQueryParameters()
 
           "return a multi error response model" in {
 
@@ -174,7 +174,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
             isAuthorised(false)
 
             When(s"I call GET /financial-transactions/it/$mtditid")
-            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.IT, incomeTaxRegime.id, RequestQueryParameters())
+            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.IT, incomeTaxRegime.id, FinancialRequestQueryParameters())
 
             res should have(
               httpStatus(FORBIDDEN)
@@ -190,7 +190,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
         "a successful response is returned by the API" should {
 
-          lazy val queryParameters = RequestQueryParameters()
+          lazy val queryParameters = FinancialRequestQueryParameters()
 
           "return a success response" in {
 
@@ -216,7 +216,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
         "a bad request response is returned by the API, containing one error" should {
 
-          lazy val queryParameters = RequestQueryParameters()
+          lazy val queryParameters = FinancialRequestQueryParameters()
 
           "return a single error response" in {
 
@@ -242,7 +242,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
         "a bad request response is returned by the API, containing multiple errors" should {
 
-          lazy val queryParameters = RequestQueryParameters()
+          lazy val queryParameters = FinancialRequestQueryParameters()
 
           "return a multi error response model" in {
 
@@ -273,7 +273,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
             isAuthorised(false)
 
             When(s"I call GET /financial-transactions/vat/$vrn")
-            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, RequestQueryParameters())
+            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, FinancialRequestQueryParameters())
 
             res should have(
               httpStatus(FORBIDDEN)
