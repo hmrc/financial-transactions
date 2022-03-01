@@ -35,7 +35,7 @@ class LateSubmissionSpec extends SpecBase{
   }
 
   "deserialize to a penalty model with all optional fields present" in {
-    Json.toJson(modelWithAppealStatusAndLevel) shouldBe lppWithAppealStatusAndLevel
+    Json.toJson(lppModelWithOptionalFields) shouldBe lppWithOptionalFields
   }
 
 }

@@ -17,8 +17,7 @@
 package models.API1812
 
 import base.SpecBase
-import play.api.libs.json.{JsError, Json}
-import utils.TestConstantsAPI1811.fullFinancialTransactions
+import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
 class GetPenaltyDetailsSpec extends SpecBase {

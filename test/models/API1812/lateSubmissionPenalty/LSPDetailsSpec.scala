@@ -22,19 +22,19 @@ import utils.TestConstantsAPI1812._
 
 class LSPDetailsSpec extends SpecBase {
 
-  "serialize to JSON with all optional fields present" in {
+  "deserialize to JSON with all optional fields present" in {
     lspDetailsAllOptions.as[LSPDetails] shouldBe lspDetailsModelWithAllOptions
   }
 
-  "serialize to JSON with no optional fields present" in {
+  "deserialize to JSON with no optional fields present" in {
     lspDetailsWithNoOptions.as[LSPDetails] shouldBe lspDetailsModelWithNoOptions
   }
 
-  "deserialize to an lsp details model with all optional fields present" in {
+  "serialize to an lsp details model with all optional fields present" in {
     Json.toJson(lspDetailsModelWithAllOptions) shouldBe lspDetailsAllOptions
   }
 
-  "deserialize to a penalty model with all optional fields present" in {
+  "serialize to a penalty model with all optional fields present" in {
     Json.toJson(lspDetailsModelWithNoOptions) shouldBe lspDetailsWithNoOptions
   }
 

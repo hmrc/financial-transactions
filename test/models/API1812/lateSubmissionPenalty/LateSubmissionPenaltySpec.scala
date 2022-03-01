@@ -22,11 +22,11 @@ import utils.TestConstantsAPI1812.{lateSubmissionPenaltyJson, lateSubmissionPena
 
 class LateSubmissionPenaltySpec extends SpecBase{
 
-  "serialize to JSON as a LateSubmissionPenalty model" in {
+  "deserialize to JSON as a LateSubmissionPenalty model" in {
     lateSubmissionPenaltyJson.as[LateSubmissionPenalty] shouldBe lateSubmissionPenaltyModel
   }
 
-  "deserialize to a LateSubmissionPenalty model " in {
+  "serialize to a LateSubmissionPenalty model " in {
     Json.toJson(lateSubmissionPenaltyModel) shouldBe lateSubmissionPenaltyJson
   }
 

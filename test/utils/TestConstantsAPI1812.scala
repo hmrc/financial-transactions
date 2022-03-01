@@ -26,7 +26,7 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 object TestConstantsAPI1812 {
 
 
-  val lppWithoutAppealStatusAndLevel: JsObject = Json.obj(
+  val lppWithoutOptionalFields: JsObject = Json.obj(
     "penaltyNumber" -> "1234ABCD",
     "penaltyCategory" -> "LPP1",
     "penaltyStatus" -> "P",
@@ -40,7 +40,7 @@ object TestConstantsAPI1812 {
     "principalChargeReference" -> "CHARGING12345")
 
 
-  val lppWithAppealStatusAndLevel: JsObject = Json.obj(
+  val lppWithOptionalFields: JsObject = Json.obj(
     "penaltyNumber" -> "1234ABCD",
     "penaltyCategory" -> "LPP1",
     "penaltyStatus" -> "P",
@@ -55,7 +55,7 @@ object TestConstantsAPI1812 {
     "principalChargeDueDate" -> "2022-03-01",
     "principalChargeReference" -> "CHARGING12345")
 
-  val modelWithAppealStatusAndLevel: LatePaymentPenalty = LatePaymentPenalty(
+  val lppModelWithOptionalFields: LatePaymentPenalty = LatePaymentPenalty(
     penaltyNumber = "1234ABCD",
     penaltyCategory = LPPPenaltyCategoryEnum.firstPenalty,
     penaltyStatus = LPPPenaltyStatusEnum.Posted,
@@ -71,7 +71,7 @@ object TestConstantsAPI1812 {
     principalChargeDueDate = LocalDate.of(2022, 3, 1)
   )
 
-  val modelWithoutAppealStatusAndLevel: LatePaymentPenalty = LatePaymentPenalty(
+  val modelWithoutOptionalFields: LatePaymentPenalty = LatePaymentPenalty(
     penaltyNumber = "1234ABCD",
     penaltyCategory = LPPPenaltyCategoryEnum.firstPenalty,
     penaltyStatus = LPPPenaltyStatusEnum.Posted,
@@ -212,7 +212,7 @@ object TestConstantsAPI1812 {
 
   val getPenaltyDetailsAllModel: GetPenaltyDetails = GetPenaltyDetails(
     lateSubmissionPenalty = Some(lateSubmissionPenaltyModel),
-    latePaymentPenalty = Some(Seq(modelWithAppealStatusAndLevel))
+    latePaymentPenalty = Some(Seq(lppModelWithOptionalFields))
   )
 
   val getPenaltyDetailsLSPModel: GetPenaltyDetails = GetPenaltyDetails(
@@ -222,7 +222,7 @@ object TestConstantsAPI1812 {
 
   val getPenaltyDetailsLPPModel: GetPenaltyDetails = GetPenaltyDetails(
     lateSubmissionPenalty = None,
-    latePaymentPenalty = Some(Seq(modelWithAppealStatusAndLevel))
+    latePaymentPenalty = Some(Seq(lppModelWithOptionalFields))
   )
 
   val getPenaltyDetailsNone: GetPenaltyDetails = GetPenaltyDetails(

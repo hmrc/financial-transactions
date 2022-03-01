@@ -23,19 +23,19 @@ import utils.TestConstantsAPI1812._
 class LatePaymentPenaltySpec extends SpecBase{
 
   "serialize to JSON with no appeal status and appeal level" in {
-    lppWithoutAppealStatusAndLevel.as[LatePaymentPenalty] shouldBe modelWithoutAppealStatusAndLevel
+    lppWithoutOptionalFields.as[LatePaymentPenalty] shouldBe modelWithoutOptionalFields
   }
 
   "serialize to JSON with an appeal status and appeal level" in {
-   lppWithAppealStatusAndLevel.as[LatePaymentPenalty] shouldBe modelWithAppealStatusAndLevel
+   lppWithOptionalFields.as[LatePaymentPenalty] shouldBe lppModelWithOptionalFields
   }
 
   "deserialize to a penalty model with no appeal status and no appeal level" in {
-    Json.toJson(modelWithoutAppealStatusAndLevel) shouldBe lppWithoutAppealStatusAndLevel
+    Json.toJson(modelWithoutOptionalFields) shouldBe lppWithoutOptionalFields
   }
 
   "deserialize to a penalty model with appeal status and appeal level" in {
-    Json.toJson(modelWithAppealStatusAndLevel) shouldBe lppWithAppealStatusAndLevel
+    Json.toJson(lppModelWithOptionalFields) shouldBe lppWithOptionalFields
   }
 
 }

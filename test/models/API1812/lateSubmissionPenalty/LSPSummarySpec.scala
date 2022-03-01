@@ -22,11 +22,11 @@ import utils.TestConstantsAPI1812.{lspSummaryJson, lspSummaryModel}
 
 class LSPSummarySpec  extends SpecBase{
 
-  "serialize to JSON as a LatePaymentPenalty model" in {
+  "deserialize to a LatePaymentPenalty model successfully" in {
     lspSummaryJson.as[LSPSummary] shouldBe lspSummaryModel
   }
 
-  "deserialize to a LatePaymentPenalty model " in {
+  "serialize to json successfully" in {
     Json.toJson(lspSummaryModel) shouldBe lspSummaryJson
   }
 

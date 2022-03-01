@@ -18,7 +18,7 @@ package models.API1812.latePaymentPenalty
 
 import java.time.LocalDate
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{Format, Json}
 
 case class LatePaymentPenalty(penaltyNumber: String,
                               penaltyCategory: LPPPenaltyCategoryEnum.Value,
@@ -36,6 +36,5 @@ case class LatePaymentPenalty(penaltyNumber: String,
                               )
 
 object LatePaymentPenalty {
-  implicit val reads: Reads[LatePaymentPenalty] = Json.reads[LatePaymentPenalty]
-  implicit val writes: Writes[LatePaymentPenalty] = Json.writes[LatePaymentPenalty]
+  implicit val format: Format[LatePaymentPenalty] = Json.format[LatePaymentPenalty]
 }
