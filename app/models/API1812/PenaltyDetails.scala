@@ -22,21 +22,21 @@ import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import utils.JsonUtils
 
 
-case class GetPenaltyDetails(lateSubmissionPenalty: Option[LateSubmissionPenalty],
+case class PenaltyDetails(lateSubmissionPenalty: Option[LateSubmissionPenalty],
                           latePaymentPenalty: Option[Seq[LatePaymentPenalty]])
 
-object GetPenaltyDetails extends JsonUtils  {
-  implicit val format: Format[GetPenaltyDetails] = new Format[GetPenaltyDetails] {
-    override def reads(json: JsValue): JsResult[GetPenaltyDetails] = {
+object PenaltyDetails extends JsonUtils  {
+  implicit val format: Format[PenaltyDetails] = new Format[PenaltyDetails] {
+    override def reads(json: JsValue): JsResult[PenaltyDetails] = {
       for {
         latePaymentPenalty <- (json \ "latePaymentPenalty" \ "details").validateOpt[Seq[LatePaymentPenalty]]
         lateSubmissionPenalty <- (json \ "lateSubmissionPenalty").validateOpt[LateSubmissionPenalty]
       } yield {
-        GetPenaltyDetails(lateSubmissionPenalty, latePaymentPenalty)
+        PenaltyDetails(lateSubmissionPenalty, latePaymentPenalty)
       }
     }
 
-    override def writes(details: GetPenaltyDetails): JsValue = {
+    override def writes(details: PenaltyDetails): JsValue = {
       jsonObjNoNulls(
         "lateSubmissionPenalty" -> details.lateSubmissionPenalty,
         if(details.latePaymentPenalty.isDefined) {

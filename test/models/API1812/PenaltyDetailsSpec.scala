@@ -20,26 +20,26 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
-class GetPenaltyDetailsSpec extends SpecBase {
+class PenaltyDetailsSpec extends SpecBase {
 
   "Get Penalty Details" should {
     "return empty json when no LSP/LPP details exist" in {
-      val result = Json.fromJson(Json.parse("{}"))(GetPenaltyDetails.format)
+      val result = Json.fromJson(Json.parse("{}"))(PenaltyDetails.format)
       result.isSuccess shouldBe true
       result.get.latePaymentPenalty.isEmpty shouldBe true
       result.get.lateSubmissionPenalty.isEmpty shouldBe true
     }
 
     "deserialize successfully where only latePaymentPenalty is populated" in {
-      getPenaltyDetailsLPPJson.as[GetPenaltyDetails] shouldBe getPenaltyDetailsLPPModel
+      getPenaltyDetailsLPPJson.as[PenaltyDetails] shouldBe getPenaltyDetailsLPPModel
     }
 
     "deserialize successfully to a GetPenaltyDetailsModel where only lateSubmissionPenalty is populated" in {
-      getPenaltyDetailsLSPJson.as[GetPenaltyDetails] shouldBe getPenaltyDetailsLSPModel
+      getPenaltyDetailsLSPJson.as[PenaltyDetails] shouldBe getPenaltyDetailsLSPModel
     }
 
     "deserialize successfully to a GetPenaltyDetailsModel where both latePaymentPenalty and lateSubmissionPenalty are populated" in {
-      getPenaltyDetailsJAllson.as[GetPenaltyDetails] shouldBe getPenaltyDetailsAllModel
+      getPenaltyDetailsJAllson.as[PenaltyDetails] shouldBe getPenaltyDetailsAllModel
     }
 
     "be writable to JSON" when {

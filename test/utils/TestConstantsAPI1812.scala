@@ -18,7 +18,7 @@ package utils
 
 import java.time.LocalDate
 
-import models.API1812.GetPenaltyDetails
+import models.API1812.PenaltyDetails
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LPPPenaltyStatusEnum, LatePaymentPenalty}
 import models.API1812.lateSubmissionPenalty.{LSPDetails, LSPPenaltyCategoryEnum, LSPPenaltyStatusEnum, LSPSummary, LateSubmission, LateSubmissionPenalty}
 import play.api.libs.json.{JsObject, JsValue, Json}
@@ -71,7 +71,7 @@ object TestConstantsAPI1812 {
     principalChargeDueDate = LocalDate.of(2022, 3, 1)
   )
 
-  val modelWithoutOptionalFields: LatePaymentPenalty = LatePaymentPenalty(
+  val lppmodelWithoutOptionalFields: LatePaymentPenalty = LatePaymentPenalty(
     penaltyNumber = "1234ABCD",
     penaltyCategory = LPPPenaltyCategoryEnum.firstPenalty,
     penaltyStatus = LPPPenaltyStatusEnum.Posted,
@@ -94,7 +94,7 @@ object TestConstantsAPI1812 {
     taxPeriodStartDate = Some(LocalDate.of(2022, 1, 1)),
     taxPeriodEndDate = Some(LocalDate.of(2022, 3, 31)),
     taxPeriodDueDate = Some(LocalDate.of(2022, 5, 7)),
-    returnReceiptDate = Some(LocalDate.of(2022, 4, 1)),
+    returnReceiptDate = Some(LocalDate.of(2022, 4, 1))
   )
 
   val lateSubmissionModelNoOptional: LateSubmission = LateSubmission(
@@ -144,7 +144,7 @@ object TestConstantsAPI1812 {
     "penaltyStatus" ->"ACTIVE",
     "penaltyCreationDate" ->"2022-01-01",
     "penaltyExpiryDate" ->"2024-01-01",
-    "communicationsDate" -> "2022-01-01",
+    "communicationsDate" -> "2022-01-01"
   )
 
   val lspDetailsModelWithAllOptions: LSPDetails = LSPDetails(
@@ -210,22 +210,22 @@ object TestConstantsAPI1812 {
     "details" -> Json.arr(lspDetailsAllOptions)
   )
 
-  val getPenaltyDetailsAllModel: GetPenaltyDetails = GetPenaltyDetails(
+  val getPenaltyDetailsAllModel: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = Some(lateSubmissionPenaltyModel),
     latePaymentPenalty = Some(Seq(lppModelWithOptionalFields))
   )
 
-  val getPenaltyDetailsLSPModel: GetPenaltyDetails = GetPenaltyDetails(
+  val getPenaltyDetailsLSPModel: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = Some(lateSubmissionPenaltyModel),
     latePaymentPenalty = None
   )
 
-  val getPenaltyDetailsLPPModel: GetPenaltyDetails = GetPenaltyDetails(
+  val getPenaltyDetailsLPPModel: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = None,
     latePaymentPenalty = Some(Seq(lppModelWithOptionalFields))
   )
 
-  val getPenaltyDetailsNone: GetPenaltyDetails = GetPenaltyDetails(
+  val getPenaltyDetailsNone: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = None,
     latePaymentPenalty = None
   )
