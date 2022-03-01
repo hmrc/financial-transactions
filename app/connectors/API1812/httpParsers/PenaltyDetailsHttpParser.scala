@@ -16,20 +16,20 @@
 
 package connectors.API1812.httpParsers
 
-import models.API1812.Error
+import models.API1812.{Error, PenaltyDetails}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil
 
 object PenaltyDetailsHttpParser extends LoggerUtil {
 
-  type PenaltyDetailsResponse = Either[Error, getPenaltyDetails]
+  type PenaltyDetailsResponse = Either[Error, PenaltyDetails]
 
   implicit object PenaltyDetailsReads extends HttpReads[PenaltyDetailsResponse] {
     override def read(method: String, url: String, response: HttpResponse): PenaltyDetailsResponse = {
       response.status match {
         case OK =>
-          response.json.validate[getPenaltyDetails].fold(
+          response.json.validate[PenaltyDetails].fold(
             invalid => {
               logger.warn("[PenaltyDetailsReads][read] Json Error Parsing Successful EIS Response")
               logger.debug(s"[PenaltyDetailsReads][read] EIS Response: ${response.json}\nJson Errors: $invalid")

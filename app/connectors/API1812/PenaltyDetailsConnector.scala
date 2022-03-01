@@ -18,7 +18,7 @@ package connectors.API1812
 
 import config.MicroserviceAppConfig
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.{PenaltyDetailsReads, PenaltyDetailsResponse}
-import models.TaxRegime
+import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
 

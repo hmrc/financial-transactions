@@ -23,6 +23,7 @@ import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
+import utils.TestConstantsAPI1812.{getPenaltyDetailsAllModel, getPenaltyDetailsJAllson}
 
 class PenaltyDetailsHttpParserSpec extends SpecBase {
 
@@ -30,9 +31,9 @@ class PenaltyDetailsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and matches expected Schema" should {
 
-      val httpResponse = HttpResponse(OK, fullPenaltyDetailsJson.toString)
+      val httpResponse = HttpResponse(OK, getPenaltyDetailsJAllson.toString)
 
-      val expected = Right(fullPenaltyDetails)
+      val expected = Right(getPenaltyDetailsAllModel)
 
       val result = PenaltyDetailsReads.read("", "", httpResponse)
 
