@@ -19,8 +19,8 @@ package utils
 import java.time.LocalDate
 
 import models.API1812.PenaltyDetails
-import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LPPPenaltyStatusEnum, LatePaymentPenalty}
-import models.API1812.lateSubmissionPenalty.{LSPDetails, LSPPenaltyCategoryEnum, LSPPenaltyStatusEnum, LSPSummary, LateSubmission, LateSubmissionPenalty}
+import models.API1812.latePaymentPenalty._
+import models.API1812.lateSubmissionPenalty._
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 object TestConstantsAPI1812 {
