@@ -18,7 +18,7 @@ package models.API1812.lateSubmissionPenalty
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstantsAPI1812.{lateSubmissionPenaltyJson, lateSubmissionPenaltyModel, lspSummaryJson, lspSummaryModel}
+import utils.TestConstantsAPI1812.{lateSubmissionPenaltyJson, lateSubmissionPenaltyModel}
 
 class LateSubmissionPenaltySpec extends SpecBase{
 

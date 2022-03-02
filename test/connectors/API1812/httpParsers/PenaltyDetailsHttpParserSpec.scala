@@ -19,7 +19,6 @@ package connectors.API1812.httpParsers
 import base.SpecBase
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsReads
 import models.API1812.Error
-import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
@@ -45,7 +44,7 @@ class PenaltyDetailsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK but the response is not as expected" should {
 
-      val httpResponse = HttpResponse(OK, Json.obj("foo" -> "bar").toString)
+      val httpResponse = HttpResponse(OK, Json.obj("lateSubmissionPenalty" -> "complete and utter nonsense").toString)
 
       val expected = Left(Error(BAD_REQUEST,
         "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
