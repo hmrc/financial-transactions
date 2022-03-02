@@ -22,9 +22,6 @@ import play.api.{Configuration, Environment}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
-  val desEnvironment: String
-  val desToken: String
-  val desUrl: String
   val features: Features
 }
 
@@ -40,8 +37,8 @@ class MicroserviceAppConfig @Inject()(val environment: Environment, servicesConf
   lazy val desUrl: String = servicesConfig.getString("microservice.services.des.url")
 
   lazy val eisEnvironment: String = servicesConfig.getString("microservice.services.eis.environment")
+  lazy val eisToken: String = servicesConfig.getString("microservice.services.eis.auth-token")
   lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
-
 
   override val features = new Features
 }

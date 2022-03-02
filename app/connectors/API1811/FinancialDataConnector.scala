@@ -36,7 +36,7 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                          (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
-    val eisHeaders = Seq("CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
+    val eisHeaders = Seq("Authorization" -> s"Bearer ${appConfig.eisToken}","CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
 
     val url = financialDataUrl(regime)
 
