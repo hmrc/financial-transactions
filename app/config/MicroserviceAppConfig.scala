@@ -29,7 +29,7 @@ trait AppConfig {
 }
 
 @Singleton
-class MicroserviceAppConfig @Inject()(val environment: Environment, servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
+class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
 
   private def loadConfig(key: String) = servicesConfig.getString(key)
 

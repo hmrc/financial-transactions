@@ -22,7 +22,6 @@ import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialT
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil
-
 import scala.concurrent.{ExecutionContext, Future}
 
 class FinancialTransactionsService @Inject()(val connector: FinancialDataConnector,

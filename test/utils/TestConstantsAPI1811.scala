@@ -132,4 +132,6 @@ object TestConstantsAPI1811 {
     financialDetails = Seq(fullTransaction)
   )
 
+  val fullPenaltyDetails: PenaltyDetails =
+
 }
