@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package mocks.services
+package mocks.connectors
 
+import connectors.API1812.PenaltyDetailsConnector
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import org.scalatestplus.mockito.MockitoSugar.mock
-import services.API1812.PenaltyDetailsService
 
 import scala.concurrent.Future
 
-trait MockPenaltyDetailsService {
+trait MockPenaltyDetailsConnector {
 
-  val mockPenaltyDetailsService: PenaltyDetailsService = mock[PenaltyDetailsService]
+  val mockPenaltyDetailsConnector: PenaltyDetailsConnector = mock[PenaltyDetailsConnector]
 
-  def setupMockGetPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                                (response: PenaltyDetailsResponse): OngoingStubbing[Future[PenaltyDetailsResponse]] =
+  def setupPenaltyDetailsCall(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
+                               (response: PenaltyDetailsResponse): OngoingStubbing[Future[PenaltyDetailsResponse]] =
     when(
-      mockPenaltyDetailsService.getPenaltyDetails(
+      mockPenaltyDetailsConnector.getPenaltyDetails(
         ArgumentMatchers.eq(regime),
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())

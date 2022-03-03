@@ -17,36 +17,29 @@
 package services.API1812
 
 import base.SpecBase
-import models.API1811.Error
-import models.{RequestQueryParameters, TaxRegime, VatRegime}
+import mocks.connectors.MockPenaltyDetailsConnector
+import models.API1812.Error
+import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.ImplicitDateFormatter._
-import utils.TestConstantsAPI1811.fullFinancialTransactions
+import utils.TestConstantsAPI1812.penaltyDetailsAllModel
 
 class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnector {
 
-  object Service extends PenaltyDetailsService(mockPenaltyDetailsConnector, ec)
+  "The .getPenaltyDetails method" when {
 
-  "The FinancialTransactionsService.getFinancialTransactions method" when {
-
-    val queryParams: RequestQueryParameters = RequestQueryParameters(
-      fromDate = Some("2017-04-06"),
-      toDate = Some("2018-04-05"),
-      onlyOpenItems = Some(false)
-    )
-    val regime: TaxRegime = VatRegime("123456")
+    val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some(2))
+    val regime: TaxRegime = VatRegime("123456789")
+    val service = new PenaltyDetailsService(mockPenaltyDetailsConnector)
 
     "the connector returns a success response" should {
 
       "return the same response" in {
-
-        val successResponse = Right(fullFinancialTransactions)
-        setupPenaltyDetailsData(regime, queryParams)(successResponse)
-        val actual = await(Service.getPenaltyDetails()(regime, queryParams))
+        val successResponse = Right(penaltyDetailsAllModel)
+        setupPenaltyDetailsCall(regime, queryParams)(successResponse)
+        val actual = await(service.getPenaltyDetails(regime, queryParams))
 
         actual shouldBe successResponse
-
       }
     }
 
@@ -54,8 +47,8 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
 
       "return the same response" in {
         val failureResponse = Left(Error(Status.INTERNAL_SERVER_ERROR, "error"))
-        setupPenaltyDetailsData(regime, queryParams)(failureResponse)
-        val actual = await(Service.getPenaltyDetails(regime, queryParams))
+        setupPenaltyDetailsCall(regime, queryParams)(failureResponse)
+        val actual = await(service.getPenaltyDetails(regime, queryParams))
 
         actual shouldBe failureResponse
       }

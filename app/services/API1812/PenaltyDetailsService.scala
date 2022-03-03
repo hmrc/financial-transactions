@@ -17,19 +17,17 @@
 package services.API1812
 
 import com.google.inject.Inject
-import models.{PenaltyDetailsQueryParameters, RequestQueryParameters, TaxRegime}
+import connectors.API1812.PenaltyDetailsConnector
+import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
+import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PenaltyDetailsService @Inject()(val connector: PenaltyDetailsConnector,
-                                      implicit val ec: ExecutionContext) extends LoggerUtil {
+class PenaltyDetailsService @Inject()(connector: PenaltyDetailsConnector) extends LoggerUtil {
 
-  def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)(
-                       implicit headerCarrier: HeaderCarrier): Future[PenaltyDetailsResponse] = {
-
-    logger.debug("[PenaltyDetailsService][getPenaltyDetails] " +
-      s"Calling PenaltyDetailsConnector with Regime: $regime\nParams: $queryParameters")
-      connector.getPenaltyDetailsData(regime, queryParameters)
-  }
+  def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
+                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] =
+    connector.getPenaltyDetails(regime, queryParameters)
+}

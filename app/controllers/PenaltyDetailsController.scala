@@ -16,52 +16,40 @@
 
 package controllers
 
-
-
-import config.{MicroserviceAppConfig, RegimeKeys}
+import config.RegimeKeys
 import controllers.actions.AuthAction
-import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
+import models.API1166.InvalidTaxRegime
+import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.API1812.PenaltyDetailsService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import utils.LoggerUtil
-import scala.concurrent.Future
-import javax.inject.{Inject, Singleton}
 
+import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{Inject, Singleton}
 
 @Singleton
 class PenaltyDetailsController @Inject()(authenticate: AuthAction,
-                                        penaltyDetailsService: PenaltyDetailsService,
-                                        cc: ControllerComponents,
-                                        implicit val appConfig: MicroserviceAppConfig) extends BackendController(cc) with LoggerUtil {
+                                         penaltyDetailsService: PenaltyDetailsService,
+                                         cc: ControllerComponents)
+                                        (implicit ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
 
-  def getPenaltyDetails(idValue: String,
-                        queryParams: PenaltyDetailsQueryParameters): Action[AnyContent] =
-
-    authenticate.async {
-      implicit authorisedUser =>
-      idValue.toUpperCase match {
-        case RegimeKeys.idType => retrievePenaltyDetails(VatRegime(idValue), queryParams)
-        case _ =>
+  def getPenaltyDetails(idType: String,
+                        idValue: String,
+                        queryParams: PenaltyDetailsQueryParameters): Action[AnyContent] = authenticate.async {
+    implicit authorisedUser =>
+      idType.toUpperCase match {
+        case RegimeKeys.VAT =>
+          penaltyDetailsService.getPenaltyDetails(VatRegime(idValue), queryParams).map {
+            case Right(penaltyDetails) => Ok(Json.toJson(penaltyDetails))
+            case Left(error) => Status(error.code)(Json.toJson(error))
+          }
+        case regime =>
           logger.warn(s"[PenaltyDetailsController][getPenaltyDetails] " +
-            "Invalid Tax Regime '$$idType' received in request.")
-          Future.successful(BadRequest(Json.toJson(NewInvalidTaxRegime)))
+            s"Invalid Tax Regime '$regime' received in request.")
+          Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
       }
     }
-
-
-  private def retrievePenaltyDetails(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
-                                                  (implicit hc: HeaderCarrier) = {
-    logger.debug(s"[PenaltyDetailsController][retrievePenaltyDetailsAPI1812] " +
-      "Calling API1812.PenaltyDetailsService.getPenaltyDetails")
-
-    penaltyDetailsService.getPenaltyDetails(regime, queryParams).map {
-      case Right(penaltyDetails) => Ok(Json.toJson(penaltyDetails))
-      case Left(error) => Status(error.code)(Json.toJson(error))
-    }
-  }
-
 }
 

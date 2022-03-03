@@ -17,97 +17,74 @@
 package controllers
 
 import base.SpecBase
+import config.RegimeKeys
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
 import mocks.services.MockPenaltyDetailsService
-import models.API1166._
-import models.API1811.{Error => Error1811}
-import models.{RequestQueryParameters, _}
+import models.API1166.{InvalidTaxRegime, UnauthenticatedError}
+import models.API1812.Error
+import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
-import utils.TestConstantsAPI1811.{fullFinancialTransactions => fullFinancialTransactions1811}
+import utils.TestConstantsAPI1812.{penaltyDetailsAllJson, penaltyDetailsAllModel}
 
-class PenaltyDetailsControllerSpec extends SpecBase
-  with MockPenaltyDetailsService
-  with MockMicroserviceAuthorisedFunctions {
-
-  val singleError: Error = Error(code = "CODE", reason = "ERROR MESSAGE")
-  val multiError: MultiError = MultiError(
-    failures = Seq(
-      Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
-      Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
-    )
-  )
+class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsService with MockMicroserviceAuthorisedFunctions {
 
   val authActionImpl = new AuthActionImpl(mockAuth, controllerComponents)
 
-  object TestPenaltyDetailsController extends PenaltyDetailsController(
+  val controller = new PenaltyDetailsController(
     authActionImpl,
     mockPenaltyDetailsService,
-    controllerComponents,
-    mockAppConfig
+    controllerComponents
   )
 
-  "The GET PenaltyDetailsController.getPenaltyDetails method" when {
+  val vrn = "123456789"
+  val vatRegime: VatRegime = VatRegime(vrn)
 
-    val badRequestError = Error1811(Status.BAD_REQUEST, "error")
-    val successResponse = Right(fullPenaltyDetails)
-    val errorResponse = Left(badRequestError)
+  "The .getPenaltyDetails method" when {
 
-    "an authenticated user requests VAT details" when {
-
-      val id = "123456"
-      val vatRegime = VatRegime(id)
+    "an authenticated user requests details for the VAT regime" when {
 
       "the service returns a success response" should {
 
         lazy val result = {
-          setupMockGetPenaltyTransactions(vatRegime, PenaltyDetailsQueryParameters())(successResponse)
-          TestPenaltyDetailsController.getPenaltyDetails(
-            id, PenaltyDetailsQueryParameters()
-          )(fakeRequest)
+          setupMockGetPenaltyDetails(vatRegime, PenaltyDetailsQueryParameters())(Right(penaltyDetailsAllModel))
+          controller.getPenaltyDetails(RegimeKeys.VAT, vrn, PenaltyDetailsQueryParameters())(fakeRequest)
         }
 
         "return a status of 200 (OK)" in {
           status(result) shouldBe Status.OK
         }
 
-        "return a json body with the financial transaction information" in {
-          contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions1811)
+        "return a json body with the penalty details information" in {
+          contentAsJson(result) shouldBe penaltyDetailsAllJson
         }
       }
 
       "the service returns a failure response" should {
 
+        val error = Error(Status.INSUFFICIENT_STORAGE, "ERROR MESSAGE")
+        val errorJson = Json.obj("code" -> 507, "reason" -> "ERROR MESSAGE")
         lazy val result = {
-          setupMockGetPenaltyTransactions(vatRegime, PenaltyDetailsQueryParameters())(errorResponse)
-          TestPenaltyDetailsController.getPenaltyDetails(
-            id, PenaltyDetailsQueryParameters()
-          )(fakeRequest)
+          setupMockGetPenaltyDetails(vatRegime, PenaltyDetailsQueryParameters())(Left(error))
+          controller.getPenaltyDetails(RegimeKeys.VAT, vrn, PenaltyDetailsQueryParameters())(fakeRequest)
         }
 
         "return the same status as the response" in {
-          status(result) shouldBe Status.BAD_REQUEST
+          status(result) shouldBe Status.INSUFFICIENT_STORAGE
         }
 
         "return the correct error JSON" in {
-          contentAsJson(result) shouldBe Json.toJson(badRequestError)
+          contentAsJson(result) shouldBe errorJson
         }
       }
     }
 
-    "an authenticated user requests details for an invalid tax regime" should {
+    "an authenticated user requests details for an unsupported tax regime" should {
 
-      val id = "123456"
-      val vatRegime = VatRegime(id)
-
-      lazy val result = {
-        setupMockGetPenaltyTransactions(vatRegime, PenaltyDetailsQueryParameters())(errorResponse)
-        TestPenaltyDetailsController.getPenaltyDetails(
-          id, PenaltyDetailsQueryParameters()
-        )(fakeRequest)
-      }
+      val id = "XAIT123456789"
+      lazy val result = controller.getPenaltyDetails(RegimeKeys.IT, id, PenaltyDetailsQueryParameters())(fakeRequest)
 
       "return a status of 400 (BAD_REQUEST)" in {
         status(result) shouldBe Status.BAD_REQUEST
@@ -115,6 +92,22 @@ class PenaltyDetailsControllerSpec extends SpecBase
 
       "return a json body with an Invalid Tax Regime message" in {
         contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
+      }
+    }
+
+    "an unauthenticated user requests details" should {
+
+      lazy val result = {
+        setupMockAuthorisationException()
+        controller.getPenaltyDetails(RegimeKeys.VAT, vrn, PenaltyDetailsQueryParameters())(fakeRequest)
+      }
+
+      "return a status of 401 (UNAUTHORIZED)" in {
+        status(result) shouldBe Status.UNAUTHORIZED
+      }
+
+      "return the expected JSON" in {
+        contentAsJson(result) shouldBe Json.toJson(UnauthenticatedError)
       }
     }
   }
