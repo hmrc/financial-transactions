@@ -31,31 +31,31 @@ class PenaltyDetailsSpec extends SpecBase {
     }
 
     "deserialize successfully where only latePaymentPenalty is populated" in {
-      getPenaltyDetailsLPPJson.as[PenaltyDetails] shouldBe getPenaltyDetailsLPPModel
+      penaltyDetailsLPPJson.as[PenaltyDetails] shouldBe penaltyDetailsLPPModel
     }
 
     "deserialize successfully to a GetPenaltyDetailsModel where only lateSubmissionPenalty is populated" in {
-      getPenaltyDetailsLSPJson.as[PenaltyDetails] shouldBe getPenaltyDetailsLSPModel
+      penaltyDetailsLSPJson.as[PenaltyDetails] shouldBe penaltyDetailsLSPModel
     }
 
     "deserialize successfully to a GetPenaltyDetailsModel where both latePaymentPenalty and lateSubmissionPenalty are populated" in {
-      getPenaltyDetailsJAllson.as[PenaltyDetails] shouldBe getPenaltyDetailsAllModel
+      penaltyDetailsAllJson.as[PenaltyDetails] shouldBe penaltyDetailsAllModel
     }
 
     "be writable to JSON" when {
       "no LSP/LPP details exist - return empty JSON" in {
-        Json.toJson(getPenaltyDetailsNone) shouldBe Json.obj()
+        Json.toJson(penaltyDetailsNone) shouldBe Json.obj()
       }
     }
     "serialize successfully to a GetPenaltyDetailsJson where only lateSubmissionPenalty is populated" in {
-      Json.toJson(getPenaltyDetailsLSPModel) shouldBe getPenaltyDetailsLSPJson
+      Json.toJson(penaltyDetailsLSPModel) shouldBe penaltyDetailsLSPJson
     }
 
     "serialize successfully to a GetPenaltyDetailsJson where only latePaymentPenalty is populated" in {
-      Json.toJson(getPenaltyDetailsLPPModel) shouldBe getPenaltyDetailsLPPJson
+      Json.toJson(penaltyDetailsLPPModel) shouldBe penaltyDetailsLPPJson
     }
     "serialize successfully to a GetPenaltyDetailsJson where both latePaymentPenalty and lateSubmissionPenalty are populated" in {
-      Json.toJson(getPenaltyDetailsAllModel) shouldBe getPenaltyDetailsJAllson
+      Json.toJson(penaltyDetailsAllModel) shouldBe penaltyDetailsAllJson
     }
   }
 }
