@@ -39,7 +39,7 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
 
     val url = penaltyDetailsUrl(regime)
 
-    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
+    logger.debug(s"[PenaltyDetailsConnector][getPenaltyDetails] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
     http.GET[PenaltyDetailsResponse](url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads,hc, ec)
   }
 }
