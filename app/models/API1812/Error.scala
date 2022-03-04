@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package models.API1812.lateSubmissionPenalty
+package models.API1812
 
-import base.SpecBase
-import play.api.libs.json.Json
-import utils.TestConstantsAPI1812.{lateSubmissionPenaltyJson, lateSubmissionPenaltyModel}
+import play.api.libs.json.{Format, Json}
 
-class LateSubmissionPenaltySpec extends SpecBase{
+case class Error(code: Int, reason: String)
 
-  "deserialize to JSON as a LateSubmissionPenalty model" in {
-    lateSubmissionPenaltyJson.as[LateSubmissionPenalty] shouldBe lateSubmissionPenaltyModel
-  }
-
-  "serialize to a LateSubmissionPenalty model " in {
-    Json.toJson(lateSubmissionPenaltyModel) shouldBe lateSubmissionPenaltyJson
-  }
-
+object Error {
+  implicit val format: Format[Error] = Json.format[Error]
 }

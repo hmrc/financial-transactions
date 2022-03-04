@@ -210,27 +210,27 @@ object TestConstantsAPI1812 {
     "details" -> Json.arr(lspDetailsAllOptions)
   )
 
-  val getPenaltyDetailsAllModel: PenaltyDetails = PenaltyDetails(
+  val penaltyDetailsAllModel: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = Some(lateSubmissionPenaltyModel),
     latePaymentPenalty = Some(Seq(lppModelWithOptionalFields))
   )
 
-  val getPenaltyDetailsLSPModel: PenaltyDetails = PenaltyDetails(
+  val penaltyDetailsLSPModel: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = Some(lateSubmissionPenaltyModel),
     latePaymentPenalty = None
   )
 
-  val getPenaltyDetailsLPPModel: PenaltyDetails = PenaltyDetails(
+  val penaltyDetailsLPPModel: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = None,
     latePaymentPenalty = Some(Seq(lppModelWithOptionalFields))
   )
 
-  val getPenaltyDetailsNone: PenaltyDetails = PenaltyDetails(
+  val penaltyDetailsNone: PenaltyDetails = PenaltyDetails(
     lateSubmissionPenalty = None,
     latePaymentPenalty = None
   )
 
-  val getPenaltyDetailsLPPJson: JsValue = Json.parse(
+  val penaltyDetailsLPPJson: JsValue = Json.parse(
     """
       |{
       |  "latePaymentPenalty": {
@@ -253,7 +253,7 @@ object TestConstantsAPI1812 {
       |}
       |""".stripMargin)
 
-  val getPenaltyDetailsLSPJson : JsValue= Json.parse(
+  val penaltyDetailsLSPJson : JsValue= Json.parse(
     """
       |{
       | "lateSubmissionPenalty": {
@@ -292,7 +292,7 @@ object TestConstantsAPI1812 {
       |}
       |""".stripMargin)
 
-  val getPenaltyDetailsJAllson : JsValue = Json.parse(
+  val penaltyDetailsAllJson : JsValue = Json.parse(
     """
       |{
       | "lateSubmissionPenalty": {

@@ -46,18 +46,18 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
       if(appConfig.features.useApi1811()) {
         idType.toUpperCase match {
           case RegimeKeys.VAT => retrieveFinancialTransactionsAPI1811(VatRegime(idValue), queryParams)
-          case _ =>
+          case regime =>
             logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
-              "Invalid Tax Regime '$$idType' received in request.")
+              s"Invalid Tax Regime '$regime' received in request.")
             Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
         }
       } else {
         idType.toUpperCase match {
           case RegimeKeys.VAT => retrieveFinancialTransactions(VatRegime(idValue), queryParams)
           case RegimeKeys.IT => retrieveFinancialTransactions(IncomeTaxRegime(idValue), queryParams)
-          case _ =>
+          case regime =>
             logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
-              "Invalid Tax Regime '$$idType' received in request.")
+              s"Invalid Tax Regime '$regime' received in request.")
             Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
         }
       }

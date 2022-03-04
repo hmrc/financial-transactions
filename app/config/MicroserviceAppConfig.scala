@@ -18,7 +18,7 @@ package config
 
 import config.featureSwitch.Features
 import javax.inject.{Inject, Singleton}
-import play.api.{Configuration, Environment}
+import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
@@ -29,7 +29,7 @@ trait AppConfig {
 }
 
 @Singleton
-class MicroserviceAppConfig @Inject()(val environment: Environment, servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
+class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
 
   private def loadConfig(key: String) = servicesConfig.getString(key)
 
