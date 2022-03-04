@@ -17,7 +17,7 @@
 package utils
 
 import play.api.libs.json.{JsObject, Json}
-import models.API1811.{FinancialTransactions, SubItem, Transaction}
+import models.API1811.{DocumentDetails, FinancialTransactions, SubItem, Transaction}
 import utils.ImplicitDateFormatter._
 import utils.TestConstants.fullTransactionJson
 
@@ -130,6 +130,32 @@ object TestConstantsAPI1811 {
 
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
     financialDetails = Seq(fullTransaction)
+  )
+
+  val fullDocumentDetails : DocumentDetails = DocumentDetails(
+    taxYear = "2017",
+    documentId = "1455",
+    documentDate = "2018-03-29",
+    documentText = "VAT-VC",
+    documentDueDate = "2020-04-15",
+    totalAmount = 45552768.79,
+    documentOutstandingAmount = 297873.46,
+    statisticalFlag = false,
+    accruingPenaltyLPP1 = Some("1000.34"),
+    accruingPenaltyLPP2 = Some("accrlpp2")
+  )
+
+  val fullDocumentDetailsJson: JsObject = Json.obj(
+    "taxYear" -> "2017",
+    "documentId" -> "1455",
+    "documentDate" -> "2018-03-29",
+    "documentText" -> "VAT-VC",
+    "documentDueDate" -> "2020-04-15",
+    "totalAmount" -> 45552768.79,
+    "documentOutstandingAmount" -> 297873.46,
+    "statisticalFlag" -> false,
+    "accruingPenaltyLPP1" -> "1000.34",
+    "accruingPenaltyLPP2" -> "accrlpp2",
   )
 
 }
