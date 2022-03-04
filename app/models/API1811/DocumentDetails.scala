@@ -28,12 +28,9 @@ case class DocumentDetails(
                             documentDueDate: LocalDate,
                             totalAmount: BigDecimal,
                             documentOutstandingAmount: BigDecimal,
+                            statisticalFlag: Boolean,
                             accruingPenaltyLPP1: Option[String],
-                            lpp1Amount: Option[String],
-                            lpp1ID: Option[String],
-                            lpp2Amount: Option[String],
-                            accruingPenaltyLPP2: Option[String],
-                            lpp2ID: Option[String]
+                            accruingPenaltyLPP2: Option[String]
                           )
 
 object DocumentDetails {

@@ -140,12 +140,9 @@ object TestConstantsAPI1811 {
     documentDueDate = "2020-04-15",
     totalAmount = 45552768.79,
     documentOutstandingAmount = 297873.46,
+    statisticalFlag = false,
     accruingPenaltyLPP1 = Some("1000.34"),
-    lpp1Amount = Some("1000.34"),
-    lpp1ID = Some("LPP1ID"),
-    accruingPenaltyLPP2 = Some("accrlpp2"),
-    lpp2Amount = Some("1000.34"),
-    lpp2ID = Some("LPP2ID")
+    accruingPenaltyLPP2 = Some("accrlpp2")
   )
 
   val fullDocumentDetailsJson: JsObject = Json.obj(
@@ -156,12 +153,9 @@ object TestConstantsAPI1811 {
     "documentDueDate" -> "2020-04-15",
     "totalAmount" -> 45552768.79,
     "documentOutstandingAmount" -> 297873.46,
+    "statisticalFlag" -> false,
     "accruingPenaltyLPP1" -> "1000.34",
-    "lpp1Amount" -> "1000.34",
-    "lpp1ID" -> "LPP1ID",
     "accruingPenaltyLPP2" -> "accrlpp2",
-    "lpp2Amount" -> "1000.34",
-    "lpp2ID" -> "LPP2ID"
   )
 
 }
