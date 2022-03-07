@@ -18,15 +18,14 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstants.fullSubItemJson
-import utils.TestConstantsAPI1811.{fullSubItem, fullSubItemJsonEIS}
+import utils.TestConstantsAPI1811.{fullSubItem, fullSubItemJsonEIS, fullSubItemJsonEISOutput}
 
 class SubItemSpec extends SpecBase {
 
   "SubItem" should {
 
     "serialize to Json successfully" in {
-      Json.toJson(fullSubItem) shouldBe fullSubItemJson
+      Json.toJson(fullSubItem) shouldBe fullSubItemJsonEISOutput
     }
 
     "deserialize to a SubItem model successfully" in {

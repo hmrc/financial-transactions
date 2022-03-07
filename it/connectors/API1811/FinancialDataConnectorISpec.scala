@@ -50,7 +50,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
 
     "return a FinancialTransactionsModel" when {
 
-      s"an $OK response is received from financial transactions and the response can be parsed" in {
+      s"a $OK response is received from financial transactions and the response can be parsed" in {
 
         stubGetRequest(
           generateUrl(regimeType, vrn),
