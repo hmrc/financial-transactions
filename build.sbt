@@ -87,6 +87,7 @@ lazy val microservice = Project(appName, file("."))
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     routesImport += "binders.FinancialTransactionsBinders._",
+    routesImport += "binders.PenaltyDetailsBinders._",
     routesGenerator := InjectedRoutesGenerator
   )
   .configs(IntegrationTest)

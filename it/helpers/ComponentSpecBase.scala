@@ -16,12 +16,12 @@
 
 package helpers
 
-import binders.FinancialTransactionsBinders
+import binders.{FinancialTransactionsBinders,PenaltyDetailsBinders}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, stubFor}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.MicroserviceAppConfig
 import helpers.servicemocks.AuthStub
-import models.FinancialRequestQueryParameters
+import models.{FinancialRequestQueryParameters,PenaltyDetailsQueryParameters}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -76,6 +76,15 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       val queryParamStart = if(queryParameters.hasQueryParameters) "?" else ""
       get(s"/financial-transactions/$idType/$id$queryParamStart" +
         FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters))
+    }
+  }
+
+  object PenaltyDetails {
+    def get(uri: String): WSResponse = await(buildClient(uri).get())
+    def getPenaltyDetails(idType: String, id: String, queryParameters: PenaltyDetailsQueryParameters): WSResponse = {
+      val queryParamStart = if(queryParameters.hasQueryParameters) "?" else ""
+      get(s"/financial-transactions/penalty/$idType/$id$queryParamStart" +
+        PenaltyDetailsBinders.penaltyDetailsQueryBinder.unbind("", queryParameters))
     }
   }
 
