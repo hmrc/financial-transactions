@@ -20,7 +20,8 @@ import java.time.LocalDate
 
 import play.api.libs.json.{Format, Json}
 
-case class Transaction(chargeType: Option[String] = None,
+case class Transaction(documentId: String,
+                       chargeType: Option[String] = None,
                        mainType: Option[String] = None,
                        periodKey: Option[String] = None,
                        periodKeyDescription: Option[String] = None,

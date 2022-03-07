@@ -19,7 +19,6 @@ package utils
 import play.api.libs.json.{JsObject, Json}
 import models.API1811.{DocumentDetails, FinancialTransactions, SubItem, Transaction}
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.fullTransactionJson
 
 object TestConstantsAPI1811 {
 
@@ -65,14 +64,38 @@ object TestConstantsAPI1811 {
     "paymentLot" -> "H",
     "paymentLotItem" -> "112",
     "clearingSAPDocument" -> "3350000253",
-    "codingInitiationDate" -> "2018-01-01",
     "statisticalDocument" -> "I",
     "DDCollectionInProgress" -> true,
     "returnReason" -> "J",
     "promisetoPay" -> "K"
   )
 
+  val fullSubItemJsonEISOutput: JsObject = Json.obj(
+    "subItem" -> "000",
+    "dueDate" -> "2018-02-14",
+    "amount" -> 3400.0,
+    "clearingDate" -> "2018-02-17",
+    "clearingReason" -> "A",
+    "outgoingPaymentMethod" -> "B",
+    "paymentLock" -> "C",
+    "clearingLock" -> "D",
+    "interestLock" -> "E",
+    "dunningLock" -> "1",
+    "returnFlag" -> false,
+    "paymentReference" -> "F",
+    "paymentAmount" -> 2000.0,
+    "paymentMethod" -> "G",
+    "paymentLot" -> "H",
+    "paymentLotItem" -> "112",
+    "clearingSAPDocument" -> "3350000253",
+    "statisticalDocument" -> "I",
+    "DDcollectionInProgress" -> true,
+    "returnReason" -> "J",
+    "promiseToPay" -> "K"
+  )
+
   val fullTransaction: Transaction = Transaction(
+    documentId = "012345678901234567890123456789",
     chargeType = Some("PAYE"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
@@ -97,6 +120,7 @@ object TestConstantsAPI1811 {
   )
 
   val fullTransactionJsonEIS: JsObject = Json.obj(
+    "documentId" -> "012345678901234567890123456789",
     "chargeType" -> "PAYE",
     "mainType" -> "2100",
     "periodKey" -> "13RL",
@@ -120,16 +144,29 @@ object TestConstantsAPI1811 {
     "items" -> Json.arr(fullSubItemJsonEIS)
   )
 
-  val fullFinancialTransactionsJsonEIS: JsObject = Json.obj(
-    "financialDetails" -> Json.arr(fullTransactionJsonEIS)
-  )
-
-  val fullFinancialTransactionsJsonOutput: JsObject = Json.obj(
-    "financialTransactions" -> Json.arr(fullTransactionJson)
-  )
-
-  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
-    financialDetails = Seq(fullTransaction)
+  val fullTransactionJsonEISOutput: JsObject = Json.obj(
+    "documentId" -> "012345678901234567890123456789",
+    "chargeType" -> "PAYE",
+    "mainType" -> "2100",
+    "periodKey" -> "13RL",
+    "periodKeyDescription" -> "abcde",
+    "taxPeriodFrom" -> "2017-04-06",
+    "taxPeriodTo" -> "2018-04-05",
+    "businessPartner" -> "6622334455",
+    "contractAccountCategory" -> "02",
+    "contractAccount" -> "X",
+    "contractObjectType" -> "ABCD",
+    "contractObject" -> "00000003000000002757",
+    "sapDocumentNumber" -> "1040000872",
+    "sapDocumentNumberItem" -> "XM00",
+    "chargeReference" -> "XM002610011594",
+    "mainTransaction" -> "1234",
+    "subTransaction" -> "5678",
+    "originalAmount" -> 3400,
+    "outstandingAmount" -> 1400,
+    "clearedAmount" -> 2000,
+    "accruedInterest" -> 0.23,
+    "items" -> Json.arr(fullSubItemJsonEISOutput)
   )
 
   val fullDocumentDetails : DocumentDetails = DocumentDetails(
@@ -156,6 +193,21 @@ object TestConstantsAPI1811 {
     "statisticalFlag" -> false,
     "accruingPenaltyLPP1" -> "1000.34",
     "accruingPenaltyLPP2" -> "accrlpp2",
+  )
+
+  val fullFinancialTransactionsJsonEIS: JsObject = Json.obj(
+    "documentDetails" -> Json.arr(fullDocumentDetailsJson),
+    "financialDetails" -> Json.arr(fullTransactionJsonEIS)
+  )
+
+  val fullFinancialTransactionsJsonOutput: JsObject = Json.obj(
+    "documentDetails" -> Json.arr(fullDocumentDetailsJson),
+    "financialTransactions" -> Json.arr(fullTransactionJsonEISOutput)
+  )
+
+  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
+    documentDetails = Seq(fullDocumentDetails),
+    financialDetails = Seq(fullTransaction)
   )
 
 }

@@ -16,14 +16,27 @@
 package testData
 
 import play.api.libs.json.{JsObject, Json}
-import models.API1811.{Error, FinancialTransactions, SubItem, Transaction}
+import models.API1811.{DocumentDetails, Error, FinancialTransactions, SubItem, Transaction}
 import play.api.http.Status
 import utils.ImplicitDateFormatter._
 
 object FinancialData1811 {
 
   val fullFinancialTransactionsJsonEIS: JsObject = Json.obj(
+    "documentDetails" -> Json.arr(Json.obj(
+      "taxYear" -> "2017",
+      "documentId" -> "1455",
+      "documentDate" -> "2018-03-29",
+      "documentText" -> "VAT-VC",
+      "documentDueDate" -> "2020-04-15",
+      "totalAmount" -> 45552768.79,
+      "documentOutstandingAmount" -> 297873.46,
+      "statisticalFlag" -> false,
+      "accruingPenaltyLPP1" -> "1000.34",
+      "accruingPenaltyLPP2" -> "accrlpp2",
+    )),
     "financialDetails" -> Json.arr(Json.obj(
+      "documentId" -> "012345678901234567890123456789",
       "chargeType" -> "PAYE",
       "mainType" -> "2100",
       "periodKey" -> "13RL",
@@ -71,7 +84,20 @@ object FinancialData1811 {
   )
 
   val fullFinancialTransactionsJsonOutput: JsObject = Json.obj(
+    "documentDetails" -> Json.arr(Json.obj(
+      "taxYear" -> "2017",
+      "documentId" -> "1455",
+      "documentDate" -> "2018-03-29",
+      "documentText" -> "VAT-VC",
+      "documentDueDate" -> "2020-04-15",
+      "totalAmount" -> 45552768.79,
+      "documentOutstandingAmount" -> 297873.46,
+      "statisticalFlag" -> false,
+      "accruingPenaltyLPP1" -> "1000.34",
+      "accruingPenaltyLPP2" -> "accrlpp2",
+    )),
     "financialTransactions" -> Json.arr(Json.obj(
+      "documentId" -> "012345678901234567890123456789",
       "chargeType" -> "PAYE",
       "mainType" -> "2100",
       "periodKey" -> "13RL",
@@ -119,7 +145,20 @@ object FinancialData1811 {
   )
 
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
+    documentDetails = Seq(DocumentDetails(
+      taxYear = "2017",
+      documentId = "1455",
+      documentDate = "2018-03-29",
+      documentText = "VAT-VC",
+      documentDueDate = "2020-04-15",
+      totalAmount = 45552768.79,
+      documentOutstandingAmount = 297873.46,
+      statisticalFlag = false,
+      accruingPenaltyLPP1 = Some("1000.34"),
+      accruingPenaltyLPP2 = Some("accrlpp2")
+    )),
     financialDetails = Seq(Transaction(
+      documentId = "012345678901234567890123456789",
       chargeType = Some("PAYE"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
