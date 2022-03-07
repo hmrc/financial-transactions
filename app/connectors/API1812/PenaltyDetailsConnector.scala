@@ -35,7 +35,7 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
 
-    val eisHeaders = Seq("CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
+    val eisHeaders = Seq("Authorization" -> s"Bearer ${appConfig.eisToken}","CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
 
     val url = penaltyDetailsUrl(regime)
 
