@@ -45,17 +45,8 @@ The service currently supports the following Tax Regimes:
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|taxPayerDetails|`object`|**true**
 |documentDetails|`Array[DocumentDetailsObject]`|**true**
 |financialDetails|`Array[FinancialDetailsObject]` *see below*|**true**|
-
-##### Taxpayer details Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|idType|`String`|**true**|
-|idNumber|`String`|**true**|
-|regimeType|`String`|**true**|
 
 ##### Document Details Object
 
@@ -76,7 +67,7 @@ The service currently supports the following Tax Regimes:
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|documentId|`String`|**false**|
+|documentId|`String`|**true**|
 |chargeType|`String`|**false**|
 |mainType|`String`|**false**|
 |periodKey|`String`|**false**|
@@ -131,18 +122,6 @@ The service currently supports the following Tax Regimes:
 **Json Body**: 
 ```
 {
-    "taxPayerDetails": {
-      "idType": "VRN",
-      "idNumber": "222222222",
-      "regimeType": "VATC"
-    },
-    "balanceDetails": {
-      "balanceDueWithin30Days": 99.99,
-      "balanceNotDueIn30Days": 99.99,
-      "overDueAmount": 99.99,
-      "totalBalance": 99.99,
-      "amountCodedOut": 99.99
-    },
     "documentDetails": [
       {
         "taxYear": "2018",
@@ -259,14 +238,6 @@ true
 **Status**: OK (200)
 
 #### Definition
-
-##### Response Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|idType|`String`|**true**|
-|idNumber|`String`|**true**|
-|regimeType|`String`|**true**|
 
 ##### Penalty details Object
 
