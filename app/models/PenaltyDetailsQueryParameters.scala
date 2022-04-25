@@ -21,8 +21,10 @@ import models.PenaltyDetailsQueryParameters.dateLimitKey
 case class PenaltyDetailsQueryParameters(dateLimit: Option[Int] = None) {
 
   val toSeqQueryParams: Seq[(String, String)] = Seq(dateLimit.map(dateLimitKey -> _.toString)).flatten
+  val hasQueryParameters: Boolean = toSeqQueryParams.nonEmpty
 }
 
 object PenaltyDetailsQueryParameters {
   val dateLimitKey = "dateLimit"
+
 }

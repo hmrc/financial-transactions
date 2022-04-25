@@ -16,10 +16,12 @@
 
 package testData
 
+import models.API1812.Error
 import models.API1812.PenaltyDetails
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LPPPenaltyStatusEnum, LatePaymentPenalty}
 import models.API1812.lateSubmissionPenalty.{LSPDetails, LSPPenaltyCategoryEnum, LSPPenaltyStatusEnum, LSPSummary, LateSubmission, LateSubmissionPenalty}
 import play.api.libs.json.{JsObject, Json}
+import play.api.http.Status
 
 import java.time.LocalDate
 
@@ -150,5 +152,14 @@ object PenaltyDetailsTestData {
     lateSubmissionPenalty = Some(fullLSPModel),
     latePaymentPenalty = Some(Seq(fullLPPModel))
   )
+
+  val errorJson: JsObject = Json.obj(
+    "failures" -> Json.arr(Json.obj(
+      "code" -> "INVALID_REGIME",
+      "reason" -> "Submission has not passed validation. Invalid parameter regime."
+    ))
+  )
+
+  val errorModel: Error = Error(Status.BAD_REQUEST, errorJson.toString())
 
 }

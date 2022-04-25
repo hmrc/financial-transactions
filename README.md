@@ -3,14 +3,11 @@
 [![Apache-2.0 license](http://img.shields.io/badge/license-Apache-brightgreen.svg)](http://www.apache.org/licenses/LICENSE-2.0.html)
 [![Download](https://api.bintray.com/packages/hmrc/releases/financial-transactions/images/download.svg)](https://bintray.com/hmrc/releases/financial-transactions/_latestVersion)
 
-This protected micro-service processes authenticated requests to retrieve Financial Transactions (Liabilities and Payments) for a specific Tax Regime for a specified Taxpayer.
+This protected micro-service processes authenticated requests to retrieve Financial Transactions (Liabilities, Payments and Penalties) for a specific Tax Regime for a specified Taxpayer.
 
 The service currently supports the following Tax Regimes:
 
-  * Making Tax Digital - Income Tax Self-Assessment (ITSA)
   * Making Tax Digital - VAT (VATC)
-  
-  
   
 # Endpoint Definitions (APIs)
 
@@ -22,15 +19,15 @@ The service currently supports the following Tax Regimes:
 
 |Path Parameter|Description|
 |-|-|
-|`regime`|Used to specify the Tax Regime to retrieve Financial Transactions for. Valid values are: `vat` and `it`|
-|`identifier`|Regime Identifier for the Taxpayer. For `it` the MTDITID. For `vat` the VRN|
+|`regime`|Used to specify the Tax Regime to retrieve Financial Transactions for. Valid values are: `vat`|
+|`identifier`|Regime Identifier for the Taxpayer. For `vat` the VRN|
 
 **Query Parameters**:
 
 |Query Parameter|Mandatory|Description|Format/Valid Values|
 |-|-|-|-|
-|`fromDate`|**false\***|Used to filter the response to only include items from this date|YYYY-MM-DD|
-|`toDate`|**false\***|Used to filter the response to only include items before this date|YYYY-MM-DD|
+|`fromDate`|**false**|Used to filter the response to only include items from this date|YYYY-MM-DD|
+|`toDate`|**false**|Used to filter the response to only include items before this date|YYYY-MM-DD|
 |`onlyOpenItems`|**false**|Used to filter the response to only include items that are outstanding/open|`true` \| `false`|
 |`includeLocks`|**false**|Used to filter the response to include items that have locks|`true` \| `false`|
 |`calculateAccruedInterest`|**false**|Calculate accrued interest for overdue debits and include it in the response|`true` \| `false`|
@@ -48,16 +45,29 @@ The service currently supports the following Tax Regimes:
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|idType|`String`|**false**
-|idNumber|`String`|**false**
-|regimeType|`String`|**false**
-|processingDate|`ZonedDateTime`|**true**
-|financialTransactions|`Array[FinancialTransactionObject]` *see below*|**false**|
+|documentDetails|`Array[DocumentDetailsObject]`|**true**
+|financialDetails|`Array[FinancialDetailsObject]` *see below*|**true**|
+
+##### Document Details Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|taxYear|`String`|**true**|
+|documentId|`String`|**true**|
+|documentDate|`Date`|**true**|
+|documentText|`String`|**true**|
+|documentDueDate|`Date`|**true**|
+|totalAmount|`Decimal`|**true**|
+|documentOutstandingAmount|`Decimal`|**true**|
+|statisticalFlag|`Boolean`|**true**|
+|accruingPenaltyLPP1|`String`|**false**|
+|accruingPenaltyLPP2|`String`|**false**|
 
 ##### Financial Transaction Object
 
 |Data Item|Type|Mandatory|
 |-|-|-|
+|documentId|`String`|**true**|
 |chargeType|`String`|**false**|
 |mainType|`String`|**false**|
 |periodKey|`String`|**false**|
@@ -106,154 +116,58 @@ The service currently supports the following Tax Regimes:
 |returnReason|`String`|**false**|
 |promiseToPay|`String`|**false**|
 
-
 #### Example
 
 **Status**: OK (200)
 **Json Body**: 
 ```
 {
-  "idType": "MTDBSA",
-  "idNumber": "XQIT00000000001",
-  "regimeType": "ITSA",
-  "processingDate": "2017-03-07T09:30:00.000Z",
-  "financialTransactions": [
-    {
-       "chargeType": "PAYE",
-       "mainType": "2100",
-       "periodKey": "13RL",
-       "periodKeyDescription": "abcde",
-       "taxPeriodFrom": "1967-08-13",
-       "taxPeriodTo": "1967-08-14",
-       "businessPartner": "6622334455",
-       "contractAccountCategory": "02",
-       "contractAccount": "X",
-       "contractObjectType": "ABCD",
-       "contractObject": "00000003000000002757",
-       "sapDocumentNumber": "1040000872",
-       "sapDocumentNumberItem": "XM00",
-       "chargeReference": "XM002610011594",
-       "mainTransaction": "1234",
-       "subTransaction": "5678",
-       "originalAmount": 10000,
-       "outstandingAmount": 10000,
-       "clearedAmount": 10000,
-       "accruedInterest": 10000,
-       "items": [
-         {
-           "subItem": "001",
-           "dueDate": "1967-08-13",
-           "amount": 10000,
-           "clearingDate": "1967-08-13",
-           "clearingReason": "01",
-           "outgoingPaymentMethod": "A",
-           "paymentLock": "a",
-           "clearingLock": "A",
-           "interestLock": "C",
-           "dunningLock": "1",
-           "returnFlag": true,
-           "paymentReference": "a",
-           "paymentAmount": 10000,
-           "paymentMethod": "A",
-           "paymentLot": "081203010024",
-           "paymentLotItem": "000001",
-           "clearingSAPDocument": "3350000253",
-           "statisticalDocument": "A",
-           "DDcollectionInProgress": true,
-           "returnReason": "ABCA",
-           "promiseToPay": "123456789101"
-         }
-       ]
-     }
-   ]
- }
-```
-
-### Single-Error Response
-
-#### Definition
-
-##### Response Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|code|`String`|**true**
-|reason|`String`|**true**
-
-#### Example
-```
-{
-  "code": "SERVICE_UNAVAILABLE",
-  "reason": "Dependent systems are currently not responding"
+    "documentDetails": [
+      {
+        "taxYear": "2018",
+        "documentId": "ABCD",
+        "documentDate": "2018-01-01",
+        "documentText": "Charge",
+        "documentDueDate": "2018-02-02",
+        "totalAmount": 99.99,
+        "documentOutstandingAmount": 99.99,
+        "statisticalFlag": false
+      }
+    ],
+    "financialDetails" : [
+      {
+        "taxYear": "2018",
+        "documentId": "ABCD",
+        "chargeType" : "VAT Return Credit Charge",
+        "mainType" : "VAT Return Charge",
+        "periodKey" : "18AA",
+        "periodKeyDescription" : "ABCD",
+        "taxPeriodFrom" : "2018-02-01",
+        "taxPeriodTo" : "2018-04-30",
+        "businessPartner" : "0",
+        "contractAccountCategory" : "99",
+        "contractAccount" : "X",
+        "contractObjectType" : "ABCD",
+        "contractObject" : "0",
+        "sapDocumentNumber" : "0",
+        "sapDocumentNumberItem" : "0",
+        "chargeReference" : "XD002750002155",
+        "mainTransaction" : "1234",
+        "subTransaction" : "5678",
+        "originalAmount" : -100.00,
+        "outstandingAmount" : -100.00,
+        "items" : [
+          {
+            "subItem" : "000",
+            "dueDate" : "2018-06-07",
+            "amount" : -100.00
+          }
+        ]
+      }
+    ]
+  }
 }
 ```
-
-### Multi-Error Response
-
-#### Definition
-
-##### Response Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|failures|`Array[SingleErrorObject]` *see above*|**true** *(min items 2)*|
-
-#### Example
-```
-{
-  "failures": [
-    {
-      "code": "INVALID_IDTYPE",
-      "reason": "Submission has not passed validation. Invalid parameter idType."
-    },
-    {
-      "code": "INVALID_IDNUMBER",
-      "reason": "Submission has not passed validation. Invalid parameter idNumber."
-    }
-  ]
-}
-```
-
-
-### Error Responses
-
-#### Client Triggered Exceptions
-
-|HTTP Code|Code|Reason|
-|-|-|-|
-|400|BAD_REQUEST|Bad Request. Message: '{error messages}'|
-|400|INVALID_TAX_REGIME|The supplied Tax Regime is invalid.|
-|401|UNAUTHENTICATED|Not authenticated|
-|403|UNAUTHORISED|Not authorised|
-|404|NOT_FOUND|URI '{requested path}' not found|
-
-#### Downstream Triggered Exceptions
-
-|HTTP Code|Code|Reason|
-|-|-|-|
-|400|INVALID_IDTYPE|Submission has not passed validation. Invalid parameter idType.|
-|400|INVALID_IDNUMBER|Submission has not passed validation. Invalid parameter idNumber.|
-|400|INVALID_REGIMETYPE|Submission has not passed validation. Invalid parameter regimeType.|
-|400|INVALID_ONLYOPENITEMS|Submission has not passed validation. Invalid parameter onlyOpenItems.|
-|400|INVALID_INCLUDELOCKS|Submission has not passed validation. Invalid parameter includeLocks.|
-|400|INVALID_CALCULATEACCRUEDINTEREST|Submission has not passed validation. Invalid parameter calculateAccruedInterest.|
-|400|INVALID_CUSTOMERPAYMENTINFORMATION|Submission has not passed validation. Invalid parameter customerPaymentInformation.|
-|400|INVALID_DATEFROM|Submission has not passed validation. Invalid parameter dateFrom|
-|400|INVALID_DATETO|Submission has not passed validation. Invalid parameter dateTo|
-|404|NOT_FOUND|The remote endpoint has indicated that no data can be found|
-|422|INVALID_DATA|The remote endpoint has indicated that the request contains invalid data|
-|500|SERVER_ERROR|DES is currently experiencing problems that require live service intervention|
-|500|INVALID_JSON|The downstream service responded with invalid json.|
-|500|UNEXPECTED_JSON_FORMAT|The downstream service responded with json which did not match the expected format.|
-|500|UNEXPECTED_DOWNSTREAM_ERROR|The downstream service responded with an unexpected response.|
-|503|SERVICE_UNAVAILABLE|Dependent systems are currently not responding|
-
-#### Catch All (e.g. runtime exceptions)
-
-|HTTP Code|Code|Reason|
-|-|-|-|
-|{status}|{status}|{error message}|
-
 
 ## Check Direct Debit exists for VRN
 
@@ -302,7 +216,174 @@ The service responds with a simple true or false response depending on whether a
 true
 ```
 
-### Single-Error Response
+## Get Taxpayer penalty details for Tax Regime
+
+**Method**: GET
+
+**URL**: /financial-transactions/penalty/`regime`/`identifier`
+
+|Path Parameter|Description|
+|-|-|
+|`regime`|Used to specify the Tax Regime to retrieve Financial Transactions for. Valid values are: `vat`|
+|`identifier`|Regime Identifier for the Taxpayer. For `vat` the VRN|
+
+**Query Parameters**:
+
+|Query Parameter|Mandatory|Description|Format/Valid Values|
+|-|-|-|-|
+|`dateLimit`|**false**|Number of months data need to be limited to. example 9. This will be expected to be 24 months unless specified.|
+
+### Success Response
+
+**Status**: OK (200)
+
+#### Definition
+
+##### Penalty details Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|lateSubmissionPenalty|`object`|**false**
+|latePaymentPenalty|`object`|**false**
+
+##### Late Submission Penalty Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|summary|`object`|**true**|
+|details|`object`|**true**|
+
+##### Late Submission Penalty Summary Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|activePenaltyPoints|`Int`|**true**|
+|inactivePenaltyPoints|`Int`|**true**|
+|POCAchievementDate|`Date`|**true**|
+|regimeThreshold|`Int`|**true**|
+|penaltyChargeAmount|`Decimal`|**true**|
+
+##### Late Submission Penalty Details Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|penaltyNumber|`String`|**true**|
+|penaltyOrder|`String`|**true**|
+|penaltyCategory|`String`|**true**|
+|penaltyStatus|`String`|**true**|
+|penaltyCreationDate|`Date`|**true**|
+|penaltyExpiryDate|`Date`|**true**|
+|communicationsDate|`Date`|**true**|
+|lateSubmissions|`Array[LateSubmissionObject]`|**false**|
+|appealStatus|`String`|**false**|
+|appealLevel|`String`|**false**|
+|chargeReference|`String`|**false**|
+|chargeAmount|`Decimal`|**false**|
+|chargeOutstandingAmount|`Decimal`|**false**|
+|chargeDueDate|`Date`|**false**|
+
+##### Late Submission Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|lateSubmissionID|`String`|**true**|
+|taxPeriod|`Date`|**false**|
+|taxReturnStatus|`Decimal`|**true**|
+|taxPeriodStartDate|`Date`|**false**|
+|taxPeriodEndDate|`Date`|**false**|
+|taxPeriodDueDate|`Date`|**false**|
+|returnReceiptDate|`Date`|**false**|
+
+##### Late Payment Penalty Object
+\|Data Item|Type|Mandatory|
+|-|-|-|
+|details|`object`|**true**|
+
+##### Late Payment Penalty details Object
+
+|Data Item|Type|Mandatory|
+|-|-|-|
+|penaltyNumber|`String`|**true**|
+|penaltyCategory|`String`|**true**|
+|penaltyStatus|`String`|**true**|
+|penaltyAmountAccruing|`Decimal`|**true**|
+|penaltyAmountPosted|`Decimal`|**true**|
+|penaltyChargeCreationDate|`Date`|**true**|
+|communicationsDate|`Date`|**true**|
+|penaltyChargeReference|`String`|**true**|
+|penaltyChargeDueDate|`Date`|**true**|
+|appealStatus|`String`|**false**|
+|appealLevel|`String`|**false**|
+|principalChargeReference|`String`|**true**|
+|principalChargeDueDate|`Date`|**true**|
+
+#### Example
+
+**Status**: OK (200)
+**Json Body**:
+```
+{
+    "lateSubmissionPenalty": {
+      "summary": {
+        "activePenaltyPoints": 1,
+        "inactivePenaltyPoints": 1,
+        "POCAchievementDate": "2018-01-01",
+        "regimeThreshold": 1,
+        "penaltyChargeAmount": -99999999999.99
+      },
+      "details": [
+        {
+          "penaltyNumber": "XXXXXXXXXXX1",
+          "penaltyOrder": "XX",
+          "penaltyCategory": "P",
+          "penaltyStatus": "ACTIVE",
+          "penaltyCreationDate": "2018-01-01",
+          "penaltyExpiryDate": "2018-01-01",
+          "communicationsDate": "2018-01-01",
+          "lateSubmissions": [
+            {
+              "lateSubmissionID": "XXX",
+              "taxPeriod": "18AA",
+              "taxReturnStatus": "XXXXX",
+              "taxPeriodStartDate": "2018-01-01",
+              "taxPeriodEndDate": "2018-01-01",
+              "taxPeriodDueDate": "2018-01-01",
+              "returnReceiptDate": "2018-01-01"
+            }
+          ],
+          "appealStatus": "XX",
+          "appealLevel": "XX",
+          "chargeReference": "XXXXXXXXXXXXXXX1",
+          "chargeAmount": -99999999999.99,
+          "chargeOutstandingAmount": -99999999999.99,
+          "chargeDueDate": "2018-01-01"
+        }
+      ]
+    },
+    "latePaymentPenalty": {
+      "details": [
+        {
+          "penaltyNumber": "XXXXXXXXXXX2",
+          "penaltyCategory": "LPP1",
+          "penaltyStatus": "A",
+          "penaltyAmountAccruing": -99999999999.99,
+          "penaltyAmountPosted": -99999999999.99,
+          "penaltyChargeCreationDate": "2018-01-01",
+          "communicationsDate": "2018-01-01",
+          "penaltyChargeReference": "XXXXXXXXXXXXXXX2",
+          "penaltyChargeDueDate": "2018-01-01",
+          "appealStatus": "XX",
+          "appealLevel": "XX",
+          "principalChargeReference": "XXXXXXXXXXXXXXX3",
+          "principalChargeDueDate": "2018-01-01"
+        }
+      ]
+    }
+  }
+}
+```
+
+### Error Response
 
 #### Definition
 
@@ -310,7 +391,7 @@ true
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|code|`String`|**true**
+|code|`Int`|**true**
 |reason|`String`|**true**
 
 #### Example
@@ -320,65 +401,6 @@ true
   "reason": "Dependent systems are currently not responding"
 }
 ```
-
-### Multi-Error Response
-
-#### Definition
-
-##### Response Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|failures|`Array[SingleErrorObject]` *see above*|**true** *(min items 2)*|
-
-#### Example
-```
-{
-  "failures": [
-    {
-      "code": "INVALID_IDTYPE",
-      "reason": "Submission has not passed validation. Invalid parameter idType."
-    },
-    {
-      "code": "INVALID_IDNUMBER",
-      "reason": "Submission has not passed validation. Invalid parameter idNumber."
-    }
-  ]
-}
-```
-
-
-### Error Responses
-
-#### Client Triggered Exceptions
-
-|HTTP Code|Code|Reason|
-|-|-|-|
-|400|BAD_REQUEST|Bad Request. Message: '{error messages}'|
-|401|UNAUTHENTICATED|Not authenticated|
-|403|UNAUTHORISED|Not authorised|
-|404|NOT_FOUND|URI '{requested path}' not found|
-
-#### Downstream Triggered Exceptions
-
-|HTTP Code|Code|Reason|
-|-|-|-|
-|400|INVALID_VRN|Submission has not passed validation. Invalid idType/idValue.|
-|400|INVALID_VRN|Submission has not passed validation. Invalid parameter idNumber.|
-|400|INVALID_REGIME|Request has not passed validation. Invalid regime.|
-|404|NOT_FOUND|The back end has indicated that there is no match found for the given identifier|
-|500|SERVER_ERROR|DES is currently experiencing problems that require live service intervention|
-|500|INVALID_JSON|The downstream service responded with invalid json.|
-|500|UNEXPECTED_JSON_FORMAT|The downstream service responded with json which did not match the expected format.|
-|500|UNEXPECTED_DOWNSTREAM_ERROR|The downstream service responded with an unexpected response.|
-|503|SERVICE_UNAVAILABLE|Dependent systems are currently not responding|
-
-#### Catch All (e.g. runtime exceptions)
-
-|HTTP Code|Code|Reason|
-|-|-|-|
-|{status}|{status}|{error message}|
-
 
 Requirements
 ------------
@@ -412,7 +434,7 @@ To test the application fully (Unit Tests, Component Tests *(integration)*, Scal
 ```
 sbt clean scalastyle coverage test it:test coverageOff coverageReport
 ```
-*(To run only a subset of the tests ommit the desired sbt options accordingly)*
+*(To run only a subset of the tests omit the desired sbt options accordingly)*
 
 
 ---
