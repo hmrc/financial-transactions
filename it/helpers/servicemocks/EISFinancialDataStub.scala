@@ -28,10 +28,10 @@ object EISFinancialDataStub {
     if(requestQueryParams.hasQueryParameters) {
       s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
         s"?${FinancialTransactionsBinders.financialDataQueryBinder.unbind("", requestQueryParams)}" +
-        "&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"
+        "&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"
     } else {
       s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
-        "?onlyOpenItems=false&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"
+        "?onlyOpenItems=false&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"
     }
 
   def stubGetFinancialData(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
