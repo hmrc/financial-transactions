@@ -29,6 +29,7 @@ The service currently supports the following Tax Regimes:
 |`fromDate`|**false**|Used to filter the response to only include items from this date|YYYY-MM-DD|
 |`toDate`|**false**|Used to filter the response to only include items before this date|YYYY-MM-DD|
 |`onlyOpenItems`|**false**|Used to filter the response to only include items that are outstanding/open|`true` \| `false`|
+|`includeStatistical`|**false**|Used to filter the response to include statistical items|`true` \| `false`|
 |`includeLocks`|**false**|Used to filter the response to include items that have locks|`true` \| `false`|
 |`calculateAccruedInterest`|**false**|Calculate accrued interest for overdue debits and include it in the response|`true` \| `false`|
 |`customerPaymentInformation`|**false**|Include Taxpayer Payment Information in the response|`true` \| `false`|
