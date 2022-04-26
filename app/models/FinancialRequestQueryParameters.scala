@@ -37,9 +37,10 @@ case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
       Seq(onlyOpenItemsKey -> "false")
     }
     toSeqQueryParams ++ openItems ++ Seq(
+      includeStatisticalKey -> "true",
       includeLocksKey -> "true",
       calculateAccruedInterestKey -> "true",
-      removePOAKey -> "true",
+      removePOAKey -> "false",
       customerPaymentInformationKey -> "true"
     )
   }
@@ -52,6 +53,7 @@ object FinancialRequestQueryParameters {
   val dateToKey = "dateTo"
   val onlyOpenItemsKey = "onlyOpenItems"
   val removePOAKey = "removePOA"
+  val includeStatisticalKey = "includeStatistical"
   val includeLocksKey = "includeLocks"
   val calculateAccruedInterestKey = "calculateAccruedInterest"
   val customerPaymentInformationKey = "customerPaymentInformation"

@@ -44,7 +44,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
   val queryParameters: FinancialRequestQueryParameters = FinancialRequestQueryParameters()
 
   def generateUrl(regimeType: String, VRN : String): String =  s"/penalty/financial-data/VRN/$VRN/$regimeType" +
-    s"?onlyOpenItems=false&includeLocks=true&calculateAccruedInterest=true&removePOA=true&customerPaymentInformation=true"
+    s"?onlyOpenItems=false&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"
 
   "getFinancialData" should {
 
