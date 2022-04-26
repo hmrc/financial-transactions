@@ -92,7 +92,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           includeStatisticalKey -> "true",
           includeLocksKey -> "true",
           calculateAccruedInterestKey -> "true",
-          removePOAKey -> "true",
+          removePOAKey -> "false",
           customerPaymentInformationKey -> "true"
         )
       }
@@ -109,7 +109,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           includeStatisticalKey -> "true",
           includeLocksKey -> "true",
           calculateAccruedInterestKey -> "true",
-          removePOAKey -> "true",
+          removePOAKey -> "false",
           customerPaymentInformationKey -> "true"
         )
       }

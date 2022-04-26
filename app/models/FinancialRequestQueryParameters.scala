@@ -40,7 +40,7 @@ case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
       includeStatisticalKey -> "true",
       includeLocksKey -> "true",
       calculateAccruedInterestKey -> "true",
-      removePOAKey -> "true",
+      removePOAKey -> "false",
       customerPaymentInformationKey -> "true"
     )
   }
