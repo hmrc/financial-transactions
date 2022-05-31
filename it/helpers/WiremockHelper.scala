@@ -23,7 +23,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.concurrent.{Eventually, IntegrationPatience}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.libs.ws.WSClient
+import play.api.libs.ws.{WSClient, WSRequest}
 
 object WiremockHelper extends Eventually with IntegrationPatience {
 
@@ -73,6 +73,7 @@ trait WiremockHelper {
 
   def resetWiremock() = WireMock.reset()
 
-  def buildClient(path: String) = ws.url(s"http://localhost:$port$path").withFollowRedirects(false)
+  def buildClient(path: String): WSRequest = ws.url(s"http://localhost:$port$path")
+    .withHttpHeaders("Authorization" -> "localToken").withFollowRedirects(false)
 }
 
