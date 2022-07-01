@@ -22,7 +22,7 @@ import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.TestConstantsAPI1812.penaltyDetailsAllModel
+import utils.TestConstantsAPI1812.{penaltyDetailsModelMax, penaltyDetailsModelNone}
 
 class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnector {
 
@@ -32,14 +32,24 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
     val regime: TaxRegime = VatRegime("123456789")
     val service = new PenaltyDetailsService(mockPenaltyDetailsConnector)
 
-    "the connector returns a success response" should {
+    "the connector returns a success response with LPP items in the array" should {
 
       "return the same response" in {
-        val successResponse = Right(penaltyDetailsAllModel)
+        val successResponse = Right(penaltyDetailsModelMax)
         setupPenaltyDetailsCall(regime, queryParams)(successResponse)
         val actual = await(service.getPenaltyDetails(regime, queryParams))
 
         actual shouldBe successResponse
+      }
+    }
+
+    "the connector returns a success response with no LPP section" should {
+
+      "return a custom 404 error response" in {
+        setupPenaltyDetailsCall(regime, queryParams)(Right(penaltyDetailsModelNone))
+        val actual = await(service.getPenaltyDetails(regime, queryParams))
+
+        actual shouldBe Left(Error(Status.NOT_FOUND, "No LPP data was found"))
       }
     }
 

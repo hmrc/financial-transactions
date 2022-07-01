@@ -27,7 +27,7 @@ import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
-import utils.TestConstantsAPI1812.{penaltyDetailsAllJson, penaltyDetailsAllModel}
+import utils.TestConstantsAPI1812.{LPPJsonMax, penaltyDetailsModelMax, writtenLPPJson}
 
 class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsService with MockMicroserviceAuthorisedFunctions {
 
@@ -49,7 +49,7 @@ class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsServi
       "the service returns a success response" should {
 
         lazy val result = {
-          setupMockGetPenaltyDetails(vatRegime, PenaltyDetailsQueryParameters())(Right(penaltyDetailsAllModel))
+          setupMockGetPenaltyDetails(vatRegime, PenaltyDetailsQueryParameters())(Right(penaltyDetailsModelMax))
           controller.getPenaltyDetails(RegimeKeys.VAT, vrn, PenaltyDetailsQueryParameters())(fakeRequest)
         }
 
@@ -58,7 +58,7 @@ class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsServi
         }
 
         "return a json body with the penalty details information" in {
-          contentAsJson(result) shouldBe penaltyDetailsAllJson
+          contentAsJson(result) shouldBe writtenLPPJson(LPPJsonMax)
         }
       }
 

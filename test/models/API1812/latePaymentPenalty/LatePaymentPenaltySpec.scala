@@ -20,22 +20,30 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
-class LatePaymentPenaltySpec extends SpecBase{
+class LatePaymentPenaltySpec extends SpecBase {
 
-  "serialize to JSON with no appeal status and appeal level" in {
-    lppWithoutOptionalFields.as[LatePaymentPenalty] shouldBe lppmodelWithoutOptionalFields
+  "LatePaymentPenalty" should {
+
+    "parse from JSON" when {
+
+      "optional fields are present" in {
+        LPPJsonMax.as[LatePaymentPenalty] shouldBe LPPModelMax
+      }
+
+      "optional fields are missing" in {
+        LPPJsonMin.as[LatePaymentPenalty] shouldBe LPPModelMin
+      }
+    }
+
+    "serialize to JSON" when {
+
+      "optional fields are present" in {
+        Json.toJson(LPPModelMax) shouldBe LPPJsonMax
+      }
+
+      "optional fields are missing" in {
+        Json.toJson(LPPJsonMin) shouldBe LPPJsonMin
+      }
+    }
   }
-
-  "serialize to JSON with an appeal status and appeal level" in {
-   lppWithOptionalFields.as[LatePaymentPenalty] shouldBe lppModelWithOptionalFields
-  }
-
-  "deserialize to a penalty model with no appeal status and no appeal level" in {
-    Json.toJson(lppmodelWithoutOptionalFields) shouldBe lppWithoutOptionalFields
-  }
-
-  "deserialize to a penalty model with appeal status and appeal level" in {
-    Json.toJson(lppModelWithOptionalFields) shouldBe lppWithOptionalFields
-  }
-
 }
