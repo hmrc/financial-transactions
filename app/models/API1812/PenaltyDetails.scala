@@ -17,34 +17,17 @@
 package models.API1812
 
 import models.API1812.latePaymentPenalty.LatePaymentPenalty
-import models.API1812.lateSubmissionPenalty.LateSubmissionPenalty
-import play.api.libs.json.{Format, JsResult, JsValue, Json}
+import play.api.libs.functional.syntax.unlift
+import play.api.libs.json.{Reads, Writes, __}
 import utils.JsonUtils
 
+case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]])
 
-case class PenaltyDetails(lateSubmissionPenalty: Option[LateSubmissionPenalty],
-                          latePaymentPenalty: Option[Seq[LatePaymentPenalty]])
+object PenaltyDetails extends JsonUtils {
 
-object PenaltyDetails extends JsonUtils  {
-  implicit val format: Format[PenaltyDetails] = new Format[PenaltyDetails] {
-    override def reads(json: JsValue): JsResult[PenaltyDetails] = {
-      for {
-        latePaymentPenalty <- (json \ "latePaymentPenalty" \ "details").validateOpt[Seq[LatePaymentPenalty]]
-        lateSubmissionPenalty <- (json \ "lateSubmissionPenalty").validateOpt[LateSubmissionPenalty]
-      } yield {
-        PenaltyDetails(lateSubmissionPenalty, latePaymentPenalty)
-      }
-    }
+  implicit val reads: Reads[PenaltyDetails] =
+    (__ \ "latePaymentPenalty" \ "details").readNullable[Seq[LatePaymentPenalty]].map(PenaltyDetails.apply)
 
-    override def writes(details: PenaltyDetails): JsValue = {
-      jsonObjNoNulls(
-        "lateSubmissionPenalty" -> details.lateSubmissionPenalty,
-        if(details.latePaymentPenalty.isDefined) {
-          "latePaymentPenalty" -> Json.obj("details" -> details.latePaymentPenalty)
-        } else {
-          "latePaymentPenalty" -> Json.obj()
-        }
-      )
-    }
-  }
+  implicit val writes: Writes[PenaltyDetails] =
+    (__ \ "LPPDetails").writeNullable[Seq[LatePaymentPenalty]].contramap(unlift(PenaltyDetails.unapply))
 }

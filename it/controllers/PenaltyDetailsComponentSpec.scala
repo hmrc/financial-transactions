@@ -39,7 +39,7 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
 
         And("I wiremock stub a successful Get Penalty Details response")
         EISPenaltyDetailsStub.stubGetPenaltyDetails(
-          vatRegime, queryParameters)(OK, PenaltyDetailsTestData.fullPenaltyDetailsJson)
+          vatRegime, queryParameters)(OK, PenaltyDetailsTestData.penaltyDetailsAPIJson)
 
         When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
         val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
@@ -47,7 +47,7 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
         Then("a successful response is returned with expected JSON data")
         res should have(
           httpStatus(OK),
-          jsonBodyAs(PenaltyDetailsTestData.fullPenaltyDetailsJson)
+          jsonBodyAs(PenaltyDetailsTestData.penaltyDetailsWrittenJson)
         )
       }
     }

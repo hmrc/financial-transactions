@@ -16,24 +16,19 @@
 
 package models.API1812.latePaymentPenalty
 
-import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
 
-case class LatePaymentPenalty(penaltyNumber: String,
+case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyCategory: LPPPenaltyCategoryEnum.Value,
-                              penaltyStatus: LPPPenaltyStatusEnum.Value,
-                              penaltyAmountAccruing: BigDecimal,
-                              penaltyAmountPosted: BigDecimal,
-                              penaltyChargeCreationDate: LocalDate,
-                              communicationsDate: LocalDate,
-                              penaltyChargeReference: String,
-                              penaltyChargeDueDate: LocalDate,
-                              appealStatus: Option[String],
-                              appealLevel: Option[String],
-                              principalChargeReference: String,
-                              principalChargeDueDate: LocalDate
-                              )
+                              LPP1LRCalculationAmount: Option[BigDecimal],
+                              LPP1LRDays: Option[String],
+                              LPP1LRPercentage: Option[Double],
+                              LPP1HRCalculationAmount: Option[BigDecimal],
+                              LPP1HRDays: Option[String],
+                              LPP1HRPercentage: Option[Double],
+                              LPP2Days: Option[String],
+                              LPP2Percentage: Option[Double],
+                              penaltyChargeReference: Option[String])
 
 object LatePaymentPenalty {
   implicit val format: Format[LatePaymentPenalty] = Json.format[LatePaymentPenalty]

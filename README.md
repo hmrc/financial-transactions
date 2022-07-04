@@ -244,79 +244,23 @@ true
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|lateSubmissionPenalty|`object`|**false**
-|latePaymentPenalty|`object`|**false**
-
-##### Late Submission Penalty Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|summary|`object`|**true**|
-|details|`object`|**true**|
-
-##### Late Submission Penalty Summary Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|activePenaltyPoints|`Int`|**true**|
-|inactivePenaltyPoints|`Int`|**true**|
-|POCAchievementDate|`Date`|**true**|
-|regimeThreshold|`Int`|**true**|
-|penaltyChargeAmount|`Decimal`|**true**|
-
-##### Late Submission Penalty Details Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|penaltyNumber|`String`|**true**|
-|penaltyOrder|`String`|**true**|
-|penaltyCategory|`String`|**true**|
-|penaltyStatus|`String`|**true**|
-|penaltyCreationDate|`Date`|**true**|
-|penaltyExpiryDate|`Date`|**true**|
-|communicationsDate|`Date`|**true**|
-|lateSubmissions|`Array[LateSubmissionObject]`|**false**|
-|appealStatus|`String`|**false**|
-|appealLevel|`String`|**false**|
-|chargeReference|`String`|**false**|
-|chargeAmount|`Decimal`|**false**|
-|chargeOutstandingAmount|`Decimal`|**false**|
-|chargeDueDate|`Date`|**false**|
-
-##### Late Submission Object
-
-|Data Item|Type|Mandatory|
-|-|-|-|
-|lateSubmissionID|`String`|**true**|
-|taxPeriod|`Date`|**false**|
-|taxReturnStatus|`Decimal`|**true**|
-|taxPeriodStartDate|`Date`|**false**|
-|taxPeriodEndDate|`Date`|**false**|
-|taxPeriodDueDate|`Date`|**false**|
-|returnReceiptDate|`Date`|**false**|
-
-##### Late Payment Penalty Object
-\|Data Item|Type|Mandatory|
-|-|-|-|
-|details|`object`|**true**|
+|LPPDetails|`array`|**true**|
 
 ##### Late Payment Penalty details Object
 
 |Data Item|Type|Mandatory|
 |-|-|-|
-|penaltyNumber|`String`|**true**|
-|penaltyCategory|`String`|**true**|
-|penaltyStatus|`String`|**true**|
-|penaltyAmountAccruing|`Decimal`|**true**|
-|penaltyAmountPosted|`Decimal`|**true**|
-|penaltyChargeCreationDate|`Date`|**true**|
-|communicationsDate|`Date`|**true**|
-|penaltyChargeReference|`String`|**true**|
-|penaltyChargeDueDate|`Date`|**true**|
-|appealStatus|`String`|**false**|
-|appealLevel|`String`|**false**|
 |principalChargeReference|`String`|**true**|
-|principalChargeDueDate|`Date`|**true**|
+|penaltyCategory|`String`|**true**|
+|LPP1LRCalculationAmount|`BigDecimal`|**false**|
+|LPP1LRDays|`String`|**false**|
+|LPP1LRPercentage|`Double`|**false**|
+|LPP1HRCalculationAmount|`BigDecimal`|**false**|
+|LPP1HRDays|`String`|**false**|
+|LPP1HRPercentage|`Double`|**false**|
+|LPP2Days|`String`|**false**|
+|LPP2Percentage|`Double`|**false**|
+|penaltyChargeReference|`String`|**false**|
 
 #### Example
 
@@ -324,63 +268,21 @@ true
 **Json Body**:
 ```
 {
-    "lateSubmissionPenalty": {
-      "summary": {
-        "activePenaltyPoints": 1,
-        "inactivePenaltyPoints": 1,
-        "POCAchievementDate": "2018-01-01",
-        "regimeThreshold": 1,
-        "penaltyChargeAmount": -99999999999.99
-      },
-      "details": [
-        {
-          "penaltyNumber": "XXXXXXXXXXX1",
-          "penaltyOrder": "XX",
-          "penaltyCategory": "P",
-          "penaltyStatus": "ACTIVE",
-          "penaltyCreationDate": "2018-01-01",
-          "penaltyExpiryDate": "2018-01-01",
-          "communicationsDate": "2018-01-01",
-          "lateSubmissions": [
-            {
-              "lateSubmissionID": "XXX",
-              "taxPeriod": "18AA",
-              "taxReturnStatus": "XXXXX",
-              "taxPeriodStartDate": "2018-01-01",
-              "taxPeriodEndDate": "2018-01-01",
-              "taxPeriodDueDate": "2018-01-01",
-              "returnReceiptDate": "2018-01-01"
-            }
-          ],
-          "appealStatus": "XX",
-          "appealLevel": "XX",
-          "chargeReference": "XXXXXXXXXXXXXXX1",
-          "chargeAmount": -99999999999.99,
-          "chargeOutstandingAmount": -99999999999.99,
-          "chargeDueDate": "2018-01-01"
-        }
-      ]
-    },
-    "latePaymentPenalty": {
-      "details": [
-        {
-          "penaltyNumber": "XXXXXXXXXXX2",
-          "penaltyCategory": "LPP1",
-          "penaltyStatus": "A",
-          "penaltyAmountAccruing": -99999999999.99,
-          "penaltyAmountPosted": -99999999999.99,
-          "penaltyChargeCreationDate": "2018-01-01",
-          "communicationsDate": "2018-01-01",
-          "penaltyChargeReference": "XXXXXXXXXXXXXXX2",
-          "penaltyChargeDueDate": "2018-01-01",
-          "appealStatus": "XX",
-          "appealLevel": "XX",
-          "principalChargeReference": "XXXXXXXXXXXXXXX3",
-          "principalChargeDueDate": "2018-01-01"
-        }
-      ]
+  "LPPDetails": [
+    {
+      "principalChargeReference": "ABCDEFGHIJKLMNOP",
+      "penaltyCategory": "LPP1",
+      "LPP1LRCalculationAmount": 100.11,
+      "LPP1LRDays": "15",
+      "LPP1LRPercentage": 2.4,
+      "LPP1HRCalculationAmount": 200.22,
+      "LPP1HRDays": "30",
+      "LPP1HRPercentage": 4.2,
+      "LPP2Days": "31",
+      "LPP2Percentage": 5.5,
+      "penaltyChargeReference": "BCDEFGHIJKLMNOPQ"
     }
-  }
+  ]
 }
 ```
 
@@ -396,27 +298,29 @@ true
 |reason|`String`|**true**
 
 #### Example
+
+The following response will be returned if the downstream API has returned a successful response, but there were no LPP details provided:
 ```
 {
-  "code": "SERVICE_UNAVAILABLE",
-  "reason": "Dependent systems are currently not responding"
+  "code": 404,
+  "reason": "No LPP data was found"
 }
 ```
+
+Any other errors will be generated based on data from the downstream API call, where `code` contains the HTTP status code and the `reason` contains the JSON body.
 
 Requirements
 ------------
 
 This service is written in [Scala](http://www.scala-lang.org/) and [Play](http://playframework.com/), so needs at least a [JRE] to run.
 
-
 ## Running the application
 
 ### Running from Nexus/Bintray
 To update from Nexus and start all services from the RELEASE version instead of snapshot
 ```
-sm --start FINANCIAL_TRANSACTIONS -f
+sm --start FINANCIAL_TRANSACTIONS
 ```
-
 
 ### To manually run the application locally:
 
@@ -436,7 +340,6 @@ To test the application fully (Unit Tests, Component Tests *(integration)*, Scal
 sbt clean scalastyle coverage test it:test coverageOff coverageReport
 ```
 *(To run only a subset of the tests omit the desired sbt options accordingly)*
-
 
 ---
 ### License

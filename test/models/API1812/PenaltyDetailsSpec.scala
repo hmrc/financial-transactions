@@ -22,40 +22,33 @@ import utils.TestConstantsAPI1812._
 
 class PenaltyDetailsSpec extends SpecBase {
 
-  "Get Penalty Details" should {
-    "return empty json when no LSP/LPP details exist" in {
-      val result = Json.fromJson(Json.parse("{}"))(PenaltyDetails.format)
-      result.isSuccess shouldBe true
-      result.get.latePaymentPenalty.isEmpty shouldBe true
-      result.get.lateSubmissionPenalty.isEmpty shouldBe true
+  "PenaltyDetails" should {
+
+    "parse JSON to an empty sequence when no LPP details exist" in {
+      val result = Json.obj().as[PenaltyDetails]
+      result.LPPDetails.isEmpty shouldBe true
     }
 
-    "deserialize successfully where only latePaymentPenalty is populated" in {
-      penaltyDetailsLPPJson.as[PenaltyDetails] shouldBe penaltyDetailsLPPModel
-    }
+    "parse a JSON array of LPP details to a sequence correctly" when {
 
-    "deserialize successfully to a GetPenaltyDetailsModel where only lateSubmissionPenalty is populated" in {
-      penaltyDetailsLSPJson.as[PenaltyDetails] shouldBe penaltyDetailsLSPModel
-    }
+      "optional fields are present" in {
+        apiLPPJson(LPPJsonMax).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
+      }
 
-    "deserialize successfully to a GetPenaltyDetailsModel where both latePaymentPenalty and lateSubmissionPenalty are populated" in {
-      penaltyDetailsAllJson.as[PenaltyDetails] shouldBe penaltyDetailsAllModel
-    }
-
-    "be writable to JSON" when {
-      "no LSP/LPP details exist - return empty JSON" in {
-        Json.toJson(penaltyDetailsNone) shouldBe Json.obj()
+      "optional fields are missing" in {
+        apiLPPJson(LPPJsonMin).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
       }
     }
-    "serialize successfully to a GetPenaltyDetailsJson where only lateSubmissionPenalty is populated" in {
-      Json.toJson(penaltyDetailsLSPModel) shouldBe penaltyDetailsLSPJson
-    }
 
-    "serialize successfully to a GetPenaltyDetailsJson where only latePaymentPenalty is populated" in {
-      Json.toJson(penaltyDetailsLPPModel) shouldBe penaltyDetailsLPPJson
-    }
-    "serialize successfully to a GetPenaltyDetailsJson where both latePaymentPenalty and lateSubmissionPenalty are populated" in {
-      Json.toJson(penaltyDetailsAllModel) shouldBe penaltyDetailsAllJson
+    "serialize to JSON" when {
+
+      "optional fields are present" in {
+        Json.toJson(penaltyDetailsModelMax) shouldBe writtenLPPJson(LPPJsonMax)
+      }
+
+      "optional fields are missing" in {
+        Json.toJson(penaltyDetailsModelMin) shouldBe writtenLPPJson(LPPJsonMin)
+      }
     }
   }
 }

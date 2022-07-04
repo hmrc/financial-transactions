@@ -31,7 +31,7 @@ trait MockPenaltyDetailsConnector {
   val mockPenaltyDetailsConnector: PenaltyDetailsConnector = mock[PenaltyDetailsConnector]
 
   def setupPenaltyDetailsCall(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                               (response: PenaltyDetailsResponse): OngoingStubbing[Future[PenaltyDetailsResponse]] =
+                             (response: PenaltyDetailsResponse): OngoingStubbing[Future[PenaltyDetailsResponse]] =
     when(
       mockPenaltyDetailsConnector.getPenaltyDetails(
         ArgumentMatchers.eq(regime),

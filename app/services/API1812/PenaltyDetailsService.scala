@@ -19,7 +19,9 @@ package services.API1812
 import com.google.inject.Inject
 import connectors.API1812.PenaltyDetailsConnector
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
+import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
+import play.api.http.Status
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.LoggerUtil
 
@@ -29,5 +31,8 @@ class PenaltyDetailsService @Inject()(connector: PenaltyDetailsConnector) extend
 
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] =
-    connector.getPenaltyDetails(regime, queryParameters)
+    connector.getPenaltyDetails(regime, queryParameters).map {
+      case Right(details) if details.LPPDetails.isEmpty => Left(Error(Status.NOT_FOUND, "No LPP data was found"))
+      case either => either
+    }
 }
