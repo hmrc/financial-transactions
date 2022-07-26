@@ -54,7 +54,6 @@ class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
       } else {
         idType.toUpperCase match {
           case RegimeKeys.VAT => retrieveFinancialTransactions(VatRegime(idValue), queryParams)
-          case RegimeKeys.IT => retrieveFinancialTransactions(IncomeTaxRegime(idValue), queryParams)
           case regime =>
             logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
               s"Invalid Tax Regime '$regime' received in request.")
