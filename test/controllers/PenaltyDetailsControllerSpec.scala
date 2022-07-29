@@ -21,7 +21,7 @@ import config.RegimeKeys
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
 import mocks.services.MockPenaltyDetailsService
-import models.API1166.{InvalidTaxRegime, UnauthenticatedError}
+import models.API1166.UnauthenticatedError
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.http.Status
@@ -78,20 +78,6 @@ class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsServi
         "return the correct error JSON" in {
           contentAsJson(result) shouldBe errorJson
         }
-      }
-    }
-
-    "an authenticated user requests details for an unsupported tax regime" should {
-
-      val id = "XAIT123456789"
-      lazy val result = controller.getPenaltyDetails(RegimeKeys.IT, id, PenaltyDetailsQueryParameters())(fakeRequest)
-
-      "return a status of 400 (BAD_REQUEST)" in {
-        status(result) shouldBe Status.BAD_REQUEST
-      }
-
-      "return a json body with an Invalid Tax Regime message" in {
-        contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
       }
     }
 
