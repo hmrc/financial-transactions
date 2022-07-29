@@ -26,7 +26,7 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
   val transactionName = "financial-transactions-request"
   val auditEvent = "financialTransactionsRequest"
 
-  val testRegime = VatRegime("XQIT00000000001")
+  val testRegime: VatRegime = VatRegime("999999999")
 
   "The FinancialTransactionsRequestAuditModel" when {
 

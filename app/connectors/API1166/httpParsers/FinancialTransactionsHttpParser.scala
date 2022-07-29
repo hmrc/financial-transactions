@@ -16,14 +16,19 @@
 
 package connectors.API1166.httpParsers
 
+import config.MicroserviceAppConfig
 import connectors.httpParsers.ResponseHttpParsers
 import models.API1166.FinancialTransactions
 import models.API1166.{UnexpectedJsonFormat, UnexpectedResponse}
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil
+import utils.{ChargeTypes, LoggerUtil}
 
-object FinancialTransactionsHttpParser extends ResponseHttpParsers with LoggerUtil {
+import javax.inject.{Inject, Singleton}
+
+@Singleton
+class FinancialTransactionsHttpParser @Inject()(implicit appConfig: MicroserviceAppConfig) extends
+  ResponseHttpParsers with LoggerUtil {
 
   implicit object FinancialTransactionsReads extends HttpReads[HttpGetResult[FinancialTransactions]] {
     override def read(method: String, url: String, response: HttpResponse): HttpGetResult[FinancialTransactions] = {
@@ -38,7 +43,7 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers with LoggerUt
             valid => {
               logger.debug(s"[FinancialTransactionsReads][read] DES Response: \n\n${response.json}")
               logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
-              Right(valid)
+              Right(removeInvalidCharges(valid))
             }
           )
         case status if status >= 400 && status < 600 =>
@@ -50,4 +55,9 @@ object FinancialTransactionsHttpParser extends ResponseHttpParsers with LoggerUt
       }
     }
   }
+
+  private def removeInvalidCharges(model: FinancialTransactions): FinancialTransactions =
+    model.copy(financialTransactions = model.financialTransactions.filter { charge =>
+      ChargeTypes.validChargeTypes(appConfig).contains(charge.chargeType.getOrElse("").toUpperCase)
+    })
 }

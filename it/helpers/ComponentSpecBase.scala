@@ -39,7 +39,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl = s"http://$mockHost:$mockPort"
   val httpClient : HttpClient = app.injector.instanceOf[HttpClient]
-  val appConfig: MicroserviceAppConfig = app.injector.instanceOf[MicroserviceAppConfig]
+  implicit val appConfig: MicroserviceAppConfig = app.injector.instanceOf[MicroserviceAppConfig]
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,

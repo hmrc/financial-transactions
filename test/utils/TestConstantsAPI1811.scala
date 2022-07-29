@@ -96,7 +96,7 @@ object TestConstantsAPI1811 {
 
   val fullTransaction: Transaction = Transaction(
     documentId = "012345678901234567890123456789",
-    chargeType = Some("PAYE"),
+    chargeType = Some("VAT Return Debit Charge"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
     periodKeyDescription = Some("abcde"),
@@ -121,7 +121,7 @@ object TestConstantsAPI1811 {
 
   val fullTransactionJsonEIS: JsObject = Json.obj(
     "documentId" -> "012345678901234567890123456789",
-    "chargeType" -> "PAYE",
+    "chargeType" -> "VAT Return Debit Charge",
     "mainType" -> "2100",
     "periodKey" -> "13RL",
     "periodKeyDescription" -> "abcde",
@@ -146,7 +146,7 @@ object TestConstantsAPI1811 {
 
   val fullTransactionJsonEISOutput: JsObject = Json.obj(
     "documentId" -> "012345678901234567890123456789",
-    "chargeType" -> "PAYE",
+    "chargeType" -> "VAT Return Debit Charge",
     "mainType" -> "2100",
     "periodKey" -> "13RL",
     "periodKeyDescription" -> "abcde",

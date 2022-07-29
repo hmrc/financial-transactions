@@ -72,7 +72,7 @@ object TestConstants {
   )
 
   val fullTransaction: Transaction = Transaction(
-    chargeType = Some("PAYE"),
+    chargeType = Some("VAT Return Debit Charge"),
     mainType = Some("2100"),
     periodKey = Some("13RL"),
     periodKeyDescription = Some("abcde"),
@@ -96,7 +96,7 @@ object TestConstants {
   )
 
   val fullTransactionJson: JsObject = Json.obj(
-    "chargeType" -> "PAYE",
+    "chargeType" -> "VAT Return Debit Charge",
     "mainType" -> "2100",
     "periodKey" -> "13RL",
     "periodKeyDescription" -> "abcde",
@@ -124,7 +124,7 @@ object TestConstants {
     idNumber = Some("XQIT00000000001"),
     regimeType = Some("ITSA"),
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Some(Seq(fullTransaction))
+    financialTransactions = Seq(fullTransaction)
   )
 
   val fullFinancialTransactionsJson: JsObject = Json.obj(

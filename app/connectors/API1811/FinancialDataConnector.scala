@@ -16,31 +16,39 @@
 
 package connectors.API1811
 
-import java.util.UUID.randomUUID
-
 import config.MicroserviceAppConfig
-import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.{FinancialTransactionsReads, FinancialTransactionsResponse}
-import javax.inject.{Inject, Singleton}
+import connectors.API1811.httpParsers.FinancialTransactionsHttpParser
+import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
 
+import java.util.UUID.randomUUID
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTransactionsHttpParser)
+                                      (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.eisUrl}/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
-                         (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
-    val eisHeaders = Seq("Authorization" -> s"Bearer ${appConfig.eisToken}","CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
+    val eisHeaders = Seq(
+      "Authorization" -> s"Bearer ${appConfig.eisToken}",
+      "CorrelationId" -> randomUUID().toString,
+      "Environment" -> appConfig.eisEnvironment
+    )
 
     val url = financialDataUrl(regime)
 
-    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.api1811QueryParams}")
-    http.GET[FinancialTransactionsResponse](url, queryParameters.api1811QueryParams, eisHeaders)(FinancialTransactionsReads,hc, ec)
-    }
+    logger.debug("[FinancialDataConnector][getFinancialData] - " +
+      s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.api1811QueryParams}")
+
+    http.GET[FinancialTransactionsResponse](
+      url, queryParameters.api1811QueryParams, eisHeaders)(httpParser.FinancialTransactionsReads, hc, ec)
+  }
 }

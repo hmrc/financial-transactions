@@ -27,18 +27,18 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
   val transactionName = "financial-transactions-response"
   val auditEvent = "financialTransactionsResponse"
 
-  val testRegime = VatRegime("XQIT00000000001")
+  val testRegime: VatRegime = VatRegime("999999999")
 
   "The FinancialTransactionsResponseAuditModel" when {
 
     "passed some transaction data in the response" should {
 
       val testTransactions = FinancialTransactions(
-        idType = Some("MTDBSA"),
-        idNumber = Some("XQIT00000000001"),
-        regimeType = Some("ITSA"),
+        idType = Some("VRN"),
+        idNumber = Some("999999999"),
+        regimeType = Some("VATC"),
         processingDate = "2018-03-07T22:55:56.987Z",
-        financialTransactions = Some(Seq(
+        financialTransactions = Seq(
           Transaction(
             chargeReference = Some("XM002610011594"),
             originalAmount = Some(3400.0),
@@ -77,7 +77,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
               )
             ))
           )
-        ))
+        )
       )
       object TestFinancialTransactionsResponseAuditModel extends FinancialTransactionsResponseAuditModel(testRegime, testTransactions)
 
@@ -120,7 +120,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
 
     "not passed any transactions in the response" should {
 
-      val noTransactions = FinancialTransactions(processingDate = "2018-03-07T22:55:56.987Z")
+      val noTransactions = FinancialTransactions(None, None, None, "2018-03-07T22:55:56.987Z", Seq())
       object TestFinancialTransactionsResponseAuditModel extends FinancialTransactionsResponseAuditModel(testRegime, noTransactions)
 
       "Have the correct details for the audit event" in {

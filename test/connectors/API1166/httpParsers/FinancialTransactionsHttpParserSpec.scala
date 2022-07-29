@@ -17,29 +17,77 @@
 package connectors.API1166.httpParsers
 
 import base.SpecBase
-import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsReads
 import models.API1166._
 import play.api.http.Status
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson}
+import utils.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson, fullSubItemJson}
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 
+  val httpParser = new FinancialTransactionsHttpParser()
+
   "The FinancialTransactionsHttpParser" when {
 
-    "the http response status is 200 OK and matches expected Schema" should {
+    "the http response status is 200 OK and matches expected Schema" when {
 
-      val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsJson.toString)
+      "recognised charge types are returned" should {
 
-      val expected = Right(fullFinancialTransactions)
+        val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsJson.toString)
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+        val expected = Right(fullFinancialTransactions)
 
-      "return a FinancialTransactions instance" in {
-        result shouldEqual expected
+        val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+
+        "return a FinancialTransactions instance containing financialTransactions items with valid charge types" in {
+          result shouldEqual expected
+        }
       }
 
+      "unrecognised charge types are returned" should {
+
+        val invalidChargeTypeJson: JsObject = Json.obj(
+          "chargeType" -> "Made Up Charge Type",
+          "mainType" -> "2100",
+          "periodKey" -> "13RL",
+          "periodKeyDescription" -> "abcde",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "businessPartner" -> "6622334455",
+          "contractAccountCategory" -> "02",
+          "contractAccount" -> "X",
+          "contractObjectType" -> "ABCD",
+          "contractObject" -> "00000003000000002757",
+          "sapDocumentNumber" -> "1040000872",
+          "sapDocumentNumberItem" -> "XM00",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "1234",
+          "subTransaction" -> "5678",
+          "originalAmount" -> 3400,
+          "outstandingAmount" -> 1400,
+          "clearedAmount" -> 2000,
+          "accruedInterest" -> 0.23,
+          "items" -> Json.arr(fullSubItemJson)
+        )
+
+        val filteredFinancialJson = Json.obj(
+          "idType" -> "MTDBSA",
+          "idNumber" -> "XQIT00000000001",
+          "regimeType" -> "ITSA",
+          "processingDate" -> "2017-03-07T22:55:56.987Z",
+          "financialTransactions" -> Json.arr(invalidChargeTypeJson)
+        )
+
+        val httpResponse = HttpResponse(Status.OK, filteredFinancialJson.toString)
+
+        val expected = Right(fullFinancialTransactions.copy(financialTransactions = Seq()))
+
+        val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+
+        "return a FinancialTransactions instance that has had the invalid financialTransactions items filtered out" in {
+          result shouldEqual expected
+        }
+      }
     }
 
     "the http response status is 200 OK but the response is not as expected" should {
@@ -48,7 +96,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val expected = Left(UnexpectedJsonFormat)
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return an UnexpectedJsonFormat instance" in {
         result shouldEqual expected
@@ -72,7 +120,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
         )
       ))
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return a Error instance" in {
         result shouldEqual expected
@@ -106,7 +154,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
         )
       ))
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return a MultiError" in {
         result shouldEqual expected
@@ -120,7 +168,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val expected = Left(UnexpectedJsonFormat)
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return an UnexpectedJsonFormat instance" in {
         result shouldEqual expected
@@ -134,7 +182,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val expected = Left(InvalidJsonResponse)
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return an UnexpectedJsonFormat instance" in {
         result shouldEqual expected
@@ -158,7 +206,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
         )
       ))
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return an ISE" in {
         result shouldEqual expected
@@ -172,7 +220,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val expected = Left(UnexpectedResponse)
 
-      val result = FinancialTransactionsReads.read("", "", httpResponse)
+      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return an ISE" in {
         result shouldEqual expected

@@ -37,7 +37,7 @@ object FinancialData1811 {
     )),
     "financialDetails" -> Json.arr(Json.obj(
       "documentId" -> "012345678901234567890123456789",
-      "chargeType" -> "PAYE",
+      "chargeType" -> "VAT Return Debit Charge",
       "mainType" -> "2100",
       "periodKey" -> "13RL",
       "periodKeyDescription" -> "abcde",
@@ -98,7 +98,7 @@ object FinancialData1811 {
     )),
     "financialTransactions" -> Json.arr(Json.obj(
       "documentId" -> "012345678901234567890123456789",
-      "chargeType" -> "PAYE",
+      "chargeType" -> "VAT Return Debit Charge",
       "mainType" -> "2100",
       "periodKey" -> "13RL",
       "periodKeyDescription" -> "abcde",
@@ -159,7 +159,7 @@ object FinancialData1811 {
     )),
     financialDetails = Seq(Transaction(
       documentId = "012345678901234567890123456789",
-      chargeType = Some("PAYE"),
+      chargeType = Some("VAT Return Debit Charge"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
       periodKeyDescription = Some("abcde"),

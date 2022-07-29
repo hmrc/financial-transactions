@@ -17,19 +17,21 @@
 package connectors.API1166
 
 import config.MicroserviceAppConfig
-import connectors.API1166.httpParsers.FinancialTransactionsHttpParser._
-import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
-import javax.inject.{Inject, Singleton}
+import connectors.API1166.httpParsers.FinancialTransactionsHttpParser
+import connectors.httpParsers.DirectDebitCheckHttpParser.{DirectDebitCheckReads, HttpGetResult}
 import models.API1166.FinancialTransactions
 import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class FinancialDataConnector @Inject()(http: HttpClient,
+                                       httpParser: FinancialTransactionsHttpParser)
+                                      (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def financialDataUrl(regime: TaxRegime) =
     s"${appConfig.desUrl}/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
@@ -46,7 +48,7 @@ class FinancialDataConnector @Inject()(val http: HttpClient, val appConfig: Micr
     val hc = headerCarrier.copy(authorization = None)
 
     logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: $queryParameters")
-    http.GET(url, queryParameters.toSeqQueryParams, desHeaders)(FinancialTransactionsReads, hc, ec).map {
+    http.GET(url, queryParameters.toSeqQueryParams, desHeaders)(httpParser.FinancialTransactionsReads, hc, ec).map {
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(response) => response.status match {
         case NOT_FOUND =>

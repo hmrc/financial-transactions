@@ -24,7 +24,7 @@ case class FinancialTransactions(idType: Option[String] = None,
                                  idNumber: Option[String] = None,
                                  regimeType: Option[String] = None,
                                  processingDate: ZonedDateTime,
-                                 financialTransactions: Option[Seq[Transaction]] = None)
+                                 financialTransactions: Seq[Transaction])
 
 object FinancialTransactions {
   implicit val format: Format[FinancialTransactions] = Json.format[FinancialTransactions]

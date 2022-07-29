@@ -23,11 +23,11 @@ object FinancialData1166 {
 
   val successResponse: FinancialTransactions = FinancialTransactions(
     idType = Some("MTDBSA"),
-    idNumber = Some("XQIT00000000001"),
-    regimeType = Some("ITSA"),
+    idNumber = Some("999999999"),
+    regimeType = Some("VATC"),
     processingDate = "2017-03-07T22:55:56.987Z",
-    financialTransactions = Some(Seq(Transaction(
-      chargeType = Some("PAYE"),
+    financialTransactions = Seq(Transaction(
+      chargeType = Some("VAT Return Debit Charge"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
       periodKeyDescription = Some("abcde"),
@@ -70,7 +70,7 @@ object FinancialData1166 {
         returnReason = Some("J"),
         promiseToPay = Some("K")
       )))
-    )))
+    ))
   )
 
   val singleErrorResponse: Error = Error("CODE","ERROR MESSAGE")
