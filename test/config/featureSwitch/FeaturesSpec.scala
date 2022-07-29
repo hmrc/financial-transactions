@@ -28,17 +28,21 @@ class FeaturesSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter
   override def beforeEach(): Unit = {
     super.beforeEach()
     features.useApi1811(false)
+    features.chargeTypeFilter(true)
   }
 
   "A feature" should {
 
     "return its current state" in {
       features.useApi1811() mustBe false
+      features.chargeTypeFilter() mustBe true
     }
 
     "switch to a new state" in {
       features.useApi1811(true)
+      features.chargeTypeFilter(false)
       features.useApi1811() mustBe true
+      features.chargeTypeFilter() mustBe false
     }
   }
 }

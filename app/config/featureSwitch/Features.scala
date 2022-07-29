@@ -24,5 +24,6 @@ class Features @Inject()(implicit config: Configuration){
 
   private val featureSwitch: String = "feature-switch"
   lazy val useApi1811 = new Feature(s"$featureSwitch.useApi1811")
+  lazy val chargeTypeFilter = new Feature(s"$featureSwitch.chargeTypeFilter")
 
 }
