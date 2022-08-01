@@ -26,9 +26,4 @@ class RegimeKeysSpec extends SpecBase {
     }
   }
 
-  "The IT key" should {
-    "have the value 'IT'" in {
-      RegimeKeys.IT shouldBe "IT"
-    }
-  }
 }

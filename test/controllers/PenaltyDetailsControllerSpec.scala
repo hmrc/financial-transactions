@@ -84,7 +84,7 @@ class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsServi
     "an authenticated user requests details for an unsupported tax regime" should {
 
       val id = "XAIT123456789"
-      lazy val result = controller.getPenaltyDetails(RegimeKeys.IT, id, PenaltyDetailsQueryParameters())(fakeRequest)
+      lazy val result = controller.getPenaltyDetails("dummyRegime", id, PenaltyDetailsQueryParameters())(fakeRequest)
 
       "return a status of 400 (BAD_REQUEST)" in {
         status(result) shouldBe Status.BAD_REQUEST

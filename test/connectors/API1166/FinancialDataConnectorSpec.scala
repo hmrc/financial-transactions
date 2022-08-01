@@ -42,7 +42,6 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
   )))
 
   val vatRegime: TaxRegime = VatRegime(id = "12345678")
-  val itRegime: IncomeTaxRegime = IncomeTaxRegime(id = "AB123456B")
 
   object TestFinancialDataConnector extends FinancialDataConnector(mockHttpGet, mockAppConfig)
 
@@ -61,14 +60,6 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
       val actualUrl: String = TestFinancialDataConnector.financialDataUrl(vatRegime)
       val expectedUrl: String = s"${mockAppConfig.desUrl}/enterprise/financial-data/${vatRegime.idType}/${vatRegime.id}/${vatRegime.regimeType}"
-
-      actualUrl shouldBe expectedUrl
-    }
-
-    "format the request Url correctly for Income Tax TaxRegime requests" in {
-
-      val actualUrl: String = TestFinancialDataConnector.financialDataUrl(itRegime)
-      val expectedUrl: String = s"${mockAppConfig.desUrl}/enterprise/financial-data/${itRegime.idType}/${itRegime.id}/${itRegime.regimeType}"
 
       actualUrl shouldBe expectedUrl
     }

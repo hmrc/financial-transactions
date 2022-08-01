@@ -22,11 +22,6 @@ sealed trait TaxRegime {
   val regimeType: String
 }
 
-case class IncomeTaxRegime(id: String) extends TaxRegime {
-  override val idType = "MTDBSA"
-  override val regimeType = "ITSA"
-}
-
 case class VatRegime(id: String) extends TaxRegime {
   override val idType = "VRN"
   override val regimeType = "VATC"

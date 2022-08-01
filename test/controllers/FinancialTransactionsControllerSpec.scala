@@ -123,65 +123,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
         }
 
-        "is requesting IT details" should {
-
-          val regimeType = "IT"
-          val mtditid = "XAIT0000123456"
-          val incomeTaxRegime = IncomeTaxRegime(mtditid)
-
-          "for a successful response from the FinancialTransactionsService" should {
-
-            lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, mtditid, FinancialRequestQueryParameters()
-            )(fakeRequest)
-
-            "return a status of 200 (OK)" in {
-              setupMockGetFinancialTransactions(incomeTaxRegime, FinancialRequestQueryParameters())(successResponse)
-              status(result) shouldBe Status.OK
-            }
-
-            "return a json body with the financial transaction information" in {
-              contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions)
-            }
-
-          }
-
-          "for a bad request with single error from the FinancialTransactionsService" should {
-
-            lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, mtditid, FinancialRequestQueryParameters()
-            )(fakeRequest)
-
-            "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(incomeTaxRegime, FinancialRequestQueryParameters())(badRequestSingleError)
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return a json body with the single error message" in {
-
-              contentAsJson(result) shouldBe Json.toJson(singleError)
-            }
-          }
-
-          "for a bad request with multiple errors from the FinancialTransactionsService" should {
-
-            lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, mtditid, FinancialRequestQueryParameters()
-            )(fakeRequest)
-
-            "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(incomeTaxRegime, FinancialRequestQueryParameters())(badRequestMultiError)
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return a json body with the multiple error messages" in {
-
-              contentAsJson(result) shouldBe Json.toJson(multiError)
-            }
-          }
-
-        }
-
         "is requesting details for an Invalid Tax Regime" should {
 
           val regimeType = "BANANA"

@@ -17,7 +17,7 @@
 package audit.models
 
 import base.SpecBase
-import _root_.models.IncomeTaxRegime
+import _root_.models.VatRegime
 import models.API1166.{FinancialTransactions, SubItem, Transaction}
 import play.api.libs.json.Json
 import utils.ImplicitDateFormatter._
@@ -27,7 +27,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
   val transactionName = "financial-transactions-response"
   val auditEvent = "financialTransactionsResponse"
 
-  val testRegime = IncomeTaxRegime("XQIT00000000001")
+  val testRegime = VatRegime("XQIT00000000001")
 
   "The FinancialTransactionsResponseAuditModel" when {
 
