@@ -16,29 +16,33 @@
 
 package connectors.API1811.httpParsers
 
+import config.MicroserviceAppConfig
+import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import models.API1811.{Error, FinancialTransactions}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.LoggerUtil
+import utils.{ChargeTypes, LoggerUtil}
 
-object FinancialTransactionsHttpParser extends LoggerUtil {
+import javax.inject.{Inject, Singleton}
 
-  type FinancialTransactionsResponse = Either[Error, FinancialTransactions]
+@Singleton
+class FinancialTransactionsHttpParser @Inject()(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   implicit object FinancialTransactionsReads extends HttpReads[FinancialTransactionsResponse] {
-    override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsResponse = {
+    override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsResponse =
       response.status match {
         case OK =>
           response.json.validate[FinancialTransactions].fold(
             invalid => {
               logger.warn("[FinancialTransactionsReads][read] Json Error Parsing Successful EIS Response")
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: ${response.json}\nJson Errors: $invalid")
-              Left(Error(BAD_REQUEST, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
+              Left(Error(BAD_REQUEST, "UNEXPECTED_JSON_FORMAT - " +
+                "The downstream service responded with json which did not match the expected format."))
             },
             valid => {
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: \n\n${response.json}")
               logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
-              Right(valid)
+              Right(removeInvalidCharges(valid))
             }
           )
         case NOT_FOUND =>
@@ -49,6 +53,14 @@ object FinancialTransactionsHttpParser extends LoggerUtil {
           s"Status code:'${response.status}', Body: '${response.body}")
           Left(Error(response.status, response.body))
       }
-    }
   }
+
+  private def removeInvalidCharges(model: FinancialTransactions): FinancialTransactions =
+    model.copy(financialDetails = model.financialDetails.filter { charge =>
+      ChargeTypes.validChargeTypes(appConfig).contains(charge.chargeType.getOrElse("").toUpperCase)
+    })
+}
+
+object FinancialTransactionsHttpParser {
+  type FinancialTransactionsResponse = Either[Error, FinancialTransactions]
 }

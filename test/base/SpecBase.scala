@@ -17,7 +17,6 @@
 package base
 
 import config.MicroserviceAppConfig
-import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice._
@@ -30,13 +29,13 @@ import play.api.test.Helpers.stubControllerComponents
 
 import scala.concurrent.ExecutionContext
 
-trait SpecBase extends AnyWordSpecLike with Matchers with OptionValues with GuiceOneAppPerSuite {
+trait SpecBase extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite {
 
   def injector: Injector = app.injector
 
   def fakeRequest: FakeRequest[AnyContentAsEmpty.type] = FakeRequest("", "")
 
-  lazy val mockAppConfig: MicroserviceAppConfig = injector.instanceOf[MicroserviceAppConfig]
+  implicit lazy val mockAppConfig: MicroserviceAppConfig = injector.instanceOf[MicroserviceAppConfig]
 
   implicit lazy val hc: HeaderCarrier = HeaderCarrier().withExtraHeaders(REFERER -> "/dummy/referer/path")
   implicit lazy val ec: ExecutionContext = injector.instanceOf[ExecutionContext]

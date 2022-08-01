@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
+import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
 import models.API1166.FinancialTransactions
 import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers

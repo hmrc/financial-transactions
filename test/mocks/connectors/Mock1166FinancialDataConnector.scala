@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.API1166.FinancialDataConnector
-import connectors.API1166.httpParsers.FinancialTransactionsHttpParser.HttpGetResult
+import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
 import models.API1166.FinancialTransactions
 import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
@@ -29,7 +29,6 @@ import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 
 import scala.concurrent.Future
-
 
 trait Mock1166FinancialDataConnector extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
 

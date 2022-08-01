@@ -16,7 +16,7 @@
 
 package connectors.API1811
 
-import connectors.API1811
+import connectors.API1811.httpParsers.FinancialTransactionsHttpParser
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import helpers.ComponentSpecBase
 import models.API1811.Error
@@ -31,7 +31,8 @@ import scala.concurrent.ExecutionContext
 
 class FinancialDataConnectorISpec extends ComponentSpecBase {
 
-  val connector: API1811.FinancialDataConnector = new API1811.FinancialDataConnector(httpClient, appConfig)
+  val httpParser = new FinancialTransactionsHttpParser()
+  val connector: FinancialDataConnector = new FinancialDataConnector(httpClient, httpParser)
   implicit val hc: HeaderCarrier = HeaderCarrier()
   implicit val ec: ExecutionContext = ExecutionContext.global
 
@@ -43,8 +44,9 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
   val invalidVrn = "9"
   val queryParameters: FinancialRequestQueryParameters = FinancialRequestQueryParameters()
 
-  def generateUrl(regimeType: String, VRN : String): String =  s"/penalty/financial-data/VRN/$VRN/$regimeType" +
-    s"?onlyOpenItems=false&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"
+  def generateUrl(regimeType: String, VRN : String): String =
+    s"/penalty/financial-data/VRN/$VRN/$regimeType?onlyOpenItems=false&includeStatistical=true" +
+      "&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"
 
   "getFinancialData" should {
 
@@ -132,7 +134,5 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
         }
       }
     }
-
   }
-
 }

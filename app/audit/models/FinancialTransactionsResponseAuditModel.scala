@@ -30,7 +30,7 @@ case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, ftTransact
     "taxRegime" -> regime.regimeType,
     "taxIdentifier" -> regime.id,
     "processingDate" -> ftTransactions.processingDate.toString,
-    "transactions" -> Json.toJson(ftTransactions.financialTransactions.fold(Seq.empty[TransactionsAuditModel])(_.map(transaction =>
+    "transactions" -> Json.toJson(ftTransactions.financialTransactions.map(transaction =>
       TransactionsAuditModel(
         chargeReference = transaction.chargeReference,
         originalAmount = transaction.originalAmount,
@@ -39,6 +39,6 @@ case class FinancialTransactionsResponseAuditModel(regime: TaxRegime, ftTransact
         accruedInterest = transaction.accruedInterest,
         paymentReferences = transaction.items.map(paymentReferences)
       )
-    )))
+    ))
   )
 }
