@@ -21,6 +21,9 @@ import config.AppConfig
 object ChargeTypes {
 
   private[utils] val establishedChargeTypes: Set[String] = Set(
+    "VAT AA 1st LPP",
+    "VAT AA 2nd LPP",
+    "VAT Additional Assessment LPI",
     "VAT Unrepayable Overpayment",
     "VAT Repayment Supplement Rec",
     "VAT Indirect Tax Revenue Rec",
