@@ -95,7 +95,6 @@ object ChargeTypes {
     "VAT PA 2nd LPP LPI",
     "VAT PA 1st LPP",
     "VAT PA 2nd LPP",
-    "VAT PA 2nd LPP LPI",
     "VAT AA 1st LPP",
     "VAT AA 2nd LPP",
     "VAT Additional Assessment LPI",
