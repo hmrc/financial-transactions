@@ -80,6 +80,7 @@ object ChargeTypes {
   ).map(_.toUpperCase)
 
   private[utils] val penaltiesAndInterestChargeTypes: Set[String] = Set(
+    "VAT Protective Assessment LPI",
     "VAT Return 1st LPP",
     "VAT Return LPI",
     "VAT Return 1st LPP LPI",
@@ -91,6 +92,9 @@ object ChargeTypes {
     "VAT OA 1st LPP LPI",
     "VAT OA 2nd LPP LPI",
     "VAT PA 1st LPP LPI",
+    "VAT PA 2nd LPP LPI",
+    "VAT PA 1st LPP",
+    "VAT PA 2nd LPP",
     "VAT PA 2nd LPP LPI",
     "VAT AA 1st LPP",
     "VAT AA 2nd LPP",
