@@ -19,11 +19,10 @@ package models.API1812
 import models.API1812.latePaymentPenalty.LatePaymentPenalty
 import play.api.libs.functional.syntax.unlift
 import play.api.libs.json.{Reads, Writes, __}
-import utils.JsonUtils
 
 case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]])
 
-object PenaltyDetails extends JsonUtils {
+object PenaltyDetails {
 
   implicit val reads: Reads[PenaltyDetails] =
     (__ \ "latePaymentPenalty" \ "details").readNullable[Seq[LatePaymentPenalty]].map(PenaltyDetails.apply)
