@@ -105,7 +105,11 @@ object ChargeTypes {
     "VAT Return AA 1st LPP LPI",
     "VAT Return AA 2nd LPP LPI",
     "VAT Manual LPP",
-    "VAT Manual LPP LPI"
+    "VAT Manual LPP LPI",
+    "VAT AA Quarterly Instal LPI",
+    "VAT AA Monthly Instal LPI",
+    "VAT AA Return Charge 1st LPP",
+    "VAT AA Return Charge 2nd LPP"
   ).map(_.toUpperCase)
 
   def validChargeTypes(appConfig: AppConfig): Set[String] =
