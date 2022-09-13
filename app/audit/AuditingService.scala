@@ -21,7 +21,7 @@ import audit.models.{AuditModel, ExtendedAuditModel}
 import config.MicroserviceAppConfig
 import org.joda.time.DateTime
 import play.api.http.HeaderNames.REFERER
-import play.api.libs.json.{JodaReads, JodaWrites, JsObject, JsValue, Json, Reads, Writes}
+import play.api.libs.json.{JodaReads, JodaWrites, Reads, Writes}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.AuditExtensions
 import uk.gov.hmrc.play.audit.http.connector.AuditResult.{Disabled, Failure, Success}
@@ -37,12 +37,9 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
   implicit val dateTimeJsReader: Reads[DateTime] = JodaReads.jodaDateReads("yyyyMMddHHmmss")
   implicit val dateTimeWriter: Writes[DateTime] = JodaWrites.jodaDateWrites("dd/MM/yyyy HH:mm:ss")
 
-  implicit val dataEventWrites: Writes[DataEvent] = Json.writes[DataEvent]
-  implicit val extendedDataEventWrites: Writes[ExtendedDataEvent] = Json.writes[ExtendedDataEvent]
-
   def audit(auditModel: AuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuditResult] = {
     val dataEvent = toDataEvent(appConfig.appName, auditModel, path)
-    logger.debug(s"Splunk Audit Event:\n\n${Json.toJson(dataEvent)}")
+    logger.debug(s"Splunk Audit Event:\n\n$dataEvent")
     auditConnector.sendEvent(dataEvent).map {
       case Success =>
         logger.debug("Splunk Audit Successful")
@@ -58,7 +55,7 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
 
   def audit(auditModel: ExtendedAuditModel)(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[AuditResult] = {
     val extendedDataEvent = toDataEvent(appConfig.appName, auditModel, path)
-    logger.debug(s"Splunk Audit Event:\n\n${Json.toJson(extendedDataEvent)}")
+    logger.debug(s"Splunk Audit Event:\n\n$extendedDataEvent")
     auditConnector.sendExtendedEvent(extendedDataEvent).map {
       case Success =>
         logger.debug("Splunk Audit Successful")
@@ -83,14 +80,11 @@ class AuditingService @Inject()(appConfig: MicroserviceAppConfig, auditConnector
   def toDataEvent(appName: String, auditModel: ExtendedAuditModel, path: String)
                  (implicit hc: HeaderCarrier): ExtendedDataEvent = {
 
-    val details: JsValue =
-      Json.toJson(AuditExtensions.auditHeaderCarrier(hc).toAuditDetails()).as[JsObject].deepMerge(auditModel.detail.as[JsObject])
-
     ExtendedDataEvent(
       auditSource = appName,
       auditType = auditModel.auditType,
       tags = AuditExtensions.auditHeaderCarrier(hc).toAuditTags(auditModel.transactionName, path),
-      detail = details
+      detail = auditModel.detail
     )
   }
 
