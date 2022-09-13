@@ -73,7 +73,9 @@ object ChargeTypes {
     "Payment on account",
     "VAT POA Return Debit Charge",
     "VAT POA Return Credit Charge",
-    "VAT POA Instalments"
+    "VAT POA Instalments",
+    "VAT Migrated Liabilities debit",
+    "VAT Migrated Credit"
   ).map(_.toUpperCase)
 
   private[utils] val penaltiesAndInterestChargeTypes: Set[String] = Set(
