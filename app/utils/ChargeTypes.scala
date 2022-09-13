@@ -70,7 +70,6 @@ object ChargeTypes {
     "VAT Failure to Submit EC Sales",
     "VAT Statutory Interest",
     "VAT PA Further Interest",
-    "Credit Return Offset",
     "Payment on account",
     "VAT POA Return Debit Charge",
     "VAT POA Return Credit Charge",
