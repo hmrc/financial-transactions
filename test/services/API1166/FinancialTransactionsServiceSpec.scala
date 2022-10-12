@@ -25,7 +25,7 @@ import models._
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
+import utils.API1166.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
 
 class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDataConnector with MockAuditingService {
 

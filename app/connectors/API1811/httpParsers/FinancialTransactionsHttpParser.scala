@@ -21,7 +21,8 @@ import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialT
 import models.API1811.{Error, FinancialTransactions}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.{ChargeTypes, LoggerUtil}
+import utils.API1166.ChargeTypes
+import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
 

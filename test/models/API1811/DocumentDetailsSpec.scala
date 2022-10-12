@@ -17,7 +17,7 @@
 package models.API1811
 
 import play.api.libs.json.Json
-import utils.TestConstantsAPI1811._
+import utils.API1811.TestConstants._
 import base.SpecBase
 
 class DocumentDetailsSpec  extends SpecBase{

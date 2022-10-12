@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package utils
+package utils.API1166
 
 import base.SpecBase
-import utils.API1166.ChargeTypes
 import utils.API1166.ChargeTypes.{establishedChargeTypes, penaltiesAndInterestChargeTypes}
 
 class ChargeTypesSpec extends SpecBase {

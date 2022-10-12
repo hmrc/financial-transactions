@@ -22,7 +22,8 @@ import models.API1166.FinancialTransactions
 import models.API1166.{UnexpectedJsonFormat, UnexpectedResponse}
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.{ChargeTypes, LoggerUtil}
+import utils.API1166.ChargeTypes
+import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
 
