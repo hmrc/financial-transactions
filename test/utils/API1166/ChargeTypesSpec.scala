@@ -17,7 +17,8 @@
 package utils
 
 import base.SpecBase
-import utils.ChargeTypes.{establishedChargeTypes, penaltiesAndInterestChargeTypes}
+import utils.API1166.ChargeTypes
+import utils.API1166.ChargeTypes.{establishedChargeTypes, penaltiesAndInterestChargeTypes}
 
 class ChargeTypesSpec extends SpecBase {
 
