@@ -18,7 +18,7 @@ package models.API1166
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson}
+import utils.API1166.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson}
 
 class FinancialTransactionsSpec extends SpecBase {
 

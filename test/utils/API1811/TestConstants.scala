@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package utils
+package utils.API1811
 
-import play.api.libs.json.{JsObject, Json}
 import models.API1811.{DocumentDetails, FinancialTransactions, SubItem, Transaction}
+import play.api.libs.json.{JsObject, Json}
 import utils.ImplicitDateFormatter._
 
-object TestConstantsAPI1811 {
+object TestConstants {
 
   val fullSubItem: SubItem = SubItem(
     subItem = Some("000"),
@@ -110,8 +110,8 @@ object TestConstantsAPI1811 {
     sapDocumentNumber = Some("1040000872"),
     sapDocumentNumberItem = Some("XM00"),
     chargeReference = Some("XM002610011594"),
-    mainTransaction = Some("1234"),
-    subTransaction = Some("5678"),
+    mainTransaction = Some("4700"),
+    subTransaction = Some("1174"),
     originalAmount = Some(3400),
     outstandingAmount = Some(1400),
     clearedAmount = Some(2000),
@@ -135,8 +135,8 @@ object TestConstantsAPI1811 {
     "sapDocumentNumber" -> "1040000872",
     "sapDocumentNumberItem" -> "XM00",
     "chargeReference" -> "XM002610011594",
-    "mainTransaction" -> "1234",
-    "subTransaction" -> "5678",
+    "mainTransaction" -> "4700",
+    "subTransaction" -> "1174",
     "originalAmount" -> 3400,
     "outstandingAmount" -> 1400,
     "clearedAmount" -> 2000,
@@ -160,8 +160,8 @@ object TestConstantsAPI1811 {
     "sapDocumentNumber" -> "1040000872",
     "sapDocumentNumberItem" -> "XM00",
     "chargeReference" -> "XM002610011594",
-    "mainTransaction" -> "1234",
-    "subTransaction" -> "5678",
+    "mainTransaction" -> "4700",
+    "subTransaction" -> "1174",
     "originalAmount" -> 3400,
     "outstandingAmount" -> 1400,
     "clearedAmount" -> 2000,
@@ -169,7 +169,7 @@ object TestConstantsAPI1811 {
     "items" -> Json.arr(fullSubItemJsonEISOutput)
   )
 
-  val fullDocumentDetails : DocumentDetails = DocumentDetails(
+  val fullDocumentDetails: DocumentDetails = DocumentDetails(
     taxYear = "2017",
     documentId = "1455",
     documentDate = "2018-03-29",

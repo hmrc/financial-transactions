@@ -18,7 +18,7 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstantsAPI1811.{fullSubItem, fullSubItemJsonEIS, fullSubItemJsonEISOutput}
+import utils.API1811.TestConstants.{fullSubItem, fullSubItemJsonEIS, fullSubItemJsonEISOutput}
 
 class SubItemSpec extends SpecBase {
 

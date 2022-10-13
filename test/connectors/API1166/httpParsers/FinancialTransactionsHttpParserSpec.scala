@@ -21,7 +21,7 @@ import models.API1166._
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson, fullSubItemJson}
+import utils.API1166.TestConstants.{fullFinancialTransactions, fullFinancialTransactionsJson, fullSubItemJson}
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 

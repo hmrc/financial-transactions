@@ -21,7 +21,7 @@ import mocks.connectors.Mock1811FinancialDataConnector
 import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.TestConstantsAPI1811.fullFinancialTransactions
+import utils.API1811.TestConstants.fullFinancialTransactions
 import utils.ImplicitDateFormatter._
 import play.api.http.Status
 

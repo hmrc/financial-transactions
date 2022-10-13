@@ -26,7 +26,7 @@ import models.FinancialRequestQueryParameters._
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.ImplicitDateFormatter._
-import utils.TestConstants.fullFinancialTransactions
+import utils.API1166.TestConstants.fullFinancialTransactions
 
 import scala.concurrent.Future
 

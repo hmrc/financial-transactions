@@ -18,7 +18,7 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstantsAPI1811.{fullTransaction, fullTransactionJsonEIS, fullTransactionJsonEISOutput}
+import utils.API1811.TestConstants.{fullTransaction, fullTransactionJsonEIS, fullTransactionJsonEISOutput}
 
 class TransactionSpec extends SpecBase {
 

@@ -22,7 +22,7 @@ import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
 import play.api.libs.json.{JsObject, Json}
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstantsAPI1811._
+import utils.API1811.TestConstants._
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 

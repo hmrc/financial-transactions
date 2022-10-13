@@ -16,8 +16,8 @@
 
 package controllers
 
-import utils.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
-import utils.TestConstantsAPI1811.{fullFinancialTransactions => fullFinancialTransactions1811}
+import utils.API1166.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
+import utils.API1811.TestConstants.{fullFinancialTransactions => fullFinancialTransactions1811}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
@@ -25,7 +25,7 @@ import mocks.services.MockFinancialTransactionsService
 import mocks.services.Mock1811FinancialTransactionsService
 import models.API1166._
 import models.API1811.{Error => Error1811}
-import models.{FinancialRequestQueryParameters, _}
+import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}

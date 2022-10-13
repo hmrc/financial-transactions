@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.API1166
 
 import config.AppConfig
 
@@ -73,9 +73,7 @@ object ChargeTypes {
     "Payment on account",
     "VAT POA Return Debit Charge",
     "VAT POA Return Credit Charge",
-    "VAT POA Instalments",
-    "Unallocated payment",
-    "Refund"
+    "VAT POA Instalments"
   ).map(_.toUpperCase)
 
   private[utils] val penaltiesAndInterestChargeTypes: Set[String] = Set(
@@ -112,5 +110,5 @@ object ChargeTypes {
   ).map(_.toUpperCase)
 
   def validChargeTypes(appConfig: AppConfig): Set[String] =
-   establishedChargeTypes ++ (if(appConfig.features.includePenAndIntCharges()) penaltiesAndInterestChargeTypes else Set())
+    establishedChargeTypes ++ (if (appConfig.features.includePenAndIntCharges()) penaltiesAndInterestChargeTypes else Set())
 }

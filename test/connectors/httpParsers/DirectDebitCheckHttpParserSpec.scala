@@ -23,7 +23,7 @@ import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstants.{multipleDirectDebits, multipleDirectDebitsJson}
+import utils.API1166.TestConstants.{multipleDirectDebits, multipleDirectDebitsJson}
 
 class DirectDebitCheckHttpParserSpec extends SpecBase {
 

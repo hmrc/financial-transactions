@@ -18,7 +18,7 @@ package models
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.TestConstants.{singleDirectDebits, singleDirectDebitsJson, multipleDirectDebits, multipleDirectDebitsJson
+import utils.API1166.TestConstants.{singleDirectDebits, singleDirectDebitsJson, multipleDirectDebits, multipleDirectDebitsJson
   , noDirectDebits, noDirectDebitsJson}
 
 class DirectDebitsSpec extends SpecBase {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package utils
+package utils.API1166
 
 import models.API1166.{FinancialTransactions, SubItem, Transaction}
 import models.{DirectDebitDetail, DirectDebits}
@@ -155,12 +155,12 @@ object TestConstants {
 
   val multipleDirectDebits: DirectDebits = DirectDebits(
     directDebitMandateFound = true,
-    directDebitDetails = Some(Seq(fullDirectDebitDetail,fullDirectDebitDetail))
+    directDebitDetails = Some(Seq(fullDirectDebitDetail, fullDirectDebitDetail))
   )
 
   val multipleDirectDebitsJson: JsObject = Json.obj(
     "directDebitMandateFound" -> true,
-    "directDebitDetails" -> Json.arr(fullDirectDebitDetailJson,fullDirectDebitDetailJson)
+    "directDebitDetails" -> Json.arr(fullDirectDebitDetailJson, fullDirectDebitDetailJson)
   )
 
   val singleDirectDebits: DirectDebits = DirectDebits(
