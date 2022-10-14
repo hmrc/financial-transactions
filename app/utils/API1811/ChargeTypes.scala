@@ -119,19 +119,26 @@ object ChargeTypes extends LoggerUtil {
     ("4788", vatInterestSubTrans) -> "VAT Manual LPP LPI"
   )
 
-  def removeInvalidCharges(transactions: Seq[Transaction])(implicit appConfig: AppConfig): Seq[Transaction] = {
-    val supportedCharges = if (appConfig.features.includePenAndIntCharges()) {
+  private[utils] def supportedChargeList(implicit appConfig: AppConfig): Map[(String, String), String] =
+    if (appConfig.features.includePenAndIntCharges()) {
       establishedChargeTypes ++ penaltiesAndInterestChargeTypes
     } else {
       establishedChargeTypes
     }
+
+  def retrieveChargeType(mainTransaction: Option[String], subTransaction: Option[String])
+                        (implicit appConfig: AppConfig): Option[String] =
+    supportedChargeList.get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
+
+  def removeInvalidCharges(transactions: Seq[Transaction])(implicit appConfig: AppConfig): Seq[Transaction] = {
+    val supportedCharges = supportedChargeList
     transactions.filter { charge =>
       (charge.mainTransaction, charge.subTransaction) match {
         case (Some(mainTrans), Some(subTrans)) =>
           supportedCharges.contains((mainTrans, subTrans))
         case _ =>
-          logger.warn("[ChargeTypes][isSupportedTransaction] - Insufficient transaction values provided. " +
-            s"Main: ${charge.mainTransaction}, Sub: ${charge.subTransaction}")
+          logger.warn("[ChargeTypes][isSupportedTransaction] - Insufficient transaction values provided for charge, " +
+            s"reference: ${charge.chargeReference}, main: ${charge.mainTransaction}, sub: ${charge.subTransaction}")
           false
       }
     }

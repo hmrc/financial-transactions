@@ -21,7 +21,7 @@ import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialT
 import models.API1811.{Error, FinancialTransactions}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.API1166.ChargeTypes
+import utils.API1811.ChargeTypes
 import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
@@ -43,7 +43,7 @@ class FinancialTransactionsHttpParser @Inject()(implicit appConfig: Microservice
             valid => {
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: \n\n${response.json}")
               logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
-              Right(removeInvalidCharges(valid))
+              Right(valid.copy(financialDetails = ChargeTypes.removeInvalidCharges(valid.financialDetails)))
             }
           )
         case NOT_FOUND =>
@@ -55,11 +55,6 @@ class FinancialTransactionsHttpParser @Inject()(implicit appConfig: Microservice
           Left(Error(response.status, response.body))
       }
   }
-
-  private def removeInvalidCharges(model: FinancialTransactions): FinancialTransactions =
-    model.copy(financialDetails = model.financialDetails.filter { charge =>
-      ChargeTypes.validChargeTypes(appConfig).contains(charge.chargeType.getOrElse("").toUpperCase)
-    })
 }
 
 object FinancialTransactionsHttpParser {

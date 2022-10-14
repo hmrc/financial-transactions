@@ -16,9 +16,11 @@
 
 package models.API1811
 
-import java.time.LocalDate
+import config.AppConfig
+import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
+import utils.API1811.ChargeTypes
 
-import play.api.libs.json.{Format, Json}
+import java.time.LocalDate
 
 case class Transaction(documentId: String,
                        chargeType: Option[String] = None,
@@ -44,5 +46,11 @@ case class Transaction(documentId: String,
                        items: Seq[SubItem])
 
 object Transaction {
-  implicit val format: Format[Transaction] = Json.format[Transaction]
+  implicit val reads: Reads[Transaction] = Json.reads[Transaction]
+
+  implicit def writes(implicit appConfig: AppConfig): Writes[Transaction] = Writes { model =>
+    JsObject(Json.obj(
+      "chargeType" -> ChargeTypes.retrieveChargeType(model.mainTransaction, model.subTransaction)
+    ).fields.filterNot(_._2 == JsNull))
+  }
 }
