@@ -21,6 +21,56 @@ import TestConstants.fullTransaction
 
 class ChargeTypesSpec extends SpecBase {
 
+  "The supportedChargeList function" when {
+
+    val vatReturnLPITransaction = ("4620", "1175")
+
+    "the includePenAndIntCharges feature switch is off" should {
+
+      "return a list of charge types excluding those associated with the penalties and interest work package" in {
+        mockAppConfig.features.includePenAndIntCharges(false)
+        val list = ChargeTypes.supportedChargeList
+        list.size shouldBe 53
+        list.get(vatReturnLPITransaction) shouldBe None
+      }
+    }
+
+    "the includePenAndIntCharges feature switch is on" should {
+
+      "return a list of all recognised charge types" in {
+        mockAppConfig.features.includePenAndIntCharges(true)
+        val list = ChargeTypes.supportedChargeList
+        list.size shouldBe 83
+        list.get(vatReturnLPITransaction) shouldBe Some("VAT Return LPI")
+      }
+    }
+  }
+
+  "The retrieveChargeType function" should {
+
+    "return the corresponding charge type" when {
+
+      "the transaction IDs are recognised" in {
+        ChargeTypes.retrieveChargeType(Some("4700"), Some("1174")) shouldBe Some("VAT Return Debit Charge")
+      }
+    }
+
+    "return None" when {
+
+      "the transaction IDs are not recognised" in {
+        ChargeTypes.retrieveChargeType(Some("1111"), Some("2222")) shouldBe None
+      }
+
+      "no main transaction is provided" in {
+        ChargeTypes.retrieveChargeType(None, Some("1174")) shouldBe None
+      }
+
+      "no sub transaction is provided" in {
+        ChargeTypes.retrieveChargeType(Some("4700"), None) shouldBe None
+      }
+    }
+  }
+
   "The removeInvalidCharges function" should {
 
     "filter out charges" when {

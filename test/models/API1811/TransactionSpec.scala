@@ -22,14 +22,35 @@ import utils.API1811.TestConstants.{fullTransaction, fullTransactionJsonEIS, ful
 
 class TransactionSpec extends SpecBase {
 
-  "Transaction" should {
+  "Transaction json reads" should {
 
-    "serialize to Json successfully" in {
-      Json.toJson(fullTransaction) shouldBe fullTransactionJsonEISOutput
+    "parse JSON to a Transaction model successfully" in {
+      fullTransactionJsonEIS.as[Transaction] shouldBe fullTransaction
+    }
+  }
+
+  "Transaction json writes" should {
+
+    "write a Transaction model to maximum JSON successfully" when {
+
+      "all fields are present" in {
+        Json.toJson(fullTransaction) shouldBe fullTransactionJsonEISOutput
+      }
     }
 
-    "deserialize to a Transaction model successfully" in {
-      fullTransactionJsonEIS.as[Transaction] shouldBe fullTransaction
+    "not include a chargeType field in the output JSON" should {
+
+      "main transaction is not present" in {
+        Json.toJson(fullTransaction.copy(mainTransaction = None)) shouldBe Json.obj()
+      }
+
+      "sub transaction is not present" in {
+        Json.toJson(fullTransaction.copy(subTransaction = None)) shouldBe Json.obj()
+      }
+
+      "main transaction and sub transaction are not present" in {
+        Json.toJson(fullTransaction.copy(mainTransaction = None, subTransaction = None)) shouldBe Json.obj()
+      }
     }
   }
 }

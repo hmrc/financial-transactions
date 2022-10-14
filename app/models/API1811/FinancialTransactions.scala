@@ -16,6 +16,7 @@
 
 package models.API1811
 
+import config.AppConfig
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
 
@@ -28,7 +29,7 @@ object FinancialTransactions {
     (JsPath \ "financialDetails").read[Seq[Transaction]]
   )(FinancialTransactions.apply _)
 
-  implicit val writes: Writes[FinancialTransactions] = (
+  implicit def writes(implicit appConfig: AppConfig): Writes[FinancialTransactions] = (
     (JsPath \ "documentDetails").write[Seq[DocumentDetails]] and
     (JsPath \ "financialTransactions").write[Seq[Transaction]]
   )(unlift(FinancialTransactions.unapply))

@@ -145,28 +145,7 @@ object TestConstants {
   )
 
   val fullTransactionJsonEISOutput: JsObject = Json.obj(
-    "documentId" -> "012345678901234567890123456789",
-    "chargeType" -> "VAT Return Debit Charge",
-    "mainType" -> "2100",
-    "periodKey" -> "13RL",
-    "periodKeyDescription" -> "abcde",
-    "taxPeriodFrom" -> "2017-04-06",
-    "taxPeriodTo" -> "2018-04-05",
-    "businessPartner" -> "6622334455",
-    "contractAccountCategory" -> "02",
-    "contractAccount" -> "X",
-    "contractObjectType" -> "ABCD",
-    "contractObject" -> "00000003000000002757",
-    "sapDocumentNumber" -> "1040000872",
-    "sapDocumentNumberItem" -> "XM00",
-    "chargeReference" -> "XM002610011594",
-    "mainTransaction" -> "4700",
-    "subTransaction" -> "1174",
-    "originalAmount" -> 3400,
-    "outstandingAmount" -> 1400,
-    "clearedAmount" -> 2000,
-    "accruedInterest" -> 0.23,
-    "items" -> Json.arr(fullSubItemJsonEISOutput)
+    "chargeType" -> "VAT Return Debit Charge"
   )
 
   val fullDocumentDetails: DocumentDetails = DocumentDetails(
