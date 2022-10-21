@@ -18,22 +18,16 @@ package helpers.servicemocks
 
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper.stubGet
-import models.{FinancialRequestQueryParameters, TaxRegime}
+import models.TaxRegime
 import play.api.libs.json.JsValue
 
 object EISFinancialDataStub {
 
-  private def financialDataUrl(regime: TaxRegime, requestQueryParams: FinancialRequestQueryParameters): String =
-    if(requestQueryParams.queryParams1811.nonEmpty) {
+  private def financialDataUrl(regime: TaxRegime): String =
       s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
         "?includeClearedItems=true&includeStatisticalItems=true&includePaymentOnAccount=true&addRegimeTotalisation=true" +
         "&addLockInformation=true&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
-    } else {
-      s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
-        "?onlyOpenItems=false&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"
-    }
 
-  def stubGetFinancialData(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
-                          (status: Int, response: JsValue): StubMapping =
-    stubGet(financialDataUrl(regime, queryParams), status, response.toString())
+  def stubGetFinancialData(regime: TaxRegime)(status: Int, response: JsValue): StubMapping =
+      stubGet(financialDataUrl(regime), status, response.toString())
 }

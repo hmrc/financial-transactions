@@ -44,7 +44,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
           And("I wiremock stub a successful Get Financial Data response")
           EISFinancialDataStub.stubGetFinancialData(
-            vatRegime, queryParameters)(OK, FinancialData1811.fullFinancialTransactionsJsonEIS)
+            vatRegime)(OK, FinancialData1811.fullFinancialTransactionsJsonEIS)
 
           When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
           val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
@@ -66,7 +66,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
           isAuthorised()
 
           And("I wiremock stub a bad request response from Get Financial Data")
-          EISFinancialDataStub.stubGetFinancialData(vatRegime, queryParameters)(BAD_REQUEST, FinancialData1811.errorJson)
+          EISFinancialDataStub.stubGetFinancialData(vatRegime)(BAD_REQUEST, FinancialData1811.errorJson)
 
           When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
           val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
