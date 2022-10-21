@@ -81,6 +81,7 @@ object ChargeTypes {
   private[utils] val penaltiesAndInterestChargeTypes: Set[String] = Set(
     "VAT Protective Assessment LPI",
     "VAT Return 1st LPP",
+    "VAT Return 2nd LPP",
     "VAT Return LPI",
     "VAT Return 1st LPP LPI",
     "VAT Return 2nd LPP LPI",

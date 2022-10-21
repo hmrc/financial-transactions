@@ -40,7 +40,7 @@ class ChargeTypesSpec extends SpecBase {
       "return a list of all recognised charge types" in {
         mockAppConfig.features.includePenAndIntCharges(true)
         val list = ChargeTypes.supportedChargeList
-        list.size shouldBe 83
+        list.size shouldBe 84
         list.get(vatReturnLPITransaction) shouldBe Some("VAT Return LPI")
       }
     }
