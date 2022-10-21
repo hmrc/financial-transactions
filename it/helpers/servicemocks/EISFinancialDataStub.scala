@@ -16,7 +16,6 @@
 
 package helpers.servicemocks
 
-import binders.FinancialTransactionsBinders
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper.stubGet
 import models.{FinancialRequestQueryParameters, TaxRegime}
@@ -25,10 +24,10 @@ import play.api.libs.json.JsValue
 object EISFinancialDataStub {
 
   private def financialDataUrl(regime: TaxRegime, requestQueryParams: FinancialRequestQueryParameters): String =
-    if(requestQueryParams.hasQueryParameters) {
+    if(requestQueryParams.queryParams1811.nonEmpty) {
       s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
-        s"?${FinancialTransactionsBinders.financialDataQueryBinder.unbind("", requestQueryParams)}" +
-        "&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"
+        "?includeClearedItems=true&includeStatisticalItems=true&includePaymentOnAccount=true&addRegimeTotalisation=true" +
+        "&addLockInformation=true&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
     } else {
       s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
         "?onlyOpenItems=false&includeStatistical=true&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"

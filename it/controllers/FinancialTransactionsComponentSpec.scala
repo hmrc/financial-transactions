@@ -35,7 +35,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
       "a successful response is returned by the API" should {
 
-        lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(true))
+        lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(false))
 
         "return a success response" in {
 

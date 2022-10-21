@@ -22,7 +22,6 @@ import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialT
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
-
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,9 +45,9 @@ class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTr
     val url = financialDataUrl(regime)
 
     logger.debug("[FinancialDataConnector][getFinancialData] - " +
-      s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.api1811QueryParams}")
+      s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.queryParams1811}")
 
     http.GET[FinancialTransactionsResponse](
-      url, queryParameters.api1811QueryParams, eisHeaders)(httpParser.FinancialTransactionsReads, hc, ec)
+      url, queryParameters.queryParams1811, eisHeaders)(httpParser.FinancialTransactionsReads, hc, ec)
   }
 }

@@ -25,7 +25,7 @@ import play.api.libs.json.JsValue
 object DesFinancialDataStub {
 
   private def financialDataUrl(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters): String = {
-    if (queryParameters.hasQueryParameters) {
+    if (queryParameters.queryParams1166.nonEmpty) {
       s"/enterprise/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
         s"?${FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters)}"
     }

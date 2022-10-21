@@ -26,7 +26,6 @@ import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testData.FinancialData1811.{fullFinancialTransactions, fullFinancialTransactionsJsonEIS}
 import uk.gov.hmrc.http.HeaderCarrier
-
 import scala.concurrent.ExecutionContext
 
 class FinancialDataConnectorISpec extends ComponentSpecBase {
@@ -45,8 +44,9 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
   val queryParameters: FinancialRequestQueryParameters = FinancialRequestQueryParameters()
 
   def generateUrl(regimeType: String, VRN : String): String =
-    s"/penalty/financial-data/VRN/$VRN/$regimeType?onlyOpenItems=false&includeStatistical=true" +
-      "&includeLocks=true&calculateAccruedInterest=true&removePOA=false&customerPaymentInformation=true"
+    s"/penalty/financial-data/VRN/$VRN/$regimeType?includeClearedItems=true" +
+      "&includeStatisticalItems=true&includePaymentOnAccount=true&addRegimeTotalisation=true" +
+      "&addLockInformation=true&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
 
   "getFinancialData" should {
 

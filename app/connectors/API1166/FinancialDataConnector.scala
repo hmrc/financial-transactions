@@ -24,7 +24,6 @@ import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -47,8 +46,8 @@ class FinancialDataConnector @Inject()(http: HttpClient,
     val url = financialDataUrl(regime)
     val hc = headerCarrier.copy(authorization = None)
 
-    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: $queryParameters")
-    http.GET(url, queryParameters.toSeqQueryParams, desHeaders)(httpParser.FinancialTransactionsReads, hc, ec).map {
+    logger.debug(s"[FinancialDataConnector][getFinancialData] - Calling GET $url \nHeaders: $desHeaders\n QueryParams: ${queryParameters.queryParams1166}")
+    http.GET(url, queryParameters.queryParams1166, desHeaders)(httpParser.FinancialTransactionsReads, hc, ec).map {
       case financialTransactions@Right(_) => financialTransactions
       case error@Left(response) => response.status match {
         case NOT_FOUND =>
