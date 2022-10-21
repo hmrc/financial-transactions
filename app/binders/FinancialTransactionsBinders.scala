@@ -18,11 +18,9 @@ package binders
 
 import java.net.URLEncoder
 import java.time.LocalDate
-
 import models.FinancialRequestQueryParameters._
 import models.FinancialRequestQueryParameters
 import play.api.mvc.QueryStringBindable
-
 import scala.util.{Failure, Success, Try}
 
 object FinancialTransactionsBinders {
@@ -45,7 +43,7 @@ object FinancialTransactionsBinders {
         }
       }
 
-      override def unbind(key: String, params: FinancialRequestQueryParameters): String = params.toSeqQueryParams.map {
+      override def unbind(key: String, params: FinancialRequestQueryParameters): String = params.queryParams1166.map {
         case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
       }.mkString("&")
 

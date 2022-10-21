@@ -73,7 +73,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   object FinancialTransactions {
     def get(uri: String): WSResponse = await(buildClient(uri).get())
     def getFinancialTransactions(idType: String, id: String, queryParameters: FinancialRequestQueryParameters): WSResponse = {
-      val queryParamStart = if(queryParameters.hasQueryParameters) "?" else ""
+      val queryParamStart = if(queryParameters.queryParams1166.nonEmpty) "?" else ""
       get(s"/financial-transactions/$idType/$id$queryParamStart" +
         FinancialTransactionsBinders.financialDataQueryBinder.unbind("", queryParameters))
     }

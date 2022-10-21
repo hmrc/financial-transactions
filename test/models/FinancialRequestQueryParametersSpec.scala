@@ -37,28 +37,28 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
     }
   }
 
-  "The FinancialDataQueryParameters.toSeqQueryParams method" should {
+  "The FinancialDataQueryParameters.queryParams1166 method" should {
 
     "output the expected sequence of key-value pairs" which {
 
       "for no Query Parameters, has no values" in {
         val queryParams = FinancialRequestQueryParameters()
-        queryParams.toSeqQueryParams shouldBe Seq()
+        queryParams.queryParams1166 shouldBe Seq()
       }
 
       "for fromDate Query Param, has a 'dateFrom' param with correct value" in {
         val queryParams = FinancialRequestQueryParameters(fromDate = Some("2018-04-06"))
-        queryParams.toSeqQueryParams shouldBe Seq(dateFromKey -> "2018-04-06")
+        queryParams.queryParams1166 shouldBe Seq(dateFromKey -> "2018-04-06")
       }
 
       "for toDate Query Param, has a 'dateTo' param with correct value" in {
         val queryParams = FinancialRequestQueryParameters(toDate = Some("2019-04-05"))
-        queryParams.toSeqQueryParams shouldBe Seq(dateToKey -> "2019-04-05")
+        queryParams.queryParams1166 shouldBe Seq(dateToKey -> "2019-04-05")
       }
 
       "for onlyOpenItems Query Param, has a 'onlyOpenItems' param with correct value" in {
         val queryParams = FinancialRequestQueryParameters(onlyOpenItems = Some(true))
-        queryParams.toSeqQueryParams shouldBe Seq(onlyOpenItemsKey -> "true")
+        queryParams.queryParams1166 shouldBe Seq(onlyOpenItemsKey -> "true")
       }
 
       "for all Query Params, outputs them all as expected" in {
@@ -67,7 +67,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(false)
         )
-        queryParams.toSeqQueryParams shouldBe Seq(
+        queryParams.queryParams1166 shouldBe Seq(
           dateFromKey -> "2017-04-06",
           dateToKey -> "2018-04-05",
           onlyOpenItemsKey -> "false"
@@ -75,45 +75,69 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
       }
     }
   }
-  "The FinancialDataQueryParameters.api1811QueryParams method" should {
+  "The FinancialDataQueryParameters.queryParams1811 method" should {
 
-    "output the expected sequence of key value pairs" which {
+    "output the expected sequence of key value pairs" when {
 
-      "if only open items is defined it should be added to the sequence" in {
+      "only open items is defined in the request then include cleared items should be set to the opposite" in {
         val queryParams = FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           onlyOpenItems = Some(true)
         )
-        queryParams.api1811QueryParams shouldBe Seq(
+        queryParams.queryParams1811 shouldBe Seq(
+          dateTypeKey -> "BILLING",
           dateFromKey -> "2017-04-06",
           dateToKey -> "2018-04-05",
-          onlyOpenItemsKey -> "true",
-          includeStatisticalKey -> "true",
-          includeLocksKey -> "true",
-          calculateAccruedInterestKey -> "true",
-          removePOAKey -> "false",
-          customerPaymentInformationKey -> "true"
+          includeClearedItemsKey -> "false",
+          includeStatisticalItemsKey -> "true",
+          includePaymentOnAccountKey -> "true",
+          addRegimeTotalisationKey -> "true",
+          addLockInformationKey -> "true",
+          penaltyDetailsKey -> "true",
+          addPostedInterestDetailsKey -> "true",
+          addAccruingInterestKey -> "true"
         )
       }
-      "if only open items is not defined in the request it should be added to the sequence and set to false" in {
+
+      "only open items is not defined in the request then include cleared items should be set to true" in {
         val queryParams = FinancialRequestQueryParameters(
           fromDate = Some("2017-04-06"),
           toDate = Some("2018-04-05"),
           None
         )
-        queryParams.api1811QueryParams shouldBe Seq(
+        queryParams.queryParams1811 shouldBe Seq(
+          dateTypeKey -> "BILLING",
           dateFromKey -> "2017-04-06",
           dateToKey -> "2018-04-05",
-          onlyOpenItemsKey -> "false",
-          includeStatisticalKey -> "true",
-          includeLocksKey -> "true",
-          calculateAccruedInterestKey -> "true",
-          removePOAKey -> "false",
-          customerPaymentInformationKey -> "true"
+          includeClearedItemsKey -> "true",
+          includeStatisticalItemsKey -> "true",
+          includePaymentOnAccountKey -> "true",
+          addRegimeTotalisationKey -> "true",
+          addLockInformationKey -> "true",
+          penaltyDetailsKey -> "true",
+          addPostedInterestDetailsKey -> "true",
+          addAccruingInterestKey -> "true"
+        )
+      }
+
+      "no dates are provided then no date related parameters should be added to the sequence" in {
+        val queryParams = FinancialRequestQueryParameters(
+          fromDate = None,
+          toDate = None,
+          onlyOpenItems = Some(true)
+        )
+        queryParams.queryParams1811 shouldBe Seq(
+          includeClearedItemsKey -> "false",
+          includeStatisticalItemsKey -> "true",
+          includePaymentOnAccountKey -> "true",
+          addRegimeTotalisationKey -> "true",
+          addLockInformationKey -> "true",
+          penaltyDetailsKey -> "true",
+          addPostedInterestDetailsKey -> "true",
+          addAccruingInterestKey -> "true"
         )
       }
     }
-
   }
 }

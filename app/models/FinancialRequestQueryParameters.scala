@@ -17,46 +17,52 @@
 package models
 
 import java.time.LocalDate
-
 import play.api.libs.json.{Format, Json}
 
 case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
                                            toDate: Option[LocalDate] = None,
                                            onlyOpenItems: Option[Boolean] = None) {
+
   import FinancialRequestQueryParameters._
-  val toSeqQueryParams: Seq[(String, String)] = Seq(
-    fromDate.map(dateFromKey -> _.toString),
-    toDate.map(dateToKey -> _.toString),
-    onlyOpenItems.map(onlyOpenItemsKey -> _.toString)
-  ).flatten
-  val hasQueryParameters: Boolean = toSeqQueryParams.nonEmpty
-  val api1811QueryParams: Seq[(String, String)] = {
-    val openItems = if(onlyOpenItems.isDefined) {
-      Seq()
-    } else {
-      Seq(onlyOpenItemsKey -> "false")
-    }
-    toSeqQueryParams ++ openItems ++ Seq(
-      includeStatisticalKey -> "true",
-      includeLocksKey -> "true",
-      calculateAccruedInterestKey -> "true",
-      removePOAKey -> "false",
-      customerPaymentInformationKey -> "true"
-    )
-  }
+
+  val queryParams1811: Seq[(String, String)] =
+    Seq(
+      fromDate.map(_ => dateTypeKey -> "BILLING"),
+      fromDate.map(dateFromKey -> _.toString),
+      toDate.map(dateToKey -> _.toString),
+      Some(onlyOpenItems.fold(includeClearedItemsKey -> "true")(boolean => includeClearedItemsKey -> (!boolean).toString)),
+      Some(includeStatisticalItemsKey -> "true"),
+      Some(includePaymentOnAccountKey -> "true"),
+      Some(addRegimeTotalisationKey -> "true"),
+      Some(addLockInformationKey -> "true"),
+      Some(penaltyDetailsKey -> "true"),
+      Some(addPostedInterestDetailsKey -> "true"),
+      Some(addAccruingInterestKey -> "true")
+    ).flatten
+
+  val queryParams1166: Seq[(String, String)] =
+    Seq(
+      fromDate.map(dateFromKey -> _.toString),
+      toDate.map(dateToKey -> _.toString),
+      onlyOpenItems.map(onlyOpenItemsKey -> _.toString)
+    ).flatten
 
 }
 
 object FinancialRequestQueryParameters {
 
+  val dateTypeKey = "dateType"
   val dateFromKey = "dateFrom"
   val dateToKey = "dateTo"
+  val includeClearedItemsKey = "includeClearedItems"
+  val includeStatisticalItemsKey = "includeStatisticalItems"
+  val includePaymentOnAccountKey = "includePaymentOnAccount"
+  val addRegimeTotalisationKey = "addRegimeTotalisation"
+  val addLockInformationKey = "addLockInformation"
+  val penaltyDetailsKey = "addPenaltyDetails"
+  val addPostedInterestDetailsKey = "addPostedInterestDetails"
+  val addAccruingInterestKey = "addAccruingInterestDetails"
   val onlyOpenItemsKey = "onlyOpenItems"
-  val removePOAKey = "removePOA"
-  val includeStatisticalKey = "includeStatistical"
-  val includeLocksKey = "includeLocks"
-  val calculateAccruedInterestKey = "calculateAccruedInterest"
-  val customerPaymentInformationKey = "customerPaymentInformation"
 
   implicit val format: Format[FinancialRequestQueryParameters] = Json.format[FinancialRequestQueryParameters]
 }
