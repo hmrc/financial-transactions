@@ -16,7 +16,7 @@
 
 package utils.API1811
 
-import models.API1811.{DocumentDetails, FinancialTransactions, SubItem, Transaction}
+import models.API1811.{DocumentDetails, DocumentDetailsNew, FinancialTransactions, LineItemDetails, SubItem, Transaction}
 import play.api.libs.json.{JsObject, Json}
 import utils.ImplicitDateFormatter._
 
@@ -187,6 +187,97 @@ object TestConstants {
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
     documentDetails = Seq(fullDocumentDetails),
     financialDetails = Seq(fullTransaction)
+  )
+
+  val lineItemDetailsFull: LineItemDetails = LineItemDetails(
+    mainTransaction = Some("4700"),
+    subTransaction = Some("1174"),
+    periodKey = Some("13RL"),
+    periodFromDate = Some("2017-4-6"),
+    periodToDate = Some("2018-4-5"),
+    netDueDate = Some("2018-2-14"),
+    amount = Some(3400),
+    ddCollectionInProgress = Some(true),
+    interestRate = Some(3.00)
+  )
+
+  val lineItemDetailsFullJson: JsObject = Json.obj(
+    "mainTransaction" -> "4700",
+    "subTransaction" -> "1174",
+    "periodKey" -> "13RL",
+    "periodFromDate" -> "2017-04-06",
+    "periodToDate" -> "2018-04-05",
+    "netDueDate" -> "2018-02-14",
+    "amount" -> 3400,
+    "ddCollectionInProgress" -> true,
+    "lineItemInterestDetails" -> Json.obj(
+      "currentInterestRate" -> 3.00
+    )
+  )
+
+  val lineItemDetailsFullIncorrectFields: LineItemDetails = lineItemDetailsFull.copy(
+    mainTransaction = None,
+    subTransaction = None
+  )
+
+  val lineItemDetailsFullIncorrectFieldsJson: JsObject = Json.obj(
+    "mainTraction" -> "4700",
+    "subTraction" -> "1174",
+    "periodKey" -> "13RL",
+    "periodFromDate" -> "2017-04-06",
+    "periodToDate" -> "2018-04-05",
+    "netDueDate" -> "2018-02-14",
+    "amount" -> 3400,
+    "ddCollectionInProgress" -> true,
+    "lineItemInterestDetails" -> Json.obj(
+      "currentInterestRate" -> 3.00
+    )
+  )
+
+  val fullDocumentDetailsNew: DocumentDetailsNew = DocumentDetailsNew(
+    chargeReferenceNumber = Some("XM002610011594"),
+    documentTotalAmount = Some(45552768.79),
+    documentOutstandingAmount = Some(297873.46),
+    lineItemDetails = Some(Seq(lineItemDetailsFull)),
+    interestAccruingAmount = Some(0.23),
+    penaltyType = Some("LPP1"),
+    penaltyStatus = Some("POSTED"),
+    penaltyAmount = Some(10.01)
+  )
+
+  val fullDocumentDetailsNewJson: JsObject = Json.obj(
+    "chargeReferenceNumber" -> "XM002610011594",
+    "documentTotalAmount" -> 45552768.79,
+    "documentOutstandingAmount" -> 297873.46,
+    "lineItemDetails" -> Json.arr(lineItemDetailsFullJson),
+    "documentInterestTotals" -> Json.obj(
+      "interestAccruingAmount" -> 0.23
+    ),
+    "documentPenaltyTotals" -> Json.obj(
+      "penaltyType" -> "LPP1",
+      "penaltyStatus" -> "POSTED",
+      "penaltyAmount" -> 10.01
+    )
+  )
+
+  val documentDetailsNewIncorrectFieldsJson: JsObject = Json.obj(
+    "chargeRefNumber" -> "XM002610011594",
+    "documentAmount" -> 45552768.79,
+    "documentOutstandingAmount" -> 297873.46,
+    "lineItemDetails" -> Json.arr(lineItemDetailsFullJson),
+    "documentInterestTotals" -> Json.obj(
+      "interestAccruingAmount" -> 0.23
+    ),
+    "documentPenaltyTotals" -> Json.obj(
+      "penaltyType" -> "LPP1",
+      "penaltyStatus" -> "POSTED",
+      "penaltyAmount" -> 10.01
+    )
+  )
+
+  val fullDocumentDetailsNewIncorrectFields: DocumentDetailsNew = fullDocumentDetailsNew.copy(
+    chargeReferenceNumber = None,
+    documentTotalAmount = None
   )
 
 }
