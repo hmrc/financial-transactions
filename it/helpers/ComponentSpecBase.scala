@@ -16,12 +16,12 @@
 
 package helpers
 
-import binders.{FinancialTransactionsBinders,PenaltyDetailsBinders}
+import binders.{FinancialTransactionsBinders, PenaltyDetailsBinders}
 import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, stubFor}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.MicroserviceAppConfig
 import helpers.servicemocks.AuthStub
-import models.{FinancialRequestQueryParameters,PenaltyDetailsQueryParameters}
+import models.{FinancialRequestQueryParameters, PenaltyDetailsQueryParameters}
 import org.scalatest._
 import org.scalatest.concurrent.{Eventually, IntegrationPatience, ScalaFutures}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
@@ -29,7 +29,9 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+
+import scala.concurrent.ExecutionContext
 
 trait ComponentSpecBase extends TestSuite with CustomMatchers
   with GuiceOneServerPerSuite with ScalaFutures with IntegrationPatience
@@ -39,7 +41,10 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl = s"http://$mockHost:$mockPort"
   val httpClient : HttpClient = app.injector.instanceOf[HttpClient]
+
   implicit val appConfig: MicroserviceAppConfig = app.injector.instanceOf[MicroserviceAppConfig]
+  implicit val hc: HeaderCarrier = HeaderCarrier()
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
   def config: Map[String, String] = Map(
     "microservice.services.auth.host" -> mockHost,
