@@ -28,15 +28,15 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import utils.LoggerUtil
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialTransactionsController @Inject()(val authenticate: AuthAction,
-                                                val financialTransactionsService: FinancialTransactionsService,
-                                                val api1811Service: services.API1811.FinancialTransactionsService,
-                                                cc: ControllerComponents,
-                                                implicit val appConfig: MicroserviceAppConfig) extends BackendController(cc) with LoggerUtil {
+class FinancialTransactionsController @Inject()(authenticate: AuthAction,
+                                                financialTransactionsService: FinancialTransactionsService,
+                                                api1811Service: services.API1811.FinancialTransactionsService,
+                                                cc: ControllerComponents)
+                                               (implicit appConfig: MicroserviceAppConfig,
+                                                ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
 
   def getFinancialTransactions(idType: String,
                                idValue: String,

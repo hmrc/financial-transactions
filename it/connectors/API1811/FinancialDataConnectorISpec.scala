@@ -25,15 +25,11 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testData.FinancialData1811.{fullFinancialTransactions, fullFinancialTransactionsJsonEIS}
-import uk.gov.hmrc.http.HeaderCarrier
-import scala.concurrent.ExecutionContext
 
 class FinancialDataConnectorISpec extends ComponentSpecBase {
 
   val httpParser = new FinancialTransactionsHttpParser()
   val connector: FinancialDataConnector = new FinancialDataConnector(httpClient, httpParser)
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-  implicit val ec: ExecutionContext = ExecutionContext.global
 
   val regimeType = "VATC"
   val invalidRegimeType = "9"

@@ -24,15 +24,10 @@ import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, REQUEST_TIMEOUT}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import testData.PenaltyDetailsTestData.{penaltyDetailsAPIJson, penaltyDetailsModel}
-import uk.gov.hmrc.http.HeaderCarrier
-
-import scala.concurrent.ExecutionContext
 
 class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
   val connector: PenaltyDetailsConnector = new PenaltyDetailsConnector(httpClient, appConfig)
-  implicit val hc: HeaderCarrier = HeaderCarrier()
-  implicit val ec: ExecutionContext = ExecutionContext.global
 
   val vatRegime: TaxRegime = VatRegime(id = "123456789")
   val queryParameters: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()

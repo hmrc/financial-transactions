@@ -49,8 +49,7 @@ class FinancialTransactionsControllerSpec extends SpecBase
     authActionImpl,
     mockFinancialTransactionsService,
     mock1811FinancialTransactionsService,
-    controllerComponents,
-    mockAppConfig
+    controllerComponents
   )
 
   "The GET FinancialTransactionsController.getFinancialTransactions method" when {
