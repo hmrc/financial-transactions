@@ -16,23 +16,31 @@
 
 package models.API1811
 
-import java.time.LocalDate
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{JsPath, Reads}
 
-import play.api.libs.json.{Format, Json}
-
-case class DocumentDetails(
-                            taxYear: String,
-                            documentId: String,
-                            documentDate: LocalDate,
-                            documentText: String,
-                            documentDueDate: LocalDate,
-                            totalAmount: BigDecimal,
-                            documentOutstandingAmount: BigDecimal,
-                            statisticalFlag: Boolean,
-                            accruingPenaltyLPP1: Option[String],
-                            accruingPenaltyLPP2: Option[String]
-                          )
+case class DocumentDetails(chargeReferenceNumber: Option[String],
+                           documentTotalAmount: Option[BigDecimal],
+                           documentOutstandingAmount: Option[BigDecimal],
+                           lineItemDetails: Option[Seq[LineItemDetails]],
+                           interestAccruingAmount: Option[BigDecimal],
+                           penaltyType: Option[String],
+                           penaltyStatus: Option[String],
+                           penaltyAmount: Option[BigDecimal])
 
 object DocumentDetails {
-  implicit val format: Format[DocumentDetails] = Json.format[DocumentDetails]
+
+  val penaltyPath = "documentPenaltyTotals"
+
+  implicit val reads: Reads[DocumentDetails] = (
+    (JsPath \ "chargeReferenceNumber").readNullable[String] and
+    (JsPath \ "documentTotalAmount").readNullable[BigDecimal] and
+    (JsPath \ "documentOutstandingAmount").readNullable[BigDecimal] and
+    (JsPath \ "lineItemDetails").readNullable[Seq[LineItemDetails]] and
+    (JsPath \ "documentInterestTotals" \ "interestAccruingAmount").readNullable[BigDecimal] and
+    (JsPath \ penaltyPath)(0).\("penaltyType").readNullable[String] and
+    (JsPath \ penaltyPath)(0).\("penaltyStatus").readNullable[String] and
+    (JsPath \ penaltyPath)(0).\("penaltyAmount").readNullable[BigDecimal]
+  )(DocumentDetails.apply _)
+
 }

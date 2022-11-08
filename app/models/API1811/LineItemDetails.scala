@@ -18,8 +18,10 @@ package models.API1811
 
 import java.time.LocalDate
 
+import config.AppConfig
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
+import utils.API1811.ChargeTypes
 
 case class LineItemDetails(mainTransaction: Option[String],
                            subTransaction: Option[String],
@@ -29,6 +31,9 @@ case class LineItemDetails(mainTransaction: Option[String],
                            netDueDate: Option[LocalDate],
                            amount: Option[BigDecimal],
                            ddCollectionInProgress: Option[Boolean],
+                           clearingDate: Option[LocalDate],
+                           clearingReason: Option[String],
+                           clearingDocument: Option[String],
                            interestRate: Option[BigDecimal])
 
 object LineItemDetails {
@@ -42,7 +47,15 @@ object LineItemDetails {
     (JsPath \ "netDueDate").readNullable[LocalDate] and
     (JsPath \ "amount").readNullable[BigDecimal] and
     (JsPath \ "ddCollectionInProgress").readNullable[Boolean] and
-    (JsPath \ "lineItemInterestDetails" \ "currentInterestRate").readNullable[BigDecimal]
+    (JsPath \ "clearingDate").readNullable[LocalDate] and
+    (JsPath \ "clearingReason").readNullable[String] and
+    (JsPath \ "clearingDocument").readNullable[String] and
+    (JsPath \ "lineItemInterestDetails" \"currentInterestRate").readNullable[BigDecimal]
   ) (LineItemDetails.apply _)
 
+  implicit def writes(implicit appConfig: AppConfig): Writes[LineItemDetails] = Writes { model =>
+    JsObject(Json.obj(
+      "chargeType" -> ChargeTypes.retrieveChargeType(model.mainTransaction, model.subTransaction)
+    ).fields.filterNot(_._2 == JsNull))
+  }
 }

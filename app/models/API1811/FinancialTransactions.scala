@@ -16,21 +16,13 @@
 
 package models.API1811
 
-import config.AppConfig
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json._
 
-case class FinancialTransactions(documentDetails: Seq[DocumentDetails],
-                                 financialDetails: Seq[Transaction])
+case class FinancialTransactions(documentDetails: Seq[DocumentDetails])
 
 object FinancialTransactions {
-  implicit val reads: Reads[FinancialTransactions] = (
-    (JsPath \ "documentDetails").read[Seq[DocumentDetails]] and
-    (JsPath \ "financialDetails").read[Seq[Transaction]]
-  )(FinancialTransactions.apply _)
 
-  implicit def writes(implicit appConfig: AppConfig): Writes[FinancialTransactions] = (
-    (JsPath \ "documentDetails").write[Seq[DocumentDetails]] and
-    (JsPath \ "financialTransactions").write[Seq[Transaction]]
-  )(unlift(FinancialTransactions.unapply))
+  implicit val reads: Reads[FinancialTransactions] =
+    (__ \ "getFinancialData" \ "financialDetails" \ "documentDetails").read[Seq[DocumentDetails]]
+      .map(FinancialTransactions.apply)
 }

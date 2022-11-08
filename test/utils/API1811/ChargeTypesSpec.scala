@@ -17,7 +17,7 @@
 package utils.API1811
 
 import base.SpecBase
-import TestConstants.fullTransaction
+import TestConstants.{fullDocumentDetails, lineItemDetailsFull}
 
 class ChargeTypesSpec extends SpecBase {
 
@@ -76,34 +76,49 @@ class ChargeTypesSpec extends SpecBase {
     "filter out charges" when {
 
       "the main transaction value is not supported" in {
-        val transactions = Seq(fullTransaction, fullTransaction.copy(mainTransaction = Some("1111")))
-        ChargeTypes.removeInvalidCharges(transactions) shouldBe Seq(fullTransaction)
+        val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(mainTransaction = Some("1111")))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the sub transaction value is not supported" in {
-        val transactions = Seq(fullTransaction, fullTransaction.copy(subTransaction = Some("1111")))
-        ChargeTypes.removeInvalidCharges(transactions) shouldBe Seq(fullTransaction)
+        val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(subTransaction = Some("1111")))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the main transaction value is not present" in {
-        val transactions = Seq(fullTransaction, fullTransaction.copy(mainTransaction = None))
-        ChargeTypes.removeInvalidCharges(transactions) shouldBe Seq(fullTransaction)
+        val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(mainTransaction = None))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the sub transaction value is not present" in {
-        val transactions = Seq(fullTransaction, fullTransaction.copy(subTransaction = None))
-        ChargeTypes.removeInvalidCharges(transactions) shouldBe Seq(fullTransaction)
+        val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(subTransaction = None))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
+      }
+
+      "the documentDetails has no lineItemDetails" in {
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = None))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe dDetails
       }
     }
 
-    val vatReturnLPITransaction = fullTransaction.copy(mainTransaction = Some("4620"), subTransaction = Some("1175"))
-    val transactions = Seq(fullTransaction, vatReturnLPITransaction)
+    val vatReturnLPITransaction = lineItemDetailsFull.copy(mainTransaction = Some("4620"), subTransaction = Some("1175"))
+    val transactions = Seq(lineItemDetailsFull, vatReturnLPITransaction)
+    val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
 
     "filter out penalties and interest charges" when {
 
       "the includePenAndIntCharges feature switch is off" in {
         mockAppConfig.features.includePenAndIntCharges(false)
-        ChargeTypes.removeInvalidCharges(transactions) shouldBe Seq(fullTransaction)
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
     }
 
@@ -111,7 +126,7 @@ class ChargeTypesSpec extends SpecBase {
 
       "the includePenAndIntCharges feature switch is on" in {
         mockAppConfig.features.includePenAndIntCharges(true)
-        ChargeTypes.removeInvalidCharges(transactions) shouldBe transactions
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe dDetails
       }
     }
   }

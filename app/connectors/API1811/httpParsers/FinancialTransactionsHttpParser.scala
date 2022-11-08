@@ -43,7 +43,7 @@ class FinancialTransactionsHttpParser @Inject()(implicit appConfig: Microservice
             valid => {
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: \n\n${response.json}")
               logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
-              Right(valid.copy(financialDetails = ChargeTypes.removeInvalidCharges(valid.financialDetails)))
+              Right(valid.copy(documentDetails = ChargeTypes.removeInvalidCharges(valid.documentDetails)))
             }
           )
         case NOT_FOUND =>

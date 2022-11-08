@@ -15,159 +15,126 @@
  */
 package testData
 
+import models.API1811.{DocumentDetails, FinancialTransactions, LineItemDetails}
 import play.api.libs.json.{JsObject, Json}
-import models.API1811.{DocumentDetails, Error, FinancialTransactions, SubItem, Transaction}
-import play.api.http.Status
 import utils.ImplicitDateFormatter._
 
 object FinancialData1811 {
 
   val fullFinancialTransactionsJsonEIS: JsObject = Json.obj(
-    "documentDetails" -> Json.arr(Json.obj(
-      "taxYear" -> "2017",
-      "documentId" -> "1455",
-      "documentDate" -> "2018-03-29",
-      "documentText" -> "VAT-VC",
-      "documentDueDate" -> "2020-04-15",
-      "totalAmount" -> 45552768.79,
-      "documentOutstandingAmount" -> 297873.46,
-      "statisticalFlag" -> false,
-      "accruingPenaltyLPP1" -> "1000.34",
-      "accruingPenaltyLPP2" -> "accrlpp2",
-    )),
-    "financialDetails" -> Json.arr(Json.obj(
-      "documentId" -> "012345678901234567890123456789",
-      "chargeType" -> "VAT Return Debit Charge",
-      "mainType" -> "2100",
-      "periodKey" -> "13RL",
-      "periodKeyDescription" -> "abcde",
-      "taxPeriodFrom" -> "2017-04-06",
-      "taxPeriodTo" -> "2018-04-05",
-      "businessPartner" -> "6622334455",
-      "contractAccountCategory" -> "02",
-      "contractAccount" -> "X",
-      "contractObjectType" -> "ABCD",
-      "contractObject" -> "00000003000000002757",
-      "sapDocumentNumber" -> "1040000872",
-      "sapDocumentNumberItem" -> "XM00",
-      "chargeReference" -> "XM002610011594",
-      "mainTransaction" -> "4700",
-      "subTransaction" -> "1174",
-      "originalAmount" -> 3400,
-      "outstandingAmount" -> 1400,
-      "clearedAmount" -> 2000,
-      "accruedInterest" -> 0.23,
-      "items" -> Json.arr(Json.obj(
-        "subItem" -> "000",
-        "dueDate" -> "2018-02-14",
-        "amount" -> 3400.0,
-        "clearingDate" -> "2018-02-17",
-        "clearingReason" -> "A",
-        "outgoingPaymentMethod" -> "B",
-        "paymentLock" -> "C",
-        "clearingLock" -> "D",
-        "interestLock" -> "E",
-        "dunningLock" -> "1",
-        "returnFlag" -> false,
-        "paymentReference" -> "F",
-        "paymentAmount" -> 2000.0,
-        "paymentMethod" -> "G",
-        "paymentLot" -> "H",
-        "paymentLotItem" -> "112",
-        "clearingSAPDocument" -> "3350000253",
-        "statisticalDocument" -> "I",
-        "DDCollectionInProgress" -> true,
-        "returnReason" -> "J",
-        "promisetoPay" -> "K"
-      ))
+    "getFinancialData" -> Json.obj(
+      "financialDetails" -> Json.obj(
+        "totalisation" -> Json.obj(
+          "regimeTotalisation" -> Json.obj(
+            "totalAccountOverdue" -> 1000.0,
+            "totalAccountNotYetDue" -> 250.0,
+            "totalAccountCredit" -> 40.0,
+            "totalAccountBalance" -> 1210.0
+          ),
+          "targetedSearch_SelectionCriteriaTotalisation" -> Json.obj(
+            "totalOverdue" -> 100.0,
+            "totalNotYetDue" -> 0.0,
+            "totalBalance" -> 100.0,
+            "totalCredit" -> 10.0,
+            "totalCleared" -> 50.0
+          ),
+          "additionalReceivableTotalisations" -> Json.obj(
+            "totalAccountPostedInterest" -> -99999999999.99,
+            "totalAccountAccruingInterest" -> -99999999999.99
+          ),
+        ),
+        "documentDetails" -> Json.arr(Json.obj(
+          "documentNumber" -> "187346702498",
+          "documentType" -> "TRM New Charge",
+          "chargeReferenceNumber" -> "XP001286394838",
+          "businessPartnerNumber" -> "100893731",
+          "contractAccountNumber" -> "900726630",
+          "contractAccountCategory" -> "VAT",
+          "contractObjectNumber" -> "104920928302302",
+          "contractObjectType" -> "ZVAT",
+          "postingDate" -> "2022-01-01",
+          "issueDate" -> "2022-01-01",
+          "documentTotalAmount" -> 100.00,
+          "documentClearedAmount" -> 100.00,
+          "documentOutstandingAmount" -> 0.00,
+          "documentLockDetails" -> Json.obj(
+            "lockType" -> "Payment",
+            "lockStartDate" -> "2022-01-01",
+            "lockEndDate" -> "2022-01-01"
+          ),
+          "documentInterestTotals" -> Json.obj(
+            "interestPostedAmount" -> "13.12",
+            "interestPostedChargeRef" -> "XB001286323438",
+            "interestAccruingAmount" -> 12.10
+          ),
+          "documentPenaltyTotals" -> Json.arr(Json.obj(
+            "penaltyType" -> "LPP1",
+            "penaltyStatus" -> "POSTED",
+            "penaltyAmount" -> "10.01",
+            "postedChargeReference" -> "XR00123933492"
+          )),
+          "lineItemDetails" -> Json.arr(Json.obj(
+            "itemNumber" -> "0001",
+            "subItemNumber" -> "003",
+            "mainTransaction" -> "4700",
+            "subTransaction" -> "1174",
+            "chargeDescription" -> "VAT Return",
+            "periodFromDate" -> "2022-01-01",
+            "periodToDate" -> "2022-01-31",
+            "periodKey" -> "22A1",
+            "netDueDate" -> "2022-02-08",
+            "formBundleNumber" -> "125435934761",
+            "statisticalKey" -> "1",
+            "amount" -> 3420.00,
+            "clearingDate" -> "2022-02-09",
+            "clearingReason" -> "Payment at External Payment Collector Reported",
+            "clearingDocument" -> "719283701921",
+            "outgoingPaymentMethod" -> "B",
+            "ddCollectionInProgress" -> true,
+            "lineItemLockDetails" -> Json.arr(Json.obj(
+              "lockType" -> "Payment",
+              "lockStartDate" -> "2022-01-01",
+              "lockEndDate" -> "2022-01-01"
+            )),
+            "lineItemInterestDetails" -> Json.obj(
+            "interestKey" -> "String",
+              "currentInterestRate" -> -999.99,
+              "interestStartDate" -> "1920-02-29",
+              "interestPostedAmount" -> -99999999999.99,
+              "interestAccruingAmount" -> -99999999999.99
+            )
+          ))
+        ))
+      )
+    )
+  )
+
+  val lineItems: LineItemDetails = LineItemDetails(
+    mainTransaction = Some("4700"),
+    subTransaction = Some("1174"),
+    periodFromDate = Some("2022-01-01"),
+    periodToDate = Some("2022-01-31"),
+    periodKey = Some("22A1"),
+    netDueDate = Some("2022-02-08"),
+    amount = Some(3420.0),
+    ddCollectionInProgress = Some(true),
+    clearingDate = Some("2022-02-09"),
+    clearingReason = Some("Payment at External Payment Collector Reported"),
+    clearingDocument = Some("719283701921"),
+    interestRate = Some(-999.99)
+  )
+
+  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(Seq(
+    DocumentDetails(
+      chargeReferenceNumber = Some("XP001286394838"),
+      documentTotalAmount = Some(100.00),
+      documentOutstandingAmount = Some(0.0),
+      lineItemDetails = Some(Seq(lineItems)),
+      interestAccruingAmount = Some(12.10),
+      penaltyType = Some("LPP1"),
+      penaltyStatus = Some("POSTED"),
+      penaltyAmount = Some(10.01)
     ))
   )
 
-  val fullFinancialTransactionsJsonOutput: JsObject = Json.obj(
-    "documentDetails" -> Json.arr(Json.obj(
-      "taxYear" -> "2017",
-      "documentId" -> "1455",
-      "documentDate" -> "2018-03-29",
-      "documentText" -> "VAT-VC",
-      "documentDueDate" -> "2020-04-15",
-      "totalAmount" -> 45552768.79,
-      "documentOutstandingAmount" -> 297873.46,
-      "statisticalFlag" -> false,
-      "accruingPenaltyLPP1" -> "1000.34",
-      "accruingPenaltyLPP2" -> "accrlpp2",
-    )),
-    "financialTransactions" -> Json.arr(Json.obj(
-      "chargeType" -> "VAT Return Debit Charge"
-    ))
-  )
-
-  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
-    documentDetails = Seq(DocumentDetails(
-      taxYear = "2017",
-      documentId = "1455",
-      documentDate = "2018-03-29",
-      documentText = "VAT-VC",
-      documentDueDate = "2020-04-15",
-      totalAmount = 45552768.79,
-      documentOutstandingAmount = 297873.46,
-      statisticalFlag = false,
-      accruingPenaltyLPP1 = Some("1000.34"),
-      accruingPenaltyLPP2 = Some("accrlpp2")
-    )),
-    financialDetails = Seq(Transaction(
-      documentId = "012345678901234567890123456789",
-      chargeType = Some("VAT Return Debit Charge"),
-      mainType = Some("2100"),
-      periodKey = Some("13RL"),
-      periodKeyDescription = Some("abcde"),
-      taxPeriodFrom = Some("2017-4-6"),
-      taxPeriodTo = Some("2018-4-5"),
-      businessPartner = Some("6622334455"),
-      contractAccountCategory = Some("02"),
-      contractAccount = Some("X"),
-      contractObjectType = Some("ABCD"),
-      contractObject = Some("00000003000000002757"),
-      sapDocumentNumber = Some("1040000872"),
-      sapDocumentNumberItem = Some("XM00"),
-      chargeReference = Some("XM002610011594"),
-      mainTransaction = Some("4700"),
-      subTransaction = Some("1174"),
-      originalAmount = Some(3400),
-      outstandingAmount = Some(1400),
-      clearedAmount = Some(2000),
-      accruedInterest = Some(0.23),
-      items = Seq(SubItem(
-        subItem = Some("000"),
-        dueDate = Some("2018-2-14"),
-        amount = Some(3400.00),
-        clearingDate = Some("2018-2-17"),
-        clearingReason = Some("A"),
-        outgoingPaymentMethod = Some("B"),
-        paymentLock = Some("C"),
-        clearingLock = Some("D"),
-        interestLock = Some("E"),
-        dunningLock = Some("1"),
-        returnFlag = Some(false),
-        paymentReference = Some("F"),
-        paymentAmount = Some(2000.00),
-        paymentMethod = Some("G"),
-        paymentLot = Some("H"),
-        paymentLotItem = Some("112"),
-        clearingSAPDocument = Some("3350000253"),
-        statisticalDocument = Some("I"),
-        DDcollectionInProgress = Some(true),
-        returnReason = Some("J"),
-        promiseToPay = Some("K")
-      ))
-    ))
-  )
-
-  val errorJson: JsObject = Json.obj(
-    "failures" -> Json.arr(Json.obj(
-      "code" -> "INVALID_CORRELATIONID",
-      "reason" -> "Submission has not passed validation. Invalid header CorrelationId"
-    ))
-  )
-
-  val errorModel: Error = Error(Status.BAD_REQUEST, errorJson.toString())
 }

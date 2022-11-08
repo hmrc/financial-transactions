@@ -34,7 +34,7 @@ class LineItemDetailsSpec extends SpecBase {
     "minimum fields are present" should {
 
       "deserialise from JSON correctly" in {
-        val emptyModel = LineItemDetails(None, None, None, None, None, None, None, None, None)
+        val emptyModel = LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None)
         Json.obj("" -> "").as[LineItemDetails] shouldBe emptyModel
       }
     }
@@ -46,5 +46,30 @@ class LineItemDetailsSpec extends SpecBase {
       }
     }
 
+  }
+
+  "LineItemDetails json writes" should {
+
+    "write a LineItemDetails model to maximum JSON successfully" when {
+
+      "all fields are present" in {
+        Json.toJson(lineItemDetailsFull) shouldBe Json.obj("chargeType" -> "VAT Return Debit Charge")
+      }
+    }
+
+    "not include a chargeType field in the output JSON" should {
+
+      "main transaction is not present" in {
+        Json.toJson(lineItemDetailsFull.copy(mainTransaction = None)) shouldBe Json.obj()
+      }
+
+      "sub transaction is not present" in {
+        Json.toJson(lineItemDetailsFull.copy(subTransaction = None)) shouldBe Json.obj()
+      }
+
+      "main transaction and sub transaction are not present" in {
+        Json.toJson(lineItemDetailsFull.copy(mainTransaction = None, subTransaction = None)) shouldBe Json.obj()
+      }
+    }
   }
 }
