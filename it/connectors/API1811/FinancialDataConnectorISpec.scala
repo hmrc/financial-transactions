@@ -60,7 +60,6 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
 
         val result: FinancialTransactionsResponse =
           await(connector.getFinancialData(vatRegime,queryParameters))
-        println(fullFinancialTransactionsJsonEIS.toString)
         result shouldBe Right(expectedResult)
 
       }

@@ -18,16 +18,67 @@ package controllers
 
 import config.RegimeKeys
 import helpers.ComponentSpecBase
-import helpers.servicemocks.DesFinancialDataStub
+import helpers.servicemocks.{DesFinancialDataStub, EISFinancialDataStub}
 import models.API1166._
 import models.{FinancialRequestQueryParameters, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
-import testData.FinancialData1166
+import testData.{FinancialData1166, FinancialData1811}
 
 class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
   "Sending a request to /financial-transactions/:regime/:identifier (FinancialTransactions controller)" when {
+
+    "the useApi1811 feature switch is enabled" when {
+
+    val vatRegime = VatRegime("123456789")
+
+    "a successful response is returned by the API" should {
+
+      lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(false))
+
+      "return a success response" in {
+
+        appConfig.features.useApi1811(true)
+        isAuthorised()
+
+        And("I wiremock stub a successful Get Financial Data response")
+        EISFinancialDataStub.stubGetFinancialData(
+          vatRegime)(OK, FinancialData1811.fullFinancialTransactionsJsonEIS)
+
+        When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
+        val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+        Then("a successful response is returned with expected JSON data")
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(Json.obj())
+        )
+      }
+    }
+
+    "an unsuccessful response is returned by the API" should {
+
+      lazy val queryParameters = FinancialRequestQueryParameters()
+
+      "return a single error response" in {
+
+        isAuthorised()
+
+        And("I wiremock stub a bad request response from Get Financial Data")
+        EISFinancialDataStub.stubGetFinancialData(vatRegime)(BAD_REQUEST, FinancialData1811.errorJson)
+
+        When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
+        val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+        Then("an error is returned by the API with expected JSON data")
+        res should have(
+          httpStatus(BAD_REQUEST),
+          jsonBodyAs[models.API1811.Error](FinancialData1811.errorModel)
+        )
+      }
+    }
+  }
 
     "the useApi1811 feature switch is disabled" when {
 

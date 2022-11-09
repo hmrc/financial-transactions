@@ -47,11 +47,10 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       "unrecognised charge types are returned" should {
 
-
         val httpResponse = HttpResponse(Status.OK, filteredFinancialJson.toString)
 
         val expected = Right(fullFinancialTransactions.copy(
-          documentDetails = Seq(fullDocumentDetails.copy(lineItemDetails = None))
+          documentDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Seq()))
         ))
 
         val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)

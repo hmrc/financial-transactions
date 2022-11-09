@@ -26,28 +26,24 @@ import play.api.libs.ws.WSResponse
 trait CustomMatchers extends AnyWordSpecLike with Matchers with OptionValues with GivenWhenThen {
   
   def httpStatus(expectedValue: Int): HavePropertyMatcher[WSResponse, Int] =
-    new HavePropertyMatcher[WSResponse, Int] {
-      def apply(response: WSResponse) = {
-        Then(s"the response status should be '$expectedValue'")
-        HavePropertyMatchResult(
-          response.status == expectedValue,
-          "httpStatus",
-          expectedValue,
-          response.status
-        )
-      }
+    (response: WSResponse) => {
+      Then(s"the response status should be '$expectedValue'")
+      HavePropertyMatchResult(
+        response.status == expectedValue,
+        "httpStatus",
+        expectedValue,
+        response.status
+      )
     }
 
   def jsonBodyAs[T](expectedValue: T)(implicit reads: Reads[T]): HavePropertyMatcher[WSResponse, T] =
-    new HavePropertyMatcher[WSResponse, T] {
-      def apply(response: WSResponse) = {
-        Then(s"the response json should be '${expectedValue.toString}'")
-        HavePropertyMatchResult(
-          response.json.as[T] == expectedValue,
-          "jsonBodyAs",
-          expectedValue,
-          response.json.as[T]
-        )
-      }
+    (response: WSResponse) => {
+      Then(s"the response json should be '${expectedValue.toString}'")
+      HavePropertyMatchResult(
+        response.json.as[T] == expectedValue,
+        "jsonBodyAs",
+        expectedValue,
+        response.json.as[T]
+      )
     }
 }

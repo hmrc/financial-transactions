@@ -31,11 +31,10 @@ class DocumentDetailsSpec extends SpecBase {
       }
     }
 
-    "no fields are present" should {
+    "minimum fields are present" should {
 
       "deserialise from JSON correctly" in {
-        val emptyModel = DocumentDetails(None, None, None, None, None, None, None, None)
-        Json.obj("" -> "").as[DocumentDetails] shouldBe emptyModel
+        Json.obj("lineItemDetails" -> Json.arr("")).as[DocumentDetails] shouldBe emptyModel
       }
     }
 

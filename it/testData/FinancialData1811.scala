@@ -15,8 +15,9 @@
  */
 package testData
 
-import models.API1811.{DocumentDetails, FinancialTransactions, LineItemDetails}
+import models.API1811.{DocumentDetails, Error, FinancialTransactions, LineItemDetails}
 import play.api.libs.json.{JsObject, Json}
+import play.api.http.Status
 import utils.ImplicitDateFormatter._
 
 object FinancialData1811 {
@@ -129,12 +130,21 @@ object FinancialData1811 {
       chargeReferenceNumber = Some("XP001286394838"),
       documentTotalAmount = Some(100.00),
       documentOutstandingAmount = Some(0.0),
-      lineItemDetails = Some(Seq(lineItems)),
+      lineItemDetails = Seq(lineItems),
       interestAccruingAmount = Some(12.10),
       penaltyType = Some("LPP1"),
       penaltyStatus = Some("POSTED"),
       penaltyAmount = Some(10.01)
     ))
   )
+
+  val errorJson: JsObject = Json.obj(
+    "failures" -> Json.arr(Json.obj(
+      "code" -> "INVALID_CORRELATIONID",
+      "reason" -> "Submission has not passed validation. Invalid header CorrelationId"
+    ))
+  )
+
+  val errorModel: Error = Error(Status.BAD_REQUEST, errorJson.toString())
 
 }

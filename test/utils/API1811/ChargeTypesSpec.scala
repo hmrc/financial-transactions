@@ -77,47 +77,47 @@ class ChargeTypesSpec extends SpecBase {
 
       "the main transaction value is not supported" in {
         val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(mainTransaction = Some("1111")))
-        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
-        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = transactions))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull)))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the sub transaction value is not supported" in {
         val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(subTransaction = Some("1111")))
-        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
-        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = transactions))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull)))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the main transaction value is not present" in {
         val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(mainTransaction = None))
-        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
-        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = transactions))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull)))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the sub transaction value is not present" in {
         val transactions = Seq(lineItemDetailsFull, lineItemDetailsFull.copy(subTransaction = None))
-        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
-        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = transactions))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull)))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
 
       "the documentDetails has no lineItemDetails" in {
-        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = None))
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Seq()))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe dDetails
       }
     }
 
     val vatReturnLPITransaction = lineItemDetailsFull.copy(mainTransaction = Some("4620"), subTransaction = Some("1175"))
     val transactions = Seq(lineItemDetailsFull, vatReturnLPITransaction)
-    val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Some(transactions)))
+    val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = transactions))
 
     "filter out penalties and interest charges" when {
 
       "the includePenAndIntCharges feature switch is off" in {
         mockAppConfig.features.includePenAndIntCharges(false)
-        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Some(Seq(lineItemDetailsFull))))
+        val expected = Seq(fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull)))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe expected
       }
     }

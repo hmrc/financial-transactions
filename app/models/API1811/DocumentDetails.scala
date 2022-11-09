@@ -22,7 +22,7 @@ import play.api.libs.json.{JsPath, Reads}
 case class DocumentDetails(chargeReferenceNumber: Option[String],
                            documentTotalAmount: Option[BigDecimal],
                            documentOutstandingAmount: Option[BigDecimal],
-                           lineItemDetails: Option[Seq[LineItemDetails]],
+                           lineItemDetails: Seq[LineItemDetails],
                            interestAccruingAmount: Option[BigDecimal],
                            penaltyType: Option[String],
                            penaltyStatus: Option[String],
@@ -36,7 +36,7 @@ object DocumentDetails {
     (JsPath \ "chargeReferenceNumber").readNullable[String] and
     (JsPath \ "documentTotalAmount").readNullable[BigDecimal] and
     (JsPath \ "documentOutstandingAmount").readNullable[BigDecimal] and
-    (JsPath \ "lineItemDetails").readNullable[Seq[LineItemDetails]] and
+    (JsPath \ "lineItemDetails").read[Seq[LineItemDetails]] and
     (JsPath \ "documentInterestTotals" \ "interestAccruingAmount").readNullable[BigDecimal] and
     (JsPath \ penaltyPath)(0).\("penaltyType").readNullable[String] and
     (JsPath \ penaltyPath)(0).\("penaltyStatus").readNullable[String] and

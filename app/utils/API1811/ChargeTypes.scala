@@ -137,7 +137,7 @@ object ChargeTypes extends LoggerUtil {
 
   def removeInvalidLineItems(transaction: DocumentDetails)(implicit appConfig: AppConfig): DocumentDetails = {
     val supportedCharges = supportedChargeList
-    val filtered = transaction.lineItemDetails.getOrElse(Seq()).filter { charge =>
+    val filtered = transaction.lineItemDetails.filter { charge =>
       (charge.mainTransaction, charge.subTransaction) match {
         case (Some(mainTrans), Some(subTrans)) =>
           supportedCharges.contains((mainTrans, subTrans))
@@ -148,8 +148,7 @@ object ChargeTypes extends LoggerUtil {
           false
       }
     }
-    val details = if (filtered.isEmpty) None else Some(filtered)
-    transaction.copy(lineItemDetails = details)
+    transaction.copy(lineItemDetails = filtered)
   }
 
 }

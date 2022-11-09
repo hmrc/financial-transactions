@@ -94,7 +94,7 @@ object TestConstants {
     chargeReferenceNumber = Some("XM002610011594"),
     documentTotalAmount = Some(45552768.79),
     documentOutstandingAmount = Some(297873.46),
-    lineItemDetails = Some(Seq(lineItemDetailsFull)),
+    lineItemDetails = Seq(lineItemDetailsFull),
     interestAccruingAmount = Some(0.23),
     penaltyType = Some("LPP1"),
     penaltyStatus = Some("POSTED"),
@@ -150,6 +150,9 @@ object TestConstants {
     chargeReferenceNumber = None,
     documentTotalAmount = None
   )
+
+  val emptyLineItem: LineItemDetails = LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None)
+  val emptyModel: DocumentDetails = DocumentDetails(None, None, None, Seq(emptyLineItem), None, None, None, None)
 
   def fullFTJson(documentDetails: JsObject): JsObject = Json.obj(
     "getFinancialData" -> Json.obj(
