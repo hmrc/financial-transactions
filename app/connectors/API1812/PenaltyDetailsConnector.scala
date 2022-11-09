@@ -33,13 +33,19 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
     s"${appConfig.eisUrl}/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}"
 
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
+                       (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
 
-    val eisHeaders = Seq("Authorization" -> s"Bearer ${appConfig.eisToken}","CorrelationId" -> randomUUID().toString, "Environment" -> appConfig.eisEnvironment)
+    val eisHeaders = Seq(
+      "Authorization" -> s"Bearer ${appConfig.eisToken}",
+      "CorrelationId" -> randomUUID().toString,
+      "Environment" -> appConfig.eisEnvironment
+    )
 
+    val hc = headerCarrier.copy(authorization = None)
     val url = penaltyDetailsUrl(regime)
 
-    logger.debug(s"[PenaltyDetailsConnector][getPenaltyDetails] - Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
+    logger.debug("[PenaltyDetailsConnector][getPenaltyDetails] - " +
+      s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
     http.GET[PenaltyDetailsResponse](url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads,hc, ec)
   }
 }

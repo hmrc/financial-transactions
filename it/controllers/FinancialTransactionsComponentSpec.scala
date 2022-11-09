@@ -52,7 +52,7 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
         Then("a successful response is returned with expected JSON data")
         res should have(
           httpStatus(OK),
-          jsonBodyAs(Json.obj())
+          jsonBodyAs(FinancialData1811.fullFinancialTransactionsOutputJson)
         )
       }
     }

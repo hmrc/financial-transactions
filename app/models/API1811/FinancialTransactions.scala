@@ -16,6 +16,7 @@
 
 package models.API1811
 
+import config.AppConfig
 import play.api.libs.json._
 
 case class FinancialTransactions(documentDetails: Seq[DocumentDetails])
@@ -25,4 +26,8 @@ object FinancialTransactions {
   implicit val reads: Reads[FinancialTransactions] =
     (__ \ "getFinancialData" \ "financialDetails" \ "documentDetails").read[Seq[DocumentDetails]]
       .map(FinancialTransactions.apply)
+
+  implicit def writes(implicit appConfig: AppConfig): Writes[FinancialTransactions] = Writes { model =>
+    Json.obj("financialTransactions" -> Json.toJsFieldJsValueWrapper(model.documentDetails))
+  }
 }

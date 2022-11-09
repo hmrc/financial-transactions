@@ -16,8 +16,10 @@
 
 package models.API1811
 
+import config.AppConfig
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
-import play.api.libs.json.{JsPath, Reads}
+import play.api.libs.json.{JsNull, JsObject, JsPath, JsResultException, Json, JsonValidationError, Reads, Writes}
+import utils.API1811.ChargeTypes
 
 case class DocumentDetails(chargeReferenceNumber: Option[String],
                            documentTotalAmount: Option[BigDecimal],
@@ -43,4 +45,34 @@ object DocumentDetails {
     (JsPath \ penaltyPath)(0).\("penaltyAmount").readNullable[BigDecimal]
   )(DocumentDetails.apply _)
 
+  implicit def writes(implicit appConfig: AppConfig): Writes[DocumentDetails] = Writes { model =>
+    if (model.lineItemDetails.nonEmpty) {
+      JsObject(Json.obj(
+        "chargeType" -> ChargeTypes.retrieveChargeType(
+          model.lineItemDetails.head.mainTransaction, model.lineItemDetails.head.subTransaction
+        ),
+        "periodKey" -> model.lineItemDetails.head.periodKey,
+        "taxPeriodFrom" -> model.lineItemDetails.head.periodFromDate,
+        "taxPeriodTo" -> model.lineItemDetails.head.periodToDate,
+        "chargeReference" -> model.chargeReferenceNumber,
+        "mainTransaction" -> model.lineItemDetails.head.mainTransaction,
+        "subTransaction" -> model.lineItemDetails.head.subTransaction,
+        "originalAmount" -> model.documentTotalAmount,
+        "outstandingAmount" -> model.documentOutstandingAmount,
+        "items" -> model.lineItemDetails,
+        "accruingInterestAmount" -> model.interestAccruingAmount,
+        "interestRate" -> model.lineItemDetails.head.interestRate,
+        "accruingPenaltyAmount" -> {
+          if (model.penaltyStatus.contains("ACCRUING")) Some(model.penaltyAmount) else None
+        },
+        "penaltyType" -> {
+          if (model.penaltyStatus.contains("ACCRUING")) Some(model.penaltyType) else None
+        }
+      ).fields.filterNot(_._2 == JsNull))
+    } else {
+      throw JsResultException(Seq(
+        (JsPath \ "lineItemDetails") -> Seq(JsonValidationError("Line item details must contain at least 1 item"))
+      ))
+    }
+  }
 }

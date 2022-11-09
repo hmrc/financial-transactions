@@ -17,7 +17,7 @@
 package controllers
 
 import utils.API1166.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
-import utils.API1811.TestConstants.{fullFinancialTransactions => fullFinancialTransactions1811}
+import utils.API1811.TestConstants.{fullFinancialTransactionsOutputJson, fullFinancialTransactions => fullFinancialTransactions1811}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
@@ -29,6 +29,8 @@ import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
+
+import scala.concurrent.Future
 
 class FinancialTransactionsControllerSpec extends SpecBase
   with MockFinancialTransactionsService
@@ -162,8 +164,9 @@ class FinancialTransactionsControllerSpec extends SpecBase
       "the API1811 feature switch is on" when {
 
         val badRequestError = Error1811(Status.BAD_REQUEST, "error")
-        val successResponse = Right(fullFinancialTransactions1811)
-        val errorResponse = Left(badRequestError)
+        val successResponse = Future.successful(Right(fullFinancialTransactions1811))
+        val errorResponse = Future.successful(Left(badRequestError))
+        val exceptionResponse = Future.failed(new Exception("oops"))
 
         "an authenticated user requests VAT details" when {
 
@@ -184,6 +187,10 @@ class FinancialTransactionsControllerSpec extends SpecBase
             "return a status of 200 (OK)" in {
               status(result) shouldBe Status.OK
             }
+
+            "return a json body with the financial transaction information" in {
+              contentAsJson(result) shouldBe fullFinancialTransactionsOutputJson
+            }
           }
 
           "the service returns a failure response" should {
@@ -202,6 +209,25 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
             "return the correct error JSON" in {
               contentAsJson(result) shouldBe Json.toJson(badRequestError)
+            }
+          }
+
+          "an exception has been thrown at an earlier stage" should {
+
+            lazy val result = {
+              mockAppConfig.features.useApi1811(true)
+              setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(exceptionResponse)
+              TestFinancialTransactionController.getFinancialTransactions(
+                regimeType, id, FinancialRequestQueryParameters()
+              )(fakeRequest)
+            }
+
+            "return a status of 500 (INTERNAL_SERVER_ERROR)" in {
+              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
+            }
+
+            "return an error json body" in {
+              contentAsJson(result) shouldBe Json.obj("code" -> 500, "reason" -> "oops")
             }
           }
         }

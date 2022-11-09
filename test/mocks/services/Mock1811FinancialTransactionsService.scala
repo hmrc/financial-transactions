@@ -31,12 +31,11 @@ trait Mock1811FinancialTransactionsService {
   val mock1811FinancialTransactionsService: api1811FinancialTransactionsService = mock[api1811FinancialTransactionsService]
 
   def setupMock1811GetFinancialTransactions(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
-                                       (response: FinancialTransactionsResponse): OngoingStubbing[Future[FinancialTransactionsResponse]] =
+                                       (response: Future[FinancialTransactionsResponse]): OngoingStubbing[Future[FinancialTransactionsResponse]] =
     when(
       mock1811FinancialTransactionsService.getFinancialTransactions(
         ArgumentMatchers.eq(regime),
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any())
-    ).thenReturn(Future.successful(response))
-
+    ).thenReturn(response)
 }

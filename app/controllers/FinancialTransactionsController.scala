@@ -82,8 +82,13 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
       "Calling API1811.FinancialTransactionsService.getFinancialTransactions")
 
     api1811Service.getFinancialTransactions(regime, queryParams).map {
-      case Right(financialTransactions) => Ok(Json.obj()) // TODO put the transactions back in once Writes exists again
+      case Right(financialTransactions) => Ok(Json.toJson(financialTransactions))
       case Left(error) => Status(error.code)(Json.toJson(error))
+    }.recover {
+      case ex =>
+        logger.warn("[FinancialTransactionsController][retrieveFinancialTransactionsAPI1811] - " +
+          s"Exception received when retrieving data: ${ex.getMessage}, returning status code 500")
+        InternalServerError(Json.toJson(API1811.Error(INTERNAL_SERVER_ERROR, ex.getMessage)))
     }
   }
 

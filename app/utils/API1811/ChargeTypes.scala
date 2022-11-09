@@ -83,7 +83,9 @@ object ChargeTypes extends LoggerUtil {
     ("4790", penaltyDebitSubTrans) -> "VAT FTN RCSL",
     ("4793", penaltyDebitSubTrans) -> "VAT Failure to submit RCSL",
     ("4796", penaltyDebitSubTrans) -> "VAT MP pre 2009",
-    ("4799", penaltyDebitSubTrans) -> "VAT MP (R) pre 2009"
+    ("4799", penaltyDebitSubTrans) -> "VAT MP (R) pre 2009",
+    ("7704", vatDebitSubTrans) -> "VAT Migrated Liabilities debit",
+    ("7705", vatCreditSubTrans) -> "VAT Migrated Credit"
   )
 
   private val penaltiesAndInterestChargeTypes: Map[(String, String), String] = Map(
@@ -132,23 +134,20 @@ object ChargeTypes extends LoggerUtil {
     supportedChargeList.get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
 
   def removeInvalidCharges(transactions: Seq[DocumentDetails])(implicit appConfig: AppConfig): Seq[DocumentDetails] = {
-    transactions.map(removeInvalidLineItems)
-  }
-
-  def removeInvalidLineItems(transaction: DocumentDetails)(implicit appConfig: AppConfig): DocumentDetails = {
     val supportedCharges = supportedChargeList
-    val filtered = transaction.lineItemDetails.filter { charge =>
-      (charge.mainTransaction, charge.subTransaction) match {
-        case (Some(mainTrans), Some(subTrans)) =>
-          supportedCharges.contains((mainTrans, subTrans))
-        case _ =>
-          logger.warn("[ChargeTypes][removeInvalidLineItems] - Insufficient transaction values provided for charge, " +
-            s"reference: ${transaction.chargeReferenceNumber}, main: ${charge.mainTransaction.getOrElse("none")}, " +
-            s"sub: ${charge.mainTransaction.getOrElse("none")}")
-          false
+    transactions.filter { document =>
+      val filtered = document.lineItemDetails.filter { charge =>
+        (charge.mainTransaction, charge.subTransaction) match {
+          case (Some(mainTrans), Some(subTrans)) =>
+            supportedCharges.contains((mainTrans, subTrans))
+          case _ =>
+            logger.warn("[ChargeTypes][removeInvalidLineItems] - Insufficient transaction values provided for charge, " +
+              s"reference: ${document.chargeReferenceNumber}, main: ${charge.mainTransaction.getOrElse("none")}, " +
+              s"sub: ${charge.mainTransaction.getOrElse("none")}")
+            false
+        }
       }
+      document.lineItemDetails.length == filtered.length
     }
-    transaction.copy(lineItemDetails = filtered)
   }
-
 }

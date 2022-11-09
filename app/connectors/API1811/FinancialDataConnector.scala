@@ -34,7 +34,7 @@ class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTr
     s"${appConfig.eisUrl}/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}"
 
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
+                      (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
     val eisHeaders = Seq(
       "Authorization" -> s"Bearer ${appConfig.eisToken}",
@@ -42,6 +42,7 @@ class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTr
       "Environment" -> appConfig.eisEnvironment
     )
 
+    val hc = headerCarrier.copy(authorization = None)
     val url = financialDataUrl(regime)
 
     logger.debug("[FinancialDataConnector][getFinancialData] - " +

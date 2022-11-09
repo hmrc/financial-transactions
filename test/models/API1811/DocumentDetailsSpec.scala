@@ -17,33 +17,145 @@
 package models.API1811
 
 import base.SpecBase
-import play.api.libs.json.Json
+import play.api.libs.json._
 import utils.API1811.TestConstants._
 
 class DocumentDetailsSpec extends SpecBase {
 
-  "DocumentDetails" when {
+  "DocumentDetails" should {
 
-    "maximum fields are present" should {
+    "read from JSON" when {
 
-      "deserialise from JSON correctly" in {
+      "maximum fields are present" in {
         fullDocumentDetailsJson.as[DocumentDetails] shouldBe fullDocumentDetails
       }
-    }
 
-    "minimum fields are present" should {
-
-      "deserialise from JSON correctly" in {
-        Json.obj("lineItemDetails" -> Json.arr("")).as[DocumentDetails] shouldBe emptyModel
+      "minimum fields are present" in {
+        Json.obj("lineItemDetails" -> Json.arr("")).as[DocumentDetails] shouldBe emptyDocumentDetails
       }
-    }
 
-    "some correct fields are present but some are unrecognised" should {
-
-      "read the recognised fields correctly" in {
+      "some correct fields are present but some are unrecognised" in {
         documentDetailsIncorrectFieldsJson.as[DocumentDetails] shouldBe fullDocumentDetailsIncorrectFields
       }
     }
 
+    "write to JSON" when {
+
+      "maximum fields are present" in {
+        Json.toJson(fullDocumentDetails) shouldBe fullDocumentDetailsOutputJson
+      }
+
+      "minimum fields are present" in {
+        val expectedOutput: JsObject = Json.obj("items" -> Json.arr(Json.obj()))
+        Json.toJson(emptyDocumentDetails) shouldBe expectedOutput
+      }
+
+      "there is a posted penalty, so that no penalty details are provided" in {
+        val model = fullDocumentDetails.copy(penaltyType = Some("LPP1"), penaltyStatus = Some("POSTED"))
+        val expectedOutput = Json.obj(
+          "chargeType" -> "VAT Return Debit Charge",
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "there are multiple line item details objects" in {
+        val model = fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull, lineItemDetailsFull))
+        val expectedOutput: JsObject = Json.obj(
+          "chargeType" -> "VAT Return Debit Charge",
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson, fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3,
+          "accruingPenaltyAmount" -> 10.01,
+          "penaltyType" -> "LPP1"
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "main transaction is not present" in {
+        val model = fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull.copy(mainTransaction = None)))
+        val expectedOutput = Json.obj(
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3,
+          "accruingPenaltyAmount" -> 10.01,
+          "penaltyType" -> "LPP1"
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "sub transaction is not present" in {
+        val model = fullDocumentDetails.copy(lineItemDetails = Seq(lineItemDetailsFull.copy(subTransaction = None)))
+        val expectedOutput = Json.obj(
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3,
+          "accruingPenaltyAmount" -> 10.01,
+          "penaltyType" -> "LPP1"
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "main transaction and sub transaction are not present" in {
+        val model = fullDocumentDetails.copy(
+          lineItemDetails = Seq(lineItemDetailsFull.copy(mainTransaction = None, subTransaction = None)))
+        val expectedOutput = Json.obj(
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3,
+          "accruingPenaltyAmount" -> 10.01,
+          "penaltyType" -> "LPP1"
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+    }
+
+    "throw an exception" when {
+
+      "there are no line item details present" in {
+        val model = fullDocumentDetails.copy(lineItemDetails = Seq())
+        val ex = intercept[JsResultException](Json.toJson(model))
+        ex.errors.head._1 shouldBe JsPath \ "lineItemDetails"
+        ex.errors.head._2 shouldBe List(JsonValidationError(List("Line item details must contain at least 1 item")))
+      }
+    }
   }
 }

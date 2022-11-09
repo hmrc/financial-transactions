@@ -49,9 +49,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
         val httpResponse = HttpResponse(Status.OK, filteredFinancialJson.toString)
 
-        val expected = Right(fullFinancialTransactions.copy(
-          documentDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Seq()))
-        ))
+        val expected = Right(fullFinancialTransactions.copy(documentDetails = Seq()))
 
         val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 

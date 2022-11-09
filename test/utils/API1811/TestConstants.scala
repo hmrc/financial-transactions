@@ -97,7 +97,7 @@ object TestConstants {
     lineItemDetails = Seq(lineItemDetailsFull),
     interestAccruingAmount = Some(0.23),
     penaltyType = Some("LPP1"),
-    penaltyStatus = Some("POSTED"),
+    penaltyStatus = Some("ACCRUING"),
     penaltyAmount = Some(10.01)
   )
 
@@ -111,7 +111,7 @@ object TestConstants {
     ),
     "documentPenaltyTotals" -> Json.arr(Json.obj(
       "penaltyType" -> "LPP1",
-      "penaltyStatus" -> "POSTED",
+      "penaltyStatus" -> "ACCRUING",
       "penaltyAmount" -> 10.01
     ))
   )
@@ -126,7 +126,7 @@ object TestConstants {
     ),
     "documentPenaltyTotals" -> Json.arr(Json.obj(
       "penaltyType" -> "LPP1",
-      "penaltyStatus" -> "POSTED",
+      "penaltyStatus" -> "ACCRUING",
       "penaltyAmount" -> 10.01
     ))
   )
@@ -141,7 +141,7 @@ object TestConstants {
     ),
     "documentPenaltyTotals" -> Json.arr(Json.obj(
       "penaltyType" -> "LPP1",
-      "penaltyStatus" -> "POSTED",
+      "penaltyStatus" -> "ACCRUING",
       "penaltyAmount" -> 10.01
     ))
   )
@@ -152,7 +152,7 @@ object TestConstants {
   )
 
   val emptyLineItem: LineItemDetails = LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None)
-  val emptyModel: DocumentDetails = DocumentDetails(None, None, None, Seq(emptyLineItem), None, None, None, None)
+  val emptyDocumentDetails: DocumentDetails = DocumentDetails(None, None, None, Seq(emptyLineItem), None, None, None, None)
 
   def fullFTJson(documentDetails: JsObject): JsObject = Json.obj(
     "getFinancialData" -> Json.obj(
@@ -168,4 +168,33 @@ object TestConstants {
     documentDetails = Seq(fullDocumentDetails)
   )
 
+  val fullLineItemDetailsOutputJson: JsObject = Json.obj(
+    "dueDate" -> "2018-02-14",
+    "amount" -> 3400,
+    "clearingDate" -> "2017-08-06",
+    "clearingReason" -> "Payment at External Payment Collector Reported",
+    "clearingSAPDocument" -> "719283701921",
+    "DDcollectionInProgress" -> true
+  )
+
+  val fullDocumentDetailsOutputJson: JsObject = Json.obj(
+    "chargeType" -> "VAT Return Debit Charge",
+    "periodKey" -> "13RL",
+    "taxPeriodFrom" -> "2017-04-06",
+    "taxPeriodTo" -> "2018-04-05",
+    "chargeReference" -> "XM002610011594",
+    "mainTransaction" -> "4700",
+    "subTransaction" -> "1174",
+    "originalAmount" -> 45552768.79,
+    "outstandingAmount" -> 297873.46,
+    "items" -> Json.arr(fullLineItemDetailsOutputJson),
+    "accruingInterestAmount" -> 0.23,
+    "interestRate" -> 3,
+    "accruingPenaltyAmount" -> 10.01,
+    "penaltyType" -> "LPP1"
+  )
+
+  val fullFinancialTransactionsOutputJson: JsObject = Json.obj(
+    "financialTransactions" -> Json.arr(fullDocumentDetailsOutputJson)
+  )
 }
