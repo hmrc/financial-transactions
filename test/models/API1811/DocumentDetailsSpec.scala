@@ -16,20 +16,34 @@
 
 package models.API1811
 
+import base.SpecBase
 import play.api.libs.json.Json
 import utils.API1811.TestConstants._
-import base.SpecBase
 
-class DocumentDetailsSpec  extends SpecBase{
+class DocumentDetailsSpec extends SpecBase {
 
-  "DocumentDetails" should {
-    "serialize to Json successfully" in {
-      Json.toJson(fullDocumentDetails) shouldBe fullDocumentDetailsJson
+  "DocumentDetails" when {
+
+    "maximum fields are present" should {
+
+      "deserialise from JSON correctly" in {
+        fullDocumentDetailsJson.as[DocumentDetails] shouldBe fullDocumentDetails
+      }
     }
 
-    "deserialize to a Transaction model successfully" in {
-      fullDocumentDetailsJson.as[DocumentDetails] shouldBe fullDocumentDetails
+    "minimum fields are present" should {
+
+      "deserialise from JSON correctly" in {
+        Json.obj("lineItemDetails" -> Json.arr("")).as[DocumentDetails] shouldBe emptyModel
+      }
     }
+
+    "some correct fields are present but some are unrecognised" should {
+
+      "read the recognised fields correctly" in {
+        documentDetailsIncorrectFieldsJson.as[DocumentDetails] shouldBe fullDocumentDetailsIncorrectFields
+      }
+    }
+
   }
-
 }

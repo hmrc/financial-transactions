@@ -17,7 +17,7 @@
 package utils.API1811
 
 import config.AppConfig
-import models.API1811.Transaction
+import models.API1811.DocumentDetails
 import utils.LoggerUtil
 
 object ChargeTypes extends LoggerUtil {
@@ -131,17 +131,24 @@ object ChargeTypes extends LoggerUtil {
                         (implicit appConfig: AppConfig): Option[String] =
     supportedChargeList.get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
 
-  def removeInvalidCharges(transactions: Seq[Transaction])(implicit appConfig: AppConfig): Seq[Transaction] = {
+  def removeInvalidCharges(transactions: Seq[DocumentDetails])(implicit appConfig: AppConfig): Seq[DocumentDetails] = {
+    transactions.map(removeInvalidLineItems)
+  }
+
+  def removeInvalidLineItems(transaction: DocumentDetails)(implicit appConfig: AppConfig): DocumentDetails = {
     val supportedCharges = supportedChargeList
-    transactions.filter { charge =>
+    val filtered = transaction.lineItemDetails.filter { charge =>
       (charge.mainTransaction, charge.subTransaction) match {
         case (Some(mainTrans), Some(subTrans)) =>
           supportedCharges.contains((mainTrans, subTrans))
         case _ =>
-          logger.warn("[ChargeTypes][isSupportedTransaction] - Insufficient transaction values provided for charge, " +
-            s"reference: ${charge.chargeReference}, main: ${charge.mainTransaction}, sub: ${charge.subTransaction}")
+          logger.warn("[ChargeTypes][removeInvalidLineItems] - Insufficient transaction values provided for charge, " +
+            s"reference: ${transaction.chargeReferenceNumber}, main: ${charge.mainTransaction.getOrElse("none")}, " +
+            s"sub: ${charge.mainTransaction.getOrElse("none")}")
           false
       }
     }
+    transaction.copy(lineItemDetails = filtered)
   }
+
 }

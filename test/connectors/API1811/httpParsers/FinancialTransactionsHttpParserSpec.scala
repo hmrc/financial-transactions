@@ -20,7 +20,7 @@ import base.SpecBase
 import models.API1811._
 import play.api.http.Status
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
 import utils.API1811.TestConstants._
 
@@ -47,39 +47,11 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       "unrecognised charge types are returned" should {
 
-        val invalidChargeTypeJson: JsObject = Json.obj(
-          "documentId" -> "012345678901234567890123456789",
-          "chargeType" -> "Made Up Charge Type",
-          "mainType" -> "2100",
-          "periodKey" -> "13RL",
-          "periodKeyDescription" -> "abcde",
-          "taxPeriodFrom" -> "2017-04-06",
-          "taxPeriodTo" -> "2018-04-05",
-          "businessPartner" -> "6622334455",
-          "contractAccountCategory" -> "02",
-          "contractAccount" -> "X",
-          "contractObjectType" -> "ABCD",
-          "contractObject" -> "00000003000000002757",
-          "sapDocumentNumber" -> "1040000872",
-          "sapDocumentNumberItem" -> "XM00",
-          "chargeReference" -> "XM002610011594",
-          "mainTransaction" -> "1234",
-          "subTransaction" -> "5678",
-          "originalAmount" -> 3400,
-          "outstandingAmount" -> 1400,
-          "clearedAmount" -> 2000,
-          "accruedInterest" -> 0.23,
-          "items" -> Json.arr(fullSubItemJsonEIS)
-        )
-
-        val filteredFinancialJson: JsObject = Json.obj(
-          "documentDetails" -> Json.arr(fullDocumentDetailsJson),
-          "financialDetails" -> Json.arr(invalidChargeTypeJson)
-        )
-
         val httpResponse = HttpResponse(Status.OK, filteredFinancialJson.toString)
 
-        val expected = Right(fullFinancialTransactions.copy(financialDetails = Seq()))
+        val expected = Right(fullFinancialTransactions.copy(
+          documentDetails = Seq(fullDocumentDetails.copy(lineItemDetails = Seq()))
+        ))
 
         val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
 

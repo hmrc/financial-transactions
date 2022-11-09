@@ -184,10 +184,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
             "return a status of 200 (OK)" in {
               status(result) shouldBe Status.OK
             }
-
-            "return a json body with the financial transaction information" in {
-              contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions1811)
-            }
           }
 
           "the service returns a failure response" should {

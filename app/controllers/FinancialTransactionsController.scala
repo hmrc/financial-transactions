@@ -82,7 +82,7 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
       "Calling API1811.FinancialTransactionsService.getFinancialTransactions")
 
     api1811Service.getFinancialTransactions(regime, queryParams).map {
-      case Right(financialTransactions) => Ok(Json.toJson(financialTransactions))
+      case Right(financialTransactions) => Ok(Json.obj()) // TODO put the transactions back in once Writes exists again
       case Left(error) => Status(error.code)(Json.toJson(error))
     }
   }
