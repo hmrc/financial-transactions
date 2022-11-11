@@ -17,14 +17,34 @@
 package models.API1811
 
 import base.SpecBase
+import play.api.libs.json.Json
 import utils.API1811.TestConstants._
 
 class FinancialTransactionsSpec extends SpecBase {
 
   "FinancialTransactions" should {
 
-    "deserialize to a Transaction model successfully" in {
-      fullFinancialTransactionsJsonEIS.as[FinancialTransactions] shouldBe fullFinancialTransactions
+    "read from JSON" when {
+
+      "maximum fields are present" in {
+        fullFinancialTransactionsJsonEIS.as[FinancialTransactions] shouldBe fullFinancialTransactions
+      }
+    }
+
+    "write to JSON" when {
+
+      "maximum fields are present" in {
+        Json.toJson(fullFinancialTransactions) shouldBe fullFinancialTransactionsOutputJson
+      }
+
+      "there are multiple document details objects" in {
+        val model = FinancialTransactions(Seq(fullDocumentDetails, fullDocumentDetails))
+        val expectedOutput = Json.obj(
+          "financialTransactions" -> Json.arr(fullDocumentDetailsOutputJson, fullDocumentDetailsOutputJson)
+        )
+
+        Json.toJson(model) shouldBe expectedOutput
+      }
     }
   }
 }

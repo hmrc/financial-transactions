@@ -52,8 +52,8 @@ class AuthActionImpl @Inject()(val authorisedFunctions: AuthorisedFunctions, cc:
       case _: NoActiveSession =>
         logger.debug("[AuthActionImpl][invokeBlock] Request did not have an Active Session, returning Unauthorised - Unauthenticated Error")
         Unauthorized(Json.toJson(UnauthenticatedError))
-      case _ =>
-        logger.debug("[AuthActionImpl][invokeBlock] Request has an active session but was not authorised, returning Forbidden - Not Authorised Error")
+      case ex =>
+        logger.debug(s"[AuthActionImpl][invokeBlock] - Unexpected exception ${ex.getMessage}, returning Forbidden - Not Authorised Error")
         Forbidden(Json.toJson(ForbiddenError))
     }
   }

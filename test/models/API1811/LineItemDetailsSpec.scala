@@ -22,53 +22,31 @@ import utils.API1811.TestConstants._
 
 class LineItemDetailsSpec extends SpecBase {
 
-  "LineItemDetails" when {
+  "LineItemDetails" should {
 
-    "maximum fields are present" should {
+    "read from JSON" when {
 
-      "deserialise from JSON correctly" in {
+      "maximum fields are present" in {
         lineItemDetailsFullJson.as[LineItemDetails] shouldBe lineItemDetailsFull
       }
-    }
 
-    "minimum fields are present" should {
-
-      "deserialise from JSON correctly" in {
-        val emptyModel = LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None)
-        Json.obj("" -> "").as[LineItemDetails] shouldBe emptyModel
+      "minimum fields are present" in {
+        Json.obj("" -> "").as[LineItemDetails] shouldBe emptyLineItem
       }
-    }
 
-    "some correct fields are present but some are unrecognised" should {
-
-      "read the recognised fields correctly" in {
+      "some correct fields are present but some are unrecognised" in {
         lineItemDetailsFullIncorrectFieldsJson.as[LineItemDetails] shouldBe lineItemDetailsFullIncorrectFields
       }
     }
 
-  }
+    "write to JSON" when {
 
-  "LineItemDetails json writes" should {
-
-    "write a LineItemDetails model to maximum JSON successfully" when {
-
-      "all fields are present" in {
-        Json.toJson(lineItemDetailsFull) shouldBe Json.obj("chargeType" -> "VAT Return Debit Charge")
-      }
-    }
-
-    "not include a chargeType field in the output JSON" should {
-
-      "main transaction is not present" in {
-        Json.toJson(lineItemDetailsFull.copy(mainTransaction = None)) shouldBe Json.obj()
+      "maximum fields are present" in {
+        Json.toJson(lineItemDetailsFull) shouldBe fullLineItemDetailsOutputJson
       }
 
-      "sub transaction is not present" in {
-        Json.toJson(lineItemDetailsFull.copy(subTransaction = None)) shouldBe Json.obj()
-      }
-
-      "main transaction and sub transaction are not present" in {
-        Json.toJson(lineItemDetailsFull.copy(mainTransaction = None, subTransaction = None)) shouldBe Json.obj()
+      "minimum fields are present" in {
+        Json.toJson(emptyLineItem) shouldBe Json.obj()
       }
     }
   }

@@ -70,7 +70,7 @@ object FinancialData1811 {
           ),
           "documentPenaltyTotals" -> Json.arr(Json.obj(
             "penaltyType" -> "LPP1",
-            "penaltyStatus" -> "POSTED",
+            "penaltyStatus" -> "ACCRUING",
             "penaltyAmount" -> "10.01",
             "postedChargeReference" -> "XR00123933492"
           )),
@@ -133,7 +133,7 @@ object FinancialData1811 {
       lineItemDetails = Seq(lineItems),
       interestAccruingAmount = Some(12.10),
       penaltyType = Some("LPP1"),
-      penaltyStatus = Some("POSTED"),
+      penaltyStatus = Some("ACCRUING"),
       penaltyAmount = Some(10.01)
     ))
   )
@@ -147,4 +147,29 @@ object FinancialData1811 {
 
   val errorModel: Error = Error(Status.BAD_REQUEST, errorJson.toString())
 
+  val fullFinancialTransactionsOutputJson: JsObject = Json.obj(
+    "financialTransactions" -> Json.arr(Json.obj(
+      "chargeType" -> "VAT Return Debit Charge",
+      "periodKey" -> "22A1",
+      "taxPeriodFrom" -> "2022-01-01",
+      "taxPeriodTo" -> "2022-01-31",
+      "chargeReference" -> "XP001286394838",
+      "mainTransaction" -> "4700",
+      "subTransaction" -> "1174",
+      "originalAmount" -> 100.00,
+      "outstandingAmount" -> 0.00,
+      "items" -> Json.arr(Json.obj(
+        "dueDate" -> "2022-02-08",
+        "amount" -> 3420.00,
+        "clearingDate" -> "2022-02-09",
+        "clearingReason" -> "Payment at External Payment Collector Reported",
+        "clearingSAPDocument" -> "719283701921",
+        "DDcollectionInProgress" -> true
+      )),
+      "accruingInterestAmount" -> 12.10,
+      "interestRate" -> -999.99,
+      "accruingPenaltyAmount" -> 10.01,
+      "penaltyType" -> "LPP1"
+    ))
+  )
 }

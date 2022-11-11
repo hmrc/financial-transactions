@@ -18,10 +18,8 @@ package models.API1811
 
 import java.time.LocalDate
 
-import config.AppConfig
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
-import utils.API1811.ChargeTypes
 
 case class LineItemDetails(mainTransaction: Option[String],
                            subTransaction: Option[String],
@@ -53,9 +51,14 @@ object LineItemDetails {
     (JsPath \ "lineItemInterestDetails" \"currentInterestRate").readNullable[BigDecimal]
   ) (LineItemDetails.apply _)
 
-  implicit def writes(implicit appConfig: AppConfig): Writes[LineItemDetails] = Writes { model =>
+  implicit val writes: Writes[LineItemDetails] = Writes { model =>
     JsObject(Json.obj(
-      "chargeType" -> ChargeTypes.retrieveChargeType(model.mainTransaction, model.subTransaction)
+      "dueDate" -> model.netDueDate,
+      "amount" -> model.amount,
+      "clearingDate" -> model.clearingDate,
+      "clearingReason" -> model.clearingReason,
+      "clearingSAPDocument" -> model.clearingDocument,
+      "DDcollectionInProgress" -> model.ddCollectionInProgress
     ).fields.filterNot(_._2 == JsNull))
   }
 }
