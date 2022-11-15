@@ -89,8 +89,6 @@ object ChargeTypes extends LoggerUtil {
   )
 
   private val penaltiesAndInterestChargeTypes: Map[(String, String), String] = Map(
-    ("4716", penaltyDebitSubTrans) -> "VAT POA Return 1st LPP",
-    ("4717", penaltyDebitSubTrans) -> "VAT POA Return 2nd LPP",
     ("4620", vatInterestSubTrans) -> "VAT Return LPI",
     ("4622", vatInterestSubTrans) -> "VAT Return 1st LPP LPI",
     ("4624", vatInterestSubTrans) -> "VAT Return 2nd LPP LPI",
@@ -118,6 +116,8 @@ object ChargeTypes extends LoggerUtil {
     ("4691", vatInterestSubTrans) -> "VAT AA Monthly Instal LPI",
     ("4703", penaltyDebitSubTrans) -> "VAT Return 1st LPP",
     ("4704", penaltyDebitSubTrans) -> "VAT Return 2nd LPP",
+    ("4716", penaltyDebitSubTrans) -> "VAT POA Return 1st LPP",
+    ("4717", penaltyDebitSubTrans) -> "VAT POA Return 2nd LPP",
     ("4718", penaltyDebitSubTrans) -> "VAT AA Return Charge 1st LPP",
     ("4719", penaltyDebitSubTrans) -> "VAT AA Return Charge 2nd LPP",
     ("4743", penaltyDebitSubTrans) -> "VAT Error Correction 1st LPP",
