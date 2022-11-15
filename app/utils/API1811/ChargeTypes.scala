@@ -89,9 +89,14 @@ object ChargeTypes extends LoggerUtil {
   )
 
   private val penaltiesAndInterestChargeTypes: Map[(String, String), String] = Map(
+    ("4716", penaltyDebitSubTrans) -> "VAT POA Return 1st LPP",
+    ("4717", penaltyDebitSubTrans) -> "VAT POA Return 2nd LPP",
     ("4620", vatInterestSubTrans) -> "VAT Return LPI",
     ("4622", vatInterestSubTrans) -> "VAT Return 1st LPP LPI",
     ("4624", vatInterestSubTrans) -> "VAT Return 2nd LPP LPI",
+    ("4626", vatInterestSubTrans) -> "VAT Return POA LPI",
+    ("4628", vatInterestSubTrans) -> "VAT Return POA 1st LPP LPI",
+    ("4630", vatInterestSubTrans) -> "VAT Return POA 2nd LPP LPI",
     ("4634", vatInterestSubTrans) -> "VAT Return AA 1st LPP LPI",
     ("4636", vatInterestSubTrans) -> "VAT Return AA 2nd LPP LPI",
     ("4652", vatInterestSubTrans) -> "VAT Central Assessment LPI",
@@ -124,12 +129,7 @@ object ChargeTypes extends LoggerUtil {
     ("4761", penaltyDebitSubTrans) -> "VAT PA 1st LPP",
     ("4762", penaltyDebitSubTrans) -> "VAT PA 2nd LPP",
     ("4787", penaltyDebitSubTrans) -> "VAT Manual LPP",
-    ("4788", vatInterestSubTrans) -> "VAT Manual LPP LPI",
-    ("4626", vatInterestSubTrans) -> "VAT Return POA LPI",
-    ("4716", penaltyDebitSubTrans) -> "VAT POA Return 1st LPP",
-    ("4717", penaltyDebitSubTrans) -> "VAT POA Return 2nd LPP",
-    ("4628", vatInterestSubTrans) -> "VAT Return POA 1st LPP LPI",
-    ("4630", vatInterestSubTrans) -> "VAT Return POA 2nd LPP LPI"
+    ("4788", vatInterestSubTrans) -> "VAT Manual LPP LPI"
   )
 
   private[utils] def supportedChargeList(implicit appConfig: AppConfig): Map[(String, String), String] =
