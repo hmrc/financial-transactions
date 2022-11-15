@@ -94,6 +94,7 @@ object TestConstants {
     chargeReferenceNumber = Some("XM002610011594"),
     documentTotalAmount = Some(45552768.79),
     documentOutstandingAmount = Some(297873.46),
+    documentClearedAmount = Some(45254895.33),
     lineItemDetails = Seq(lineItemDetailsFull),
     interestAccruingAmount = Some(0.23),
     penaltyType = Some("LPP1"),
@@ -105,6 +106,7 @@ object TestConstants {
     "chargeReferenceNumber" -> "XM002610011594",
     "documentTotalAmount" -> 45552768.79,
     "documentOutstandingAmount" -> 297873.46,
+    "documentClearedAmount" -> 45254895.33,
     "lineItemDetails" -> Json.arr(lineItemDetailsFullJson),
     "documentInterestTotals" -> Json.obj(
       "interestAccruingAmount" -> 0.23
@@ -120,6 +122,7 @@ object TestConstants {
     "chargeReferenceNumber" -> "XM002610011594",
     "documentTotalAmount" -> 45552768.79,
     "documentOutstandingAmount" -> 297873.46,
+    "documentClearedAmount" -> 45254895.33,
     "lineItemDetails" -> Json.arr(lineItemDetailsJsonBadCharge),
     "documentInterestTotals" -> Json.obj(
       "interestAccruingAmount" -> 0.23
@@ -135,6 +138,7 @@ object TestConstants {
     "chargeRefNumber" -> "XM002610011594",
     "documentAmount" -> 45552768.79,
     "documentOutstandingAmount" -> 297873.46,
+    "documentClearedAmount" -> 45254895.33,
     "lineItemDetails" -> Json.arr(lineItemDetailsFullJson),
     "documentInterestTotals" -> Json.obj(
       "interestAccruingAmount" -> 0.23
@@ -152,7 +156,7 @@ object TestConstants {
   )
 
   val emptyLineItem: LineItemDetails = LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None)
-  val emptyDocumentDetails: DocumentDetails = DocumentDetails(None, None, None, Seq(emptyLineItem), None, None, None, None)
+  val emptyDocumentDetails: DocumentDetails = DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, None, None, None)
 
   def fullFTJson(documentDetails: JsObject): JsObject = Json.obj(
     "getFinancialData" -> Json.obj(
@@ -187,6 +191,7 @@ object TestConstants {
     "subTransaction" -> "1174",
     "originalAmount" -> 45552768.79,
     "outstandingAmount" -> 297873.46,
+    "clearedAmount" -> 45254895.33,
     "items" -> Json.arr(fullLineItemDetailsOutputJson),
     "accruingInterestAmount" -> 0.23,
     "interestRate" -> 3,

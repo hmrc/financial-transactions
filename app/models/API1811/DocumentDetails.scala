@@ -24,6 +24,7 @@ import utils.API1811.ChargeTypes
 case class DocumentDetails(chargeReferenceNumber: Option[String],
                            documentTotalAmount: Option[BigDecimal],
                            documentOutstandingAmount: Option[BigDecimal],
+                           documentClearedAmount: Option[BigDecimal],
                            lineItemDetails: Seq[LineItemDetails],
                            interestAccruingAmount: Option[BigDecimal],
                            penaltyType: Option[String],
@@ -38,6 +39,7 @@ object DocumentDetails {
     (JsPath \ "chargeReferenceNumber").readNullable[String] and
     (JsPath \ "documentTotalAmount").readNullable[BigDecimal] and
     (JsPath \ "documentOutstandingAmount").readNullable[BigDecimal] and
+    (JsPath \ "documentClearedAmount").readNullable[BigDecimal] and
     (JsPath \ "lineItemDetails").read[Seq[LineItemDetails]] and
     (JsPath \ "documentInterestTotals" \ "interestAccruingAmount").readNullable[BigDecimal] and
     (JsPath \ penaltyPath)(0).\("penaltyType").readNullable[String] and
@@ -59,6 +61,7 @@ object DocumentDetails {
         "subTransaction" -> model.lineItemDetails.head.subTransaction,
         "originalAmount" -> model.documentTotalAmount,
         "outstandingAmount" -> model.documentOutstandingAmount,
+        "clearedAmount" -> model.documentClearedAmount,
         "items" -> model.lineItemDetails,
         "accruingInterestAmount" -> model.interestAccruingAmount,
         "interestRate" -> model.lineItemDetails.head.interestRate,
