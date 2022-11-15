@@ -130,6 +130,7 @@ object FinancialData1811 {
       chargeReferenceNumber = Some("XP001286394838"),
       documentTotalAmount = Some(100.00),
       documentOutstandingAmount = Some(0.0),
+      documentClearedAmount = Some(100.0),
       lineItemDetails = Seq(lineItems),
       interestAccruingAmount = Some(12.10),
       penaltyType = Some("LPP1"),
@@ -158,6 +159,7 @@ object FinancialData1811 {
       "subTransaction" -> "1174",
       "originalAmount" -> 100.00,
       "outstandingAmount" -> 0.00,
+      "clearedAmount" -> 100.00,
       "items" -> Json.arr(Json.obj(
         "dueDate" -> "2022-02-08",
         "amount" -> 3420.00,

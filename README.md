@@ -47,6 +47,7 @@ The service currently supports the following Tax Regimes:
 |subTransaction|`String`|**false**|    
 |originalAmount|`Decimal`|**false**|    
 |outstandingAmount|`Decimal`|**false**|    
+|clearedAmount|`Decimal`|**false**|    
 |items|`Array[SubItem]`|**false**|  
 |accruingInterestAmount|`Decimal`|**false**|  
 |interestRate|`Decimal`|**false**|  
@@ -81,6 +82,7 @@ Response Body:
             "subTransaction" : "1174",    
             "originalAmount" : 100.00,    
             "outstandingAmount" : 0.00,  
+            "clearedAmount" : 100.00,  
             "items" : [  
                 {  
                     "dueDate" : "2018-06-07",  
