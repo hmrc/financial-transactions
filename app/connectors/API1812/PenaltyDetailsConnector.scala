@@ -38,7 +38,8 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
     val eisHeaders = Seq(
       "Authorization" -> s"Bearer ${appConfig.eisToken}",
       "CorrelationId" -> randomUUID().toString,
-      "Environment" -> appConfig.eisEnvironment
+      "Environment" -> appConfig.eisEnvironment,
+      "ReceiptDate" -> "2023-12-31T17:32:28Z"
     )
 
     val hc = headerCarrier.copy(authorization = None)
