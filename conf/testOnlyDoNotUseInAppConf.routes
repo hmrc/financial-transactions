@@ -10,4 +10,6 @@
 # Failing to follow this rule may result in test routes deployed in production.
 
 # Add all the application routes to the prod.routes file
-->         /                          prod.Routes
+->         /                                              prod.Routes
+
+GET        /financial-transactions/test-only/*url         testOnly.controllers.ContractTestController.call1811(url: String)
