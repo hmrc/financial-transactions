@@ -37,7 +37,7 @@ class ContractTestConnector @Inject()(implicit appConfig: MicroserviceAppConfig)
 
   def callAPI(url: String)(implicit request: Request[_]): Future[StandaloneWSResponse] = {
 
-    val apiUrl = host + "/" + url
+    val apiUrl = host + url
     val headers: Seq[(String, String)] = if(request.headers.headers.exists(_._1 == "Authorization")) {
       request.headers.headers
     } else {

@@ -28,8 +28,9 @@ class ContractTestController @Inject()(connector: ContractTestConnector,
                                        cc: ControllerComponents)
                                       (implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  def callAPI(url: String): Action[AnyContent] = Action.async {
-    implicit request => connector.callAPI(url).map { result =>
+  def callAPI(url: String): Action[AnyContent] = Action.async { implicit request =>
+    val modifiedUrl = request.uri.replace("/financial-transactions/test-only", "")
+    connector.callAPI(modifiedUrl).map { result =>
       Status(result.status)(result.body)
     }
   }
