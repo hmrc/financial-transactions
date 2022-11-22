@@ -17,19 +17,19 @@
 package testOnly.controllers
 
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import testOnly.connectors.ContractTest1811Connector
+import testOnly.connectors.ContractTestConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ContractTestController @Inject()(connector: ContractTest1811Connector,
+class ContractTestController @Inject()(connector: ContractTestConnector,
                                        cc: ControllerComponents)
                                       (implicit ec: ExecutionContext) extends BackendController(cc) {
 
-  def call1811(url: String): Action[AnyContent] = Action.async {
-    implicit request => connector.getFinancialData(url).map { result =>
+  def callAPI(url: String): Action[AnyContent] = Action.async {
+    implicit request => connector.callAPI(url).map { result =>
       Status(result.status)(result.body)
     }
   }

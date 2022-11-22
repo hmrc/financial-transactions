@@ -27,7 +27,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.Future
 
 @Singleton
-class ContractTest1811Connector @Inject()(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class ContractTestConnector @Inject()(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   implicit val system: ActorSystem = ActorSystem()
   val wsClient: StandaloneAhcWSClient = StandaloneAhcWSClient()
@@ -35,7 +35,7 @@ class ContractTest1811Connector @Inject()(implicit appConfig: MicroserviceAppCon
   val host: String =
     if(appConfig.eisUrl.contains("localhost")) "https://admin.qa.tax.service.gov.uk/ifs/" else appConfig.eisUrl
 
-  def getFinancialData(url: String)(implicit request: Request[_]): Future[StandaloneWSResponse] = {
+  def callAPI(url: String)(implicit request: Request[_]): Future[StandaloneWSResponse] = {
 
     val apiUrl = host + url
     val headers: Seq[(String, String)] = if(request.headers.headers.exists(_._1 == "Authorization")) {
@@ -44,7 +44,7 @@ class ContractTest1811Connector @Inject()(implicit appConfig: MicroserviceAppCon
       Seq("Authorization" -> appConfig.eisToken) ++ request.headers.headers
     }
 
-    logger.debug(s"[ContractTest1811Connector][getFinancialData] - Calling URL: $apiUrl")
+    logger.debug(s"[ContractTestConnector][callAPI] - Calling URL: $apiUrl")
 
     wsClient.url(apiUrl).addHttpHeaders(headers:_*).get()
   }
