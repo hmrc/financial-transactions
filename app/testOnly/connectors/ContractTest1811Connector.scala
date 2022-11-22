@@ -24,7 +24,7 @@ import play.api.mvc.Request
 import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class ContractTest1811Connector @Inject()(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
@@ -35,7 +35,7 @@ class ContractTest1811Connector @Inject()(implicit appConfig: MicroserviceAppCon
   val host: String =
     if(appConfig.eisUrl.contains("localhost")) "https://admin.qa.tax.service.gov.uk/ifs/" else appConfig.eisUrl
 
-  def getFinancialData(url: String)(implicit request: Request[_], ec: ExecutionContext): Future[StandaloneWSResponse] = {
+  def getFinancialData(url: String)(implicit request: Request[_]): Future[StandaloneWSResponse] = {
 
     val apiUrl = host + url
     val headers: Seq[(String, String)] = if(request.headers.headers.exists(_._1 == "Authorization")) {
