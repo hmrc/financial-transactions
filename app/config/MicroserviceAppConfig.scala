@@ -28,9 +28,7 @@ trait AppConfig {
 @Singleton
 class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
 
-  private def loadConfig(key: String) = servicesConfig.getString(key)
-
-  lazy val appName: String = loadConfig("appName")
+  lazy val appName: String = servicesConfig.getString("appName")
 
   lazy val desEnvironment: String = servicesConfig.getString("microservice.services.des.environment")
   lazy val desToken: String = servicesConfig.getString("microservice.services.des.auth-token")

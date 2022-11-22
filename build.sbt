@@ -30,12 +30,11 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
   val excludedPackages = Seq(
     "<empty>",
-    "com.kenshoo.play.metrics.*",
     "Reverse.*",
     "app.*",
     "prod.*",
     "config.*",
-    "testOnlyDoNotUseInAppConf.*"
+    "testOnly.*"
   )
 
   Seq(
