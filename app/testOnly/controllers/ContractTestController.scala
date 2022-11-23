@@ -29,8 +29,16 @@ class ContractTestController @Inject()(connector: ContractTestConnector,
                                       (implicit ec: ExecutionContext) extends BackendController(cc) {
 
   def callAPI(url: String): Action[AnyContent] = Action.async { implicit request =>
-    val modifiedUrl = request.uri.replace("/financial-transactions/test-only", "")
-    connector.callAPI(modifiedUrl).map { result =>
+    val urlSplit = request.uri.replace("/financial-transactions/test-only", "").split('?')
+
+    val url = urlSplit(0)
+    val queryParams = if(urlSplit.length > 1) {
+      urlSplit(1).split('&').map(param => (param.split('=')(0), param.split('=')(1))).toSeq
+    } else {
+      Seq()
+    }
+
+    connector.callAPI(url, queryParams).map { result =>
       Status(result.status)(result.body)
     }
   }
