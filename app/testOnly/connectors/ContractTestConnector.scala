@@ -16,38 +16,36 @@
 
 package testOnly.connectors
 
-import akka.actor.ActorSystem
 import config.MicroserviceAppConfig
-import play.api.libs.ws.StandaloneWSResponse
-import play.api.libs.ws.ahc.StandaloneAhcWSClient
 import play.api.mvc.Request
+import testOnly.models.APIResponseModel
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpReads}
 import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ContractTestConnector @Inject()(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
-
-  implicit val system: ActorSystem = ActorSystem()
-  val wsClient: StandaloneAhcWSClient = StandaloneAhcWSClient()
+class ContractTestConnector @Inject()(httpClient: HttpClient)(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   val host: String =
     if(appConfig.eisUrl.contains("localhost")) "https://admin.qa.tax.service.gov.uk/ifs" else appConfig.eisUrl
 
   def callAPI(url: String, queryStringParameters: Seq[(String, String)])
-             (implicit request: Request[_]): Future[StandaloneWSResponse] = {
+             (implicit request: Request[_], headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[APIResponseModel] = {
 
     val apiUrl = host + url
     val headers: Seq[(String, String)] = if(request.headers.headers.exists(_._1 == "Authorization")) {
       request.headers.headers
     } else {
-      Seq("Authorization" -> appConfig.eisToken) ++ request.headers.headers
+      Seq("Authorization" -> s"Bearer ${appConfig.eisToken}") ++ request.headers.headers
     }
+
+    val hc = headerCarrier.copy(authorization = None)
 
     logger.debug("[ContractTestConnector][callAPI] - " +
      s"Calling URL: $apiUrl\nQuery params: $queryStringParameters\nHeaders: $headers")
 
-    wsClient.url(apiUrl).withQueryStringParameters(queryStringParameters:_*).withHttpHeaders(headers:_*).get()
+    httpClient.GET(apiUrl, queryStringParameters, headers)(HttpReads[APIResponseModel], hc, ec)
   }
 }
