@@ -45,7 +45,8 @@ class ContractTestConnector @Inject()(implicit appConfig: MicroserviceAppConfig)
       Seq("Authorization" -> appConfig.eisToken) ++ request.headers.headers
     }
 
-    logger.debug(s"[ContractTestConnector][callAPI] - Calling URL: $apiUrl with query params: $queryStringParameters")
+    logger.debug("[ContractTestConnector][callAPI] - " +
+     s"Calling URL: $apiUrl\nQuery params: $queryStringParameters\nHeaders: $headers")
 
     wsClient.url(apiUrl).withQueryStringParameters(queryStringParameters:_*).withHttpHeaders(headers:_*).get()
   }

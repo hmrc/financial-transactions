@@ -19,6 +19,7 @@ package testOnly.controllers
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import testOnly.connectors.ContractTestConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
@@ -26,7 +27,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class ContractTestController @Inject()(connector: ContractTestConnector,
                                        cc: ControllerComponents)
-                                      (implicit ec: ExecutionContext) extends BackendController(cc) {
+                                      (implicit ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
 
   def callAPI(url: String): Action[AnyContent] = Action.async { implicit request =>
     val urlSplit = request.uri.replace("/financial-transactions/test-only", "").split('?')
@@ -39,6 +40,7 @@ class ContractTestController @Inject()(connector: ContractTestConnector,
     }
 
     connector.callAPI(url, queryParams).map { result =>
+      logger.debug(s"[ContractTestController][callAPI] - Response body received: ${result.body}")
       Status(result.status)(result.body)
     }
   }
