@@ -16,6 +16,7 @@
 
 package testOnly.controllers
 
+import config.MicroserviceAppConfig
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import testOnly.connectors.ContractTestConnector
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -26,7 +27,8 @@ import scala.concurrent.ExecutionContext
 
 @Singleton
 class ContractTestController @Inject()(connector: ContractTestConnector,
-                                       cc: ControllerComponents)
+                                       cc: ControllerComponents,
+                                       appConfig: MicroserviceAppConfig)
                                       (implicit ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
 
   def callAPI(url: String): Action[AnyContent] = Action.async { implicit request =>
@@ -43,5 +45,9 @@ class ContractTestController @Inject()(connector: ContractTestConnector,
       logger.debug(s"[ContractTestController][callAPI] - Response body received: ${result.body}")
       Status(result.status)(result.body)
     }
+  }
+
+  def bearerToken: Action[AnyContent] = Action { implicit request =>
+    Ok(appConfig.eisToken)
   }
 }

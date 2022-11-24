@@ -10,6 +10,7 @@
 # Failing to follow this rule may result in test routes deployed in production.
 
 # Add all the application routes to the prod.routes file
-GET        /financial-transactions/test-only/*url         testOnly.controllers.ContractTestController.callAPI(url: String)
+GET        /financial-transactions/test-only/bearer-token  testOnly.controllers.ContractTestController.bearerToken
+GET        /financial-transactions/test-only/*url          testOnly.controllers.ContractTestController.callAPI(url: String)
 
 ->         /                                              prod.Routes
