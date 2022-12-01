@@ -125,7 +125,7 @@ object ChargeTypes extends LoggerUtil {
     ("4723", penaltyDebitSubTrans) -> "VAT-CA-LPP1",
     ("4724", penaltyDebitSubTrans) -> "VAT-CA-LPP2",
     ("4741", penaltyDebitSubTrans) -> "VAT-OA-LPP1",
-    ("4741", penaltyDebitSubTrans) -> "VAT-OA-LPP2",
+    ("4742", penaltyDebitSubTrans) -> "VAT-OA-LPP2",
     ("4743", penaltyDebitSubTrans) -> "VAT Error Correction 1st LPP",
     ("4744", penaltyDebitSubTrans) -> "VAT Error Correction 2nd LPP",
     ("4748", penaltyDebitSubTrans) -> "VAT Late Submission Pen",
