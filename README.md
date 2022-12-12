@@ -281,14 +281,10 @@ sm2 --start FINANCIAL_TRANSACTIONS
 ```   
 ### Running via SBT
 
-Kill the service ```sm2 --stop FINANCIAL_TRANSACTIONS``` *(if it's already running)*. Then run:
-```
-sbt run    
-```
-To run with test only routes enabled *(if required)*:
-```
-sbt "run 9085 -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes"    
-```   
+In order to run this microservice, you must have SBT installed. You should then be able to start the application using:
+
+```./run.sh```
+  
 ## Testing the application
 
 To test the application fully (Unit Tests, Component Tests (integration) and Scala Coverage report) execute:
