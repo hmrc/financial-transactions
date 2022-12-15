@@ -14,17 +14,20 @@
  * limitations under the License.
  */
 
-package config.featureSwitch
+package services
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
-import play.api.Configuration
 
 @Singleton
-class Features @Inject()(implicit config: Configuration){
+class DateService @Inject()(appConfig: config.AppConfig) {
 
-  private val featureSwitch: String = "feature-switch"
-  lazy val useApi1811 = new Feature(s"$featureSwitch.useApi1811")
-  lazy val includePenAndIntCharges = new Feature(s"$featureSwitch.includePenAndIntCharges")
-  lazy val staticDate = new Feature(s"$featureSwitch.staticDate")
+  def now(): LocalDate = {
+    if (appConfig.features.staticDate()) {
+      LocalDate.parse(appConfig.staticDateValue)
+    } else {
+      LocalDate.now()
+    }
+  }
 
 }

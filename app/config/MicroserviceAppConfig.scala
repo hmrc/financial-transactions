@@ -23,6 +23,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 trait AppConfig {
   val features: Features
+  val staticDateValue: String
 }
 
 @Singleton
@@ -37,6 +38,8 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
   lazy val eisEnvironment: String = servicesConfig.getString("microservice.services.eis.environment")
   lazy val eisToken: String = servicesConfig.getString("microservice.services.eis.auth-token")
   lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
+
+  override lazy val staticDateValue: String = servicesConfig.getString("date-service.staticDateValue")
 
   override val features = new Features
 }
