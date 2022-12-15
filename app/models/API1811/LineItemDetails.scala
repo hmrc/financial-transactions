@@ -32,7 +32,8 @@ case class LineItemDetails(mainTransaction: Option[String],
                            clearingDate: Option[LocalDate],
                            clearingReason: Option[String],
                            clearingDocument: Option[String],
-                           interestRate: Option[BigDecimal])
+                           interestRate: Option[BigDecimal],
+                           lineItemLockDetails: Seq[LineItemLockDetails])
 
 object LineItemDetails {
 
@@ -48,7 +49,8 @@ object LineItemDetails {
     (JsPath \ "clearingDate").readNullable[LocalDate] and
     (JsPath \ "clearingReason").readNullable[String] and
     (JsPath \ "clearingDocument").readNullable[String] and
-    (JsPath \ "lineItemInterestDetails" \"currentInterestRate").readNullable[BigDecimal]
+    (JsPath \ "lineItemInterestDetails" \ "currentInterestRate").readNullable[BigDecimal] and
+    (JsPath \ "lineItemLockDetails").read[Seq[LineItemLockDetails]].orElse(Reads.pure(Seq.empty))
   ) (LineItemDetails.apply _)
 
   implicit val writes: Writes[LineItemDetails] = Writes { model =>

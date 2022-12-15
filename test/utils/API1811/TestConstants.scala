@@ -16,7 +16,7 @@
 
 package utils.API1811
 
-import models.API1811.{DocumentDetails, FinancialTransactions, LineItemDetails}
+import models.API1811.{DocumentDetails, FinancialTransactions, LineItemDetails, LineItemLockDetails}
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate
@@ -35,7 +35,8 @@ object TestConstants {
     clearingDate = Some(LocalDate.parse("2017-08-06")),
     clearingReason = Some("Payment at External Payment Collector Reported"),
     clearingDocument = Some("719283701921"),
-    interestRate = Some(3.00)
+    interestRate = Some(3.00),
+    lineItemLockDetails = Seq(LineItemLockDetails("Some lock reason"))
   )
 
   val lineItemDetailsFullJson: JsObject = Json.obj(
@@ -52,7 +53,10 @@ object TestConstants {
     ),
     "clearingDate" -> "2017-08-06",
     "clearingReason" -> "Payment at External Payment Collector Reported",
-    "clearingDocument" -> "719283701921"
+    "clearingDocument" -> "719283701921",
+    "lineItemLockDetails" -> Json.arr(Json.obj(
+      "lockType" -> "Some lock reason"
+    ))
   )
 
   val lineItemDetailsJsonBadCharge: JsObject = Json.obj(
@@ -88,7 +92,10 @@ object TestConstants {
     ),
     "clearingDate" -> "2017-08-06",
     "clearingReason" -> "Payment at External Payment Collector Reported",
-    "clearingDocument" -> "719283701921"
+    "clearingDocument" -> "719283701921",
+    "lineItemLockDetails" -> Json.arr(Json.obj(
+      "lockType" -> "Some lock reason"
+    ))
   )
 
   val fullDocumentDetails: DocumentDetails = DocumentDetails(
@@ -156,8 +163,10 @@ object TestConstants {
     documentTotalAmount = None
   )
 
-  val emptyLineItem: LineItemDetails = LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None)
-  val emptyDocumentDetails: DocumentDetails = DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, None, None, None)
+  val emptyLineItem: LineItemDetails =
+    LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None, Seq())
+  val emptyDocumentDetails: DocumentDetails =
+    DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, None, None, None)
 
   def fullFTJson(documentDetails: JsObject): JsObject = Json.obj(
     "getFinancialData" -> Json.obj(
@@ -201,6 +210,7 @@ object TestConstants {
   )
 
   val fullFinancialTransactionsOutputJson: JsObject = Json.obj(
-    "financialTransactions" -> Json.arr(fullDocumentDetailsOutputJson)
+    "financialTransactions" -> Json.arr(fullDocumentDetailsOutputJson),
+    "hasOverdueChargeAndNoTTP" -> true
   )
 }
