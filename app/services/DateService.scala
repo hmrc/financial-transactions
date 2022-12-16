@@ -17,12 +17,10 @@
 package services
 
 import java.time.LocalDate
-import javax.inject.{Inject, Singleton}
 
-@Singleton
-class DateService @Inject()(appConfig: config.AppConfig) {
+object DateService {
 
-  def now(): LocalDate = {
+  def now(appConfig: config.AppConfig): LocalDate = {
     if (appConfig.features.staticDate()) {
       LocalDate.parse(appConfig.staticDateValue)
     } else {

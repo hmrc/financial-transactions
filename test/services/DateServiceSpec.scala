@@ -24,14 +24,12 @@ class DateServiceSpec extends SpecBase {
 
   "The date service" when {
 
-    val service = new DateService(mockAppConfig)
-
     "the static date feature is enabled" should {
 
       "return the static date specified in config" in {
         mockAppConfig.features.staticDate(true)
 
-        val result = service.now()
+        val result = DateService.now(mockAppConfig)
         val expected = LocalDate.parse("2018-05-01")
 
         result shouldEqual expected
@@ -44,7 +42,7 @@ class DateServiceSpec extends SpecBase {
       "return today's date" in {
         mockAppConfig.features.staticDate(false)
 
-        val result = service.now()
+        val result = DateService.now(mockAppConfig)
         val expected = LocalDate.now()
 
         result shouldEqual expected
