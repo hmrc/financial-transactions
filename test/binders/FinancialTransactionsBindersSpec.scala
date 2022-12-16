@@ -19,7 +19,8 @@ package binders
 import base.SpecBase
 import models.FinancialRequestQueryParameters._
 import models.FinancialRequestQueryParameters
-import utils.ImplicitDateFormatter._
+
+import java.time.LocalDate
 
 class FinancialTransactionsBindersSpec extends SpecBase {
 
@@ -47,7 +48,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
         "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
-          val expected = Some(Right(FinancialRequestQueryParameters(Some("2018-01-01"))))
+          val expected = Some(Right(FinancialRequestQueryParameters(Some(LocalDate.parse("2018-01-01")))))
           val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -77,7 +78,7 @@ class FinancialTransactionsBindersSpec extends SpecBase {
 
         "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
-          val expected = Some(Right(FinancialRequestQueryParameters(None, Some("2018-01-01"))))
+          val expected = Some(Right(FinancialRequestQueryParameters(None, Some(LocalDate.parse("2018-01-01")))))
           val actual = FinancialTransactionsBinders.financialDataQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -141,8 +142,8 @@ class FinancialTransactionsBindersSpec extends SpecBase {
         "return a FinancialRequestQueryParameters instance with correct parameters" in {
 
           val expected = Some(Right(FinancialRequestQueryParameters(
-            fromDate = Some("2018-01-01"),
-            toDate = Some("2018-01-01"),
+            fromDate = Some(LocalDate.parse("2018-01-01")),
+            toDate = Some(LocalDate.parse("2018-01-01")),
             onlyOpenItems = Some(true)
           )))
 

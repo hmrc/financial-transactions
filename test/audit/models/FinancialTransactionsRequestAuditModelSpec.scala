@@ -19,7 +19,8 @@ package audit.models
 import _root_.models.{FinancialRequestQueryParameters, _}
 import base.SpecBase
 import models.FinancialRequestQueryParameters._
-import utils.ImplicitDateFormatter._
+
+import java.time.LocalDate
 
 class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
 
@@ -33,8 +34,8 @@ class FinancialTransactionsRequestAuditModelSpec extends SpecBase {
     "all QueryParameters are passed to it" should {
 
       val testQueryParams = FinancialRequestQueryParameters(
-        fromDate = Some("2018-01-01"),
-        toDate = Some("2019-01-01"),
+        fromDate = Some(LocalDate.parse("2018-01-01")),
+        toDate = Some(LocalDate.parse("2019-01-01")),
         onlyOpenItems = Some(true)
       )
       object TestFinancialTransactionsRequestAuditModel extends FinancialTransactionsRequestAuditModel(testRegime, testQueryParams)

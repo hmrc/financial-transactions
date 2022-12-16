@@ -20,7 +20,8 @@ import base.SpecBase
 import _root_.models.VatRegime
 import models.API1166.{FinancialTransactions, SubItem, Transaction}
 import play.api.libs.json.Json
-import utils.ImplicitDateFormatter._
+
+import java.time.{LocalDate, ZonedDateTime}
 
 class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
 
@@ -37,7 +38,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
         idType = Some("VRN"),
         idNumber = Some("999999999"),
         regimeType = Some("VATC"),
-        processingDate = "2018-03-07T22:55:56.987Z",
+        processingDate = ZonedDateTime.parse("2018-03-07T22:55:56.987Z"),
         financialTransactions = Seq(
           Transaction(
             chargeReference = Some("XM002610011594"),
@@ -48,7 +49,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
             items = Some(Seq(
               SubItem(
                 subItem = Some("000"),
-                dueDate = Some("2018-2-14"),
+                dueDate = Some(LocalDate.parse("2018-02-14")),
                 amount = Some(3400.00)
               ),
               SubItem(
@@ -72,7 +73,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
             items = Some(Seq(
               SubItem(
                 subItem = Some("000"),
-                dueDate = Some("2018-7-1"),
+                dueDate = Some(LocalDate.parse("2018-07-01")),
                 amount = Some(1200.00)
               )
             ))
@@ -120,7 +121,7 @@ class FinancialTransactionsResponseAuditModelSpec extends SpecBase {
 
     "not passed any transactions in the response" should {
 
-      val noTransactions = FinancialTransactions(None, None, None, "2018-03-07T22:55:56.987Z", Seq())
+      val noTransactions = FinancialTransactions(None, None, None, ZonedDateTime.parse("2018-03-07T22:55:56.987Z"), Seq())
       object TestFinancialTransactionsResponseAuditModel extends FinancialTransactionsResponseAuditModel(testRegime, noTransactions)
 
       "Have the correct details for the audit event" in {

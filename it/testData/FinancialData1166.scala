@@ -17,7 +17,8 @@
 package testData
 
 import models.API1166._
-import utils.ImplicitDateFormatter._
+import java.time.LocalDate
+import java.time.ZonedDateTime
 
 object FinancialData1166 {
 
@@ -25,14 +26,14 @@ object FinancialData1166 {
     idType = Some("MTDBSA"),
     idNumber = Some("999999999"),
     regimeType = Some("VATC"),
-    processingDate = "2017-03-07T22:55:56.987Z",
+    processingDate = ZonedDateTime.parse("2017-03-07T22:55:56.987Z"),
     financialTransactions = Seq(Transaction(
       chargeType = Some("VAT Return Debit Charge"),
       mainType = Some("2100"),
       periodKey = Some("13RL"),
       periodKeyDescription = Some("abcde"),
-      taxPeriodFrom = Some("2017-4-6"),
-      taxPeriodTo = Some("2018-4-5"),
+      taxPeriodFrom = Some(LocalDate.parse("2017-04-06")),
+      taxPeriodTo = Some(LocalDate.parse("2018-04-05")),
       businessPartner = Some("6622334455"),
       contractAccountCategory = Some("02"),
       contractAccount = Some("X"),
@@ -49,9 +50,9 @@ object FinancialData1166 {
       accruedInterest = Some(0.23),
       items = Some(Seq(SubItem(
         subItem = Some("000"),
-        dueDate = Some("2018-2-14"),
+        dueDate = Some(LocalDate.parse("2018-02-14")),
         amount = Some(3400.00),
-        clearingDate = Some("2018-2-17"),
+        clearingDate = Some(LocalDate.parse("2018-02-17")),
         clearingReason = Some("A"),
         outgoingPaymentMethod = Some("B"),
         paymentLock = Some("C"),

@@ -18,7 +18,8 @@ package appRoutes
 
 import base.SpecBase
 import models.FinancialRequestQueryParameters
-import utils.ImplicitDateFormatter._
+
+import java.time.LocalDate
 
 class AppRoutesSpec extends SpecBase {
 
@@ -43,7 +44,7 @@ class AppRoutesSpec extends SpecBase {
 
       "'dateFrom' query parameter is supplied" should {
 
-        lazy val queryParams = FinancialRequestQueryParameters(Some("2018-02-01"))
+        lazy val queryParams = FinancialRequestQueryParameters(Some(LocalDate.parse("2018-02-01")))
 
         val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01"
 
@@ -55,7 +56,7 @@ class AppRoutesSpec extends SpecBase {
 
       "'dateFrom, dateTo' query parameters are supplied" should {
 
-        lazy val queryParams = FinancialRequestQueryParameters(Some("2018-02-01"), Some("2019-03-01"))
+        lazy val queryParams = FinancialRequestQueryParameters(Some(LocalDate.parse("2018-02-01")), Some(LocalDate.parse("2019-03-01")))
 
         val expected = "/financial-transactions/vat/123456?dateFrom=2018-02-01&dateTo=2019-03-01"
 
@@ -68,8 +69,8 @@ class AppRoutesSpec extends SpecBase {
       "all query parameters are supplied" should {
 
         lazy val queryParams = FinancialRequestQueryParameters(
-          fromDate = Some("2018-02-01"),
-          toDate = Some("2019-03-01"),
+          fromDate = Some(LocalDate.parse("2018-02-01")),
+          toDate = Some(LocalDate.parse("2019-03-01")),
           onlyOpenItems = Some(true)
         )
 

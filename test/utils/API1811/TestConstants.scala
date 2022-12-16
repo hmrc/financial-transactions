@@ -18,7 +18,8 @@ package utils.API1811
 
 import models.API1811.{DocumentDetails, FinancialTransactions, LineItemDetails}
 import play.api.libs.json.{JsObject, Json}
-import utils.ImplicitDateFormatter._
+
+import java.time.LocalDate
 
 object TestConstants {
 
@@ -26,12 +27,12 @@ object TestConstants {
     mainTransaction = Some("4700"),
     subTransaction = Some("1174"),
     periodKey = Some("13RL"),
-    periodFromDate = Some("2017-04-06"),
-    periodToDate = Some("2018-04-05"),
-    netDueDate = Some("2018-02-14"),
+    periodFromDate = Some(LocalDate.parse("2017-04-06")),
+    periodToDate = Some(LocalDate.parse("2018-04-05")),
+    netDueDate = Some(LocalDate.parse("2018-02-14")),
     amount = Some(3400),
     ddCollectionInProgress = Some(true),
-    clearingDate = Some("2017-08-06"),
+    clearingDate = Some(LocalDate.parse("2017-08-06")),
     clearingReason = Some("Payment at External Payment Collector Reported"),
     clearingDocument = Some("719283701921"),
     interestRate = Some(3.00)

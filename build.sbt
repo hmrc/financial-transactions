@@ -74,6 +74,7 @@ lazy val microservice = Project(appName, file("."))
     PlayKeys.playDefaultPort := 9085,
     scalaVersion := "2.13.8",
     libraryDependencies ++= appDependencies,
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
     retrieveManaged := true,
     routesImport += "binders.FinancialTransactionsBinders._",
     routesImport += "binders.PenaltyDetailsBinders._",
