@@ -25,9 +25,10 @@ import models._
 import models.FinancialRequestQueryParameters._
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.ImplicitDateFormatter._
+
 import utils.API1166.TestConstants.fullFinancialTransactions
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class FinancialDataConnectorSpec extends SpecBase with MockHttp {
@@ -82,8 +83,8 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             TestFinancialDataConnector.getFinancialData(
               regime = vatRegime,
               queryParameters = FinancialRequestQueryParameters(
-                fromDate = Some("2017-04-06"),
-                toDate = Some("2018-04-05"),
+                fromDate = Some(LocalDate.parse("2017-04-06")),
+                toDate = Some(LocalDate.parse("2018-04-05")),
                 onlyOpenItems = Some(false)
               )
             )
@@ -101,7 +102,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             TestFinancialDataConnector.getFinancialData(
               regime = vatRegime,
               queryParameters = FinancialRequestQueryParameters(
-                fromDate = Some("2017-04-06")
+                fromDate = Some(LocalDate.parse("2017-04-06"))
               )
             )
           await(result) shouldBe successResponse
@@ -117,7 +118,7 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
             TestFinancialDataConnector.getFinancialData(
               regime = vatRegime,
               queryParameters = FinancialRequestQueryParameters(
-                toDate = Some("2018-04-05")
+                toDate = Some(LocalDate.parse("2018-04-05"))
               )
             )
           await(result) shouldBe successResponse

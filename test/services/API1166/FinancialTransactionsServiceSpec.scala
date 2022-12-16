@@ -24,8 +24,10 @@ import models.API1166._
 import models._
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.ImplicitDateFormatter._
+
 import utils.API1166.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
+
+import java.time.LocalDate
 
 class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDataConnector with MockAuditingService {
 
@@ -39,8 +41,8 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
 
       val successResponse: Either[Nothing, FinancialTransactions] = Right(fullFinancialTransactions)
       val queryParams: FinancialRequestQueryParameters = FinancialRequestQueryParameters(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2018-04-05"),
+        fromDate = Some(LocalDate.parse("2017-04-06")),
+        toDate = Some(LocalDate.parse("2018-04-05")),
         onlyOpenItems = Some(false)
       )
 
@@ -51,8 +53,8 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
         FinancialRequestQueryParameters(
-          fromDate = Some("2017-04-06"),
-          toDate = Some("2018-04-05"),
+          fromDate = Some(LocalDate.parse("2017-04-06")),
+          toDate = Some(LocalDate.parse("2018-04-05")),
           onlyOpenItems = Some(false)
         )
       ))
@@ -69,16 +71,16 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
       val singleErrorResponse: Either[ErrorResponse, Nothing] = Left(ErrorResponse(Status.BAD_REQUEST, Error("CODE", "REASON")))
 
       setupMockGetFinancialData(regime, FinancialRequestQueryParameters(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2018-04-05"),
+        fromDate = Some(LocalDate.parse("2017-04-06")),
+        toDate = Some(LocalDate.parse("2018-04-05")),
         onlyOpenItems = Some(false)
       ))(singleErrorResponse)
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
         FinancialRequestQueryParameters(
-          fromDate = Some("2017-04-06"),
-          toDate = Some("2018-04-05"),
+          fromDate = Some(LocalDate.parse("2017-04-06")),
+          toDate = Some(LocalDate.parse("2018-04-05")),
           onlyOpenItems = Some(false)
         )
       ))
@@ -95,16 +97,16 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1166FinancialDa
       ))))
 
       setupMockGetFinancialData(regime, FinancialRequestQueryParameters(
-        fromDate = Some("2017-04-06"),
-        toDate = Some("2018-04-05"),
+        fromDate = Some(LocalDate.parse("2017-04-06")),
+        toDate = Some(LocalDate.parse("2018-04-05")),
         onlyOpenItems = Some(false)
       ))(multiErrorResponse)
 
       val actual: Either[ErrorResponse, FinancialTransactions] = await(TestFinancialTransactionService.getFinancialTransactions(
         regime,
         FinancialRequestQueryParameters(
-          fromDate = Some("2017-04-06"),
-          toDate = Some("2018-04-05"),
+          fromDate = Some(LocalDate.parse("2017-04-06")),
+          toDate = Some(LocalDate.parse("2018-04-05")),
           onlyOpenItems = Some(false)
         )
       ))

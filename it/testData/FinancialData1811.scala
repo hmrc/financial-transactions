@@ -18,7 +18,8 @@ package testData
 import models.API1811.{DocumentDetails, Error, FinancialTransactions, LineItemDetails}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
-import utils.ImplicitDateFormatter._
+
+import java.time.LocalDate
 
 object FinancialData1811 {
 
@@ -113,13 +114,13 @@ object FinancialData1811 {
   val lineItems: LineItemDetails = LineItemDetails(
     mainTransaction = Some("4700"),
     subTransaction = Some("1174"),
-    periodFromDate = Some("2022-01-01"),
-    periodToDate = Some("2022-01-31"),
+    periodFromDate = Some(LocalDate.parse("2022-01-01")),
+    periodToDate = Some(LocalDate.parse("2022-01-31")),
     periodKey = Some("22A1"),
-    netDueDate = Some("2022-02-08"),
+    netDueDate = Some(LocalDate.parse("2022-02-08")),
     amount = Some(3420.0),
     ddCollectionInProgress = Some(true),
-    clearingDate = Some("2022-02-09"),
+    clearingDate = Some(LocalDate.parse("2022-02-09")),
     clearingReason = Some("Payment at External Payment Collector Reported"),
     clearingDocument = Some("719283701921"),
     interestRate = Some(-999.99)

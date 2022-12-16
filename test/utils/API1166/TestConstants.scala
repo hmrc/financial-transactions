@@ -19,15 +19,16 @@ package utils.API1166
 import models.API1166.{FinancialTransactions, SubItem, Transaction}
 import models.{DirectDebitDetail, DirectDebits}
 import play.api.libs.json.{JsObject, Json}
-import utils.ImplicitDateFormatter._
+
+import java.time.{LocalDate, ZonedDateTime}
 
 object TestConstants {
 
   val fullSubItem: SubItem = SubItem(
     subItem = Some("000"),
-    dueDate = Some("2018-2-14"),
+    dueDate = Some(LocalDate.parse("2018-02-14")),
     amount = Some(3400.00),
-    clearingDate = Some("2018-2-17"),
+    clearingDate = Some(LocalDate.parse("2018-02-17")),
     clearingReason = Some("A"),
     outgoingPaymentMethod = Some("B"),
     paymentLock = Some("C"),
@@ -76,8 +77,8 @@ object TestConstants {
     mainType = Some("2100"),
     periodKey = Some("13RL"),
     periodKeyDescription = Some("abcde"),
-    taxPeriodFrom = Some("2017-4-6"),
-    taxPeriodTo = Some("2018-4-5"),
+    taxPeriodFrom = Some(LocalDate.parse("2017-04-06")),
+    taxPeriodTo = Some(LocalDate.parse("2018-04-05")),
     businessPartner = Some("6622334455"),
     contractAccountCategory = Some("02"),
     contractAccount = Some("X"),
@@ -123,7 +124,7 @@ object TestConstants {
     idType = Some("MTDBSA"),
     idNumber = Some("XQIT00000000001"),
     regimeType = Some("ITSA"),
-    processingDate = "2017-03-07T22:55:56.987Z",
+    processingDate = ZonedDateTime.parse("2017-03-07T22:55:56.987Z"),
     financialTransactions = Seq(fullTransaction)
   )
 

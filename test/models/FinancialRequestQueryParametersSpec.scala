@@ -17,8 +17,10 @@
 package models
 
 import base.SpecBase
-import utils.ImplicitDateFormatter._
+
 import FinancialRequestQueryParameters._
+
+import java.time.LocalDate
 
 class FinancialRequestQueryParametersSpec extends SpecBase {
 
@@ -47,12 +49,12 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
       }
 
       "for fromDate Query Param, has a 'dateFrom' param with correct value" in {
-        val queryParams = FinancialRequestQueryParameters(fromDate = Some("2018-04-06"))
+        val queryParams = FinancialRequestQueryParameters(fromDate = Some(LocalDate.parse("2018-04-06")))
         queryParams.queryParams1166 shouldBe Seq(dateFromKey -> "2018-04-06")
       }
 
       "for toDate Query Param, has a 'dateTo' param with correct value" in {
-        val queryParams = FinancialRequestQueryParameters(toDate = Some("2019-04-05"))
+        val queryParams = FinancialRequestQueryParameters(toDate = Some(LocalDate.parse("2019-04-05")))
         queryParams.queryParams1166 shouldBe Seq(dateToKey -> "2019-04-05")
       }
 
@@ -63,8 +65,8 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
 
       "for all Query Params, outputs them all as expected" in {
         val queryParams = FinancialRequestQueryParameters(
-          fromDate = Some("2017-04-06"),
-          toDate = Some("2018-04-05"),
+          fromDate = Some(LocalDate.parse("2017-04-06")),
+          toDate = Some(LocalDate.parse("2018-04-05")),
           onlyOpenItems = Some(false)
         )
         queryParams.queryParams1166 shouldBe Seq(
@@ -81,8 +83,8 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
 
       "only open items is defined in the request then include cleared items should be set to the opposite" in {
         val queryParams = FinancialRequestQueryParameters(
-          fromDate = Some("2017-04-06"),
-          toDate = Some("2018-04-05"),
+          fromDate = Some(LocalDate.parse("2017-04-06")),
+          toDate = Some(LocalDate.parse("2018-04-05")),
           onlyOpenItems = Some(true)
         )
         queryParams.queryParams1811 shouldBe Seq(
@@ -102,8 +104,8 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
 
       "only open items is not defined in the request then include cleared items should be set to true" in {
         val queryParams = FinancialRequestQueryParameters(
-          fromDate = Some("2017-04-06"),
-          toDate = Some("2018-04-05"),
+          fromDate = Some(LocalDate.parse("2017-04-06")),
+          toDate = Some(LocalDate.parse("2018-04-05")),
           None
         )
         queryParams.queryParams1811 shouldBe Seq(

@@ -22,8 +22,10 @@ import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.API1811.TestConstants.fullFinancialTransactions
-import utils.ImplicitDateFormatter._
+
 import play.api.http.Status
+
+import java.time.LocalDate
 
 class FinancialTransactionsServiceSpec extends SpecBase with Mock1811FinancialDataConnector {
 
@@ -32,8 +34,8 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1811FinancialDa
   "The FinancialTransactionsService.getFinancialTransactions method" when {
 
     val queryParams: FinancialRequestQueryParameters = FinancialRequestQueryParameters(
-      fromDate = Some("2017-04-06"),
-      toDate = Some("2018-04-05"),
+      fromDate = Some(LocalDate.parse("2017-04-06")),
+      toDate = Some(LocalDate.parse("2018-04-05")),
       onlyOpenItems = Some(false)
     )
     val regime: TaxRegime = VatRegime("123456")

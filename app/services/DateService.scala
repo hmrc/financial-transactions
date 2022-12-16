@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package utils
+package services
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 
-object ImplicitDateFormatter {
+object DateService {
 
-  implicit def toLocalDate(s: String): LocalDate = stringToDate(s).toLocalDate
-  implicit def toZonedDateTime(s: String): ZonedDateTime = stringToDate(s).toZonedDateTime
-
-  implicit class stringToDate(s: String) {
-    def toLocalDate: LocalDate = LocalDate.parse(s, DateTimeFormatter.ofPattern("uuuu-M-d"))
-    def toZonedDateTime: ZonedDateTime = ZonedDateTime.parse(s, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+  def now(appConfig: config.AppConfig): LocalDate = {
+    if (appConfig.features.staticDate()) {
+      LocalDate.parse(appConfig.staticDateValue)
+    } else {
+      LocalDate.now()
+    }
   }
+
 }
