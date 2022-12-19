@@ -34,6 +34,9 @@ The service currently supports the following Tax Regimes:
 |Data Item|Type|Mandatory|    
 |-|-|-|  
 |financialTransactions|`Array[FinancialDetails]`|**true**|
+|hasOverdueChargeAndNoTTP|`Boolean`|**true**|
+
+The `hasOverdueChargeAndNoTTP` boolean will be `true` if a user has at least one overdue charge AND no payment lock reason of "Collected via TTP". In all other cases it will be `false`.
 
 ##### FinancialDetails object
 |Data Item|Type|Mandatory|    
@@ -98,7 +101,8 @@ Response Body:
             "accruingPenaltyAmount" : 66.66,  
             "penaltyType" : "LPP1"  
         }  
-    ]    
+    ],
+    "hasOverdueChargeAndNoTTP": true
 }    
 ```   
 #### Error Response
