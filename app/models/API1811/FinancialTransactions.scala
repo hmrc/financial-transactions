@@ -18,16 +18,33 @@ package models.API1811
 
 import config.AppConfig
 import play.api.libs.json._
+import services.DateService
 
 case class FinancialTransactions(documentDetails: Seq[DocumentDetails])
 
 object FinancialTransactions {
+
+  def hasOverdueChargeAndNoTTP(documentDetails: Seq[DocumentDetails])(implicit appConfig: AppConfig): Boolean = {
+    val currentDate = DateService.now
+    val hasOverdueCharge =
+      documentDetails.exists(_.lineItemDetails.exists(_.netDueDate.fold(false)(_.isBefore(currentDate))))
+    val hasTTPLock =
+      documentDetails.exists(_.lineItemDetails.exists(_.lineItemLockDetails.exists(_.lockType.contains("Collected via TTP"))))
+
+    (hasOverdueCharge, hasTTPLock) match {
+      case (true, false) => true
+      case _ => false
+    }
+  }
 
   implicit val reads: Reads[FinancialTransactions] =
     (__ \ "getFinancialData" \ "financialDetails" \ "documentDetails").read[Seq[DocumentDetails]]
       .map(FinancialTransactions.apply)
 
   implicit def writes(implicit appConfig: AppConfig): Writes[FinancialTransactions] = Writes { model =>
-    Json.obj("financialTransactions" -> Json.toJsFieldJsValueWrapper(model.documentDetails))
+    Json.obj(
+      "financialTransactions" -> Json.toJsFieldJsValueWrapper(model.documentDetails),
+      "hasOverdueChargeAndNoTTP" -> hasOverdueChargeAndNoTTP(model.documentDetails)
+    )
   }
 }

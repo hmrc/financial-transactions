@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package services
+package models.API1811
 
-import java.time.LocalDate
+import base.SpecBase
+import play.api.libs.json.Json
 
-object DateService {
+class LineItemLockDetailsSpec extends SpecBase {
 
-  def now(implicit appConfig: config.AppConfig): LocalDate = {
-    if (appConfig.features.staticDate()) {
-      LocalDate.parse(appConfig.staticDateValue)
-    } else {
-      LocalDate.now()
+  "LineItemLockDetails" should {
+
+    "read from JSON" in {
+      Json.obj("lockType" -> "Some lock reason").as[LineItemLockDetails] shouldBe LineItemLockDetails("Some lock reason")
     }
   }
-
 }

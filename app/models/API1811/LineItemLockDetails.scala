@@ -14,18 +14,12 @@
  * limitations under the License.
  */
 
-package services
+package models.API1811
 
-import java.time.LocalDate
+import play.api.libs.json.{Json, Reads}
 
-object DateService {
+case class LineItemLockDetails(lockType: String)
 
-  def now(implicit appConfig: config.AppConfig): LocalDate = {
-    if (appConfig.features.staticDate()) {
-      LocalDate.parse(appConfig.staticDateValue)
-    } else {
-      LocalDate.now()
-    }
-  }
-
+object LineItemLockDetails {
+  implicit val reads: Reads[LineItemLockDetails] = Json.reads[LineItemLockDetails]
 }

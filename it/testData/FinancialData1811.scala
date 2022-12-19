@@ -15,7 +15,7 @@
  */
 package testData
 
-import models.API1811.{DocumentDetails, Error, FinancialTransactions, LineItemDetails}
+import models.API1811.{DocumentDetails, Error, FinancialTransactions, LineItemDetails, LineItemLockDetails}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
 
@@ -94,7 +94,7 @@ object FinancialData1811 {
             "outgoingPaymentMethod" -> "B",
             "ddCollectionInProgress" -> true,
             "lineItemLockDetails" -> Json.arr(Json.obj(
-              "lockType" -> "Payment",
+              "lockType" -> "Some payment lock",
               "lockStartDate" -> "2022-01-01",
               "lockEndDate" -> "2022-01-01"
             )),
@@ -123,7 +123,8 @@ object FinancialData1811 {
     clearingDate = Some(LocalDate.parse("2022-02-09")),
     clearingReason = Some("Payment at External Payment Collector Reported"),
     clearingDocument = Some("719283701921"),
-    interestRate = Some(-999.99)
+    interestRate = Some(-999.99),
+    lineItemLockDetails = Seq(LineItemLockDetails("Some payment lock"))
   )
 
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(Seq(
@@ -173,6 +174,7 @@ object FinancialData1811 {
       "interestRate" -> -999.99,
       "accruingPenaltyAmount" -> 10.01,
       "penaltyType" -> "LPP1"
-    ))
+    )),
+    "hasOverdueChargeAndNoTTP" -> false
   )
 }
