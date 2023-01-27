@@ -16,17 +16,35 @@
 
 package models.API1812
 
+import config.AppConfig
 import models.API1812.latePaymentPenalty.LatePaymentPenalty
-import play.api.libs.functional.syntax.unlift
-import play.api.libs.json.{Reads, Writes, __}
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json.{Json, Reads, Writes, __}
+import services.DateService
 
-case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]])
+case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]],
+                          breathingSpace: Option[Seq[BreathingSpace]]) {
+
+  def hasBreathingSpace(implicit appConfig: AppConfig): Boolean =
+    breathingSpace.fold(false)(_.exists { bs =>
+      (bs.BSStartDate.isBefore(DateService.now) || bs.BSStartDate.isEqual(DateService.now)) &&
+      (bs.BSEndDate.isAfter(DateService.now) || bs.BSEndDate.isEqual(DateService.now))
+    })
+
+}
 
 object PenaltyDetails {
 
-  implicit val reads: Reads[PenaltyDetails] =
-    (__ \ "latePaymentPenalty" \ "details").readNullable[Seq[LatePaymentPenalty]].map(PenaltyDetails.apply)
+  implicit val reads: Reads[PenaltyDetails] = (
+    (__ \ "latePaymentPenalty" \ "details").readNullable[Seq[LatePaymentPenalty]] and
+    (__ \ "breathingSpace").readNullable[Seq[BreathingSpace]]
+  )(PenaltyDetails.apply _)
 
-  implicit val writes: Writes[PenaltyDetails] =
-    (__ \ "LPPDetails").writeNullable[Seq[LatePaymentPenalty]].contramap(unlift(PenaltyDetails.unapply))
+  implicit def writes(implicit appConfig: AppConfig): Writes[PenaltyDetails] = { model =>
+    Json.obj(
+      "LPPDetails" -> Json.toJsFieldJsValueWrapper(model.LPPDetails.getOrElse(Seq())),
+      "breathingSpace" -> model.hasBreathingSpace
+    )
+  }
+
 }
