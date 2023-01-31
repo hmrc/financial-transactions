@@ -27,7 +27,7 @@ import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
-import utils.TestConstantsAPI1812.{LPPJsonMax, penaltyDetailsModelMax, writtenLPPJson}
+import utils.TestConstantsAPI1812.{penaltyDetailsModelMax, writtenPenDetailsMaxJson}
 
 class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsService with MockMicroserviceAuthorisedFunctions {
 
@@ -58,7 +58,7 @@ class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsServi
         }
 
         "return a json body with the penalty details information" in {
-          contentAsJson(result) shouldBe writtenLPPJson(LPPJsonMax)
+          contentAsJson(result) shouldBe writtenPenDetailsMaxJson(breathingSpace = false)
         }
       }
 

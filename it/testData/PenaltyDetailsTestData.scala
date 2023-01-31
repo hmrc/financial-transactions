@@ -16,8 +16,9 @@
 
 package testData
 
-import models.API1812.Error
-import models.API1812.PenaltyDetails
+import java.time.LocalDate
+
+import models.API1812.{BreathingSpace, Error, PenaltyDetails}
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
@@ -38,13 +39,29 @@ object PenaltyDetailsTestData {
     "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ"
   )
 
+  val breathingSpaceJson: JsObject = Json.obj(
+    "BSStartDate" -> "2017-04-06",
+    "BSEndDate" -> "2017-06-30"
+  )
+
   val penaltyDetailsAPIJson: JsObject = Json.obj(
     "latePaymentPenalty" -> Json.obj(
       "details" -> Json.arr(LPPJson)
-    )
+    ),
+    "breathingSpace" -> Json.arr(breathingSpaceJson)
   )
 
-  val penaltyDetailsWrittenJson: JsObject = Json.obj("LPPDetails" -> Json.arr(LPPJson))
+  val penaltyDetailsAPIJsonBSOnly: JsObject = Json.obj(
+    "breathingSpace" -> Json.arr(breathingSpaceJson)
+  )
+
+  val penaltyDetailsWrittenJson: JsObject = Json.obj(
+    "LPPDetails" -> Json.arr(LPPJson), "breathingSpace" -> false
+  )
+
+  val penaltyDetailsWrittenJsonBSOnly: JsObject = Json.obj(
+    "LPPDetails" -> Json.arr(), "breathingSpace" -> false
+  )
 
   val LPPModel: LatePaymentPenalty = LatePaymentPenalty(
     principalChargeReference = "ABCDEFGHIJKLMNOP",
@@ -60,7 +77,10 @@ object PenaltyDetailsTestData {
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ")
   )
 
-  val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModel)))
+  val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(
+    Some(Seq(LPPModel)),
+    Some(Seq(BreathingSpace(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-06-30"))))
+  )
 
   val errorJson: JsObject = Json.obj(
     "failures" -> Json.arr(Json.obj(

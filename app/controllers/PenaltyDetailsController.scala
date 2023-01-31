@@ -16,8 +16,9 @@
 
 package controllers
 
-import config.RegimeKeys
+import config.{MicroserviceAppConfig, RegimeKeys}
 import controllers.actions.AuthAction
+import javax.inject.{Inject, Singleton}
 import models.API1166.InvalidTaxRegime
 import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.libs.json.Json
@@ -27,13 +28,12 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class PenaltyDetailsController @Inject()(authenticate: AuthAction,
                                          penaltyDetailsService: PenaltyDetailsService,
                                          cc: ControllerComponents)
-                                        (implicit ec: ExecutionContext) extends BackendController(cc) with LoggerUtil {
+                                        (implicit ec: ExecutionContext, appConfig: MicroserviceAppConfig) extends BackendController(cc) with LoggerUtil {
 
   def getPenaltyDetails(idType: String,
                         idValue: String,

@@ -210,6 +210,7 @@ Response Body:
 |Data Item|Type|Mandatory|    
 |-|-|-|    
 |LPPDetails|`Array[LatePaymentPenalty]`|**true**|
+|breathingSpace|`Boolean`|**true**|
 
 ##### LatePaymentPenalty object
 
@@ -248,30 +249,15 @@ Response Body:
             "LPP2Percentage": 5.5,    
             "penaltyChargeReference": "BCDEFGHIJKLMNOPQ"    
         }    
-    ]    
-}    
+    ],
+    "breathingSpace": false
+}
 ```   
 #### Error Response
 
 ##### Response Object
 
-|Data Item|Type|Mandatory|    
-|-|-|-|    
-|code|`Int`|**true**|
-|reason|`String`|**true**|
-
-#### Example
-
-The following response will be returned if the downstream API has returned a successful response, but there were no LPP details provided:
-```
-{    
-    "code": 404,    
-    "reason": "No LPP data was found"    
-}    
-```
-Any other errors will be generated based on data from the downstream API call, where `code` contains the HTTP status code and the `reason` contains the JSON body.
-
-
+Errors will be generated based on data from the downstream API call, where `code` contains the HTTP status code and the `reason` contains the JSON body.
 
 ## Requirements
 

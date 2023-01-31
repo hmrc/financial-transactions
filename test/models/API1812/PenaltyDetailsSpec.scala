@@ -29,25 +29,84 @@ class PenaltyDetailsSpec extends SpecBase {
       result.LPPDetails.isEmpty shouldBe true
     }
 
+    "parse JSON to an empty array and breathing space details when BS json is in the response" in {
+      val result = apiLPPJsonNoPen.as[PenaltyDetails]
+      result shouldBe penaltyDetailsModelNoPen
+    }
+
     "parse a JSON array of LPP details to a sequence correctly" when {
 
       "optional fields are present" in {
-        apiLPPJson(LPPJsonMax).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
+        apiLPPJson(LPPJsonMax, breathingSpaceJSONNoBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
       }
 
       "optional fields are missing" in {
-        apiLPPJson(LPPJsonMin).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
+        apiLPPJson(LPPJsonMin, breathingSpaceJSONNoBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
       }
     }
 
     "serialize to JSON" when {
 
       "optional fields are present" in {
-        Json.toJson(penaltyDetailsModelMax) shouldBe writtenLPPJson(LPPJsonMax)
+        Json.toJson(penaltyDetailsModelMax) shouldBe writtenPenDetailsMaxJson(breathingSpace = false)
       }
 
       "optional fields are missing" in {
-        Json.toJson(penaltyDetailsModelMin) shouldBe writtenLPPJson(LPPJsonMin)
+        Json.toJson(penaltyDetailsModelMinNoBS) shouldBe writtenPenDetailsMinJson(breathingSpace = false)
+      }
+
+      "user has breathing space" in {
+        Json.toJson(penaltyDetailsModelInBS) shouldBe writtenPenDetailsMinJson(breathingSpace = true)
+      }
+    }
+
+  }
+
+  "hasBreathingSpace" should {
+
+    "return true" when {
+
+      "user is well within breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS))).hasBreathingSpace shouldBe true
+      }
+
+      "user is on the first day of breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(firstDayBS))).hasBreathingSpace shouldBe true
+      }
+
+      "user is on the last day of breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(lastDayBS))).hasBreathingSpace shouldBe true
+      }
+
+      "user is in the first of 2 breathing space periods" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS, outOfBS))).hasBreathingSpace shouldBe true
+      }
+    }
+
+    "return false" when {
+
+      "user's breathing space ended yesterday" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(BSEndYesterday))).hasBreathingSpace shouldBe false
+      }
+
+      "user's breathing space will begin tomorrow" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(BSBeginTomorrow))).hasBreathingSpace shouldBe false
+      }
+
+      "user has been out of breathing space for some time" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS))).hasBreathingSpace shouldBe false
+      }
+
+      "user is due to go into breathing space in the future" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(futureBS))).hasBreathingSpace shouldBe false
+      }
+
+      "user has no breathing space data" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None).hasBreathingSpace shouldBe false
+      }
+
+      "user is between 2 breathing space periods" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS, futureBS))).hasBreathingSpace shouldBe false
       }
     }
   }

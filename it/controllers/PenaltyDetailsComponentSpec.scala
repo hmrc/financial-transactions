@@ -21,6 +21,7 @@ import helpers.ComponentSpecBase
 import helpers.servicemocks.EISPenaltyDetailsStub
 import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.http.Status._
+import play.api.libs.json.Json
 import testData.PenaltyDetailsTestData
 
 class PenaltyDetailsComponentSpec extends ComponentSpecBase {
@@ -28,10 +29,9 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
   "Sending a request to /financial-transactions/penalty/:regime/:identifier (FinancialTransactions controller)" when {
 
     val vatRegime = VatRegime("123456789")
+    lazy val queryParameters = PenaltyDetailsQueryParameters(dateLimit = Some(2))
 
     "a successful response is returned by the API" should {
-
-      lazy val queryParameters = PenaltyDetailsQueryParameters(dateLimit = Some(2))
 
       "return a success response" in {
 
@@ -51,6 +51,47 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
         )
       }
     }
+
+    "the API returns a success response with breathing space but no penalty data" should {
+
+      "return a success response with the breathing space data and no penalty data" in {
+
+        isAuthorised()
+        And("I wiremock stub a successful Get Penalty Details response")
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(OK, PenaltyDetailsTestData.penaltyDetailsAPIJsonBSOnly)
+        When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
+        val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+        Then("a successful response is returned with a BS boolean and no penalty data")
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(PenaltyDetailsTestData.penaltyDetailsWrittenJsonBSOnly)
+        )
+
+      }
+    }
+
+    "the API returns a success response with empty JSON" should {
+
+      "return a success response with the breathing space boolean" in {
+
+        isAuthorised()
+        And("I wiremock stub a successful Get Penalty Details response")
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(OK, Json.obj())
+        When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
+        val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+        Then("a successful response is returned with a BS boolean and no penalty data")
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(PenaltyDetailsTestData.penaltyDetailsWrittenJsonBSOnly)
+        )
+
+      }
+    }
+
 
     "an unsuccessful response is returned by the API" should {
 
