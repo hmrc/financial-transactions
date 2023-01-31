@@ -16,13 +16,16 @@
 
 package connectors.API1812
 
+import config.RegimeKeys
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
 import helpers.ComponentSpecBase
+import helpers.servicemocks.EISPenaltyDetailsStub
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, REQUEST_TIMEOUT}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import testData.PenaltyDetailsTestData
 import testData.PenaltyDetailsTestData.{penaltyDetailsAPIJson, penaltyDetailsModel}
 
 class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
@@ -49,6 +52,22 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
         val result: PenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))
 
         result shouldBe Right(expectedResult)
+      }
+
+      "a success response with time to pay but no penalty data is returned" should {
+
+        isAuthorised()
+        And("I wiremock stub a successful Get Penalty Details response")
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(OK, PenaltyDetailsTestData.penaltyDetailsTTPOnlyJson)
+        When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
+        val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+        Then("a successful response is returned with a time to pay boolean and no penalty data")
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(PenaltyDetailsTestData.penaltyDetailsWrittenTTPOnlyJson)
+        )
       }
     }
 

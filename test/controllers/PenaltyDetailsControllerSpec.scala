@@ -58,7 +58,7 @@ class PenaltyDetailsControllerSpec extends SpecBase with MockPenaltyDetailsServi
         }
 
         "return a json body with the penalty details information" in {
-          contentAsJson(result) shouldBe writtenPenDetailsMaxJson(breathingSpace = false)
+          contentAsJson(result) shouldBe writtenPenDetailsMaxJson(breathingSpace = false, timeToPay = false)
         }
       }
 

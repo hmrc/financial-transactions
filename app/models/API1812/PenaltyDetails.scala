@@ -23,7 +23,8 @@ import play.api.libs.json.{Json, Reads, Writes, __}
 import services.DateService
 
 case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]],
-                          breathingSpace: Option[Seq[BreathingSpace]]) {
+                          breathingSpace: Option[Seq[BreathingSpace]],
+                          timeToPay: Option[Seq[TimeToPay]]) {
 
   def hasBreathingSpace(implicit appConfig: AppConfig): Boolean =
     breathingSpace.fold(false)(_.exists { bs =>
@@ -31,20 +32,25 @@ case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]],
       (bs.BSEndDate.isAfter(DateService.now) || bs.BSEndDate.isEqual(DateService.now))
     })
 
+  def hasTimeToPay(implicit appConfig: AppConfig): Boolean = timeToPay.fold(false)(_.exists { ttp =>
+    (ttp.TTPStartDate.isBefore(DateService.now) || ttp.TTPStartDate.isEqual(DateService.now)) &&
+      (ttp.TTPEndDate.isAfter(DateService.now) || ttp.TTPEndDate.isEqual(DateService.now))
+  })
 }
 
 object PenaltyDetails {
 
   implicit val reads: Reads[PenaltyDetails] = (
     (__ \ "latePaymentPenalty" \ "details").readNullable[Seq[LatePaymentPenalty]] and
-    (__ \ "breathingSpace").readNullable[Seq[BreathingSpace]]
+    (__ \ "breathingSpace").readNullable[Seq[BreathingSpace]] and
+    (__ \ "timeToPay").readNullable[Seq[TimeToPay]]
   )(PenaltyDetails.apply _)
 
   implicit def writes(implicit appConfig: AppConfig): Writes[PenaltyDetails] = { model =>
     Json.obj(
       "LPPDetails" -> Json.toJsFieldJsValueWrapper(model.LPPDetails.getOrElse(Seq())),
-      "breathingSpace" -> model.hasBreathingSpace
+      "breathingSpace" -> model.hasBreathingSpace,
+      "timeToPay" -> model.hasTimeToPay
     )
   }
-
 }

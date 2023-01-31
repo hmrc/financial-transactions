@@ -71,14 +71,16 @@ object TestConstantsAPI1812 {
     None
   )
 
-  def writtenPenDetailsMaxJson(breathingSpace: Boolean): JsObject = Json.obj(
+  def writtenPenDetailsMaxJson(breathingSpace: Boolean, timeToPay: Boolean): JsObject = Json.obj(
     "LPPDetails" -> Json.arr(LPPJsonMax),
-    "breathingSpace" -> breathingSpace
+    "breathingSpace" -> breathingSpace,
+    "timeToPay" -> timeToPay
   )
 
-  def writtenPenDetailsMinJson(breathingSpace: Boolean): JsObject = Json.obj(
+  def writtenPenDetailsMinJson(breathingSpace: Boolean, timeToPay: Boolean): JsObject = Json.obj(
     "LPPDetails" -> Json.arr(LPPJsonMin),
-    "breathingSpace" -> breathingSpace
+    "breathingSpace" -> breathingSpace,
+    "timeToPay" -> timeToPay
   )
 
   val inBS           : BreathingSpace = BreathingSpace(LocalDate.parse("2018-04-01"), LocalDate.parse("2018-06-30"))
@@ -89,12 +91,12 @@ object TestConstantsAPI1812 {
   val outOfBS        : BreathingSpace = BreathingSpace(LocalDate.parse("2018-03-01"), LocalDate.parse("2018-04-01"))
   val futureBS       : BreathingSpace = BreathingSpace(LocalDate.parse("2018-07-01"), LocalDate.parse("2018-08-01"))
 
-  val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)))
-  val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None)
-  val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)))
-  val penaltyDetailsModelNoPen: PenaltyDetails = PenaltyDetails(None, Some(Seq(outOfBS)))
-  val penaltyDetailsModelInBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)))
-  val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None)
+  val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)), None)
+  val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None, None)
+  val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)), None)
+  val penaltyDetailsModelNoPen: PenaltyDetails = PenaltyDetails(None, Some(Seq(outOfBS)), None)
+  val penaltyDetailsModelInBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)), None)
+  val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None, None)
 
   def apiLPPJson(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
     "latePaymentPenalty" -> Json.obj(
@@ -106,6 +108,11 @@ object TestConstantsAPI1812 {
   val breathingSpaceJSON: JsObject = Json.obj(
     "BSStartDate" -> "2017-04-06",
     "BSEndDate" -> "2017-06-30"
+  )
+
+  def writtenLPPJson(LPPJson: JsObject, timeToPay: Boolean): JsValue = Json.obj(
+    "LPPDetails" -> Json.arr(LPPJson),
+    "timeToPay" -> timeToPay
   )
 
   val breathingSpaceJSONNoBS: JsObject = Json.obj(

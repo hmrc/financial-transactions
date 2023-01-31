@@ -18,10 +18,12 @@ package testData
 
 import java.time.LocalDate
 
-import models.API1812.{BreathingSpace, Error, PenaltyDetails}
+import models.API1812.{BreathingSpace, Error, PenaltyDetails, TimeToPay}
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
+
+import java.time.LocalDate
 
 object PenaltyDetailsTestData {
 
@@ -44,11 +46,17 @@ object PenaltyDetailsTestData {
     "BSEndDate" -> "2017-06-30"
   )
 
+  val timeToPayJson: JsObject = Json.obj(
+    "TTPStartDate" -> "2017-07-07",
+    "TTPEndDate" -> "2017-08-31"
+  )
+
   val penaltyDetailsAPIJson: JsObject = Json.obj(
     "latePaymentPenalty" -> Json.obj(
       "details" -> Json.arr(LPPJson)
     ),
-    "breathingSpace" -> Json.arr(breathingSpaceJson)
+    "breathingSpace" -> Json.arr(breathingSpaceJson),
+    "timeToPay" -> Json.arr(timeToPayJson)
   )
 
   val penaltyDetailsAPIJsonBSOnly: JsObject = Json.obj(
@@ -56,11 +64,21 @@ object PenaltyDetailsTestData {
   )
 
   val penaltyDetailsWrittenJson: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(LPPJson), "breathingSpace" -> false
+    "LPPDetails" -> Json.arr(LPPJson), "breathingSpace" -> false, "timeToPay" -> false
   )
 
   val penaltyDetailsWrittenJsonBSOnly: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(), "breathingSpace" -> false
+    "LPPDetails" -> Json.arr(),
+    "breathingSpace" -> false,
+    "timeToPay" -> Json.arr(timeToPayJson)
+  )
+
+  val penaltyDetailsTTPOnlyJson: JsObject = Json.obj(
+    "timeToPay" -> Json.arr(timeToPayJson)
+  )
+
+  val penaltyDetailsWrittenTTPOnlyJson: JsObject = Json.obj(
+    "LPPDetails" -> Json.arr(), "timeToPay" -> false
   )
 
   val LPPModel: LatePaymentPenalty = LatePaymentPenalty(
@@ -79,7 +97,8 @@ object PenaltyDetailsTestData {
 
   val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(
     Some(Seq(LPPModel)),
-    Some(Seq(BreathingSpace(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-06-30"))))
+    Some(Seq(BreathingSpace(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-06-30")))),
+    Some(Seq(TimeToPay(LocalDate.parse("2017-07-07"), LocalDate.parse("2017-08-31"))))
   )
 
   val errorJson: JsObject = Json.obj(

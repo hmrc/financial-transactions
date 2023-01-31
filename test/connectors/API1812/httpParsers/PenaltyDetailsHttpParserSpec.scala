@@ -42,7 +42,7 @@ class PenaltyDetailsHttpParserSpec extends SpecBase {
     "the http response status is 200 OK with no LPP JSON" should {
 
       val httpResponse = HttpResponse(OK, Json.obj().toString)
-      val expected = Right(PenaltyDetails(None, None))
+      val expected = Right(PenaltyDetails(None, None, None))
       val result = PenaltyDetailsReads.read("", "", httpResponse)
 
       "return an empty PenaltyDetails instance" in {
