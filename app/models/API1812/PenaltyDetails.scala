@@ -33,8 +33,8 @@ case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]],
     })
 
   def hasTimeToPay(implicit appConfig: AppConfig): Boolean = timeToPay.fold(false)(_.exists { ttp =>
-    (ttp.TTPStartDate.isBefore(DateService.now) || ttp.TTPStartDate.isEqual(DateService.now)) &&
-      (ttp.TTPEndDate.isAfter(DateService.now) || ttp.TTPEndDate.isEqual(DateService.now))
+    (!ttp.TTPStartDate.isAfter(DateService.now)) &&
+      (!ttp.TTPEndDate.isBefore(DateService.now))
   })
 }
 
