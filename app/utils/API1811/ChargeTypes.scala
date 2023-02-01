@@ -29,6 +29,7 @@ object ChargeTypes extends LoggerUtil {
   val vatInterestSubTrans = "1175"
   val securityDepositSubTrans = "3160"
   val onAccountSubTrans = "0100"
+  val vatInterestRepaymentsSubTrans = "1176"
 
   private val establishedChargeTypes: Map[(String, String), String] = Map(
     ("0060", onAccountSubTrans) -> "Payment on account",
@@ -43,12 +44,12 @@ object ChargeTypes extends LoggerUtil {
     ("4707", vatInterestSubTrans) -> "VAT AA Default Interest",
     ("4708", vatInterestSubTrans) -> "VAT PA Default Interest",
     ("4709", vatInterestSubTrans) -> "VAT Repayment Supplement Rec",
-    ("4710", "") -> "VAT Repayment Supplement",                                         // TODO
+    ("4710", vatInterestRepaymentsSubTrans) -> "VAT Repayment Supplement",
     ("4711", vatDebitSubTrans) -> "VAT Indirect Tax Revenue Rec",
-    ("4715", "") -> "VAT Statutory Interest",                                           // TODO
+    ("4715", vatInterestRepaymentsSubTrans) -> "VAT Statutory Interest",
     ("4720", vatDebitSubTrans) -> "VAT Central Assessment",
-    ("4721", "") -> "VAT Default Interest",                                             // TODO
-    ("4722", "") -> "VAT Further Interest",                                             // TODO
+    ("4721", vatInterestSubTrans) -> "VAT Default Interest",
+    ("4722", vatInterestSubTrans) -> "VAT Further Interest",
     ("4725", vatInterestSubTrans) -> "VAT OA Further Interest",
     ("4726", vatInterestSubTrans) -> "VAT AA Further Interest",
     ("4727", vatInterestSubTrans) -> "VAT EC Further Interest",
@@ -64,7 +65,7 @@ object ChargeTypes extends LoggerUtil {
     ("4745", penaltyDebitSubTrans) -> "VAT Civil Evasion Penalty",
     ("4747", penaltyDebitSubTrans) -> "VAT Debit Default Surcharge",
     ("4747", penaltyCreditSubTrans) -> "VAT Credit Default Surcharge",
-    ("4751", "") -> "VAT Unrepayable Overpayment",                                      // TODO
+    ("4751", vatDebitSubTrans) -> "VAT Unrepayable Overpayment",
     ("4753", vatDebitSubTrans) -> "VAT POA Instalments",
     ("4755", penaltyDebitSubTrans) -> "VAT Inaccuracy Assessments pen",
     ("4756", vatDebitSubTrans) -> "VAT AA Quarterly Instalments",
