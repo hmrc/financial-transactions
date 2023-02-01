@@ -211,6 +211,7 @@ Response Body:
 |-|-|-|    
 |LPPDetails|`Array[LatePaymentPenalty]`|**true**|
 |breathingSpace|`Boolean`|**true**|
+|timeToPay|`Boolean`|**true**|
 
 ##### LatePaymentPenalty object
 
@@ -250,7 +251,8 @@ Response Body:
             "penaltyChargeReference": "BCDEFGHIJKLMNOPQ"    
         }    
     ],
-    "breathingSpace": false
+    "breathingSpace": false,
+    "timeToPay": false
 }
 ```   
 #### Error Response
