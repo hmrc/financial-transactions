@@ -29,7 +29,7 @@ class PenaltyDetailsSpec extends SpecBase {
       result.LPPDetails.isEmpty shouldBe true
     }
 
-    "parse JSON to an empty array and breathing space details when BS json is in the response" in {
+    "parse JSON to an empty array and breathing space details when BS json and TTP json are in the response" in {
       val result = apiLPPJsonNoPen.as[PenaltyDetails]
       result shouldBe penaltyDetailsModelNoPen
     }
@@ -37,11 +37,11 @@ class PenaltyDetailsSpec extends SpecBase {
     "parse a JSON array of LPP details to a sequence correctly" when {
 
       "optional fields are present" in {
-        apiLPPJson(LPPJsonMax, breathingSpaceJSONNoBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
+        apiLPPJson(LPPJsonMax, breathingSpaceJSONAfterBS, timeToPayJsonAfterTTP).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
       }
 
       "optional fields are missing" in {
-        apiLPPJson(LPPJsonMin, breathingSpaceJSONNoBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
+        apiLPPJson(LPPJsonMin, breathingSpaceJSONAfterBS, timeToPayJsonAfterTTP).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
       }
     }
 
@@ -57,6 +57,14 @@ class PenaltyDetailsSpec extends SpecBase {
 
       "user has breathing space" in {
         Json.toJson(penaltyDetailsModelInBS) shouldBe writtenPenDetailsMinJson(breathingSpace = true, timeToPay = false)
+      }
+
+      "user has time to pay" in {
+        Json.toJson(penaltyDetailsModelInTTP) shouldBe writtenPenDetailsMinJson(breathingSpace = false, timeToPay = true)
+      }
+
+      "the user has both breathing space and time to pay" in {
+        Json.toJson(penaltyDetailsModelInBSAndTTP) shouldBe writtenPenDetailsMinJson(breathingSpace = true, timeToPay = true)
       }
     }
 
@@ -80,6 +88,10 @@ class PenaltyDetailsSpec extends SpecBase {
 
       "user is in the first of 2 breathing space periods" in {
         PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS, outOfBS)), None).hasBreathingSpace shouldBe true
+      }
+
+      "the user is in both breathing space and time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)), Some(Seq(inTTP))).hasBreathingSpace shouldBe true
       }
     }
 
@@ -107,6 +119,83 @@ class PenaltyDetailsSpec extends SpecBase {
 
       "user is between 2 breathing space periods" in {
         PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS, futureBS)), None).hasBreathingSpace shouldBe false
+      }
+
+      "the user is in time to pay instead of breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(inTTP))).hasBreathingSpace shouldBe false
+      }
+
+      "the user is between breathing space and time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)), Some(Seq(futureTTP))).hasBreathingSpace shouldBe false
+      }
+
+      "the user is between time time to pay and breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(futureBS)), Some(Seq(outOfTTP))).hasBreathingSpace shouldBe false
+      }
+    }
+  }
+
+  "hasTimeToPay" should {
+
+    "return true" when {
+
+      "user is well within time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(inTTP))).hasTimeToPay shouldBe true
+      }
+
+      "user is on the first day of time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(firstDayTTP))).hasTimeToPay shouldBe true
+      }
+
+      "user is on the last day of time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(lastDayTTP))).hasTimeToPay shouldBe true
+      }
+
+      "user is in the first of 2 time to pay space periods" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(inTTP, outOfTTP))).hasTimeToPay shouldBe true
+      }
+
+      "the user is in both breathing space and time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)), Some(Seq(inTTP))).hasTimeToPay shouldBe true
+      }
+    }
+
+    "return false" when {
+
+      "user's time to pay ended yesterday" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(TTPEndYesterday))).hasTimeToPay shouldBe false
+      }
+
+      "user's time to pay will begin tomorrow" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(TTPBeginTomorrow))).hasTimeToPay shouldBe false
+      }
+
+      "user has been out of time to pay for some time" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(outOfTTP))).hasTimeToPay shouldBe false
+      }
+
+      "user is due to go into time to pay in the future" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(futureTTP))).hasTimeToPay shouldBe false
+      }
+
+      "user has no time to pay data" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, None).hasTimeToPay shouldBe false
+      }
+
+      "user is between 2 time to pay periods" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(outOfTTP, futureTTP))).hasTimeToPay shouldBe false
+      }
+
+      "the user is in breathing space instead of time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)), None).hasTimeToPay shouldBe false
+      }
+
+      "the user is between breathing space and time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)), Some(Seq(futureTTP))).hasTimeToPay shouldBe false
+      }
+
+      "the user is between time time to pay and breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(futureBS)), Some(Seq(outOfTTP))).hasTimeToPay shouldBe false
       }
     }
   }

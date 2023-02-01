@@ -32,7 +32,7 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
     val regime: TaxRegime = VatRegime("123456789")
     val service = new PenaltyDetailsService(mockPenaltyDetailsConnector)
 
-    "the connector returns a success response with LPP and breathing space items in the array" should {
+    "the connector returns a success response with LPP, breathing space items in the array and time to pay items in the array" should {
 
       "return the same response" in {
         val successResponse = Right(penaltyDetailsModelMax)
@@ -43,7 +43,7 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
       }
     }
 
-    "the connector returns a success response with no LPP and breathing space items" should {
+    "the connector returns a success response with no LPP but breathing space items and time to pay items" should {
 
       "return the same response" in {
         val successResponse = Right(penaltyDetailsModelNoPen)

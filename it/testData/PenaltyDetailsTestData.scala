@@ -23,8 +23,6 @@ import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPen
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
 
-import java.time.LocalDate
-
 object PenaltyDetailsTestData {
 
   val LPPJson: JsObject = Json.obj(
@@ -70,7 +68,7 @@ object PenaltyDetailsTestData {
   val penaltyDetailsWrittenJsonBSOnly: JsObject = Json.obj(
     "LPPDetails" -> Json.arr(),
     "breathingSpace" -> false,
-    "timeToPay" -> Json.arr(timeToPayJson)
+    "timeToPay" -> false
   )
 
   val penaltyDetailsTTPOnlyJson: JsObject = Json.obj(
@@ -78,7 +76,7 @@ object PenaltyDetailsTestData {
   )
 
   val penaltyDetailsWrittenTTPOnlyJson: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(), "timeToPay" -> false
+    "LPPDetails" -> Json.arr(), "breathingSpace" -> false, "timeToPay" -> false
   )
 
   val LPPModel: LatePaymentPenalty = LatePaymentPenalty(

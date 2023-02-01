@@ -72,9 +72,28 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
       }
     }
 
+    "the API returns a success response with time to pay but no penalty data" should {
+
+      "return a success response with the time to pay data and no penalty data" in {
+
+        isAuthorised()
+        And("I wiremock stub a successful Get Penalty Details response")
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(OK, PenaltyDetailsTestData.penaltyDetailsTTPOnlyJson)
+        When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
+        val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+        Then("a successful response is returned with a BS boolean and no penalty data")
+        res should have(
+          httpStatus(OK),
+          jsonBodyAs(PenaltyDetailsTestData.penaltyDetailsWrittenTTPOnlyJson)
+        )
+      }
+    }
+
     "the API returns a success response with empty JSON" should {
 
-      "return a success response with the breathing space boolean" in {
+      "return a success response with the breathing space boolean and the time to pay boolean" in {
 
         isAuthorised()
         And("I wiremock stub a successful Get Penalty Details response")
