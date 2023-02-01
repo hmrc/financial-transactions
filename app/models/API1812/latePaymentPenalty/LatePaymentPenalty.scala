@@ -16,7 +16,10 @@
 
 package models.API1812.latePaymentPenalty
 
-import play.api.libs.json.{Format, Json}
+import config.AppConfig
+import models.API1812.TimeToPay
+import play.api.libs.json.{Json, Reads, Writes}
+import services.DateService
 
 case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyCategory: LPPPenaltyCategoryEnum.Value,
@@ -28,8 +31,33 @@ case class LatePaymentPenalty(principalChargeReference: String,
                               LPP1HRPercentage: Option[Double],
                               LPP2Days: Option[String],
                               LPP2Percentage: Option[Double],
-                              penaltyChargeReference: Option[String])
+                              penaltyChargeReference: Option[String],
+                              timeToPay: Option[Seq[TimeToPay]]) {
+
+  def hasTimeToPay(implicit appConfig: AppConfig): Boolean = timeToPay.fold(false)(_.exists { ttp =>
+    (!ttp.TTPStartDate.isAfter(DateService.now)) &&
+      (!ttp.TTPEndDate.isBefore(DateService.now))
+  })
+}
 
 object LatePaymentPenalty {
-  implicit val format: Format[LatePaymentPenalty] = Json.format[LatePaymentPenalty]
+
+  implicit val reads: Reads[LatePaymentPenalty] = Json.reads[LatePaymentPenalty]
+
+  implicit def writes(implicit appConfig: AppConfig): Writes[LatePaymentPenalty] = { model =>
+    Json.obj(
+      "principalChargeReference" -> Json.toJsFieldJsValueWrapper(model.principalChargeReference),
+      "penaltyCategory" -> Json.toJsFieldJsValueWrapper(model.penaltyCategory),
+      "LPP1LRCalculationAmount" -> Json.toJsFieldJsValueWrapper(model.LPP1LRCalculationAmount),
+      "LPP1LRDays" -> Json.toJsFieldJsValueWrapper(model.LPP1LRDays),
+      "LPP1LRPercentage" -> Json.toJsFieldJsValueWrapper(model.LPP1LRPercentage),
+      "LPP1HRCalculationAmount" -> Json.toJsFieldJsValueWrapper(model.LPP1HRCalculationAmount),
+      "LPP1HRDays" -> Json.toJsFieldJsValueWrapper(model.LPP1HRDays),
+      "LPP1HRPercentage" -> Json.toJsFieldJsValueWrapper(model.LPP1HRPercentage),
+      "LPP2Days" -> Json.toJsFieldJsValueWrapper(model.LPP2Days),
+      "LPP2Percentage" -> Json.toJsFieldJsValueWrapper(model.LPP2Percentage),
+      "penaltyChargeReference" -> Json.toJsFieldJsValueWrapper(model.penaltyChargeReference),
+      "timeToPay" -> model.hasTimeToPay
+    )
+  }
 }

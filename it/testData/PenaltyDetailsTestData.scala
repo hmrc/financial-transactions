@@ -25,6 +25,11 @@ import play.api.http.Status
 
 object PenaltyDetailsTestData {
 
+  val timeToPayJson: JsObject = Json.obj(
+    "TTPStartDate" -> "2017-07-07",
+    "TTPEndDate" -> "2017-08-31"
+  )
+
   val LPPJson: JsObject = Json.obj(
     "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
     "penaltyCategory" -> "LPP1",
@@ -36,7 +41,23 @@ object PenaltyDetailsTestData {
     "LPP1HRPercentage" -> 4.2,
     "LPP2Days" -> "31",
     "LPP2Percentage" -> 5.5,
-    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ"
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> Json.arr(timeToPayJson)
+  )
+
+  val LPPJsonWritten: JsObject = Json.obj(
+    "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
+    "penaltyCategory" -> "LPP1",
+    "LPP1LRCalculationAmount" -> 100.11,
+    "LPP1LRDays" -> "15",
+    "LPP1LRPercentage" -> 2.4,
+    "LPP1HRCalculationAmount" -> 200.22,
+    "LPP1HRDays" -> "30",
+    "LPP1HRPercentage" -> 4.2,
+    "LPP2Days" -> "31",
+    "LPP2Percentage" -> 5.5,
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> true
   )
 
   val breathingSpaceJson: JsObject = Json.obj(
@@ -44,17 +65,11 @@ object PenaltyDetailsTestData {
     "BSEndDate" -> "2017-06-30"
   )
 
-  val timeToPayJson: JsObject = Json.obj(
-    "TTPStartDate" -> "2017-07-07",
-    "TTPEndDate" -> "2017-08-31"
-  )
-
   val penaltyDetailsAPIJson: JsObject = Json.obj(
     "latePaymentPenalty" -> Json.obj(
       "details" -> Json.arr(LPPJson)
     ),
-    "breathingSpace" -> Json.arr(breathingSpaceJson),
-    "timeToPay" -> Json.arr(timeToPayJson)
+    "breathingSpace" -> Json.arr(breathingSpaceJson)
   )
 
   val penaltyDetailsAPIJsonBSOnly: JsObject = Json.obj(
@@ -62,21 +77,12 @@ object PenaltyDetailsTestData {
   )
 
   val penaltyDetailsWrittenJson: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(LPPJson), "breathingSpace" -> false, "timeToPay" -> false
+    "LPPDetails" -> Json.arr(LPPJsonWritten), "breathingSpace" -> false
   )
 
   val penaltyDetailsWrittenJsonBSOnly: JsObject = Json.obj(
     "LPPDetails" -> Json.arr(),
-    "breathingSpace" -> false,
-    "timeToPay" -> false
-  )
-
-  val penaltyDetailsTTPOnlyJson: JsObject = Json.obj(
-    "timeToPay" -> Json.arr(timeToPayJson)
-  )
-
-  val penaltyDetailsWrittenTTPOnlyJson: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(), "breathingSpace" -> false, "timeToPay" -> false
+    "breathingSpace" -> false
   )
 
   val LPPModel: LatePaymentPenalty = LatePaymentPenalty(
@@ -90,13 +96,13 @@ object PenaltyDetailsTestData {
     Some(4.2),
     Some("31"),
     Some(5.5),
-    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ")
+    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
+    Some(Seq(TimeToPay(LocalDate.parse("2017-07-07"), LocalDate.parse("2017-08-31"))))
   )
 
   val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(
     Some(Seq(LPPModel)),
-    Some(Seq(BreathingSpace(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-06-30")))),
-    Some(Seq(TimeToPay(LocalDate.parse("2017-07-07"), LocalDate.parse("2017-08-31"))))
+    Some(Seq(BreathingSpace(LocalDate.parse("2017-04-06"), LocalDate.parse("2017-06-30"))))
   )
 
   val errorJson: JsObject = Json.obj(

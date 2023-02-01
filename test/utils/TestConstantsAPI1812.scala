@@ -23,6 +23,11 @@ import play.api.libs.json.{JsObject, JsValue, Json}
 
 object TestConstantsAPI1812 {
 
+  val timeToPayJson: JsObject = Json.obj(
+    "TTPStartDate" -> "2018-04-05",
+    "TTPEndDate" -> "2018-08-31"
+  )
+
   val LPPJsonMax: JsObject = Json.obj(
     "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
     "penaltyCategory" -> "LPP1",
@@ -34,12 +39,34 @@ object TestConstantsAPI1812 {
     "LPP1HRPercentage" -> 4.2,
     "LPP2Days" -> "31",
     "LPP2Percentage" -> 5.5,
-    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ"
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> Json.arr(timeToPayJson)
+  )
+
+  val LPPJsonMaxWritten: JsObject = Json.obj(
+    "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
+    "penaltyCategory" -> "LPP1",
+    "LPP1LRCalculationAmount" -> 100.11,
+    "LPP1LRDays" -> "15",
+    "LPP1LRPercentage" -> 2.4,
+    "LPP1HRCalculationAmount" -> 200.22,
+    "LPP1HRDays" -> "30",
+    "LPP1HRPercentage" -> 4.2,
+    "LPP2Days" -> "31",
+    "LPP2Percentage" -> 5.5,
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> true
   )
 
   val LPPJsonMin: JsObject = Json.obj(
     "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
     "penaltyCategory" -> "LPP1"
+  )
+
+  val LPPJsonMinWritten: JsObject = Json.obj(
+    "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
+    "penaltyCategory" -> "LPP1",
+    "timeToPay" -> false
   )
 
   val LPPModelMax: LatePaymentPenalty = LatePaymentPenalty(
@@ -53,7 +80,8 @@ object TestConstantsAPI1812 {
     Some(4.2),
     Some("31"),
     Some(5.5),
-    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ")
+    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
+    Some(Seq(TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-08-31"))))
   )
 
   val LPPModelMin: LatePaymentPenalty = LatePaymentPenalty(
@@ -67,19 +95,18 @@ object TestConstantsAPI1812 {
     None,
     None,
     None,
+    None,
     None
   )
 
-  def writtenPenDetailsMaxJson(breathingSpace: Boolean, timeToPay: Boolean): JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(LPPJsonMax),
-    "breathingSpace" -> breathingSpace,
-    "timeToPay" -> timeToPay
+  def writtenPenDetailsMaxJson(breathingSpace: Boolean): JsObject = Json.obj(
+    "LPPDetails" -> Json.arr(LPPJsonMaxWritten),
+    "breathingSpace" -> breathingSpace
   )
 
-  def writtenPenDetailsMinJson(breathingSpace: Boolean, timeToPay: Boolean): JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(LPPJsonMin),
-    "breathingSpace" -> breathingSpace,
-    "timeToPay" -> timeToPay
+  def writtenPenDetailsMinJson(breathingSpace: Boolean): JsObject = Json.obj(
+    "LPPDetails" -> Json.arr(LPPJsonMinWritten),
+    "breathingSpace" -> breathingSpace
   )
 
   val inBS           : BreathingSpace = BreathingSpace(LocalDate.parse("2018-04-01"), LocalDate.parse("2018-06-30"))
@@ -90,29 +117,34 @@ object TestConstantsAPI1812 {
   val outOfBS        : BreathingSpace = BreathingSpace(LocalDate.parse("2018-03-01"), LocalDate.parse("2018-04-01"))
   val futureBS       : BreathingSpace = BreathingSpace(LocalDate.parse("2018-07-01"), LocalDate.parse("2018-08-01"))
 
-  val outOfTTP        : TimeToPay = TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07"))
-  val inTTP           : TimeToPay = TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-07-07"))
-  val firstDayTTP     : TimeToPay = TimeToPay(LocalDate.parse("2018-05-01"), LocalDate.parse("2018-07-01"))
-  val lastDayTTP      : TimeToPay = TimeToPay(LocalDate.parse("2018-03-16"), LocalDate.parse("2018-05-01"))
-  val TTPEndYesterday : TimeToPay = TimeToPay(LocalDate.parse("2018-03-07"), LocalDate.parse("2018-04-30"))
-  val TTPBeginTomorrow: TimeToPay = TimeToPay(LocalDate.parse("2018-05-02"), LocalDate.parse("2018-07-04"))
-  val futureTTP       : TimeToPay = TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-09-05"))
+  val outOfTTP        : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07"))))
+  val inTTP           : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-07-07"))))
+  val firstDayTTP     : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-05-01"), LocalDate.parse("2018-07-01"))))
+  val lastDayTTP      : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-03-16"), LocalDate.parse("2018-05-01"))))
+  val TTPEndYesterday : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-03-07"), LocalDate.parse("2018-04-30"))))
+  val TTPBeginTomorrow: Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-05-02"), LocalDate.parse("2018-07-04"))))
+  val futureTTP       : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-09-05"))))
+  val betweenTTPS     : Option[Seq[TimeToPay]] = Some(Seq(
+      TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07")),
+      TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-08-07"))
+  ))
+  val firstOfTwoTTPS  : Option[Seq[TimeToPay]] = Some(Seq(
+    TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-07-07")),
+    TimeToPay(LocalDate.parse("2018-09-5"), LocalDate.parse("2018-11-07"))
+  ))
 
-  val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)), Some(Seq(outOfTTP)))
-  val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None, None)
-  val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)), Some(Seq(outOfTTP)))
-  val penaltyDetailsModelNoPen: PenaltyDetails = PenaltyDetails(None, Some(Seq(outOfBS)), Some(Seq(outOfTTP)))
-  val penaltyDetailsModelInBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)), None)
-  val penaltyDetailsModelInTTP: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None, Some(Seq(inTTP)))
-  val penaltyDetailsModelInBSAndTTP: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)), Some(Seq(inTTP)))
-  val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None, None)
+  val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)))
+  val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None)
+  val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)))
+  val penaltyDetailsModelNoPen: PenaltyDetails = PenaltyDetails(None, Some(Seq(outOfBS)))
+  val penaltyDetailsModelInBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)))
+  val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None)
 
-  def apiLPPJson(LPPJson: JsObject, bsJson: JsObject, ttpJson: JsObject): JsValue = Json.obj(
+  def apiLPPJson(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
     "latePaymentPenalty" -> Json.obj(
       "details" -> Json.arr(LPPJson)
     ),
-    "breathingSpace" -> Json.arr(bsJson),
-    "timeToPay" -> Json.arr(ttpJson)
+    "breathingSpace" -> Json.arr(bsJson)
   )
 
   val breathingSpaceJSON: JsObject = Json.obj(
@@ -120,24 +152,13 @@ object TestConstantsAPI1812 {
     "BSEndDate" -> "2017-06-30"
   )
 
-  def writtenLPPJson(LPPJson: JsObject, timeToPay: Boolean): JsValue = Json.obj(
-    "LPPDetails" -> Json.arr(LPPJson),
-    "timeToPay" -> timeToPay
-  )
-
   val breathingSpaceJSONAfterBS: JsObject = Json.obj(
     "BSStartDate" -> "2018-03-01",
     "BSEndDate" -> "2018-04-01"
   )
 
-  val timeToPayJsonAfterTTP: JsObject = Json.obj(
-    "TTPStartDate" -> "2018-01-07",
-    "TTPEndDate" -> "2018-02-07"
-  )
-
   val apiLPPJsonNoPen: JsValue = Json.obj(
     "breathingSpace" -> Json.arr(breathingSpaceJSONAfterBS),
-    "timeToPay" -> Json.arr(timeToPayJsonAfterTTP)
   )
 
 }
