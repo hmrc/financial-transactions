@@ -17,7 +17,6 @@
 import sbt.Tests.{Group, SubProcess}
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
-import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin.publishingSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 val appName: String = "financial-transactions"
@@ -66,7 +65,6 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
   .settings(scalaSettings: _*)
-  .settings(publishingSettings: _*)
   .settings(majorVersion := 0)
   .settings(coverageSettings: _*)
   .settings(defaultSettings(): _*)
