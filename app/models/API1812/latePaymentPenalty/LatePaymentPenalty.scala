@@ -57,7 +57,7 @@ object LatePaymentPenalty {
       "LPP2Days" -> model.LPP2Days,
       "LPP2Percentage" -> model.LPP2Percentage,
       "penaltyChargeReference" -> model.penaltyChargeReference,
-      "timeToPay" -> model.hasTimeToPay,
+      "timeToPay" -> model.hasTimeToPay
     ).fields.filterNot(_._2 == JsNull))
   }
 }
