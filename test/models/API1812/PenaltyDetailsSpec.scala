@@ -29,7 +29,7 @@ class PenaltyDetailsSpec extends SpecBase {
       result.LPPDetails.isEmpty shouldBe true
     }
 
-    "parse JSON to an empty array and breathing space details when BS json and TTP json are in the response" in {
+    "parse JSON to an empty array and breathing space details when BS json is in the response" in {
       val result = apiLPPJsonNoPen.as[PenaltyDetails]
       result shouldBe penaltyDetailsModelNoPen
     }

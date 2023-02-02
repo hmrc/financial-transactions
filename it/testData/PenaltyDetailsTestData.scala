@@ -26,8 +26,8 @@ import play.api.http.Status
 object PenaltyDetailsTestData {
 
   val timeToPayJson: JsObject = Json.obj(
-    "TTPStartDate" -> "2017-07-07",
-    "TTPEndDate" -> "2017-08-31"
+    "TTPStartDate" -> "2018-04-07",
+    "TTPEndDate" -> "2018-08-31"
   )
 
   val LPPJson: JsObject = Json.obj(
@@ -97,7 +97,7 @@ object PenaltyDetailsTestData {
     Some("31"),
     Some(5.5),
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
-    Some(Seq(TimeToPay(LocalDate.parse("2017-07-07"), LocalDate.parse("2017-08-31"))))
+    Some(Seq(TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-08-31"))))
   )
 
   val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(

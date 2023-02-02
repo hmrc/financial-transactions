@@ -130,7 +130,7 @@ object TestConstantsAPI1812 {
   ))
   val firstOfTwoTTPS  : Option[Seq[TimeToPay]] = Some(Seq(
     TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-07-07")),
-    TimeToPay(LocalDate.parse("2018-09-5"), LocalDate.parse("2018-11-07"))
+    TimeToPay(LocalDate.parse("2018-09-05"), LocalDate.parse("2018-11-07"))
   ))
 
   val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)))

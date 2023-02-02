@@ -18,7 +18,7 @@ package models.API1812.latePaymentPenalty
 
 import config.AppConfig
 import models.API1812.TimeToPay
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes, __}
 import services.DateService
 
 case class LatePaymentPenalty(principalChargeReference: String,
@@ -45,19 +45,19 @@ object LatePaymentPenalty {
   implicit val reads: Reads[LatePaymentPenalty] = Json.reads[LatePaymentPenalty]
 
   implicit def writes(implicit appConfig: AppConfig): Writes[LatePaymentPenalty] = { model =>
-    Json.obj(
-      "principalChargeReference" -> Json.toJsFieldJsValueWrapper(model.principalChargeReference),
-      "penaltyCategory" -> Json.toJsFieldJsValueWrapper(model.penaltyCategory),
-      "LPP1LRCalculationAmount" -> Json.toJsFieldJsValueWrapper(model.LPP1LRCalculationAmount),
-      "LPP1LRDays" -> Json.toJsFieldJsValueWrapper(model.LPP1LRDays),
-      "LPP1LRPercentage" -> Json.toJsFieldJsValueWrapper(model.LPP1LRPercentage),
-      "LPP1HRCalculationAmount" -> Json.toJsFieldJsValueWrapper(model.LPP1HRCalculationAmount),
-      "LPP1HRDays" -> Json.toJsFieldJsValueWrapper(model.LPP1HRDays),
-      "LPP1HRPercentage" -> Json.toJsFieldJsValueWrapper(model.LPP1HRPercentage),
-      "LPP2Days" -> Json.toJsFieldJsValueWrapper(model.LPP2Days),
-      "LPP2Percentage" -> Json.toJsFieldJsValueWrapper(model.LPP2Percentage),
-      "penaltyChargeReference" -> Json.toJsFieldJsValueWrapper(model.penaltyChargeReference),
-      "timeToPay" -> model.hasTimeToPay
-    )
+    JsObject(Json.obj(
+      "principalChargeReference" -> model.principalChargeReference,
+      "penaltyCategory" -> model.penaltyCategory,
+      "LPP1LRCalculationAmount" -> model.LPP1LRCalculationAmount,
+      "LPP1LRDays" -> model.LPP1LRDays,
+      "LPP1LRPercentage" -> model.LPP1LRPercentage,
+      "LPP1HRCalculationAmount" -> model.LPP1HRCalculationAmount,
+      "LPP1HRDays" -> model.LPP1HRDays,
+      "LPP1HRPercentage" -> model.LPP1HRPercentage,
+      "LPP2Days" -> model.LPP2Days,
+      "LPP2Percentage" -> model.LPP2Percentage,
+      "penaltyChargeReference" -> model.penaltyChargeReference,
+      "timeToPay" -> model.hasTimeToPay,
+    ).fields.filterNot(_._2 == JsNull))
   }
 }

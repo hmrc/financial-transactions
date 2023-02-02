@@ -42,7 +42,7 @@ class LatePaymentPenaltySpec extends SpecBase {
       }
 
       "optional fields are missing" in {
-        Json.toJson(LPPJsonMin) shouldBe LPPJsonMinWritten
+        Json.toJson(LPPModelMin) shouldBe LPPJsonMinWritten
       }
     }
   }
