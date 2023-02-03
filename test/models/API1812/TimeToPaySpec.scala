@@ -16,13 +16,17 @@
 
 package models.API1812
 
-import play.api.libs.json.{Json, Reads}
+import base.SpecBase
+import utils.TestConstantsAPI1812.timeToPayJson
 
 import java.time.LocalDate
 
-case class TimeToPay(TTPStartDate: LocalDate,
-                     TTPEndDate: LocalDate)
+class TimeToPaySpec extends SpecBase {
 
-object TimeToPay {
-  implicit val reads: Reads[TimeToPay] = Json.reads[TimeToPay]
+  "TimeToPay" should {
+
+    "parse from JSON correctly" in {
+      timeToPayJson.as[TimeToPay] shouldBe TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-08-31"))
+    }
+  }
 }

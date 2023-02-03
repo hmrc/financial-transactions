@@ -18,7 +18,7 @@ package models.API1812.latePaymentPenalty
 
 import config.AppConfig
 import models.API1812.TimeToPay
-import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes, __}
+import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
 import services.DateService
 
 case class LatePaymentPenalty(principalChargeReference: String,
@@ -35,8 +35,7 @@ case class LatePaymentPenalty(principalChargeReference: String,
                               timeToPay: Option[Seq[TimeToPay]]) {
 
   def hasTimeToPay(implicit appConfig: AppConfig): Boolean = timeToPay.fold(false)(_.exists { ttp =>
-    (!ttp.TTPStartDate.isAfter(DateService.now)) &&
-      (!ttp.TTPEndDate.isBefore(DateService.now))
+    !ttp.TTPStartDate.isAfter(DateService.now) && !ttp.TTPEndDate.isBefore(DateService.now)
   })
 }
 
