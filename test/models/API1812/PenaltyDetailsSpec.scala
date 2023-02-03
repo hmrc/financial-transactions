@@ -37,11 +37,11 @@ class PenaltyDetailsSpec extends SpecBase {
     "parse a JSON array of LPP details to a sequence correctly" when {
 
       "optional fields are present" in {
-        apiLPPJson(LPPJsonMax, breathingSpaceJSONNoBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
+        apiLPPJson(LPPJsonMax, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
       }
 
       "optional fields are missing" in {
-        apiLPPJson(LPPJsonMin, breathingSpaceJSONNoBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
+        apiLPPJson(LPPJsonMin, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
       }
     }
 
@@ -81,6 +81,10 @@ class PenaltyDetailsSpec extends SpecBase {
       "user is in the first of 2 breathing space periods" in {
         PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS, outOfBS))).hasBreathingSpace shouldBe true
       }
+
+      "the user is in both breathing space and time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin.copy(timeToPay = inTTP))), Some(Seq(inBS))).hasBreathingSpace shouldBe true
+      }
     }
 
     "return false" when {
@@ -107,6 +111,18 @@ class PenaltyDetailsSpec extends SpecBase {
 
       "user is between 2 breathing space periods" in {
         PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS, futureBS))).hasBreathingSpace shouldBe false
+      }
+
+      "the user is in time to pay instead of breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin.copy(timeToPay = inTTP))), None).hasBreathingSpace shouldBe false
+      }
+
+      "the user is between breathing space and time to pay" in {
+        PenaltyDetails(Some(Seq(LPPModelMin.copy(timeToPay = futureTTP))), Some(Seq(outOfBS))).hasBreathingSpace shouldBe false
+      }
+
+      "the user is between time time to pay and breathing space" in {
+        PenaltyDetails(Some(Seq(LPPModelMin.copy(timeToPay = outOfTTP))), Some(Seq(futureBS))).hasBreathingSpace shouldBe false
       }
     }
   }

@@ -27,10 +27,8 @@ case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]],
 
   def hasBreathingSpace(implicit appConfig: AppConfig): Boolean =
     breathingSpace.fold(false)(_.exists { bs =>
-      (bs.BSStartDate.isBefore(DateService.now) || bs.BSStartDate.isEqual(DateService.now)) &&
-      (bs.BSEndDate.isAfter(DateService.now) || bs.BSEndDate.isEqual(DateService.now))
+      !bs.BSStartDate.isAfter(DateService.now) && !bs.BSEndDate.isBefore(DateService.now)
     })
-
 }
 
 object PenaltyDetails {
@@ -46,5 +44,4 @@ object PenaltyDetails {
       "breathingSpace" -> model.hasBreathingSpace
     )
   }
-
 }

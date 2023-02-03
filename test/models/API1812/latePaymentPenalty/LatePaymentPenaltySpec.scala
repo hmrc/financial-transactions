@@ -38,11 +38,61 @@ class LatePaymentPenaltySpec extends SpecBase {
     "serialize to JSON" when {
 
       "optional fields are present" in {
-        Json.toJson(LPPModelMax) shouldBe LPPJsonMax
+        Json.toJson(LPPModelMax) shouldBe LPPJsonMaxWritten
       }
 
       "optional fields are missing" in {
-        Json.toJson(LPPJsonMin) shouldBe LPPJsonMin
+        Json.toJson(LPPModelMin) shouldBe LPPJsonMinWritten
+      }
+    }
+  }
+
+  "hasTimeToPay" should {
+
+    "return true" when {
+
+      "user is well within time to pay" in {
+        LPPModelMin.copy(timeToPay = inTTP).hasTimeToPay shouldBe true
+      }
+
+      "user is on the first day of time to pay" in {
+        LPPModelMin.copy(timeToPay = firstDayTTP).hasTimeToPay shouldBe true
+      }
+
+      "user is on the last day of time to pay" in {
+        LPPModelMin.copy(timeToPay = lastDayTTP).hasTimeToPay shouldBe true
+      }
+
+      "user is in the first of 2 time to pay periods" in {
+        LPPModelMin.copy(timeToPay = firstOfTwoTTPS).hasTimeToPay shouldBe true
+      }
+
+    }
+
+    "return false" when {
+
+      "user's time to pay ended yesterday" in {
+        LPPModelMin.copy(timeToPay = TTPEndYesterday).hasTimeToPay shouldBe false
+      }
+
+      "user's time to pay will begin tomorrow" in {
+        LPPModelMin.copy(timeToPay = TTPBeginTomorrow).hasTimeToPay shouldBe false
+      }
+
+      "user has been out of time to pay for some time" in {
+        LPPModelMin.copy(timeToPay = outOfTTP).hasTimeToPay shouldBe false
+      }
+
+      "user is due to go into time to pay in the future" in {
+        LPPModelMin.copy(timeToPay = futureTTP).hasTimeToPay shouldBe false
+      }
+
+      "user has no time to pay data" in {
+        LPPModelMin.hasTimeToPay shouldBe false
+      }
+
+      "user is between 2 time to pay periods" in {
+        LPPModelMin.copy(timeToPay = betweenTTPS).hasTimeToPay shouldBe false
       }
     }
   }

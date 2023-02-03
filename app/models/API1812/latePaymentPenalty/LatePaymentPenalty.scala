@@ -16,7 +16,10 @@
 
 package models.API1812.latePaymentPenalty
 
-import play.api.libs.json.{Format, Json}
+import config.AppConfig
+import models.API1812.TimeToPay
+import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
+import services.DateService
 
 case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyCategory: LPPPenaltyCategoryEnum.Value,
@@ -28,8 +31,32 @@ case class LatePaymentPenalty(principalChargeReference: String,
                               LPP1HRPercentage: Option[Double],
                               LPP2Days: Option[String],
                               LPP2Percentage: Option[Double],
-                              penaltyChargeReference: Option[String])
+                              penaltyChargeReference: Option[String],
+                              timeToPay: Option[Seq[TimeToPay]]) {
+
+  def hasTimeToPay(implicit appConfig: AppConfig): Boolean = timeToPay.fold(false)(_.exists { ttp =>
+    !ttp.TTPStartDate.isAfter(DateService.now) && !ttp.TTPEndDate.isBefore(DateService.now)
+  })
+}
 
 object LatePaymentPenalty {
-  implicit val format: Format[LatePaymentPenalty] = Json.format[LatePaymentPenalty]
+
+  implicit val reads: Reads[LatePaymentPenalty] = Json.reads[LatePaymentPenalty]
+
+  implicit def writes(implicit appConfig: AppConfig): Writes[LatePaymentPenalty] = { model =>
+    JsObject(Json.obj(
+      "principalChargeReference" -> model.principalChargeReference,
+      "penaltyCategory" -> model.penaltyCategory,
+      "LPP1LRCalculationAmount" -> model.LPP1LRCalculationAmount,
+      "LPP1LRDays" -> model.LPP1LRDays,
+      "LPP1LRPercentage" -> model.LPP1LRPercentage,
+      "LPP1HRCalculationAmount" -> model.LPP1HRCalculationAmount,
+      "LPP1HRDays" -> model.LPP1HRDays,
+      "LPP1HRPercentage" -> model.LPP1HRPercentage,
+      "LPP2Days" -> model.LPP2Days,
+      "LPP2Percentage" -> model.LPP2Percentage,
+      "penaltyChargeReference" -> model.penaltyChargeReference,
+      "timeToPay" -> model.hasTimeToPay
+    ).fields.filterNot(_._2 == JsNull))
+  }
 }

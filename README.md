@@ -227,6 +227,7 @@ Response Body:
 |LPP2Days|`String`|**false**|    
 |LPP2Percentage|`Double`|**false**|    
 |penaltyChargeReference|`String`|**false**|
+|timeToPay|`Boolean`|**true**|
 
 #### Example
 
@@ -247,7 +248,8 @@ Response Body:
             "LPP1HRPercentage": 4.2,    
             "LPP2Days": "31",    
             "LPP2Percentage": 5.5,    
-            "penaltyChargeReference": "BCDEFGHIJKLMNOPQ"    
+            "penaltyChargeReference": "BCDEFGHIJKLMNOPQ" ,
+            "timeToPay": false   
         }    
     ],
     "breathingSpace": false

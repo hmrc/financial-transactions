@@ -18,12 +18,17 @@ package testData
 
 import java.time.LocalDate
 
-import models.API1812.{BreathingSpace, Error, PenaltyDetails}
+import models.API1812.{BreathingSpace, Error, PenaltyDetails, TimeToPay}
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
 
 object PenaltyDetailsTestData {
+
+  val timeToPayJson: JsObject = Json.obj(
+    "TTPStartDate" -> "2018-04-07",
+    "TTPEndDate" -> "2018-08-31"
+  )
 
   val LPPJson: JsObject = Json.obj(
     "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
@@ -36,7 +41,23 @@ object PenaltyDetailsTestData {
     "LPP1HRPercentage" -> 4.2,
     "LPP2Days" -> "31",
     "LPP2Percentage" -> 5.5,
-    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ"
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> Json.arr(timeToPayJson)
+  )
+
+  val LPPJsonWritten: JsObject = Json.obj(
+    "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
+    "penaltyCategory" -> "LPP1",
+    "LPP1LRCalculationAmount" -> 100.11,
+    "LPP1LRDays" -> "15",
+    "LPP1LRPercentage" -> 2.4,
+    "LPP1HRCalculationAmount" -> 200.22,
+    "LPP1HRDays" -> "30",
+    "LPP1HRPercentage" -> 4.2,
+    "LPP2Days" -> "31",
+    "LPP2Percentage" -> 5.5,
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> true
   )
 
   val breathingSpaceJson: JsObject = Json.obj(
@@ -56,11 +77,12 @@ object PenaltyDetailsTestData {
   )
 
   val penaltyDetailsWrittenJson: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(LPPJson), "breathingSpace" -> false
+    "LPPDetails" -> Json.arr(LPPJsonWritten), "breathingSpace" -> false
   )
 
   val penaltyDetailsWrittenJsonBSOnly: JsObject = Json.obj(
-    "LPPDetails" -> Json.arr(), "breathingSpace" -> false
+    "LPPDetails" -> Json.arr(),
+    "breathingSpace" -> false
   )
 
   val LPPModel: LatePaymentPenalty = LatePaymentPenalty(
@@ -74,7 +96,8 @@ object PenaltyDetailsTestData {
     Some(4.2),
     Some("31"),
     Some(5.5),
-    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ")
+    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
+    Some(Seq(TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-08-31"))))
   )
 
   val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(
