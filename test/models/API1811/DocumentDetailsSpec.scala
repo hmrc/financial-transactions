@@ -31,7 +31,7 @@ class DocumentDetailsSpec extends SpecBase {
       }
 
       "minimum fields are present" in {
-        Json.obj("lineItemDetails" -> Json.arr("")).as[DocumentDetails] shouldBe emptyDocumentDetails
+        Json.obj("lineItemDetails" -> Json.arr(""), "documentPenaltyTotals" -> Json.arr("")).as[DocumentDetails] shouldBe emptyDocumentDetails
       }
 
       "some correct fields are present but some are unrecognised" in {
@@ -51,7 +51,7 @@ class DocumentDetailsSpec extends SpecBase {
       }
 
       "there is a posted penalty, so that no penalty details are provided" in {
-        val model = fullDocumentDetails.copy(penaltyType = Some("LPP1"), penaltyStatus = Some("POSTED"))
+        val model = fullDocumentDetails.copy(documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted)))
         val expectedOutput = Json.obj(
           "chargeType" -> "VAT Return Debit Charge",
           "periodKey" -> "13RL",
@@ -66,6 +66,29 @@ class DocumentDetailsSpec extends SpecBase {
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
           "accruingInterestAmount" -> 0.23,
           "interestRate" -> 3
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "there is an accruing and posted penalty but only accruing charge should be present" in {
+        val model = fullDocumentDetails.copy(
+          documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted, documentPenaltyTotals)))
+        val expectedOutput: JsObject = Json.obj(
+          "chargeType" -> "VAT Return Debit Charge",
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "clearedAmount" -> 45254895.33,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3,
+          "accruingPenaltyAmount" -> 10.01,
+          "penaltyType" -> "LPP2"
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -87,7 +110,7 @@ class DocumentDetailsSpec extends SpecBase {
           "accruingInterestAmount" -> 0.23,
           "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
-          "penaltyType" -> "LPP1"
+          "penaltyType" -> "LPP2"
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -107,7 +130,7 @@ class DocumentDetailsSpec extends SpecBase {
           "accruingInterestAmount" -> 0.23,
           "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
-          "penaltyType" -> "LPP1"
+          "penaltyType" -> "LPP2"
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -127,7 +150,7 @@ class DocumentDetailsSpec extends SpecBase {
           "accruingInterestAmount" -> 0.23,
           "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
-          "penaltyType" -> "LPP1"
+          "penaltyType" -> "LPP2"
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -147,7 +170,7 @@ class DocumentDetailsSpec extends SpecBase {
           "accruingInterestAmount" -> 0.23,
           "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
-          "penaltyType" -> "LPP1"
+          "penaltyType" -> "LPP2"
         )
         Json.toJson(model) shouldBe expectedOutput
       }

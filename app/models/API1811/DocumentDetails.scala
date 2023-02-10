@@ -27,13 +27,15 @@ case class DocumentDetails(chargeReferenceNumber: Option[String],
                            documentClearedAmount: Option[BigDecimal],
                            lineItemDetails: Seq[LineItemDetails],
                            interestAccruingAmount: Option[BigDecimal],
-                           penaltyType: Option[String],
-                           penaltyStatus: Option[String],
-                           penaltyAmount: Option[BigDecimal])
+                           documentPenaltyTotals: Option[Seq[DocumentPenaltyTotals]]
+                          ) {
+
+  def getAccruingPenalty: Option[DocumentPenaltyTotals] = {
+    documentPenaltyTotals.getOrElse(Seq()).find(_.penaltyStatus.contains("ACCRUING"))
+  }
+}
 
 object DocumentDetails {
-
-  val penaltyPath = "documentPenaltyTotals"
 
   implicit val reads: Reads[DocumentDetails] = (
     (JsPath \ "chargeReferenceNumber").readNullable[String] and
@@ -42,9 +44,7 @@ object DocumentDetails {
     (JsPath \ "documentClearedAmount").readNullable[BigDecimal] and
     (JsPath \ "lineItemDetails").read[Seq[LineItemDetails]] and
     (JsPath \ "documentInterestTotals" \ "interestAccruingAmount").readNullable[BigDecimal] and
-    (JsPath \ penaltyPath)(0).\("penaltyType").readNullable[String] and
-    (JsPath \ penaltyPath)(0).\("penaltyStatus").readNullable[String] and
-    (JsPath \ penaltyPath)(0).\("penaltyAmount").readNullable[BigDecimal]
+    (JsPath \ "documentPenaltyTotals").readNullable[Seq[DocumentPenaltyTotals]]
   )(DocumentDetails.apply _)
 
   implicit def writes(implicit appConfig: AppConfig): Writes[DocumentDetails] = Writes { model =>
@@ -65,12 +65,8 @@ object DocumentDetails {
         "items" -> model.lineItemDetails,
         "accruingInterestAmount" -> model.interestAccruingAmount,
         "interestRate" -> model.lineItemDetails.head.interestRate,
-        "accruingPenaltyAmount" -> {
-          if (model.penaltyStatus.contains("ACCRUING")) Some(model.penaltyAmount) else None
-        },
-        "penaltyType" -> {
-          if (model.penaltyStatus.contains("ACCRUING")) Some(model.penaltyType) else None
-        }
+        "accruingPenaltyAmount" -> model.getAccruingPenalty.map(_.penaltyAmount),
+        "penaltyType" -> model.getAccruingPenalty.map(_.penaltyType)
       ).fields.filterNot(_._2 == JsNull))
     } else {
       throw JsResultException(Seq(
