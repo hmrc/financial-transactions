@@ -70,10 +70,9 @@ object FinancialData1811 {
             "interestAccruingAmount" -> 12.10
           ),
           "documentPenaltyTotals" -> Json.arr(Json.obj(
-            "penaltyType" -> "LPP2",
+            "penaltyType" -> "LPP1",
             "penaltyStatus" -> "ACCRUING",
-            "penaltyAmount" -> "10.01",
-            "postedChargeReference" -> "XR00123933492"
+            "penaltyAmount" -> "10.01"
           )),
           "lineItemDetails" -> Json.arr(Json.obj(
             "itemNumber" -> "0001",
@@ -128,7 +127,7 @@ object FinancialData1811 {
   )
 
   val documentPenaltyTotals: DocumentPenaltyTotals = DocumentPenaltyTotals(
-    penaltyType = Some("LPP2"),
+    penaltyType = Some("LPP1"),
     penaltyStatus = Some("ACCRUING"),
     penaltyAmount = Some(10.01)
   )
@@ -177,7 +176,7 @@ object FinancialData1811 {
       "accruingInterestAmount" -> 12.10,
       "interestRate" -> -999.99,
       "accruingPenaltyAmount" -> 10.01,
-      "penaltyType" -> "LPP2"
+      "penaltyType" -> "LPP1"
     )),
     "hasOverdueChargeAndNoTTP" -> false
   )

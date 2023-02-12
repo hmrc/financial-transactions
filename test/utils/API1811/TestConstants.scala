@@ -99,7 +99,7 @@ object TestConstants {
   )
 
   val documentPenaltyTotals: DocumentPenaltyTotals = DocumentPenaltyTotals(
-    penaltyType = Some("LPP2"),
+    penaltyType = Some("LPP1"),
     penaltyStatus = Some("ACCRUING"),
     penaltyAmount = Some(10.01)
   )
@@ -111,7 +111,7 @@ object TestConstants {
   )
 
   val documentPenaltyTotalsJson: JsObject = Json.obj(
-    "penaltyType" -> "LPP2",
+    "penaltyType" -> "LPP1",
     "penaltyStatus" -> "ACCRUING",
     "penaltyAmount" -> 10.01
   )
@@ -166,7 +166,7 @@ object TestConstants {
       "interestAccruingAmount" -> 0.23
     ),
     "documentPenaltyTotals" -> Json.arr(Json.obj(
-      "penaltyType" -> "LPP2",
+      "penaltyType" -> "LPP1",
       "penaltyStatus" -> "ACCRUING",
       "penaltyAmount" -> 10.01
     ))
@@ -182,7 +182,7 @@ object TestConstants {
   val emptyDocumentPenaltyTotal: DocumentPenaltyTotals =
     DocumentPenaltyTotals(None, None, None)
   val emptyDocumentDetails: DocumentDetails =
-    DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, Some(Seq(emptyDocumentPenaltyTotal)))
+    DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, None)
 
   def fullFTJson(documentDetails: JsObject): JsObject = Json.obj(
     "getFinancialData" -> Json.obj(
@@ -222,7 +222,7 @@ object TestConstants {
     "accruingInterestAmount" -> 0.23,
     "interestRate" -> 3,
     "accruingPenaltyAmount" -> 10.01,
-    "penaltyType" -> "LPP2"
+    "penaltyType" -> "LPP1"
   )
 
   val fullFinancialTransactionsOutputJson: JsObject = Json.obj(
