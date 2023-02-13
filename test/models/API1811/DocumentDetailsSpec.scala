@@ -32,7 +32,7 @@ class DocumentDetailsSpec extends SpecBase {
       model.getAccruingPenalty shouldBe Some(documentPenaltyTotals)
     }
 
-    "return an empty DocumentPenaltyTotals when PenaltyStatus is not accruing" in {
+    "return a None when PenaltyStatus is not accruing" in {
 
       val model = fullDocumentDetails.copy(
         documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted)))
@@ -40,7 +40,7 @@ class DocumentDetailsSpec extends SpecBase {
       model.getAccruingPenalty shouldBe None
     }
 
-    "return a none when DocumentPenaltyTotals is empty" in {
+    "return a None when DocumentPenaltyTotals is empty" in {
 
       val model = fullDocumentDetails.copy(
         documentPenaltyTotals = Some(Seq(emptyDocumentPenaltyTotal)))
