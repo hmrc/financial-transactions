@@ -22,6 +22,33 @@ import utils.API1811.TestConstants._
 
 class DocumentDetailsSpec extends SpecBase {
 
+  "getAccruingPenalty" should {
+
+    "return only the penalty charge that has an accruing penaltyStatus" in {
+
+      val model = fullDocumentDetails.copy(
+        documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted, documentPenaltyTotals)))
+
+      model.getAccruingPenalty shouldBe Some(documentPenaltyTotals)
+    }
+
+    "return a None when PenaltyStatus is not accruing" in {
+
+      val model = fullDocumentDetails.copy(
+        documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted)))
+
+      model.getAccruingPenalty shouldBe None
+    }
+
+    "return a None when DocumentPenaltyTotals is empty" in {
+
+      val model = fullDocumentDetails.copy(
+        documentPenaltyTotals = Some(Seq(emptyDocumentPenaltyTotal)))
+
+      model.getAccruingPenalty shouldBe None
+    }
+  }
+
   "DocumentDetails" should {
 
     "read from JSON" when {
@@ -50,9 +77,78 @@ class DocumentDetailsSpec extends SpecBase {
         Json.toJson(emptyDocumentDetails) shouldBe expectedOutput
       }
 
-      "there is a posted penalty, so that no penalty details are provided" in {
-        val model = fullDocumentDetails.copy(penaltyType = Some("LPP1"), penaltyStatus = Some("POSTED"))
-        val expectedOutput = Json.obj(
+      "there is an accruing and a posted penalty charge" in {
+
+        val model = fullDocumentDetails.copy(
+          documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted, documentPenaltyTotals)))
+        val expectedOutput: JsObject = Json.obj(
+          "chargeType" -> "VAT Return Debit Charge",
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "clearedAmount" -> 45254895.33,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3,
+          "accruingPenaltyAmount" -> 10.01,
+          "penaltyType" -> "LPP1"
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "the penaltyStatus is not accruing" in {
+
+        val model = fullDocumentDetails.copy(
+          documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted)))
+        val expectedOutput: JsObject = Json.obj(
+          "chargeType" -> "VAT Return Debit Charge",
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "clearedAmount" -> 45254895.33,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "the documentPenaltyTotals array is present but empty" in {
+
+        val model = fullDocumentDetails.copy(
+          documentPenaltyTotals = Some(Seq(emptyDocumentPenaltyTotal)))
+        val expectedOutput: JsObject = Json.obj(
+          "chargeType" -> "VAT Return Debit Charge",
+          "periodKey" -> "13RL",
+          "taxPeriodFrom" -> "2017-04-06",
+          "taxPeriodTo" -> "2018-04-05",
+          "chargeReference" -> "XM002610011594",
+          "mainTransaction" -> "4700",
+          "subTransaction" -> "1174",
+          "originalAmount" -> 45552768.79,
+          "outstandingAmount" -> 297873.46,
+          "clearedAmount" -> 45254895.33,
+          "items" -> Json.arr(fullLineItemDetailsOutputJson),
+          "accruingInterestAmount" -> 0.23,
+          "interestRate" -> 3
+        )
+        Json.toJson(model) shouldBe expectedOutput
+      }
+
+      "the documentPenaltyTotals field is None" in {
+
+        val model = fullDocumentDetails.copy(documentPenaltyTotals = None)
+        val expectedOutput: JsObject = Json.obj(
           "chargeType" -> "VAT Return Debit Charge",
           "periodKey" -> "13RL",
           "taxPeriodFrom" -> "2017-04-06",

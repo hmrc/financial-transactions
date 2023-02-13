@@ -16,7 +16,7 @@
 
 package utils.API1811
 
-import models.API1811.{DocumentDetails, FinancialTransactions, LineItemDetails, LineItemLockDetails}
+import models.API1811.{DocumentDetails, DocumentPenaltyTotals, FinancialTransactions, LineItemDetails, LineItemLockDetails}
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate
@@ -98,6 +98,30 @@ object TestConstants {
     ))
   )
 
+  val documentPenaltyTotals: DocumentPenaltyTotals = DocumentPenaltyTotals(
+    penaltyType = Some("LPP1"),
+    penaltyStatus = Some("ACCRUING"),
+    penaltyAmount = Some(10.01)
+  )
+
+  val documentPenaltyTotalsPosted: DocumentPenaltyTotals = DocumentPenaltyTotals(
+    penaltyType = Some("LPP1"),
+    penaltyStatus = Some("POSTED"),
+    penaltyAmount = Some(13.50)
+  )
+
+  val documentPenaltyTotalsJson: JsObject = Json.obj(
+    "penaltyType" -> "LPP1",
+    "penaltyStatus" -> "ACCRUING",
+    "penaltyAmount" -> 10.01
+  )
+
+  val documentPenaltyTotalsPostedJson: JsObject = Json.obj(
+    "penaltyType" -> "LPP1",
+    "penaltyStatus" -> "POSTED",
+    "penaltyAmount" -> 13.50
+  )
+
   val fullDocumentDetails: DocumentDetails = DocumentDetails(
     chargeReferenceNumber = Some("XM002610011594"),
     documentTotalAmount = Some(45552768.79),
@@ -105,9 +129,7 @@ object TestConstants {
     documentClearedAmount = Some(45254895.33),
     lineItemDetails = Seq(lineItemDetailsFull),
     interestAccruingAmount = Some(0.23),
-    penaltyType = Some("LPP1"),
-    penaltyStatus = Some("ACCRUING"),
-    penaltyAmount = Some(10.01)
+    documentPenaltyTotals = Some(Seq(documentPenaltyTotals))
   )
 
   val fullDocumentDetailsJson: JsObject = Json.obj(
@@ -119,11 +141,7 @@ object TestConstants {
     "documentInterestTotals" -> Json.obj(
       "interestAccruingAmount" -> 0.23
     ),
-    "documentPenaltyTotals" -> Json.arr(Json.obj(
-      "penaltyType" -> "LPP1",
-      "penaltyStatus" -> "ACCRUING",
-      "penaltyAmount" -> 10.01
-    ))
+    "documentPenaltyTotals" -> Json.arr(documentPenaltyTotalsJson)
   )
 
   val fullDocumentDetailsJsonBadCharge: JsObject = Json.obj(
@@ -135,11 +153,7 @@ object TestConstants {
     "documentInterestTotals" -> Json.obj(
       "interestAccruingAmount" -> 0.23
     ),
-    "documentPenaltyTotals" -> Json.arr(Json.obj(
-      "penaltyType" -> "LPP1",
-      "penaltyStatus" -> "ACCRUING",
-      "penaltyAmount" -> 10.01
-    ))
+    "documentPenaltyTotals" -> Json.arr(documentPenaltyTotalsJson)
   )
 
   val documentDetailsIncorrectFieldsJson: JsObject = Json.obj(
@@ -165,8 +179,10 @@ object TestConstants {
 
   val emptyLineItem: LineItemDetails =
     LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None, Seq())
+  val emptyDocumentPenaltyTotal: DocumentPenaltyTotals =
+    DocumentPenaltyTotals(None, None, None)
   val emptyDocumentDetails: DocumentDetails =
-    DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, None, None, None)
+    DocumentDetails(None, None, None, None, Seq(emptyLineItem), None, None)
 
   def fullFTJson(documentDetails: JsObject): JsObject = Json.obj(
     "getFinancialData" -> Json.obj(

@@ -15,7 +15,7 @@
  */
 package testData
 
-import models.API1811.{DocumentDetails, Error, FinancialTransactions, LineItemDetails, LineItemLockDetails}
+import models.API1811.{DocumentDetails, DocumentPenaltyTotals, Error, FinancialTransactions, LineItemDetails, LineItemLockDetails}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
 
@@ -72,8 +72,7 @@ object FinancialData1811 {
           "documentPenaltyTotals" -> Json.arr(Json.obj(
             "penaltyType" -> "LPP1",
             "penaltyStatus" -> "ACCRUING",
-            "penaltyAmount" -> "10.01",
-            "postedChargeReference" -> "XR00123933492"
+            "penaltyAmount" -> "10.01"
           )),
           "lineItemDetails" -> Json.arr(Json.obj(
             "itemNumber" -> "0001",
@@ -127,6 +126,12 @@ object FinancialData1811 {
     lineItemLockDetails = Seq(LineItemLockDetails("Some payment lock"))
   )
 
+  val documentPenaltyTotals: DocumentPenaltyTotals = DocumentPenaltyTotals(
+    penaltyType = Some("LPP1"),
+    penaltyStatus = Some("ACCRUING"),
+    penaltyAmount = Some(10.01)
+  )
+
   val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(Seq(
     DocumentDetails(
       chargeReferenceNumber = Some("XP001286394838"),
@@ -135,9 +140,7 @@ object FinancialData1811 {
       documentClearedAmount = Some(100.0),
       lineItemDetails = Seq(lineItems),
       interestAccruingAmount = Some(12.10),
-      penaltyType = Some("LPP1"),
-      penaltyStatus = Some("ACCRUING"),
-      penaltyAmount = Some(10.01)
+      documentPenaltyTotals = Some(Seq(documentPenaltyTotals))
     ))
   )
 
