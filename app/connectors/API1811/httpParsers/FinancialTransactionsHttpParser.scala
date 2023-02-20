@@ -50,8 +50,6 @@ class FinancialTransactionsHttpParser @Inject()(implicit appConfig: Microservice
           logger.debug("[FinancialTransactionsReads][read] Error received: " + response)
           Left(Error(response.status,response.body))
         case _ =>
-          logger.warn(s"[FinancialTransactionsReads][read] unexpected ${response.status} returned from EIS " +
-          s"Status code:'${response.status}', Body: '${response.body}")
           Left(Error(response.status, response.body))
       }
   }

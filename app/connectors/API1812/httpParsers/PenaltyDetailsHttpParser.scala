@@ -45,11 +45,8 @@ object PenaltyDetailsHttpParser extends LoggerUtil {
           logger.debug("[PenaltyDetailsReads][read] Error received: " + response)
           Left(Error(response.status,response.body))
         case _ =>
-          logger.warn(s"[PenaltyDetailsReads][read] unexpected ${response.status} returned from EIS " +
-            s"Status code:'${response.status}', Body: '${response.body}")
           Left(Error(response.status, response.body))
       }
     }
   }
-
 }

@@ -20,8 +20,10 @@ import config.MicroserviceAppConfig
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import models.{FinancialRequestQueryParameters, TaxRegime}
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
+
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,9 +38,11 @@ class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTr
   def getFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                       (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsResponse] = {
 
+    val correlationID = randomUUID().toString
+
     val eisHeaders = Seq(
       "Authorization" -> s"Bearer ${appConfig.eisToken}",
-      "CorrelationId" -> randomUUID().toString,
+      "CorrelationId" -> correlationID,
       "Environment" -> appConfig.eisEnvironment
     )
 
@@ -48,7 +52,12 @@ class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTr
     logger.debug("[FinancialDataConnector][getFinancialData] - " +
       s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.queryParams1811}")
 
-    http.GET[FinancialTransactionsResponse](
-      url, queryParameters.queryParams1811, eisHeaders)(httpParser.FinancialTransactionsReads, hc, ec)
+    http.GET(url, queryParameters.queryParams1811, eisHeaders)(httpParser.FinancialTransactionsReads, hc, ec).map {
+      case Left(error) if error.code != NOT_FOUND =>
+        logger.warn(s"[FinancialDataConnector][getFinancialData] Unexpected error returned by EIS. " +
+          s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
+        Left(error)
+      case expectedResponse => expectedResponse
+    }
   }
 }
