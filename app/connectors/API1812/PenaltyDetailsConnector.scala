@@ -19,6 +19,7 @@ package connectors.API1812
 import config.MicroserviceAppConfig
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.{PenaltyDetailsReads, PenaltyDetailsResponse}
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
 
@@ -35,9 +36,11 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
                        (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
 
+    val correlationID = randomUUID().toString
+
     val eisHeaders = Seq(
       "Authorization" -> s"Bearer ${appConfig.eisToken}",
-      "CorrelationId" -> randomUUID().toString,
+      "CorrelationId" -> correlationID,
       "Environment" -> appConfig.eisEnvironment
     )
 
@@ -46,6 +49,13 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
 
     logger.debug("[PenaltyDetailsConnector][getPenaltyDetails] - " +
       s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
-    http.GET[PenaltyDetailsResponse](url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads,hc, ec)
+
+    http.GET(url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads, hc, ec).map {
+      case Left(error) if error.code != NOT_FOUND =>
+        logger.warn(s"[PenaltyDetailsConnector][getPenaltyDetails] Unexpected error returned by EIS. " +
+          s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
+        Left(error)
+      case expectedResponse => expectedResponse
+    }
   }
 }
