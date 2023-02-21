@@ -64,7 +64,6 @@ object DocumentDetails {
         "clearedAmount" -> model.documentClearedAmount,
         "items" -> model.lineItemDetails,
         "accruingInterestAmount" -> model.interestAccruingAmount,
-        "interestRate" -> model.lineItemDetails.head.interestRate,
         "accruingPenaltyAmount" -> model.getAccruingPenalty.map(_.penaltyAmount),
         "penaltyType" -> model.getAccruingPenalty.map(_.penaltyType)
       ).fields.filterNot(_._2 == JsNull))

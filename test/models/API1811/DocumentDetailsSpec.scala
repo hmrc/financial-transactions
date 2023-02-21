@@ -94,7 +94,6 @@ class DocumentDetailsSpec extends SpecBase {
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
           "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
           "penaltyType" -> "LPP1"
         )
@@ -117,8 +116,7 @@ class DocumentDetailsSpec extends SpecBase {
           "outstandingAmount" -> 297873.46,
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
-          "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3
+          "accruingInterestAmount" -> 0.23
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -139,8 +137,7 @@ class DocumentDetailsSpec extends SpecBase {
           "outstandingAmount" -> 297873.46,
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
-          "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3
+          "accruingInterestAmount" -> 0.23
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -160,8 +157,7 @@ class DocumentDetailsSpec extends SpecBase {
           "outstandingAmount" -> 297873.46,
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
-          "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3
+          "accruingInterestAmount" -> 0.23
         )
         Json.toJson(model) shouldBe expectedOutput
       }
@@ -181,7 +177,6 @@ class DocumentDetailsSpec extends SpecBase {
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson, fullLineItemDetailsOutputJson),
           "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
           "penaltyType" -> "LPP1"
         )
@@ -201,7 +196,6 @@ class DocumentDetailsSpec extends SpecBase {
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
           "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
           "penaltyType" -> "LPP1"
         )
@@ -221,7 +215,6 @@ class DocumentDetailsSpec extends SpecBase {
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
           "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
           "penaltyType" -> "LPP1"
         )
@@ -241,7 +234,6 @@ class DocumentDetailsSpec extends SpecBase {
           "clearedAmount" -> 45254895.33,
           "items" -> Json.arr(fullLineItemDetailsOutputJson),
           "accruingInterestAmount" -> 0.23,
-          "interestRate" -> 3,
           "accruingPenaltyAmount" -> 10.01,
           "penaltyType" -> "LPP1"
         )

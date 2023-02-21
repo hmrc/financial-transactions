@@ -96,14 +96,7 @@ object FinancialData1811 {
               "lockType" -> "Some payment lock",
               "lockStartDate" -> "2022-01-01",
               "lockEndDate" -> "2022-01-01"
-            )),
-            "lineItemInterestDetails" -> Json.obj(
-            "interestKey" -> "String",
-              "currentInterestRate" -> -999.99,
-              "interestStartDate" -> "1920-02-29",
-              "interestPostedAmount" -> -99999999999.99,
-              "interestAccruingAmount" -> -99999999999.99
-            )
+            ))
           ))
         ))
       )
@@ -122,7 +115,6 @@ object FinancialData1811 {
     clearingDate = Some(LocalDate.parse("2022-02-09")),
     clearingReason = Some("Payment at External Payment Collector Reported"),
     clearingDocument = Some("719283701921"),
-    interestRate = Some(-999.99),
     lineItemLockDetails = Seq(LineItemLockDetails("Some payment lock"))
   )
 
@@ -174,7 +166,6 @@ object FinancialData1811 {
         "DDcollectionInProgress" -> true
       )),
       "accruingInterestAmount" -> 12.10,
-      "interestRate" -> -999.99,
       "accruingPenaltyAmount" -> 10.01,
       "penaltyType" -> "LPP1"
     )),
