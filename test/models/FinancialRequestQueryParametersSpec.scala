@@ -95,7 +95,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           includeStatisticalItemsKey -> "true",
           includePaymentOnAccountKey -> "true",
           addRegimeTotalisationKey -> "true",
-          addLockInformationKey -> "true",
+          addLockInformationKey -> "false",
           penaltyDetailsKey -> "true",
           addPostedInterestDetailsKey -> "true",
           addAccruingInterestKey -> "true"
@@ -116,7 +116,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           includeStatisticalItemsKey -> "true",
           includePaymentOnAccountKey -> "true",
           addRegimeTotalisationKey -> "true",
-          addLockInformationKey -> "true",
+          addLockInformationKey -> "false",
           penaltyDetailsKey -> "true",
           addPostedInterestDetailsKey -> "true",
           addAccruingInterestKey -> "true"
@@ -134,7 +134,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           includeStatisticalItemsKey -> "true",
           includePaymentOnAccountKey -> "true",
           addRegimeTotalisationKey -> "true",
-          addLockInformationKey -> "true",
+          addLockInformationKey -> "false",
           penaltyDetailsKey -> "true",
           addPostedInterestDetailsKey -> "true",
           addAccruingInterestKey -> "true"

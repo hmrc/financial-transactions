@@ -34,7 +34,7 @@ case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
       Some(includeStatisticalItemsKey -> "true"),
       Some(includePaymentOnAccountKey -> "true"),
       Some(addRegimeTotalisationKey -> "true"),
-      Some(addLockInformationKey -> "true"),
+      Some(addLockInformationKey -> "false"),
       Some(penaltyDetailsKey -> "true"),
       Some(addPostedInterestDetailsKey -> "true"),
       Some(addAccruingInterestKey -> "true")
