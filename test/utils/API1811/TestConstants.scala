@@ -35,7 +35,6 @@ object TestConstants {
     clearingDate = Some(LocalDate.parse("2017-08-06")),
     clearingReason = Some("Payment at External Payment Collector Reported"),
     clearingDocument = Some("719283701921"),
-    interestRate = Some(3.00),
     lineItemLockDetails = Seq(LineItemLockDetails("Some lock reason"))
   )
 
@@ -48,9 +47,6 @@ object TestConstants {
     "netDueDate" -> "2018-02-14",
     "amount" -> 3400,
     "ddCollectionInProgress" -> true,
-    "lineItemInterestDetails" -> Json.obj(
-      "currentInterestRate" -> 3.00
-    ),
     "clearingDate" -> "2017-08-06",
     "clearingReason" -> "Payment at External Payment Collector Reported",
     "clearingDocument" -> "719283701921",
@@ -67,10 +63,7 @@ object TestConstants {
     "periodToDate" -> "2018-04-05",
     "netDueDate" -> "2018-02-14",
     "amount" -> 3400,
-    "ddCollectionInProgress" -> true,
-    "lineItemInterestDetails" -> Json.obj(
-      "currentInterestRate" -> 3.00
-    )
+    "ddCollectionInProgress" -> true
   )
 
   val lineItemDetailsFullIncorrectFields: LineItemDetails = lineItemDetailsFull.copy(
@@ -87,9 +80,6 @@ object TestConstants {
     "netDueDate" -> "2018-02-14",
     "amount" -> 3400,
     "ddCollectionInProgress" -> true,
-    "lineItemInterestDetails" -> Json.obj(
-      "currentInterestRate" -> 3.00
-    ),
     "clearingDate" -> "2017-08-06",
     "clearingReason" -> "Payment at External Payment Collector Reported",
     "clearingDocument" -> "719283701921",
@@ -178,7 +168,7 @@ object TestConstants {
   )
 
   val emptyLineItem: LineItemDetails =
-    LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, None, Seq())
+    LineItemDetails(None, None, None, None, None, None, None, None, None, None, None, Seq())
   val emptyDocumentPenaltyTotal: DocumentPenaltyTotals =
     DocumentPenaltyTotals(None, None, None)
   val emptyDocumentDetails: DocumentDetails =
@@ -220,7 +210,6 @@ object TestConstants {
     "clearedAmount" -> 45254895.33,
     "items" -> Json.arr(fullLineItemDetailsOutputJson),
     "accruingInterestAmount" -> 0.23,
-    "interestRate" -> 3,
     "accruingPenaltyAmount" -> 10.01,
     "penaltyType" -> "LPP1"
   )

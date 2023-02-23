@@ -52,8 +52,7 @@ The `hasOverdueChargeAndNoTTP` boolean will be `true` if a user has at least one
 |outstandingAmount|`Decimal`|**false**|    
 |clearedAmount|`Decimal`|**false**|    
 |items|`Array[SubItem]`|**false**|  
-|accruingInterestAmount|`Decimal`|**false**|  
-|interestRate|`Decimal`|**false**|  
+|accruingInterestAmount|`Decimal`|**false**|
 |accruingPenaltyAmount|`Decimal`|**false**|  
 |penaltyType|`String`|**false**|
 
@@ -97,7 +96,6 @@ Response Body:
                 }    
             ],  
             "accruingInterestAmount" : 55.55,  
-            "interestRate" : 2.22,  
             "accruingPenaltyAmount" : 66.66,  
             "penaltyType" : "LPP1"  
         }  
