@@ -64,6 +64,7 @@ def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
+  .disablePlugins(JUnitXmlReportPlugin)
   .settings(scalaSettings: _*)
   .settings(majorVersion := 0)
   .settings(coverageSettings: _*)
