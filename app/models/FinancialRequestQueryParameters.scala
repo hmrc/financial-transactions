@@ -27,7 +27,7 @@ case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
 
   val queryParams1811: Seq[(String, String)] =
     Seq(
-      fromDate.map(_ => dateTypeKey -> "BILLING"),
+      fromDate.map(_ => dateTypeKey -> "POSTING"),
       fromDate.map(dateFromKey -> _.toString),
       toDate.map(dateToKey -> _.toString),
       Some(onlyOpenItems.fold(includeClearedItemsKey -> "true")(boolean => includeClearedItemsKey -> (!boolean).toString)),
