@@ -88,7 +88,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           onlyOpenItems = Some(true)
         )
         queryParams.queryParams1811 shouldBe Seq(
-          dateTypeKey -> "BILLING",
+          dateTypeKey -> "POSTING",
           dateFromKey -> "2017-04-06",
           dateToKey -> "2018-04-05",
           includeClearedItemsKey -> "false",
@@ -109,7 +109,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           None
         )
         queryParams.queryParams1811 shouldBe Seq(
-          dateTypeKey -> "BILLING",
+          dateTypeKey -> "POSTING",
           dateFromKey -> "2017-04-06",
           dateToKey -> "2018-04-05",
           includeClearedItemsKey -> "true",
