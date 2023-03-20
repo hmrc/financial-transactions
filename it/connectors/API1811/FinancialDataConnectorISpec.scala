@@ -42,7 +42,7 @@ class FinancialDataConnectorISpec extends ComponentSpecBase {
   def generateUrl(regimeType: String, VRN : String): String =
     s"/penalty/financial-data/VRN/$VRN/$regimeType?includeClearedItems=true" +
       "&includeStatisticalItems=true&includePaymentOnAccount=true&addRegimeTotalisation=true" +
-      "&addLockInformation=false&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
+      "&addLockInformation=true&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
 
   "getFinancialData" should {
 
