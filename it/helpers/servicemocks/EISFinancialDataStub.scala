@@ -26,7 +26,7 @@ object EISFinancialDataStub {
   private def financialDataUrl(regime: TaxRegime): String =
       s"/penalty/financial-data/${regime.idType}/${regime.id}/${regime.regimeType}" +
         "?includeClearedItems=true&includeStatisticalItems=true&includePaymentOnAccount=true&addRegimeTotalisation=true" +
-        "&addLockInformation=false&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
+        "&addLockInformation=true&addPenaltyDetails=true&addPostedInterestDetails=true&addAccruingInterestDetails=true"
 
   def stubGetFinancialData(regime: TaxRegime)(status: Int, response: JsValue): StubMapping =
       stubGet(financialDataUrl(regime), status, response.toString())
