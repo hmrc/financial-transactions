@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1396.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
-import models.API1166._
+import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.DirectDebitCheckReads
+import models.API1396.DirectDebits
 import models._
 import play.api.http.Status
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.API1166.TestConstants.{multipleDirectDebits, multipleDirectDebitsJson}
+import utils.API1396.TestConstants.{multipleDirectDebits, multipleDirectDebitsJson}
 
 class DirectDebitCheckHttpParserSpec extends SpecBase {
 

@@ -18,18 +18,15 @@ package controllers
 
 import config.RegimeKeys
 import helpers.ComponentSpecBase
-import helpers.servicemocks.{DesFinancialDataStub, EISFinancialDataStub}
-import models.API1166._
+import helpers.servicemocks.EISFinancialDataStub
 import models.{FinancialRequestQueryParameters, VatRegime}
 import play.api.http.Status._
-import play.api.libs.json.Json
-import testData.{FinancialData1166, FinancialData1811}
+
+import testData.FinancialData1811
 
 class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
   "Sending a request to /financial-transactions/:regime/:identifier (FinancialTransactions controller)" when {
-
-    "the useApi1811 feature switch is enabled" when {
 
     val vatRegime = VatRegime("123456789")
 
@@ -39,7 +36,6 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
       "return a success response" in {
 
-        appConfig.features.useApi1811(true)
         isAuthorised()
 
         And("I wiremock stub a successful Get Financial Data response")
@@ -78,109 +74,6 @@ class FinancialTransactionsComponentSpec extends ComponentSpecBase {
         )
       }
     }
-  }
 
-    "the useApi1811 feature switch is disabled" when {
-
-      "requesting VAT transactions" when {
-
-        lazy val vrn = "123456789"
-        lazy val vatRegime = VatRegime(vrn)
-
-        "a successful response is returned by the API" should {
-
-          lazy val queryParameters = FinancialRequestQueryParameters()
-
-          "return a success response" in {
-
-            appConfig.features.useApi1811(false)
-            isAuthorised()
-
-            And("I wiremock stub a successful Get Financial Data response")
-            DesFinancialDataStub.stubGetFinancialData(
-              vatRegime, queryParameters)(OK, Json.toJson(FinancialData1166.successResponse))
-
-            When(s"I call GET /financial-transactions/vat/$vrn")
-            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
-
-            DesFinancialDataStub.verifyGetDesBusinessDetails(vatRegime, queryParameters)
-
-            Then("a successful response is returned with the correct estimate")
-
-            res should have(
-              httpStatus(OK),
-              jsonBodyAs[FinancialTransactions](FinancialData1166.successResponse)
-            )
-          }
-        }
-
-        "a bad request response is returned by the API, containing one error" should {
-
-          lazy val queryParameters = FinancialRequestQueryParameters()
-
-          "return a single error response" in {
-
-            isAuthorised()
-
-            And("I wiremock stub a successful Get Financial Data response")
-            DesFinancialDataStub.stubGetFinancialData(
-              vatRegime, queryParameters)(BAD_REQUEST, Json.toJson(FinancialData1166.singleErrorResponse))
-
-            When(s"I call GET /financial-transactions/vat/$vrn")
-            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
-
-            DesFinancialDataStub.verifyGetDesBusinessDetails(vatRegime, queryParameters)
-
-            Then("a successful response is returned with the correct estimate")
-
-            res should have(
-              httpStatus(BAD_REQUEST),
-              jsonBodyAs[Error](FinancialData1166.singleErrorResponse)
-            )
-          }
-        }
-
-        "a bad request response is returned by the API, containing multiple errors" should {
-
-          lazy val queryParameters = FinancialRequestQueryParameters()
-
-          "return a multi error response model" in {
-
-            isAuthorised()
-
-            And("I wiremock stub a successful Get Financial Data response")
-            DesFinancialDataStub.stubGetFinancialData(
-              vatRegime, queryParameters)(BAD_REQUEST, Json.toJson(FinancialData1166.multiErrorModel))
-
-            When(s"I call GET /financial-transactions/vat/$vrn")
-            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
-
-            DesFinancialDataStub.verifyGetDesBusinessDetails(vatRegime, queryParameters)
-
-            Then("a successful response is returned with the correct estimate")
-
-            res should have(
-              httpStatus(BAD_REQUEST),
-              jsonBodyAs[MultiError](FinancialData1166.multiErrorModel)
-            )
-          }
-        }
-
-        "the request is unauthorised" should {
-
-          "return an FORBIDDEN response" in {
-
-            isAuthorised(false)
-
-            When(s"I call GET /financial-transactions/vat/$vrn")
-            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, FinancialRequestQueryParameters())
-
-            res should have(
-              httpStatus(FORBIDDEN)
-            )
-          }
-        }
-      }
-    }
   }
 }

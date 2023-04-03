@@ -16,7 +16,6 @@
 
 package utils.API1811
 
-import config.AppConfig
 import models.API1811.DocumentDetails
 import utils.LoggerUtil
 
@@ -31,7 +30,7 @@ object ChargeTypes extends LoggerUtil {
   val onAccountSubTrans = "0100"
   val vatInterestRepaymentsSubTrans = "1176"
 
-  private val establishedChargeTypes: Map[(String, String), String] = Map(
+  private val supportedChargeTypes: Map[(String, String), String] = Map(
     ("0060", onAccountSubTrans) -> "Payment on account",
     ("4700", vatDebitSubTrans) -> "VAT Return Debit Charge",
     ("4700", vatCreditSubTrans) -> "VAT Return Credit Charge",
@@ -86,10 +85,7 @@ object ChargeTypes extends LoggerUtil {
     ("4796", penaltyDebitSubTrans) -> "VAT MP pre 2009",
     ("4799", penaltyDebitSubTrans) -> "VAT MP (R) pre 2009",
     ("7704", vatDebitSubTrans) -> "VAT Migrated Liabilities debit",
-    ("7705", vatCreditSubTrans) -> "VAT Migrated Credit"
-  )
-
-  private val penaltiesAndInterestChargeTypes: Map[(String, String), String] = Map(
+    ("7705", vatCreditSubTrans) -> "VAT Migrated Credit",
     ("4620", vatInterestSubTrans) -> "VAT Return LPI",
     ("4622", vatInterestSubTrans) -> "VAT Return 1st LPP LPI",
     ("4624", vatInterestSubTrans) -> "VAT Return 2nd LPP LPI",
@@ -139,24 +135,15 @@ object ChargeTypes extends LoggerUtil {
     ("4788", vatInterestSubTrans) -> "VAT Manual LPP LPI"
   )
 
-  private[utils] def supportedChargeList(implicit appConfig: AppConfig): Map[(String, String), String] =
-    if (appConfig.features.includePenAndIntCharges()) {
-      establishedChargeTypes ++ penaltiesAndInterestChargeTypes
-    } else {
-      establishedChargeTypes
-    }
+  def retrieveChargeType(mainTransaction: Option[String], subTransaction: Option[String]): Option[String] =
+    supportedChargeTypes.get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
 
-  def retrieveChargeType(mainTransaction: Option[String], subTransaction: Option[String])
-                        (implicit appConfig: AppConfig): Option[String] =
-    supportedChargeList.get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
-
-  def removeInvalidCharges(transactions: Seq[DocumentDetails])(implicit appConfig: AppConfig): Seq[DocumentDetails] = {
-    val supportedCharges = supportedChargeList
+  def removeInvalidCharges(transactions: Seq[DocumentDetails]): Seq[DocumentDetails] = {
     transactions.filter { document =>
       val filtered = document.lineItemDetails.filter { charge =>
         (charge.mainTransaction, charge.subTransaction) match {
           case (Some(mainTrans), Some(subTrans)) =>
-            supportedCharges.contains((mainTrans, subTrans))
+            supportedChargeTypes.contains((mainTrans, subTrans))
           case _ =>
             logger.warn("[ChargeTypes][removeInvalidLineItems] - Insufficient transaction values provided for charge, " +
               s"reference: ${document.chargeReferenceNumber}, main: ${charge.mainTransaction.getOrElse("none")}, " +

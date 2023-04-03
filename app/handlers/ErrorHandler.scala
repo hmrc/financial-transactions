@@ -17,9 +17,9 @@
 package handlers
 
 import config.MicroserviceAppConfig
+import models.Error
 
 import javax.inject.{Inject, Singleton}
-import models.API1166.Error
 import play.api.http.HttpErrorHandler
 import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.Json

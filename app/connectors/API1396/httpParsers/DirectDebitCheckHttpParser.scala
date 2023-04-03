@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package connectors.httpParsers
+package connectors.API1396.httpParsers
 
-import models.API1166.{UnexpectedJsonFormat, UnexpectedResponse}
-import models.DirectDebits
+import connectors.httpParsers.ResponseHttpParsers
+import models.API1396.DirectDebits
+import models.{UnexpectedJsonFormat, UnexpectedResponse}
 import play.api.http.Status.OK
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil

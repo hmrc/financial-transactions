@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.API1166
+package models
 
 import base.SpecBase
 import play.api.http.Status

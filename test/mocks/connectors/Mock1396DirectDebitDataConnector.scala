@@ -16,10 +16,9 @@
 
 package mocks.connectors
 
-import connectors.API1166.FinancialDataConnector
-import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
-import models.API1166.FinancialTransactions
-import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
+import connectors.API1396.DirectDebitDataConnector
+import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
+import models.API1396.DirectDebits
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._
 import org.mockito.stubbing.OngoingStubbing
@@ -30,28 +29,19 @@ import org.scalatest.{BeforeAndAfterEach, OptionValues}
 
 import scala.concurrent.Future
 
-trait Mock1166FinancialDataConnector extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
+trait Mock1396DirectDebitDataConnector extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
 
-  val mockFinancialDataConnector: FinancialDataConnector = mock[FinancialDataConnector]
+  val mockDirectDebitDataConnector: DirectDebitDataConnector = mock[DirectDebitDataConnector]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFinancialDataConnector)
+    reset(mockDirectDebitDataConnector)
   }
-
-  def setupMockGetFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
-                               (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
-    when(
-      mockFinancialDataConnector.getFinancialData(
-        ArgumentMatchers.eq(regime),
-        ArgumentMatchers.eq(queryParameters)
-      )(ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(response))
 
   def setupMockCheckDirectDebitExists(vrn: String)
                                (response: HttpGetResult[DirectDebits]): OngoingStubbing[Future[HttpGetResult[DirectDebits]]] =
     when(
-      mockFinancialDataConnector.checkDirectDebitExists(
+      mockDirectDebitDataConnector.checkDirectDebitExists(
         ArgumentMatchers.eq(vrn)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(response))

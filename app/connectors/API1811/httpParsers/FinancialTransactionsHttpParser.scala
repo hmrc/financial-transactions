@@ -16,7 +16,6 @@
 
 package connectors.API1811.httpParsers
 
-import config.MicroserviceAppConfig
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import models.API1811.{Error, FinancialTransactions}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
@@ -27,7 +26,7 @@ import utils.LoggerUtil
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class FinancialTransactionsHttpParser @Inject()(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class FinancialTransactionsHttpParser @Inject() extends LoggerUtil {
 
   implicit object FinancialTransactionsReads extends HttpReads[FinancialTransactionsResponse] {
     override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsResponse =

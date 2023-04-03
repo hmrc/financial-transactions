@@ -21,9 +21,8 @@ import config.RegimeKeys
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
 import mocks.services.MockPenaltyDetailsService
-import models.API1166.{InvalidTaxRegime, UnauthenticatedError}
 import models.API1812.Error
-import models.{PenaltyDetailsQueryParameters, VatRegime}
+import models.{InvalidTaxRegime, PenaltyDetailsQueryParameters, UnauthenticatedError, VatRegime}
 import play.api.http.Status
 import play.api.libs.json.Json
 import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
