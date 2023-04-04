@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialTransactionsController @Inject()(authenticate: AuthAction,
-                                                financialTransactionsService: DirectDebitService,
+                                                directDebitService: DirectDebitService,
                                                 api1811Service: services.API1811.FinancialTransactionsService,
                                                 cc: ControllerComponents)
                                                (implicit appConfig: MicroserviceAppConfig,
@@ -71,8 +71,8 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
     authenticate.async {
       implicit authorisedUser =>
         logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] " +
-          "Calling FinancialTransactionsService.checkDirectDebitExists")
-        financialTransactionsService.checkDirectDebitExists(vrn).map {
+          "Calling directDebitService.checkDirectDebitExists")
+        directDebitService.checkDirectDebitExists(vrn).map {
           case _@Right(directDebitExists) =>
             Ok(Json.toJson(directDebitExists))
           case _@Left(error) => error.error match {

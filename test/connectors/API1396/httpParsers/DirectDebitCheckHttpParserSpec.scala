@@ -27,7 +27,7 @@ import utils.API1396.TestConstants.{multipleDirectDebits, multipleDirectDebitsJs
 
 class DirectDebitCheckHttpParserSpec extends SpecBase {
 
-  "The FinancialTransactionsHttpParser" when {
+  "The DirectDebitCheckHttpParserSpec" when {
 
     "the http response status is 200 OK and matches expected Schema" should {
 
