@@ -19,11 +19,10 @@ package controllers
 import javax.inject.{Inject, Singleton}
 import config.{MicroserviceAppConfig, RegimeKeys}
 import controllers.actions.AuthAction
-import models.API1166._
 import models._
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import services.API1166.FinancialTransactionsService
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
+import services.API1396.DirectDebitService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import utils.LoggerUtil
@@ -32,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FinancialTransactionsController @Inject()(authenticate: AuthAction,
-                                                financialTransactionsService: FinancialTransactionsService,
+                                                directDebitService: DirectDebitService,
                                                 api1811Service: services.API1811.FinancialTransactionsService,
                                                 cc: ControllerComponents)
                                                (implicit appConfig: MicroserviceAppConfig,
@@ -43,7 +42,6 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
                                queryParams: FinancialRequestQueryParameters): Action[AnyContent] =
     authenticate.async {
       implicit authorisedUser =>
-      if(appConfig.features.useApi1811()) {
         idType.toUpperCase match {
           case RegimeKeys.VAT => retrieveFinancialTransactionsAPI1811(VatRegime(idValue), queryParams)
           case regime =>
@@ -51,33 +49,10 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
               s"Invalid Tax Regime '$regime' received in request.")
             Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
         }
-      } else {
-        idType.toUpperCase match {
-          case RegimeKeys.VAT => retrieveFinancialTransactions(VatRegime(idValue), queryParams)
-          case regime =>
-            logger.warn(s"[FinancialTransactionsController][getFinancialTransactions] " +
-              s"Invalid Tax Regime '$regime' received in request.")
-            Future.successful(BadRequest(Json.toJson(InvalidTaxRegime)))
-        }
       }
-    }
-
-  private def retrieveFinancialTransactions(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
-                                           (implicit hc: HeaderCarrier) = {
-    logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactions] " +
-      "Calling FinancialTransactionsService.getFinancialTransactions")
-
-    financialTransactionsService.getFinancialTransactions(regime, queryParams).map {
-      case _@Right(financialTransactions) => Ok(Json.toJson(financialTransactions))
-      case _@Left(error) => error.error match {
-        case singleError: Error => Status(error.status)(Json.toJson(singleError))
-        case multiError: MultiError => Status(error.status)(Json.toJson(multiError))
-      }
-    }
-  }
 
   private def retrieveFinancialTransactionsAPI1811(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
-                                                  (implicit hc: HeaderCarrier) = {
+                                                  (implicit hc: HeaderCarrier): Future[Result] = {
     logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactionsAPI1811] " +
       "Calling API1811.FinancialTransactionsService.getFinancialTransactions")
 
@@ -96,8 +71,8 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
     authenticate.async {
       implicit authorisedUser =>
         logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] " +
-          "Calling FinancialTransactionsService.checkDirectDebitExists")
-        financialTransactionsService.checkDirectDebitExists(vrn).map {
+          "Calling directDebitService.checkDirectDebitExists")
+        directDebitService.checkDirectDebitExists(vrn).map {
           case _@Right(directDebitExists) =>
             Ok(Json.toJson(directDebitExists))
           case _@Left(error) => error.error match {

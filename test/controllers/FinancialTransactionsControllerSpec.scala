@@ -16,14 +16,13 @@
 
 package controllers
 
-import utils.API1166.TestConstants.{fullFinancialTransactions, multipleDirectDebits}
+import utils.API1396.TestConstants.multipleDirectDebits
 import utils.API1811.TestConstants.{fullFinancialTransactionsOutputJson, fullFinancialTransactions => fullFinancialTransactions1811}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
-import mocks.services.MockFinancialTransactionsService
+import mocks.services.MockDirectDebitService
 import mocks.services.Mock1811FinancialTransactionsService
-import models.API1166._
 import models.API1811.{Error => Error1811}
 import models._
 import play.api.http.Status
@@ -33,7 +32,7 @@ import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 import scala.concurrent.Future
 
 class FinancialTransactionsControllerSpec extends SpecBase
-  with MockFinancialTransactionsService
+  with MockDirectDebitService
   with Mock1811FinancialTransactionsService
   with MockMicroserviceAuthorisedFunctions {
 
@@ -49,119 +48,12 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
   object TestFinancialTransactionController extends FinancialTransactionsController(
     authActionImpl,
-    mockFinancialTransactionsService,
+    mockDirectDebitService,
     mock1811FinancialTransactionsService,
     controllerComponents
   )
 
   "The GET FinancialTransactionsController.getFinancialTransactions method" when {
-
-    val successResponse = Right(fullFinancialTransactions)
-    val badRequestSingleError = Left(ErrorResponse(Status.BAD_REQUEST, singleError))
-    val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, multiError))
-
-    "the API1811 feature switch is off" when {
-
-      "called by an authenticated user" which {
-
-        "is requesting VAT details" should {
-
-          val regimeType = "VAT"
-          val vrn = "123456"
-          val vatRegime = VatRegime(vrn)
-
-          "for a successful response from the FinancialTransactionsService" should {
-            lazy val result = {
-              mockAppConfig.features.useApi1811(false)
-              TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, vrn, FinancialRequestQueryParameters()
-              )(fakeRequest)
-            }
-
-            "return a status of 200 (OK)" in {
-              setupMockGetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(successResponse)
-              status(result) shouldBe Status.OK
-            }
-
-            "return a json body with the financial transaction information" in {
-              contentAsJson(result) shouldBe Json.toJson(fullFinancialTransactions)
-            }
-
-          }
-
-          "for a bad request with single error from the FinancialTransactionsService" should {
-
-            lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, vrn, FinancialRequestQueryParameters()
-            )(fakeRequest)
-
-            "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(badRequestSingleError)
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return a json body with the single error message" in {
-
-              contentAsJson(result) shouldBe Json.toJson(singleError)
-            }
-          }
-
-          "for a bad request with multiple errors from the FinancialTransactionsService" should {
-
-            lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, vrn, FinancialRequestQueryParameters()
-            )(fakeRequest)
-
-            "return a status of 400 (BAD_REQUEST)" in {
-              setupMockGetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(badRequestMultiError)
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return a json body with the multiple error messages" in {
-              contentAsJson(result) shouldBe Json.toJson(multiError)
-            }
-          }
-
-        }
-
-        "is requesting details for an Invalid Tax Regime" should {
-
-          val regimeType = "BANANA"
-          val id = "123456"
-
-          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-            regimeType, id, FinancialRequestQueryParameters()
-          )(fakeRequest)
-
-          "return a status of 400 (BAD_REQUEST)" in {
-            status(result) shouldBe Status.BAD_REQUEST
-          }
-
-          "return a json body with an Invalid Tax Regime message" in {
-            contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
-          }
-        }
-      }
-
-      "called by an unauthenticated user" should {
-
-        val regimeType = "VAT"
-        val id = "123456"
-
-        "Return an UNAUTHORISED response" which {
-
-          lazy val result = TestFinancialTransactionController.getFinancialTransactions(
-            regimeType, id, FinancialRequestQueryParameters()
-          )(fakeRequest)
-
-          "has status UNAUTHORISED (401)" in {
-            setupMockAuthorisationException()
-            status(result) shouldBe Status.UNAUTHORIZED
-          }
-        }
-      }
-
-      "the API1811 feature switch is on" when {
 
         val badRequestError = Error1811(Status.BAD_REQUEST, "error")
         val successResponse = Future.successful(Right(fullFinancialTransactions1811))
@@ -177,7 +69,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "the service returns a success response" should {
 
             lazy val result = {
-              mockAppConfig.features.useApi1811(true)
               setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(successResponse)
               TestFinancialTransactionController.getFinancialTransactions(
                 regimeType, id, FinancialRequestQueryParameters()
@@ -196,7 +87,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "the service returns a failure response" should {
 
             lazy val result = {
-              mockAppConfig.features.useApi1811(true)
               setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
               TestFinancialTransactionController.getFinancialTransactions(
                 regimeType, id, FinancialRequestQueryParameters()
@@ -215,7 +105,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
           "an exception has been thrown at an earlier stage" should {
 
             lazy val result = {
-              mockAppConfig.features.useApi1811(true)
               setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(exceptionResponse)
               TestFinancialTransactionController.getFinancialTransactions(
                 regimeType, id, FinancialRequestQueryParameters()
@@ -239,7 +128,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
           val vatRegime = VatRegime(id)
 
           lazy val result = {
-            mockAppConfig.features.useApi1811(true)
             setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
             TestFinancialTransactionController.getFinancialTransactions(
               regimeType, id, FinancialRequestQueryParameters()
@@ -254,8 +142,6 @@ class FinancialTransactionsControllerSpec extends SpecBase
             contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
           }
         }
-      }
-    }
   }
 
   "The GET FinancialTransactionsController.checkDirectDebitExists method" when {

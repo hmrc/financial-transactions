@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models.API1166
+package models
 
 import play.api.http.Status
 import play.api.libs.json.{Format, Json}

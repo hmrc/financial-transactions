@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.API1396
 
 import base.SpecBase
 import play.api.libs.json.Json
-import utils.API1166.TestConstants.{singleDirectDebits, singleDirectDebitsJson, multipleDirectDebits, multipleDirectDebitsJson
-  , noDirectDebits, noDirectDebitsJson}
+import utils.API1396.TestConstants._
 
 class DirectDebitsSpec extends SpecBase {
 

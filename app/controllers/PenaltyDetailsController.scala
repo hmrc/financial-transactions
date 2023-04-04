@@ -18,9 +18,9 @@ package controllers
 
 import config.{MicroserviceAppConfig, RegimeKeys}
 import controllers.actions.AuthAction
+
 import javax.inject.{Inject, Singleton}
-import models.API1166.InvalidTaxRegime
-import models.{PenaltyDetailsQueryParameters, VatRegime}
+import models.{InvalidTaxRegime, PenaltyDetailsQueryParameters, VatRegime}
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.API1812.PenaltyDetailsService

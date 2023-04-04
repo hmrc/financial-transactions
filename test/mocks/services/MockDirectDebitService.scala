@@ -16,9 +16,8 @@
 
 package mocks.services
 
-import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
-import models.API1166.FinancialTransactions
-import models.{DirectDebits, FinancialRequestQueryParameters, TaxRegime}
+import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
+import models.API1396.DirectDebits
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}
 import org.mockito.stubbing.OngoingStubbing
@@ -26,33 +25,24 @@ import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.mockito.MockitoSugar.mock
-import services.API1166.FinancialTransactionsService
+import services.API1396.DirectDebitService
 
 import scala.concurrent.Future
 
-trait MockFinancialTransactionsService extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach {
+trait MockDirectDebitService extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach {
 
-  val mockFinancialTransactionsService: FinancialTransactionsService = mock[FinancialTransactionsService]
+  val mockDirectDebitService: DirectDebitService = mock[DirectDebitService]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockFinancialTransactionsService)
+    reset(mockDirectDebitService)
   }
-
-  def setupMockGetFinancialTransactions(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
-                               (response: HttpGetResult[FinancialTransactions]): OngoingStubbing[Future[HttpGetResult[FinancialTransactions]]] =
-    when(
-      mockFinancialTransactionsService.getFinancialTransactions(
-        ArgumentMatchers.eq(regime),
-        ArgumentMatchers.eq(queryParameters)
-      )(ArgumentMatchers.any(), ArgumentMatchers.any())
-    ).thenReturn(Future.successful(response))
 
   def setupMockCheckDirectDebitExists(vrn: String)
                                        (response: HttpGetResult[DirectDebits]):
                             OngoingStubbing[Future[HttpGetResult[DirectDebits]]] =
     when(
-      mockFinancialTransactionsService.checkDirectDebitExists(
+      mockDirectDebitService.checkDirectDebitExists(
         ArgumentMatchers.eq(vrn)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(response))

@@ -23,8 +23,6 @@ import play.api.Configuration
 class Features @Inject()(implicit config: Configuration){
 
   private val featureSwitch: String = "feature-switch"
-  lazy val useApi1811 = new Feature(s"$featureSwitch.useApi1811")
-  lazy val includePenAndIntCharges = new Feature(s"$featureSwitch.includePenAndIntCharges")
   lazy val staticDate = new Feature(s"$featureSwitch.staticDate")
 
 }
