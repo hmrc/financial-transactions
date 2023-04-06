@@ -17,11 +17,11 @@
 package connectors.API1811
 
 import config.MicroserviceAppConfig
-import connectors.API1811.httpParsers.FinancialTransactionsHttpParser
-import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
+import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.{FinancialTransactionsReads, FinancialTransactionsResponse}
+import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime}
-import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
 
 import java.util.UUID.randomUUID
@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTransactionsHttpParser)
+class FinancialDataConnector @Inject()(http: HttpClient)
                                       (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def financialDataUrl(regime: TaxRegime) =
@@ -52,12 +52,16 @@ class FinancialDataConnector @Inject()(http: HttpClient, httpParser: FinancialTr
     logger.debug("[FinancialDataConnector][getFinancialData] - " +
       s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: ${queryParameters.queryParams1811}")
 
-    http.GET(url, queryParameters.queryParams1811, eisHeaders)(httpParser.FinancialTransactionsReads, hc, ec).map {
+    http.GET(url, queryParameters.queryParams1811, eisHeaders)(FinancialTransactionsReads, hc, ec).map {
       case Left(error) if error.code != NOT_FOUND =>
         logger.warn(s"[FinancialDataConnector][getFinancialData] Unexpected error returned by EIS. " +
           s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
         Left(error)
       case expectedResponse => expectedResponse
+    }.recover {
+      case ex: HttpException =>
+        logger.warn(s"[FinancialDataConnector][getFinancialData] - HTTP exception received: ${ex.message}")
+        Left(Error(BAD_GATEWAY, ex.message))
     }
   }
 }

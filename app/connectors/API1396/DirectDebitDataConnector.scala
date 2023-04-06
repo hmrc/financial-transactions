@@ -19,7 +19,9 @@ package connectors.API1396
 import config.MicroserviceAppConfig
 import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.{DirectDebitCheckReads, HttpGetResult}
 import models.API1396.DirectDebits
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import models.{Error, ErrorResponse}
+import play.api.http.Status.BAD_GATEWAY
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
@@ -32,7 +34,8 @@ class DirectDebitDataConnector @Inject()(http: HttpClient)
   private[connectors] def directDebitUrl(vrn: String) =
     s"${appConfig.desUrl}/cross-regime/direct-debits/vatc/vrn/$vrn"
 
-  val desHeaders = Seq("Authorization" -> s"Bearer ${appConfig.desToken}", "Environment" -> appConfig.desEnvironment)
+  val desHeaders: Seq[(String, String)] =
+    Seq("Authorization" -> s"Bearer ${appConfig.desToken}", "Environment" -> appConfig.desEnvironment)
 
   def checkDirectDebitExists(vrn: String)
                             (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[DirectDebits]] = {
@@ -46,6 +49,10 @@ class DirectDebitDataConnector @Inject()(http: HttpClient)
       case error@Left(message) =>
         logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
         error
+    }.recover {
+      case ex: HttpException =>
+        logger.warn(s"[DirectDebitDataConnector][checkDirectDebitExists] - HTTP exception received: ${ex.message}")
+        Left(ErrorResponse(BAD_GATEWAY, Error("BAD_GATEWAY", ex.message)))
     }
   }
 }

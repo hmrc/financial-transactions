@@ -24,7 +24,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import uk.gov.hmrc.http.HttpResponse
 import uk.gov.hmrc.http.HttpClient
 
 import scala.concurrent.Future
@@ -38,15 +37,11 @@ trait MockHttp extends AnyWordSpecLike with Matchers with OptionValues with Befo
     reset(mockHttpGet)
   }
 
-  def setupMockHttpGet[A](url: String)(response: A): OngoingStubbing[Future[A]] =
+  def setupMockHttpGet[A](url: String)(response: Future[A]): OngoingStubbing[Future[A]] =
     when(mockHttpGet.GET[A](ArgumentMatchers.eq(url), any(), any())(any(), any(), any()))
-      .thenReturn(Future.successful(response))
+      .thenReturn(response)
 
-  def setupMockHttpGet[A](url: String, queryParams: Seq[(String, String)])(response: A): OngoingStubbing[Future[A]] =
+  def setupMockHttpGet[A](url: String, queryParams: Seq[(String, String)])(response: Future[A]): OngoingStubbing[Future[A]] =
     when(mockHttpGet.GET[A](ArgumentMatchers.eq(url), ArgumentMatchers.eq(queryParams), any())(any(),
-      any(), any())).thenReturn(Future.successful(response))
-
-  def setupMockFailedHttpGet[A](url: String)(response: HttpResponse): OngoingStubbing[Future[A]] =
-    when(mockHttpGet.GET[A](ArgumentMatchers.eq(url))(any(), any(), any())).thenReturn(Future.failed(new Exception))
-
+      any(), any())).thenReturn(response)
 }

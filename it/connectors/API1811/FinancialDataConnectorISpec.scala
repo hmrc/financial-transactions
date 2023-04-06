@@ -16,7 +16,6 @@
 
 package connectors.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpParser
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import helpers.ComponentSpecBase
 import models.API1811.Error
@@ -28,8 +27,7 @@ import testData.FinancialData1811.{fullFinancialTransactions, fullFinancialTrans
 
 class FinancialDataConnectorISpec extends ComponentSpecBase {
 
-  val httpParser = new FinancialTransactionsHttpParser()
-  val connector: FinancialDataConnector = new FinancialDataConnector(httpClient, httpParser)
+  val connector: FinancialDataConnector = new FinancialDataConnector(httpClient)
 
   val regimeType = "VATC"
   val invalidRegimeType = "9"
