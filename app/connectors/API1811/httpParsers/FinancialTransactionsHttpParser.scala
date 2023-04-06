@@ -16,17 +16,15 @@
 
 package connectors.API1811.httpParsers
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
 import models.API1811.{Error, FinancialTransactions}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.API1811.ChargeTypes
 import utils.LoggerUtil
 
-import javax.inject.{Inject, Singleton}
+object FinancialTransactionsHttpParser extends LoggerUtil {
 
-@Singleton
-class FinancialTransactionsHttpParser @Inject() extends LoggerUtil {
+  type FinancialTransactionsResponse = Either[Error, FinancialTransactions]
 
   implicit object FinancialTransactionsReads extends HttpReads[FinancialTransactionsResponse] {
     override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsResponse =
@@ -52,8 +50,4 @@ class FinancialTransactionsHttpParser @Inject() extends LoggerUtil {
           Left(Error(response.status, response.body))
       }
   }
-}
-
-object FinancialTransactionsHttpParser {
-  type FinancialTransactionsResponse = Either[Error, FinancialTransactions]
 }

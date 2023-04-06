@@ -19,8 +19,9 @@ package connectors.API1812
 import config.MicroserviceAppConfig
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.{PenaltyDetailsReads, PenaltyDetailsResponse}
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
-import play.api.http.Status.NOT_FOUND
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import models.API1812.Error
+import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
 
 import java.util.UUID.randomUUID
@@ -56,6 +57,10 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
           s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
         Left(error)
       case expectedResponse => expectedResponse
+    }.recover {
+      case ex: HttpException =>
+        logger.warn(s"[PenaltyDetailsConnector][getPenaltyDetails] - HTTP exception received: ${ex.message}")
+        Left(Error(BAD_GATEWAY, ex.message))
     }
   }
 }

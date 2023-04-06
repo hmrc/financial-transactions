@@ -22,71 +22,75 @@ import mocks.MockHttp
 import models.API1396._
 import models._
 import play.api.http.Status
+import play.api.http.Status.BAD_GATEWAY
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.RequestTimeoutException
+import utils.API1396.TestConstants.singleDirectDebits
 
 import scala.concurrent.Future
 
 class DirectDebitDataConnectorSpec extends SpecBase with MockHttp {
 
-  val badRequestSingleError: Either[ErrorResponse, Nothing] =
-    Left(ErrorResponse(Status.BAD_REQUEST, Error(code = "CODE", reason = "ERROR MESSAGE")))
+  val vrn: String = "5555555555"
 
-  val badRequestMultiError = Left(ErrorResponse(Status.BAD_REQUEST, MultiError(
-    failures = Seq(
-      Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
-      Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
-    )
-  )))
-
-  val vatRegime: TaxRegime = VatRegime(id = "12345678")
-
-  object TestDirectdebitDataConnector extends DirectDebitDataConnector(mockHttpGet)
+  val connector = new DirectDebitDataConnector(mockHttpGet)
 
   "The DirectDebitDataConnector" should {
 
     "format the request Url correctly for check direct debit requests" in {
 
-      val vrn:String = "555555555"
-      val actualUrl: String = TestDirectdebitDataConnector.directDebitUrl(vrn = vrn)
+      val actualUrl: String = connector.directDebitUrl(vrn = vrn)
       val expectedUrl: String = s"${mockAppConfig.desUrl}/cross-regime/direct-debits/vatc/vrn/$vrn"
 
       actualUrl shouldBe expectedUrl
     }
 
-    "when calling the checkDirectDebitExists" when {
+    "return a success response" when {
 
-      val successResponse: Either[Nothing, Boolean] = Right(true)
-      val vrn: String = "5555555555"
-      setupMockHttpGet(TestDirectdebitDataConnector.directDebitUrl(vrn = vrn))(successResponse)
+      "a direct debit was found" in {
+        val successResponse: HttpGetResult[DirectDebits] = Right(singleDirectDebits)
 
-      "calling check direct debit exists with success response received" should {
+        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.successful(successResponse))
+        val result: Future[HttpGetResult[DirectDebits]] =
+          connector.checkDirectDebitExists(vrn = vrn)
+        await(result) shouldBe successResponse
+      }
+    }
 
-        "return a that a direct debit was found" in {
-          setupMockHttpGet(TestDirectdebitDataConnector.directDebitUrl(vrn = vrn))(successResponse)
-          val result: Future[HttpGetResult[DirectDebits]] =
-            TestDirectdebitDataConnector.checkDirectDebitExists(vrn = vrn)
-          await(result) shouldBe successResponse
-        }
+    "return an Error model" when {
+
+      "there is a bad request, single error" in {
+        val badRequestSingleError: HttpGetResult[DirectDebits] =
+          Left(ErrorResponse(Status.BAD_REQUEST, Error(code = "CODE", reason = "ERROR MESSAGE")))
+
+        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.successful(badRequestSingleError))
+        val result: Future[HttpGetResult[DirectDebits]] =
+          connector.checkDirectDebitExists(vrn = vrn)
+        await(result) shouldBe badRequestSingleError
       }
 
-      "calling the checkDirectDebitExist, single error" should {
+      "there is a bad request, multi error" in {
+        val badRequestMultiError: HttpGetResult[DirectDebits] =
+          Left(ErrorResponse(Status.BAD_REQUEST, MultiError(
+            failures = Seq(
+              Error(code = "ERROR CODE 1", reason = "ERROR MESSAGE 1"),
+              Error(code = "ERROR CODE 2", reason = "ERROR MESSAGE 2")
+            )
+          )))
 
-        "return a Error model" in {
-          setupMockHttpGet(TestDirectdebitDataConnector.directDebitUrl(vrn = vrn))(badRequestSingleError)
-          val result: Future[HttpGetResult[DirectDebits]] =
-            TestDirectdebitDataConnector.checkDirectDebitExists(vrn = vrn)
-          await(result) shouldBe badRequestSingleError
-        }
+        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.successful(badRequestMultiError))
+        val result: Future[HttpGetResult[DirectDebits]] =
+          connector.checkDirectDebitExists(vrn = vrn)
+        await(result) shouldBe badRequestMultiError
       }
 
-      "calling the checkDirectDebitExist, multi error" should {
+      "there is a HTTP exception" in {
+        val exception = new RequestTimeoutException("Request timed out!!!")
 
-        "return a MultiError model" in {
-          setupMockHttpGet(TestDirectdebitDataConnector.directDebitUrl(vrn = vrn))(badRequestMultiError)
-          val result: Future[HttpGetResult[DirectDebits]] =
-            TestDirectdebitDataConnector.checkDirectDebitExists(vrn = vrn)
-          await(result) shouldBe badRequestMultiError
-        }
+        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.failed(exception))
+        val result: Future[HttpGetResult[DirectDebits]] =
+          connector.checkDirectDebitExists(vrn = vrn)
+        await(result) shouldBe Left(ErrorResponse(BAD_GATEWAY, Error("BAD_GATEWAY", exception.message)))
       }
     }
   }

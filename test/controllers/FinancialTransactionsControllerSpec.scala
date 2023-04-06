@@ -55,93 +55,74 @@ class FinancialTransactionsControllerSpec extends SpecBase
 
   "The GET FinancialTransactionsController.getFinancialTransactions method" when {
 
-        val badRequestError = Error1811(Status.BAD_REQUEST, "error")
-        val successResponse = Future.successful(Right(fullFinancialTransactions1811))
-        val errorResponse = Future.successful(Left(badRequestError))
-        val exceptionResponse = Future.failed(new Exception("oops"))
+    val badRequestError = Error1811(Status.BAD_REQUEST, "error")
+    val successResponse = Future.successful(Right(fullFinancialTransactions1811))
+    val errorResponse = Future.successful(Left(badRequestError))
 
-        "an authenticated user requests VAT details" when {
+    "an authenticated user requests VAT details" when {
 
-          val id = "123456"
-          val regimeType = "VAT"
-          val vatRegime = VatRegime(id)
+      val id = "123456"
+      val regimeType = "VAT"
+      val vatRegime = VatRegime(id)
 
-          "the service returns a success response" should {
+      "the service returns a success response" should {
 
-            lazy val result = {
-              setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(successResponse)
-              TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, id, FinancialRequestQueryParameters()
-              )(fakeRequest)
-            }
-
-            "return a status of 200 (OK)" in {
-              status(result) shouldBe Status.OK
-            }
-
-            "return a json body with the financial transaction information" in {
-              contentAsJson(result) shouldBe fullFinancialTransactionsOutputJson
-            }
-          }
-
-          "the service returns a failure response" should {
-
-            lazy val result = {
-              setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
-              TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, id, FinancialRequestQueryParameters()
-              )(fakeRequest)
-            }
-
-            "return the same status as the response" in {
-              status(result) shouldBe Status.BAD_REQUEST
-            }
-
-            "return the correct error JSON" in {
-              contentAsJson(result) shouldBe Json.toJson(badRequestError)
-            }
-          }
-
-          "an exception has been thrown at an earlier stage" should {
-
-            lazy val result = {
-              setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(exceptionResponse)
-              TestFinancialTransactionController.getFinancialTransactions(
-                regimeType, id, FinancialRequestQueryParameters()
-              )(fakeRequest)
-            }
-
-            "return a status of 500 (INTERNAL_SERVER_ERROR)" in {
-              status(result) shouldBe Status.INTERNAL_SERVER_ERROR
-            }
-
-            "return an error json body" in {
-              contentAsJson(result) shouldBe Json.obj("code" -> 500, "reason" -> "oops")
-            }
-          }
+        lazy val result = {
+          setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(successResponse)
+          TestFinancialTransactionController.getFinancialTransactions(
+            regimeType, id, FinancialRequestQueryParameters()
+          )(fakeRequest)
         }
 
-        "an authenticated user requests details for an invalid tax regime" should {
-
-          val regimeType = "BANANA"
-          val id = "123456"
-          val vatRegime = VatRegime(id)
-
-          lazy val result = {
-            setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
-            TestFinancialTransactionController.getFinancialTransactions(
-              regimeType, id, FinancialRequestQueryParameters()
-            )(fakeRequest)
-          }
-
-          "return a status of 400 (BAD_REQUEST)" in {
-            status(result) shouldBe Status.BAD_REQUEST
-          }
-
-          "return a json body with an Invalid Tax Regime message" in {
-            contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
-          }
+        "return a status of 200 (OK)" in {
+          status(result) shouldBe Status.OK
         }
+
+        "return a json body with the financial transaction information" in {
+          contentAsJson(result) shouldBe fullFinancialTransactionsOutputJson
+        }
+      }
+
+      "the service returns a failure response" should {
+
+        lazy val result = {
+          setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
+          TestFinancialTransactionController.getFinancialTransactions(
+            regimeType, id, FinancialRequestQueryParameters()
+          )(fakeRequest)
+        }
+
+        "return the same status as the response" in {
+          status(result) shouldBe Status.BAD_REQUEST
+        }
+
+        "return the correct error JSON" in {
+          contentAsJson(result) shouldBe Json.toJson(badRequestError)
+        }
+      }
+    }
+
+    "an authenticated user requests details for an invalid tax regime" should {
+
+      val regimeType = "BANANA"
+      val id = "123456"
+      val vatRegime = VatRegime(id)
+
+      lazy val result = {
+        setupMock1811GetFinancialTransactions(vatRegime, FinancialRequestQueryParameters())(errorResponse)
+        TestFinancialTransactionController.getFinancialTransactions(
+          regimeType, id, FinancialRequestQueryParameters()
+        )(fakeRequest)
+      }
+
+      "return a status of 400 (BAD_REQUEST)" in {
+        status(result) shouldBe Status.BAD_REQUEST
+      }
+
+      "return a json body with an Invalid Tax Regime message" in {
+        contentAsJson(result) shouldBe Json.toJson(InvalidTaxRegime)
+      }
+    }
   }
 
   "The GET FinancialTransactionsController.checkDirectDebitExists method" when {

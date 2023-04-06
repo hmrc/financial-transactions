@@ -26,8 +26,6 @@ import utils.API1811.TestConstants._
 
 class FinancialTransactionsHttpParserSpec extends SpecBase {
 
-  val httpParser = new FinancialTransactionsHttpParser()
-
   "The FinancialTransactionsHttpParser" when {
 
     "the http response status is 200 OK and matches expected Schema" when {
@@ -38,7 +36,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
         val expected = Right(fullFinancialTransactions)
 
-        val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+        val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
         "return a FinancialTransactions instance containing financialDetails items with valid charge types" in {
           result shouldEqual expected
@@ -51,7 +49,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
         val expected = Right(fullFinancialTransactions.copy(documentDetails = Seq()))
 
-        val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+        val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
         "return a FinancialTransactions instance that has had the invalid financialDetails items filtered out" in {
           result shouldEqual expected
@@ -66,7 +64,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
       val expected = Left(Error(BAD_REQUEST,
         "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
 
-      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+      val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return an Error model with an UNEXPECTED_JSON_FORMAT error message" in {
         result shouldEqual expected
@@ -79,7 +77,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val expected = Left(Error(Status.NOT_FOUND,""))
 
-      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+      val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return a NOT_FOUND status in an Error model" in {
         result shouldEqual expected
@@ -92,7 +90,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
       val expected = Left(Error( code = INTERNAL_SERVER_ERROR, reason = "message"))
 
-      val result = httpParser.FinancialTransactionsReads.read("", "", httpResponse)
+      val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
       "return the status in an Error model" in {
         result shouldEqual expected
