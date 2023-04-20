@@ -17,13 +17,17 @@
 package config
 
 import config.featureSwitch.Features
+
 import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
+
 trait AppConfig {
   val features: Features
   val staticDateValue: String
+  val familiarisationPeriodEndDate: LocalDate
 }
 
 @Singleton
@@ -40,6 +44,8 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
   lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
 
   override lazy val staticDateValue: String = servicesConfig.getString("date-service.staticDateValue")
+  override lazy val familiarisationPeriodEndDate: LocalDate =
+    LocalDate.parse(servicesConfig.getString("date-service.familiarisationPeriodEndDate"))
 
   override val features = new Features
 }
