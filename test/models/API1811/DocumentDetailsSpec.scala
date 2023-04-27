@@ -20,32 +20,104 @@ import base.SpecBase
 import play.api.libs.json._
 import utils.API1811.TestConstants._
 
+import java.time.LocalDate
+
 class DocumentDetailsSpec extends SpecBase {
+
+  val dateInFamiliarisationPeriod: LocalDate = mockAppConfig.familiarisationPeriodEndDate.minusDays(1)
+  val dateAfterFamiliarisationPeriod: LocalDate = mockAppConfig.familiarisationPeriodEndDate.plusDays(1)
+  val estimatedLPP1: DocumentPenaltyTotals = documentPenaltyTotals
+  val estimatedLPP1Document: DocumentDetails = fullDocumentDetails.copy(
+    documentPenaltyTotals = Some(Seq(estimatedLPP1)),
+    lineItemDetails = Seq(lineItemDetailsFull.copy(netDueDate = Some(dateAfterFamiliarisationPeriod)))
+  )
+  val estimatedLPP2: DocumentPenaltyTotals = estimatedLPP1.copy(penaltyType = Some("LPP2"))
+  val estimatedLPP2Document: DocumentDetails = estimatedLPP1Document.copy(documentPenaltyTotals = Some(Seq(estimatedLPP2)))
 
   "getAccruingPenalty" should {
 
-    "return only the penalty charge that has an accruing penaltyStatus" in {
+    "return estimated LPP1 details" when {
 
-      val model = fullDocumentDetails.copy(
-        documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted, documentPenaltyTotals)))
+      "the parent charge due date is after the familiarisation period end date" in {
+        estimatedLPP1Document.getAccruingPenalty shouldBe Some(estimatedLPP1)
+      }
 
-      model.getAccruingPenalty shouldBe Some(documentPenaltyTotals)
+      "the parent charge due date is on the familiarisation period end date" in {
+        val model = estimatedLPP1Document.copy(
+          lineItemDetails = Seq(lineItemDetailsFull.copy(netDueDate = Some(mockAppConfig.familiarisationPeriodEndDate)))
+        )
+        model.getAccruingPenalty shouldBe Some(estimatedLPP1)
+      }
+
+      "there is also a posted penalty in the document penalty totals" in {
+        val model = estimatedLPP1Document.copy(
+          documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted, estimatedLPP1))
+        )
+        model.getAccruingPenalty shouldBe Some(estimatedLPP1)
+      }
     }
 
-    "return a None when PenaltyStatus is not accruing" in {
+    "return estimated LPP2 details" when {
 
-      val model = fullDocumentDetails.copy(
-        documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted)))
+      "the parent charge due date is after the familiarisation period end date" in {
+        estimatedLPP2Document.getAccruingPenalty shouldBe Some(estimatedLPP2)
+      }
 
-      model.getAccruingPenalty shouldBe None
+      "the parent charge due date is before the familiarisation period end date" in {
+        val model = estimatedLPP2Document.copy(
+          lineItemDetails = Seq(lineItemDetailsFull.copy(netDueDate = Some(dateInFamiliarisationPeriod)))
+        )
+        model.getAccruingPenalty shouldBe Some(estimatedLPP2)
+      }
+
+      "the parent charge due date is on the familiarisation period end date" in {
+        val model = estimatedLPP2Document.copy(
+          lineItemDetails = Seq(lineItemDetailsFull.copy(netDueDate = Some(mockAppConfig.familiarisationPeriodEndDate)))
+        )
+        model.getAccruingPenalty shouldBe Some(estimatedLPP2)
+      }
+
+      "there is also a posted penalty in the document penalty totals" in {
+        val model = estimatedLPP2Document.copy(
+          documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted, estimatedLPP2))
+        )
+        model.getAccruingPenalty shouldBe Some(estimatedLPP2)
+      }
     }
 
-    "return a None when DocumentPenaltyTotals is empty" in {
+    "return None" when {
 
-      val model = fullDocumentDetails.copy(
-        documentPenaltyTotals = Some(Seq(emptyDocumentPenaltyTotal)))
+      "there is an estimated LPP1 with a due date before the familiarisation period end date" in {
+        val model = estimatedLPP1Document.copy(lineItemDetails =
+          Seq(lineItemDetailsFull.copy(netDueDate = Some(dateInFamiliarisationPeriod)))
+        )
+        model.getAccruingPenalty shouldBe None
+      }
 
-      model.getAccruingPenalty shouldBe None
+      "there is only a posted penalty in the document penalty totals" in {
+        val model = fullDocumentDetails.copy(documentPenaltyTotals = Some(Seq(documentPenaltyTotalsPosted)))
+        model.getAccruingPenalty shouldBe None
+      }
+
+      "there are no penalties in the document penalty totals" in {
+        val model = fullDocumentDetails.copy(documentPenaltyTotals = Some(Seq(emptyDocumentPenaltyTotal)))
+        model.getAccruingPenalty shouldBe None
+      }
+
+      "there are no document penalty totals" in {
+        val model = fullDocumentDetails.copy(documentPenaltyTotals = None)
+        model.getAccruingPenalty shouldBe None
+      }
+
+      "there are no line items" in {
+        val model = fullDocumentDetails.copy(lineItemDetails = Seq())
+        model.getAccruingPenalty shouldBe None
+      }
+
+      "there is no due date" in {
+        val model = fullDocumentDetails.copy(lineItemDetails = Seq(emptyLineItem))
+        model.getAccruingPenalty shouldBe None
+      }
     }
   }
 

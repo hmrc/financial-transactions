@@ -16,6 +16,7 @@
 
 package models.API1811
 
+import config.AppConfig
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsNull, JsObject, JsPath, JsResultException, Json, JsonValidationError, Reads, Writes}
 import utils.API1811.ChargeTypes
@@ -26,11 +27,17 @@ case class DocumentDetails(chargeReferenceNumber: Option[String],
                            documentClearedAmount: Option[BigDecimal],
                            lineItemDetails: Seq[LineItemDetails],
                            interestAccruingAmount: Option[BigDecimal],
-                           documentPenaltyTotals: Option[Seq[DocumentPenaltyTotals]]
-                          ) {
+                           documentPenaltyTotals: Option[Seq[DocumentPenaltyTotals]]) {
 
-  def getAccruingPenalty: Option[DocumentPenaltyTotals] = {
-    documentPenaltyTotals.getOrElse(Seq()).find(_.penaltyStatus.contains("ACCRUING"))
+  def getAccruingPenalty(implicit appConfig: AppConfig): Option[DocumentPenaltyTotals] = {
+    val dueDate = lineItemDetails.headOption.flatMap(_.netDueDate)
+    (documentPenaltyTotals, dueDate) match {
+      case (Some(totals), Some(due)) if due.isBefore(appConfig.familiarisationPeriodEndDate) =>
+        totals.find(pen => pen.penaltyType.contains("LPP2") && pen.penaltyStatus.contains("ACCRUING"))
+      case (Some(totals), Some(_)) =>
+        totals.find(_.penaltyStatus.contains("ACCRUING"))
+      case _ => None
+    }
   }
 }
 
@@ -46,7 +53,7 @@ object DocumentDetails {
     (JsPath \ "documentPenaltyTotals").readNullable[Seq[DocumentPenaltyTotals]]
   )(DocumentDetails.apply _)
 
-  implicit val writes: Writes[DocumentDetails] = Writes { model =>
+  implicit def writes(implicit appConfig: AppConfig): Writes[DocumentDetails] = Writes { model =>
     if (model.lineItemDetails.nonEmpty) {
       JsObject(Json.obj(
         "chargeType" -> ChargeTypes.retrieveChargeType(
