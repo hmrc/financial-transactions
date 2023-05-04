@@ -28,6 +28,10 @@ class ChargeTypesSpec extends SpecBase {
       "the transaction IDs are recognised" in {
         ChargeTypes.retrieveChargeType(Some("4700"), Some("1174")) shouldBe Some("VAT Return Debit Charge")
       }
+
+      "a migrated charge transaction ID is mapped to an existing one" in {
+        ChargeTypes.retrieveChargeType(Some("7700"), Some("1174")) shouldBe Some("VAT Return Debit Charge")
+      }
     }
 
     "return None" when {
