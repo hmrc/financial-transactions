@@ -29,6 +29,7 @@ object ChargeTypes extends LoggerUtil {
   val securityDepositSubTrans = "3160"
   val onAccountSubTrans = "0100"
   val vatInterestRepaymentsSubTrans = "1176"
+  val vatInterestCreditSubTrans = "1179"
 
   private val supportedChargeTypes: Map[(String, String), String] = Map(
     ("0060", onAccountSubTrans) -> "Payment on account",
@@ -81,8 +82,10 @@ object ChargeTypes extends LoggerUtil {
     ("4718", penaltyDebitSubTrans) -> "VAT AA Return Charge 1st LPP",
     ("4719", penaltyDebitSubTrans) -> "VAT AA Return Charge 2nd LPP",
     ("4720", vatDebitSubTrans) -> "VAT Central Assessment",
-    ("4721", vatInterestSubTrans) -> "VAT Default Interest",
-    ("4722", vatInterestSubTrans) -> "VAT Further Interest",
+    ("4721", vatInterestSubTrans) -> "VAT Default Interest Debit",
+    ("4721", vatInterestCreditSubTrans) -> "VAT Default Interest Credit",
+    ("4722", vatInterestSubTrans) -> "VAT Further Interest Debit",
+    ("4722", vatInterestCreditSubTrans) -> "VAT Further Interest Credit",
     ("4723", penaltyDebitSubTrans) -> "VAT Central Assessment 1st LPP",
     ("4724", penaltyDebitSubTrans) -> "VAT Central Assessment 2nd LPP",
     ("4725", vatInterestSubTrans) -> "VAT OA Further Interest",
@@ -142,8 +145,8 @@ object ChargeTypes extends LoggerUtil {
     ("7705", vatCreditSubTrans) -> "VAT Migrated Credit",
     ("7710", vatInterestRepaymentsSubTrans) -> "VAT Repayment Supplement",
     ("7720", vatDebitSubTrans) -> "VAT Central Assessment",
-    ("7721", vatInterestSubTrans) -> "VAT Default Interest",
-    ("7722", vatInterestSubTrans) -> "VAT Further Interest",
+    ("7721", vatInterestSubTrans) -> "VAT Default Interest Debit",
+    ("7722", vatInterestSubTrans) -> "VAT Further Interest Debit",
     ("7730", vatDebitSubTrans) -> "VAT OA Debit Charge",
     ("7730", vatCreditSubTrans) -> "VAT OA Credit Charge",
     ("7731", vatDebitSubTrans) -> "VAT EC Debit Charge",
