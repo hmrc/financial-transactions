@@ -21,7 +21,7 @@ import config.{MicroserviceAppConfig, RegimeKeys}
 import controllers.actions.AuthAction
 import models._
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, ControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, ControllerComponents, Request, Result}
 import services.API1396.DirectDebitService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
@@ -52,7 +52,7 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
       }
 
   private def retrieveFinancialTransactionsAPI1811(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
-                                                  (implicit hc: HeaderCarrier): Future[Result] = {
+                                                  (implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
     logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactionsAPI1811] " +
       "Calling API1811.FinancialTransactionsService.getFinancialTransactions")
 

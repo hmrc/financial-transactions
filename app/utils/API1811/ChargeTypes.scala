@@ -16,7 +16,9 @@
 
 package utils.API1811
 
+import config.AppConfig
 import models.API1811.DocumentDetails
+import play.api.mvc.Request
 import utils.LoggerUtil
 
 object ChargeTypes extends LoggerUtil {
@@ -30,6 +32,8 @@ object ChargeTypes extends LoggerUtil {
   val onAccountSubTrans = "0100"
   val vatInterestRepaymentsSubTrans = "1176"
   val vatInterestCreditSubTrans = "1179"
+  val vatOverpaymentForTaxSubTrans = "1168"
+  val vatOverpaymentForRPISubTrans = "1169"
 
   private val supportedChargeTypes: Map[(String, String), String] = Map(
     ("0060", onAccountSubTrans) -> "Payment on account",
@@ -169,8 +173,33 @@ object ChargeTypes extends LoggerUtil {
     ("7799", penaltyDebitSubTrans) -> "VAT MP (R) pre 2009"
   )
 
-  def retrieveChargeType(mainTransaction: Option[String], subTransaction: Option[String]): Option[String] =
-    supportedChargeTypes.get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
+  private val penaltyReformChargeTypes: Map[(String, String), String] = Map(
+    ("4764", vatOverpaymentForTaxSubTrans) -> "VAT Overpayment for Tax",
+    ("4764", vatOverpaymentForRPISubTrans) -> "VAT Overpayment for RPI",
+    ("4769", vatInterestSubTrans) -> "VAT Overpayment for Tax LPI",
+    ("6052", penaltyDebitSubTrans) -> "VAT Overpayments 1st LPP",
+    ("6053", penaltyDebitSubTrans) -> "VAT Overpayments 2nd LPP",
+    ("6054", vatInterestSubTrans) -> "VAT Overpayments 1st LPP LPI",
+    ("6055", vatInterestSubTrans) -> "VAT Overpayments 2nd LPP LPI",
+    ("6056", vatInterestRepaymentsSubTrans) -> "VAT Overpayment for Tax RPI",
+    ("6057", vatInterestRepaymentsSubTrans) -> "VAT Overpayments 1st LPP RPI",
+    ("6058", vatInterestRepaymentsSubTrans) -> "VAT Overpayments 2nd LPP RPI"
+  )
+
+  def supportedChargeTypesExt()(implicit appConfig: AppConfig, request: Request[_]): Map[(String, String), String] = {
+    if(appConfig.features.penaltyReformChargeTypesEnabled.apply()) {
+      infoLog("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is true. Using Penalty Reform charge types")
+      supportedChargeTypes ++ penaltyReformChargeTypes
+    } else {
+      infoLog("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is false. NOT using Penalty Reform charge types")
+      supportedChargeTypes
+    }
+  }
+
+  def retrieveChargeType(mainTransaction: Option[String],
+                         subTransaction: Option[String]
+                        )(implicit appConfig: AppConfig, request: Request[_]): Option[String] =
+    supportedChargeTypesExt().get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
 
   def removeInvalidCharges(transactions: Seq[DocumentDetails]): Seq[DocumentDetails] = {
     transactions.filter { document =>

@@ -19,6 +19,7 @@ package models.API1811
 import config.AppConfig
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json.{JsNull, JsObject, JsPath, JsResultException, Json, JsonValidationError, Reads, Writes}
+import play.api.mvc.Request
 import utils.API1811.ChargeTypes
 
 case class DocumentDetails(chargeReferenceNumber: Option[String],
@@ -53,7 +54,7 @@ object DocumentDetails {
     (JsPath \ "documentPenaltyTotals").readNullable[Seq[DocumentPenaltyTotals]]
   )(DocumentDetails.apply _)
 
-  implicit def writes(implicit appConfig: AppConfig): Writes[DocumentDetails] = Writes { model =>
+  implicit def writes(implicit appConfig: AppConfig, request: Request[_]): Writes[DocumentDetails] = Writes { model =>
     if (model.lineItemDetails.nonEmpty) {
       JsObject(Json.obj(
         "chargeType" -> ChargeTypes.retrieveChargeType(
