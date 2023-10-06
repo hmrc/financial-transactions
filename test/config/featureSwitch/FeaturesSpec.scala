@@ -40,6 +40,36 @@ class FeaturesSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter
       features.staticDate(false)
       features.staticDate() mustBe false
     }
+
+    "be able to be reset" in {
+
+      val staticDateOriginalStatus = features.staticDate()
+
+      features.staticDate() mustBe staticDateOriginalStatus
+      features.staticDate(false)
+      features.staticDate() mustBe !staticDateOriginalStatus
+      features.staticDate.reset()
+      features.staticDate() mustBe staticDateOriginalStatus
+    }
+  }
+
+  "resetAll" must {
+
+    "reset all switches" in {
+
+      val staticDateOriginalStatus = features.staticDate()
+      val penaltyReformChargeTypesEnabledOriginalStatus = features.penaltyReformChargeTypesEnabled()
+
+      features.staticDate() mustBe staticDateOriginalStatus
+      features.penaltyReformChargeTypesEnabled() mustBe penaltyReformChargeTypesEnabledOriginalStatus
+      features.staticDate(false)
+      features.penaltyReformChargeTypesEnabled(true)
+      features.staticDate() mustBe !staticDateOriginalStatus
+      features.penaltyReformChargeTypesEnabled() mustBe !penaltyReformChargeTypesEnabledOriginalStatus
+      features.resetAll()
+      features.staticDate() mustBe staticDateOriginalStatus
+      features.penaltyReformChargeTypesEnabled() mustBe penaltyReformChargeTypesEnabledOriginalStatus
+    }
   }
 
 }

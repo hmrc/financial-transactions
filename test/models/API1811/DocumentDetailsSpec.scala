@@ -18,6 +18,7 @@ package models.API1811
 
 import base.SpecBase
 import play.api.libs.json._
+import play.api.test.FakeRequest
 import utils.API1811.TestConstants._
 
 import java.time.LocalDate
@@ -33,6 +34,8 @@ class DocumentDetailsSpec extends SpecBase {
   )
   val estimatedLPP2: DocumentPenaltyTotals = estimatedLPP1.copy(penaltyType = Some("LPP2"))
   val estimatedLPP2Document: DocumentDetails = estimatedLPP1Document.copy(documentPenaltyTotals = Some(Seq(estimatedLPP2)))
+
+  implicit val request: FakeRequest[_] = fakeRequest
 
   "getAccruingPenalty" should {
 

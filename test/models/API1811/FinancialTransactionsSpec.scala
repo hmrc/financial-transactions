@@ -19,6 +19,7 @@ package models.API1811
 import base.SpecBase
 import org.scalatest.BeforeAndAfterAll
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
 import utils.API1811.TestConstants._
 
 import java.time.LocalDate
@@ -26,6 +27,8 @@ import java.time.LocalDate
 class FinancialTransactionsSpec extends SpecBase with BeforeAndAfterAll {
 
   override def beforeAll(): Unit = mockAppConfig.features.staticDate(true)
+
+  implicit val request: FakeRequest[_] = fakeRequest
 
   "FinancialTransactions" should {
 
