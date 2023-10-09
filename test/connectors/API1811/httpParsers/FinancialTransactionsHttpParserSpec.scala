@@ -30,7 +30,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and matches expected Schema" when {
 
-      "recognised charge types are returned" should {
+      "charge types are returned" should {
 
         val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsJsonEIS.toString)
 
@@ -38,20 +38,7 @@ class FinancialTransactionsHttpParserSpec extends SpecBase {
 
         val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
 
-        "return a FinancialTransactions instance containing financialDetails items with valid charge types" in {
-          result shouldEqual expected
-        }
-      }
-
-      "unrecognised charge types are returned" should {
-
-        val httpResponse = HttpResponse(Status.OK, filteredFinancialJson.toString)
-
-        val expected = Right(fullFinancialTransactions.copy(documentDetails = Seq()))
-
-        val result = FinancialTransactionsHttpParser.FinancialTransactionsReads.read("", "", httpResponse)
-
-        "return a FinancialTransactions instance that has had the invalid financialDetails items filtered out" in {
+        "return a FinancialTransactions instance containing financialDetails items" in {
           result shouldEqual expected
         }
       }

@@ -36,6 +36,6 @@ trait Mock1811FinancialTransactionsService {
       mock1811FinancialTransactionsService.getFinancialTransactions(
         ArgumentMatchers.eq(regime),
         ArgumentMatchers.eq(queryParameters)
-      )(ArgumentMatchers.any())
+      )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(response)
 }

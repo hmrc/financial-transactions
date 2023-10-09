@@ -17,6 +17,7 @@
 package base
 
 import config.MicroserviceAppConfig
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatestplus.play.guice._
@@ -29,7 +30,11 @@ import play.api.test.Helpers.stubControllerComponents
 
 import scala.concurrent.ExecutionContext
 
-trait SpecBase extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite {
+trait SpecBase extends AnyWordSpecLike with Matchers with GuiceOneAppPerSuite with BeforeAndAfterAll {
+
+  override def beforeAll(): Unit = {
+    mockAppConfig.features.resetAll()
+  }
 
   def injector: Injector = app.injector
 
