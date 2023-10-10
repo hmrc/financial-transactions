@@ -187,7 +187,7 @@ object ChargeTypes extends LoggerUtil {
   )
 
   def supportedChargeTypesExt()(implicit appConfig: AppConfig, request: Request[_]): Map[(String, String), String] = {
-    if(appConfig.features.penaltyReformChargeTypesEnabled.apply()) {
+    if (appConfig.features.penaltyReformChargeTypesEnabled.apply()) {
       infoLog("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is true. Using Penalty Reform charge types")
       supportedChargeTypes ++ penaltyReformChargeTypes
     } else {
@@ -201,14 +201,15 @@ object ChargeTypes extends LoggerUtil {
                         )(implicit appConfig: AppConfig, request: Request[_]): Option[String] =
     supportedChargeTypesExt().get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
 
-  def removeInvalidCharges(transactions: Seq[DocumentDetails]): Seq[DocumentDetails] = {
-    transactions.filter { document =>
+  def removeInvalidCharges(transactions: Seq[DocumentDetails]
+                          )(implicit appConfig: AppConfig, request: Request[_]): Seq[DocumentDetails] = {
+    val filteredTransactions = transactions.filter { document =>
       val filtered = document.lineItemDetails.filter { charge =>
         (charge.mainTransaction, charge.subTransaction) match {
           case (Some(mainTrans), Some(subTrans)) =>
-            supportedChargeTypes.contains((mainTrans, subTrans))
+            supportedChargeTypesExt().contains((mainTrans, subTrans))
           case _ =>
-            logger.warn("[ChargeTypes][removeInvalidLineItems] - Insufficient transaction values provided for charge, " +
+            warnLog("[ChargeTypes][removeInvalidCharges] - Insufficient transaction values provided for charge, " +
               s"reference: ${document.chargeReferenceNumber}, main: ${charge.mainTransaction.getOrElse("none")}, " +
               s"sub: ${charge.mainTransaction.getOrElse("none")}")
             false
@@ -216,5 +217,8 @@ object ChargeTypes extends LoggerUtil {
       }
       document.lineItemDetails.length == filtered.length
     }
+    val invalidCharges = transactions.diff(filteredTransactions)
+    warnLog(s"[ChargeTypes][removeInvalidCharges] ${invalidCharges.length} charges removed. Charge refs: ${invalidCharges.map(_.chargeReferenceNumber)}")
+    filteredTransactions
   }
 }

@@ -19,7 +19,6 @@ package connectors.API1811.httpParsers
 import models.API1811.{Error, FinancialTransactions}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
-import utils.API1811.ChargeTypes
 import utils.LoggerUtil
 
 object FinancialTransactionsHttpParser extends LoggerUtil {
@@ -40,7 +39,7 @@ object FinancialTransactionsHttpParser extends LoggerUtil {
             valid => {
               logger.debug(s"[FinancialTransactionsReads][read] EIS Response: \n\n${response.json}")
               logger.debug(s"[FinancialTransactionsReads][read] Financial Transactions Model: \n\n$valid")
-              Right(valid.copy(documentDetails = ChargeTypes.removeInvalidCharges(valid.documentDetails)))
+              Right(valid)
             }
           )
         case NOT_FOUND =>

@@ -18,16 +18,18 @@ package services.API1811
 
 import base.SpecBase
 import mocks.connectors.Mock1811FinancialDataConnector
-import models.API1811.Error
+import models.API1811.{Error, FinancialTransactions}
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import utils.API1811.TestConstants.fullFinancialTransactions
-
 import play.api.http.Status
+import play.api.test.FakeRequest
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import utils.API1811.TestConstants.{fullDocumentDetails, fullFinancialTransactions, lineItemDetailsFull}
 
 import java.time.LocalDate
 
 class FinancialTransactionsServiceSpec extends SpecBase with Mock1811FinancialDataConnector {
+
+  implicit val request: FakeRequest[_] = fakeRequest
 
   object Service extends FinancialTransactionsService(mockFinancialDataConnector, ec)
 
@@ -40,16 +42,33 @@ class FinancialTransactionsServiceSpec extends SpecBase with Mock1811FinancialDa
     )
     val regime: TaxRegime = VatRegime("123456")
 
-    "the connector returns a success response" should {
+    "the connector returns a success response" when {
 
-      "return the same response" in {
+      "only valid charge types are returned" should {
 
-        val successResponse = Right(fullFinancialTransactions)
-        setupMockGetFinancialData(regime, queryParams)(successResponse)
-        val actual = await(Service.getFinancialTransactions(regime, queryParams))
+        "return the same response" in {
 
-        actual shouldBe successResponse
+          val successResponse = Right(fullFinancialTransactions)
+          setupMockGetFinancialData(regime, queryParams)(successResponse)
+          val actual = await(Service.getFinancialTransactions(regime, queryParams))
 
+          actual shouldBe successResponse
+        }
+      }
+
+      "invalid charge types are returned" should {
+
+        "return a success response with the bad transactions filtered" in {
+
+          val lineItems = Seq(lineItemDetailsFull.copy(mainTransaction = Some("1111")))
+          val documentDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+
+          val successWithInvalidDataResponse = Right(FinancialTransactions(documentDetails))
+          setupMockGetFinancialData(regime, queryParams)(successWithInvalidDataResponse)
+          val actual = await(Service.getFinancialTransactions(regime, queryParams))
+
+          actual shouldBe Right(fullFinancialTransactions.copy(documentDetails = Seq()))
+        }
       }
     }
 
