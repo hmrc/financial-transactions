@@ -222,6 +222,42 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     }
   }
 
+
+  "chargeTypeIsSupportedCheck" should {
+
+    "return false" when {
+
+      "the main transaction value is not supported" in {
+        val lineItems = Seq(lineItemDetailsFull.copy(mainTransaction = Some("1111")))
+        ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe false
+      }
+
+      "the sub transaction value is not supported" in {
+        val lineItems = Seq(lineItemDetailsFull.copy(subTransaction = Some("1111")))
+        ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe false
+      }
+
+      "the main transaction value is not present" in {
+        val lineItems = Seq(lineItemDetailsFull.copy(mainTransaction = None))
+        ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe false
+      }
+
+      "the sub transaction value is not present" in {
+        val lineItems = Seq(lineItemDetailsFull.copy(subTransaction = None))
+        ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe false
+      }
+    }
+
+    "return true" when {
+
+      "the charge type is supported" in {
+        val lineItems = Seq(lineItemDetailsFull)
+        ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe true
+      }
+    }
+  }
+
+
   "The removeInvalidCharges function" should {
 
     "filter out charges" when {
@@ -257,52 +293,73 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
       }
     }
 
-    "supportedChargeTypesExt" when {
+    "not filter out any charges" when {
 
-      "penaltyReformChargeTypesEnabled is true" must {
+      "The charge type is supported" in {
 
-        "have 145 charge types" in {
-
-          mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
-
-          val expectedResult = 145
-          val actualResult = ChargeTypes.supportedChargeTypesExt().size
-
-          expectedResult shouldBe actualResult
-        }
-
-        "contain the penalty reform charge types" in {
-
-          mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
-
-          val expectedResult = testSupportedChargeTypes ++ testPenaltyReformChargeTypes
-          val actualResult = ChargeTypes.supportedChargeTypesExt()
-
-          expectedResult shouldBe actualResult
-        }
+        val lineItems = Seq(lineItemDetailsFull)
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails)
       }
 
-      "penaltyReformChargeTypesEnabled is false" must {
+      "There are multiple supported charge types" in {
 
-        "have 135 charge types" in {
+        val lineItems = Seq(
+          lineItemDetailsFull,
+          lineItemDetailsFull.copy(mainTransaction = Some("4757"), subTransaction = Some("1174")),
+          lineItemDetailsFull.copy(mainTransaction = Some("4702"), subTransaction = Some("1177"))
+        )
+        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+      }
+    }
+  }
 
-          mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
+  "supportedChargeTypesExt" when {
 
-          val expectedResult = 135
-          val actualResult = ChargeTypes.supportedChargeTypesExt().size
+    "penaltyReformChargeTypesEnabled is true" must {
 
-          expectedResult shouldBe actualResult
-        }
+      "have 145 charge types" in {
 
-        "contain the penalty reform charge types" in {
+        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-          mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
+        val expectedResult = 145
+        val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
-          val expectedResult = testSupportedChargeTypes
-          val actualResult = ChargeTypes.supportedChargeTypesExt()
+        expectedResult shouldBe actualResult
+      }
 
-          expectedResult shouldBe actualResult
-        }
+      "contain the penalty reform charge types" in {
+
+        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
+
+        val expectedResult = testSupportedChargeTypes ++ testPenaltyReformChargeTypes
+        val actualResult = ChargeTypes.supportedChargeTypesExt()
+
+        expectedResult shouldBe actualResult
+      }
+    }
+
+    "penaltyReformChargeTypesEnabled is false" must {
+
+      "have 135 charge types" in {
+
+        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
+
+        val expectedResult = 135
+        val actualResult = ChargeTypes.supportedChargeTypesExt().size
+
+        expectedResult shouldBe actualResult
+      }
+
+      "contain the penalty reform charge types" in {
+
+        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
+
+        val expectedResult = testSupportedChargeTypes
+        val actualResult = ChargeTypes.supportedChargeTypesExt()
+
+        expectedResult shouldBe actualResult
       }
     }
   }
