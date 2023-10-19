@@ -77,6 +77,10 @@ lazy val microservice = Project(appName, file("."))
     routesImport += "binders.PenaltyDetailsBinders._",
     routesGenerator := InjectedRoutesGenerator
   )
+  .settings(
+    javaOptions +="-Dlogger.resource=logback-test.xml"
+  )
+
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(

@@ -17,7 +17,7 @@
 package utils.API1811
 
 import config.AppConfig
-import models.API1811.DocumentDetails
+import models.API1811.{DocumentDetails, LineItemDetails}
 import play.api.mvc.Request
 import utils.LoggerUtil
 
@@ -201,24 +201,40 @@ object ChargeTypes extends LoggerUtil {
                         )(implicit appConfig: AppConfig, request: Request[_]): Option[String] =
     supportedChargeTypesExt().get((mainTransaction.getOrElse(""), subTransaction.getOrElse("")))
 
+  def chargeTypeIsSupportedCheck(charge: LineItemDetails,
+                                 chargeReferenceNumber: Option[String]
+                                )(implicit appConfig: AppConfig, request: Request[_]): Boolean = {
+    (charge.mainTransaction, charge.subTransaction) match {
+      case (Some(mainTrans), Some(subTrans)) if supportedChargeTypesExt().contains((mainTrans, subTrans)) =>
+        true
+      case (Some(mainTrans), Some(subTrans)) =>
+        warnLog(s"[ChargeTypes][chargeTypeIsSupportedCheck] charge type not supported: mainTrans: $mainTrans subTrans: $subTrans")
+        false
+      case _ =>
+        warnLog("[ChargeTypes][chargeTypeIsSupportedCheck] - Insufficient transaction values provided for charge, " +
+          s"reference: $chargeReferenceNumber, main: ${charge.mainTransaction.getOrElse("none")}, " +
+          s"sub: ${charge.mainTransaction.getOrElse("none")}")
+        false
+    }
+  }
+
   def removeInvalidCharges(transactions: Seq[DocumentDetails]
                           )(implicit appConfig: AppConfig, request: Request[_]): Seq[DocumentDetails] = {
-    val filteredTransactions = transactions.filter { document =>
-      val filtered = document.lineItemDetails.filter { charge =>
-        (charge.mainTransaction, charge.subTransaction) match {
-          case (Some(mainTrans), Some(subTrans)) =>
-            supportedChargeTypesExt().contains((mainTrans, subTrans))
-          case _ =>
-            warnLog("[ChargeTypes][removeInvalidCharges] - Insufficient transaction values provided for charge, " +
-              s"reference: ${document.chargeReferenceNumber}, main: ${charge.mainTransaction.getOrElse("none")}, " +
-              s"sub: ${charge.mainTransaction.getOrElse("none")}")
-            false
+
+    val filteredTransactions =
+      transactions.filter { document =>
+        val filteredCharges = document.lineItemDetails.filter { charge =>
+          chargeTypeIsSupportedCheck(charge, document.chargeReferenceNumber)
         }
+        document.lineItemDetails.length == filteredCharges.length
       }
-      document.lineItemDetails.length == filtered.length
+    val removedTransactions = transactions.diff(filteredTransactions)
+
+    if (removedTransactions.nonEmpty) {
+      warnLog(s"[ChargeTypes][removeInvalidCharges]" +
+        s"Charges removed: ${removedTransactions.length} Charge refs: ${removedTransactions.map(_.chargeReferenceNumber)}"
+      )
     }
-    val invalidCharges = transactions.diff(filteredTransactions)
-    warnLog(s"[ChargeTypes][removeInvalidCharges] ${invalidCharges.length} charges removed. Charge refs: ${invalidCharges.map(_.chargeReferenceNumber)}")
     filteredTransactions
   }
 }
