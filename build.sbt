@@ -24,6 +24,8 @@ val appName: String = "financial-transactions"
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
 
+val bootstrapPlayVersion = "7.15.0"
+
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
 
@@ -46,13 +48,13 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28" % "7.15.0"
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-28" % bootstrapPlayVersion
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"       %% "bootstrap-test-play-28"       % "7.15.0"    % scope,
-  "org.scalatestplus" %% "mockito-3-4"                  % "3.2.9.0"   % scope,
-  "org.scalamock"     %% "scalamock"                    % "5.2.0"     % scope
+  "uk.gov.hmrc"       %% "bootstrap-test-play-28"       % bootstrapPlayVersion    % scope,
+  "org.scalatestplus" %% "mockito-3-4"                  % "3.2.9.0"               % scope,
+  "org.scalamock"     %% "scalamock"                    % "5.2.0"                 % scope
 )
 
 def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =

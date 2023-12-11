@@ -63,7 +63,7 @@ class FeaturesSpec extends PlaySpec with GuiceOneAppPerSuite with BeforeAndAfter
       features.staticDate() mustBe staticDateOriginalStatus
       features.penaltyReformChargeTypesEnabled() mustBe penaltyReformChargeTypesEnabledOriginalStatus
       features.staticDate(false)
-      features.penaltyReformChargeTypesEnabled(true)
+      features.penaltyReformChargeTypesEnabled(false)
       features.staticDate() mustBe !staticDateOriginalStatus
       features.penaltyReformChargeTypesEnabled() mustBe !penaltyReformChargeTypesEnabledOriginalStatus
       features.resetAll()
