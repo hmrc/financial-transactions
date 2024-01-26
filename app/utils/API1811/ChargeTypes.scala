@@ -116,7 +116,7 @@ object ChargeTypes extends LoggerUtil {
     ("4749", vatInterestSubTrans) -> "VAT LSP Interest",
     ("4751", vatDebitSubTrans) -> "VAT Unrepayable Overpayment",
     ("4753", vatDebitSubTrans) -> "VAT POA Instalments",
-    ("4755", penaltyDebitSubTrans) -> "VAT Inaccuracy Assessments pen",
+    ("4755", penaltyDebitSubTrans) -> "VAT Inaccuracy Assessments Pen",
     ("4756", vatDebitSubTrans) -> "VAT AA Quarterly Instalments",
     ("4757", vatDebitSubTrans) -> "VAT AA Monthly Instalment",
     ("4758", penaltyDebitSubTrans) -> "VAT AA 1st LPP",

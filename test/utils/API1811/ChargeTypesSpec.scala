@@ -123,7 +123,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4749", testVatLPISubTrans) -> "VAT LSP Interest",
     ("4751", testVatDebitSubTrans) -> "VAT Unrepayable Overpayment",
     ("4753", testVatDebitSubTrans) -> "VAT POA Instalments",
-    ("4755", testPenaltyDebitSubTrans) -> "VAT Inaccuracy Assessments pen",
+    ("4755", testPenaltyDebitSubTrans) -> "VAT Inaccuracy Assessments Pen",
     ("4756", testVatDebitSubTrans) -> "VAT AA Quarterly Instalments",
     ("4757", testVatDebitSubTrans) -> "VAT AA Monthly Instalment",
     ("4758", testPenaltyDebitSubTrans) -> "VAT AA 1st LPP",
