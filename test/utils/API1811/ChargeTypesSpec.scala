@@ -33,10 +33,10 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
   val testVatCreditSubTrans = "1177"
   val testPenaltyDebitSubTrans = "1090"
   val testPenaltyCreditSubTrans = "1094"
-  val testVatInterestSubTrans = "1175"
+  val testVatLPISubTrans = "1175"
   val testSecurityDepositSubTrans = "3160"
   val testOnAccountSubTrans = "0100"
-  val testVatInterestRepaymentsSubTrans = "1176"
+  val testVatRPISubTrans = "1176"
   val testVatInterestCreditSubTrans = "1179"
   val testVatOverpaymentForTaxSubTrans = "1168"
   val testVatOverpaymentForRPISubTrans = "1169"
@@ -44,33 +44,34 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
   val testSupportedChargeTypes: Map[(String, String), String]
   = Map(
     ("0060", testOnAccountSubTrans) -> "Payment on account",
-    ("4620", testVatInterestSubTrans) -> "VAT Return LPI",
-    ("4622", testVatInterestSubTrans) -> "VAT Return 1st LPP LPI",
-    ("4624", testVatInterestSubTrans) -> "VAT Return 2nd LPP LPI",
-    ("4626", testVatInterestSubTrans) -> "VAT Return POA LPI",
-    ("4628", testVatInterestSubTrans) -> "VAT Return POA 1st LPP LPI",
-    ("4630", testVatInterestSubTrans) -> "VAT Return POA 2nd LPP LPI",
-    ("4632", testVatInterestSubTrans) -> "VAT Return AA LPI",
-    ("4634", testVatInterestSubTrans) -> "VAT Return AA 1st LPP LPI",
-    ("4636", testVatInterestSubTrans) -> "VAT Return AA 2nd LPP LPI",
-    ("4652", testVatInterestSubTrans) -> "VAT Central Assessment LPI",
-    ("4654", testVatInterestSubTrans) -> "VAT CA 1st LPP LPI",
-    ("4656", testVatInterestSubTrans) -> "VAT CA 2nd LPP LPI",
-    ("4658", testVatInterestSubTrans) -> "VAT Officer's Assessment LPI",
-    ("4660", testVatInterestSubTrans) -> "VAT OA 1st LPP LPI",
-    ("4662", testVatInterestSubTrans) -> "VAT OA 2nd LPP LPI",
-    ("4664", testVatInterestSubTrans) -> "VAT Error Correction LPI",
-    ("4666", testVatInterestSubTrans) -> "VAT Error Correct 1st LPP LPI",
-    ("4668", testVatInterestSubTrans) -> "VAT Error Correct 2nd LPP LPI",
-    ("4670", testVatInterestSubTrans) -> "VAT Additional Assessment LPI",
-    ("4672", testVatInterestSubTrans) -> "VAT AA 1st LPP LPI",
-    ("4674", testVatInterestSubTrans) -> "VAT AA 2nd LPP LPI",
-    ("4676", testVatInterestSubTrans) -> "VAT Protective Assessment LPI",
-    ("4678", testVatInterestSubTrans) -> "VAT PA 1st LPP LPI",
-    ("4680", testVatInterestSubTrans) -> "VAT PA 2nd LPP LPI",
-    ("4686", testVatInterestSubTrans) -> "VAT POA Instalment LPI",
-    ("4689", testVatInterestSubTrans) -> "VAT AA Quarterly Instal LPI",
-    ("4691", testVatInterestSubTrans) -> "VAT AA Monthly Instal LPI",
+    ("4620", testVatLPISubTrans) -> "VAT Return LPI",
+    ("4622", testVatLPISubTrans) -> "VAT Return 1st LPP LPI",
+    ("4624", testVatLPISubTrans) -> "VAT Return 2nd LPP LPI",
+    ("4626", testVatLPISubTrans) -> "VAT Return POA LPI",
+    ("4628", testVatLPISubTrans) -> "VAT Return POA 1st LPP LPI",
+    ("4630", testVatLPISubTrans) -> "VAT Return POA 2nd LPP LPI",
+    ("4632", testVatLPISubTrans) -> "VAT Return AA LPI",
+    ("4634", testVatLPISubTrans) -> "VAT Return AA 1st LPP LPI",
+    ("4636", testVatLPISubTrans) -> "VAT Return AA 2nd LPP LPI",
+    ("4652", testVatLPISubTrans) -> "VAT Central Assessment LPI",
+    ("4654", testVatLPISubTrans) -> "VAT CA 1st LPP LPI",
+    ("4656", testVatLPISubTrans) -> "VAT CA 2nd LPP LPI",
+    ("4658", testVatLPISubTrans) -> "VAT Officer's Assessment LPI",
+    ("4660", testVatLPISubTrans) -> "VAT OA 1st LPP LPI",
+    ("4662", testVatLPISubTrans) -> "VAT OA 2nd LPP LPI",
+    ("4664", testVatLPISubTrans) -> "VAT Error Correction LPI",
+    ("4666", testVatLPISubTrans) -> "VAT Error Correct 1st LPP LPI",
+    ("4668", testVatLPISubTrans) -> "VAT Error Correct 2nd LPP LPI",
+    ("4670", testVatLPISubTrans) -> "VAT Additional Assessment LPI",
+    ("4672", testVatLPISubTrans) -> "VAT AA 1st LPP LPI",
+    ("4674", testVatLPISubTrans) -> "VAT AA 2nd LPP LPI",
+    ("4676", testVatLPISubTrans) -> "VAT Protective Assessment LPI",
+    ("4678", testVatLPISubTrans) -> "VAT PA 1st LPP LPI",
+    ("4680", testVatLPISubTrans) -> "VAT PA 2nd LPP LPI",
+    ("4686", testVatLPISubTrans) -> "VAT POA Instalment LPI",
+    ("4687", testVatLPISubTrans) -> "VAT Inaccuracy Assessments pen LPI",
+    ("4689", testVatLPISubTrans) -> "VAT AA Quarterly Instal LPI",
+    ("4691", testVatLPISubTrans) -> "VAT AA Monthly Instal LPI",
     ("4699", testPenaltyDebitSubTrans) -> "VAT Deferral Penalty",
     ("4700", testVatDebitSubTrans) -> "VAT Return Debit Charge",
     ("4700", testVatCreditSubTrans) -> "VAT Return Credit Charge",
@@ -80,29 +81,29 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4702", testVatCreditSubTrans) -> "VAT AA Return Credit Charge",
     ("4703", testPenaltyDebitSubTrans) -> "VAT Return 1st LPP",
     ("4704", testPenaltyDebitSubTrans) -> "VAT Return 2nd LPP",
-    ("4705", testVatInterestSubTrans) -> "VAT OA Default Interest",
-    ("4706", testVatInterestSubTrans) -> "VAT EC Default Interest",
-    ("4707", testVatInterestSubTrans) -> "VAT AA Default Interest",
-    ("4708", testVatInterestSubTrans) -> "VAT PA Default Interest",
-    ("4709", testVatInterestSubTrans) -> "VAT Repayment Supplement Rec",
-    ("4710", testVatInterestRepaymentsSubTrans) -> "VAT Repayment Supplement",
+    ("4705", testVatLPISubTrans) -> "VAT OA Default Interest",
+    ("4706", testVatLPISubTrans) -> "VAT EC Default Interest",
+    ("4707", testVatLPISubTrans) -> "VAT AA Default Interest",
+    ("4708", testVatLPISubTrans) -> "VAT PA Default Interest",
+    ("4709", testVatLPISubTrans) -> "VAT Repayment Supplement Rec",
+    ("4710", testVatRPISubTrans) -> "VAT Repayment Supplement",
     ("4711", testVatDebitSubTrans) -> "VAT Indirect Tax Revenue Rec",
-    ("4715", testVatInterestRepaymentsSubTrans) -> "VAT Statutory Interest",
+    ("4715", testVatRPISubTrans) -> "VAT Statutory Interest",
     ("4716", testPenaltyDebitSubTrans) -> "VAT POA Return 1st LPP",
     ("4717", testPenaltyDebitSubTrans) -> "VAT POA Return 2nd LPP",
     ("4718", testPenaltyDebitSubTrans) -> "VAT AA Return Charge 1st LPP",
     ("4719", testPenaltyDebitSubTrans) -> "VAT AA Return Charge 2nd LPP",
     ("4720", testVatDebitSubTrans) -> "VAT Central Assessment",
-    ("4721", testVatInterestSubTrans) -> "VAT Default Interest Debit",
+    ("4721", testVatLPISubTrans) -> "VAT Default Interest Debit",
     ("4721", testVatInterestCreditSubTrans) -> "VAT Default Interest Credit",
-    ("4722", testVatInterestSubTrans) -> "VAT Further Interest Debit",
+    ("4722", testVatLPISubTrans) -> "VAT Further Interest Debit",
     ("4722", testVatInterestCreditSubTrans) -> "VAT Further Interest Credit",
     ("4723", testPenaltyDebitSubTrans) -> "VAT Central Assessment 1st LPP",
     ("4724", testPenaltyDebitSubTrans) -> "VAT Central Assessment 2nd LPP",
-    ("4725", testVatInterestSubTrans) -> "VAT OA Further Interest",
-    ("4726", testVatInterestSubTrans) -> "VAT AA Further Interest",
-    ("4727", testVatInterestSubTrans) -> "VAT EC Further Interest",
-    ("4728", testVatInterestSubTrans) -> "VAT PA Further Interest",
+    ("4725", testVatLPISubTrans) -> "VAT OA Further Interest",
+    ("4726", testVatLPISubTrans) -> "VAT AA Further Interest",
+    ("4727", testVatLPISubTrans) -> "VAT EC Further Interest",
+    ("4728", testVatLPISubTrans) -> "VAT PA Further Interest",
     ("4730", testVatDebitSubTrans) -> "VAT OA Debit Charge",
     ("4730", testVatCreditSubTrans) -> "VAT OA Credit Charge",
     ("4731", testVatDebitSubTrans) -> "VAT EC Debit Charge",
@@ -119,10 +120,10 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4747", testPenaltyDebitSubTrans) -> "VAT Debit Default Surcharge",
     ("4747", testPenaltyCreditSubTrans) -> "VAT Credit Default Surcharge",
     ("4748", testPenaltyDebitSubTrans) -> "VAT Late Submission Pen",
-    ("4749", testVatInterestSubTrans) -> "VAT LSP Interest",
+    ("4749", testVatLPISubTrans) -> "VAT LSP Interest",
     ("4751", testVatDebitSubTrans) -> "VAT Unrepayable Overpayment",
     ("4753", testVatDebitSubTrans) -> "VAT POA Instalments",
-    ("4755", testPenaltyDebitSubTrans) -> "VAT Inaccuracy Assessments pen",
+    ("4755", testPenaltyDebitSubTrans) -> "VAT Inaccuracy Assessments Pen",
     ("4756", testVatDebitSubTrans) -> "VAT AA Quarterly Instalments",
     ("4757", testVatDebitSubTrans) -> "VAT AA Monthly Instalment",
     ("4758", testPenaltyDebitSubTrans) -> "VAT AA 1st LPP",
@@ -141,7 +142,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4783", testPenaltyDebitSubTrans) -> "VAT Inaccuracy return replaced",
     ("4786", testPenaltyDebitSubTrans) -> "VAT BNP of Reg Pre 2010",
     ("4787", testPenaltyDebitSubTrans) -> "VAT Manual LPP",
-    ("4788", testVatInterestSubTrans) -> "VAT Manual LPP LPI",
+    ("4788", testVatLPISubTrans) -> "VAT Manual LPP LPI",
     ("4790", testPenaltyDebitSubTrans) -> "VAT FTN RCSL",
     ("4793", testPenaltyDebitSubTrans) -> "VAT Failure to submit RCSL",
     ("4796", testPenaltyDebitSubTrans) -> "VAT MP pre 2009",
@@ -154,10 +155,10 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("7702", testVatCreditSubTrans) -> "VAT AA Return Credit Charge",
     ("7704", testVatDebitSubTrans) -> "VAT Migrated Liabilities debit",
     ("7705", testVatCreditSubTrans) -> "VAT Migrated Credit",
-    ("7710", testVatInterestRepaymentsSubTrans) -> "VAT Repayment Supplement",
+    ("7710", testVatRPISubTrans) -> "VAT Repayment Supplement",
     ("7720", testVatDebitSubTrans) -> "VAT Central Assessment",
-    ("7721", testVatInterestSubTrans) -> "VAT Default Interest Debit",
-    ("7722", testVatInterestSubTrans) -> "VAT Further Interest Debit",
+    ("7721", testVatLPISubTrans) -> "VAT Default Interest Debit",
+    ("7722", testVatLPISubTrans) -> "VAT Further Interest Debit",
     ("7730", testVatDebitSubTrans) -> "VAT OA Debit Charge",
     ("7730", testVatCreditSubTrans) -> "VAT OA Credit Charge",
     ("7731", testVatDebitSubTrans) -> "VAT EC Debit Charge",
@@ -183,14 +184,14 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
   val testPenaltyReformChargeTypes: Map[(String, String), String] = Map(
     ("4764", testVatOverpaymentForTaxSubTrans) -> "VAT Overpayment for Tax",
     ("4764", testVatOverpaymentForRPISubTrans) -> "VAT Overpayment for RPI",
-    ("4769", testVatInterestSubTrans) -> "VAT Overpayment for Tax LPI",
+    ("4769", testVatLPISubTrans) -> "VAT Overpayment for Tax LPI",
     ("6052", testPenaltyDebitSubTrans) -> "VAT Overpayments 1st LPP",
     ("6053", testPenaltyDebitSubTrans) -> "VAT Overpayments 2nd LPP",
-    ("6054", testVatInterestSubTrans) -> "VAT Overpayments 1st LPP LPI",
-    ("6055", testVatInterestSubTrans) -> "VAT Overpayments 2nd LPP LPI",
-    ("6056", testVatInterestRepaymentsSubTrans) -> "VAT Overpayment for Tax RPI",
-    ("6057", testVatInterestRepaymentsSubTrans) -> "VAT Overpayments 1st LPP RPI",
-    ("6058", testVatInterestRepaymentsSubTrans) -> "VAT Overpayments 2nd LPP RPI",
+    ("6054", testVatLPISubTrans) -> "VAT Overpayments 1st LPP LPI",
+    ("6055", testVatLPISubTrans) -> "VAT Overpayments 2nd LPP LPI",
+    ("6056", testVatRPISubTrans) -> "VAT Overpayment for Tax RPI",
+    ("6057", testVatRPISubTrans) -> "VAT Overpayments 1st LPP RPI",
+    ("6058", testVatRPISubTrans) -> "VAT Overpayments 2nd LPP RPI",
   )
 
   "The retrieveChargeType function" should {
@@ -254,6 +255,15 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
         val lineItems = Seq(lineItemDetailsFull)
         ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe true
       }
+
+      "each charge tye is supported" when {
+        ChargeTypes.supportedChargeTypesExt().foreach { charge =>
+          s"return true for $charge" in {
+            val lineItems = Seq(lineItemDetailsFull.copy(mainTransaction = Some(charge._1._1), subTransaction = Some(charge._1._2)))
+            ChargeTypes.chargeTypeIsSupportedCheck(lineItems.head, fullDocumentDetails.chargeReferenceNumber) shouldBe true
+          }
+        }
+      }
     }
   }
 
@@ -295,14 +305,14 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "not filter out any charges" when {
 
-      "The charge type is supported" in {
+      "the charge type is supported" in {
 
         val lineItems = Seq(lineItemDetailsFull)
         val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails)
       }
 
-      "There are multiple supported charge types" in {
+      "there are multiple supported charge types" in {
 
         val lineItems = Seq(
           lineItemDetailsFull,
@@ -311,6 +321,16 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
         )
         val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+      }
+
+      "for each supported charge type" when {
+        ChargeTypes.supportedChargeTypesExt().foreach { charge =>
+          s"return true for $charge" in {
+            val lineItems = Seq(lineItemDetailsFull.copy(mainTransaction = Some(charge._1._1), subTransaction = Some(charge._1._2)))
+            val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+            ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+          }
+        }
       }
     }
   }
@@ -323,7 +343,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 145
+        val expectedResult = 146
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -346,7 +366,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 135
+        val expectedResult = 136
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
