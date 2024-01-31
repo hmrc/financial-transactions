@@ -62,6 +62,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4660", testVatLPISubTrans) -> "VAT OA 1st LPP LPI",
     ("4662", testVatLPISubTrans) -> "VAT OA 2nd LPP LPI",
     ("4664", testVatLPISubTrans) -> "VAT Error Correction LPI",
+    ("4665", testVatRPISubTrans) -> "VAT Error Correction RPI",
     ("4666", testVatLPISubTrans) -> "VAT Error Correct 1st LPP LPI",
     ("4668", testVatLPISubTrans) -> "VAT Error Correct 2nd LPP LPI",
     ("4670", testVatLPISubTrans) -> "VAT Additional Assessment LPI",
