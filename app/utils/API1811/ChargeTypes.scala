@@ -66,6 +66,7 @@ object ChargeTypes extends LoggerUtil {
     ("4676", vatLPISubTrans) -> "VAT Protective Assessment LPI",
     ("4678", vatLPISubTrans) -> "VAT PA 1st LPP LPI",
     ("4680", vatLPISubTrans) -> "VAT PA 2nd LPP LPI",
+    ("4682", vatLPISubTrans) -> "VAT Miscellaneous Penalty LPI",
     ("4684", vatLPISubTrans) -> "VAT Civil Evasion Penalty LPI",
     ("4686", vatLPISubTrans) -> "VAT POA Instalment LPI",
     ("4687", vatLPISubTrans) -> "VAT Inaccuracy Assessments pen LPI",
