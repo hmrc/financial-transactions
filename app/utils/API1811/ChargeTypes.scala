@@ -71,6 +71,7 @@ object ChargeTypes extends LoggerUtil {
     ("4687", vatLPISubTrans) -> "VAT Inaccuracy Assessments pen LPI",
     ("4689", vatLPISubTrans) -> "VAT AA Quarterly Instal LPI",
     ("4691", vatLPISubTrans) -> "VAT AA Monthly Instal LPI",
+    ("4695", vatLPISubTrans) -> "VAT Wrong Doing Penalty LPI",
     ("4699", penaltyDebitSubTrans) -> "VAT Deferral Penalty",
     ("4700", vatDebitSubTrans) -> "VAT Return Debit Charge",
     ("4700", vatCreditSubTrans) -> "VAT Return Credit Charge",
