@@ -137,6 +137,7 @@ object ChargeTypes extends LoggerUtil {
     ("4766", penaltyDebitSubTrans) -> "VAT FTN Mat Change Post 2010",
     ("4770", penaltyDebitSubTrans) -> "VAT Inaccuracies in EC Sales",
     ("4773", penaltyDebitSubTrans) -> "VAT Failure to Submit EC Sales",
+    ("4774", vatLPISubTrans) -> "VAT Fail to Sub EC Sales LPI",
     ("4775", penaltyDebitSubTrans) -> "VAT Carter Penalty",
     ("4776", penaltyDebitSubTrans) -> "VAT FTN Each Partner",
     ("4780", penaltyDebitSubTrans) -> "VAT OA Inaccuracies from 2009",
