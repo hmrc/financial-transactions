@@ -19,6 +19,7 @@ package utils.API1811
 import base.SpecBase
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
+import utils.API1811.ChargeTypes.vatLPISubTrans
 import utils.API1811.TestConstants.{fullDocumentDetails, lineItemDetailsFull}
 
 class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
@@ -144,6 +145,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4766", testPenaltyDebitSubTrans) -> "VAT FTN Mat Change Post 2010",
     ("4770", testPenaltyDebitSubTrans) -> "VAT Inaccuracies in EC Sales",
     ("4773", testPenaltyDebitSubTrans) -> "VAT Failure to Submit EC Sales",
+    ("4774", testVatLPISubTrans) -> "VAT Fail to Sub EC Sales LPI",
     ("4775", testPenaltyDebitSubTrans) -> "VAT Carter Penalty",
     ("4776", testPenaltyDebitSubTrans) -> "VAT FTN Each Partner",
     ("4780", testPenaltyDebitSubTrans) -> "VAT OA Inaccuracies from 2009",
@@ -348,11 +350,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is true" must {
 
-      "have 155 charge types" in {
+      "have 156 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 155
+        val expectedResult = 156
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -371,11 +373,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is false" must {
 
-      "have 145 charge types" in {
+      "have 146 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 145
+        val expectedResult = 146
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
