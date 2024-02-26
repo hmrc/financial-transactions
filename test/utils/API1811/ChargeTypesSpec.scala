@@ -82,6 +82,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4689", testVatLPISubTrans) -> "VAT AA Quarterly Instal LPI",
     ("4691", testVatLPISubTrans) -> "VAT AA Monthly Instal LPI",
     ("4695", testVatLPISubTrans) -> "VAT Wrong Doing Penalty LPI",
+    ("4697", testVatLPISubTrans) -> "VAT Carter Penalty LPI",
     ("4699", testPenaltyDebitSubTrans) -> "VAT Deferral Penalty",
     ("4700", testVatDebitSubTrans) -> "VAT Return Debit Charge",
     ("4700", testVatCreditSubTrans) -> "VAT Return Credit Charge",
@@ -158,6 +159,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4789", testVatRPISubTrans) -> "VAT Manual LPP RPI",
     ("4790", testPenaltyDebitSubTrans) -> "VAT FTN RCSL",
     ("4793", testPenaltyDebitSubTrans) -> "VAT Failure to submit RCSL",
+    ("4794", testVatLPISubTrans) -> "VAT Failure to Submit RCSL LPI",
     ("4796", testPenaltyDebitSubTrans) -> "VAT MP pre 2009",
     ("4799", testPenaltyDebitSubTrans) -> "VAT MP (R) pre 2009",
     ("7700", testVatDebitSubTrans) -> "VAT Return Debit Charge",
@@ -352,11 +354,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is true" must {
 
-      "have 158 charge types" in {
+      "have 160 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 158
+        val expectedResult = 160
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -375,11 +377,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is false" must {
 
-      "have 148 charge types" in {
+      "have 150 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 148
+        val expectedResult = 150
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
