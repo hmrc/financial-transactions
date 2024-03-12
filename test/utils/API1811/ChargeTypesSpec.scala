@@ -19,6 +19,7 @@ package utils.API1811
 import base.SpecBase
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
+import utils.API1811.ChargeTypes.vatInterestRepaymentsSubTrans
 import utils.API1811.TestConstants.{fullDocumentDetails, lineItemDetailsFull}
 
 class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
@@ -49,10 +50,13 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4622", testVatLPISubTrans) -> "VAT Return 1st LPP LPI",
     ("4623", testVatRPISubTrans) -> "VAT Return 1st LPP RPI",
     ("4624", testVatLPISubTrans) -> "VAT Return 2nd LPP LPI",
+    ("4625", vatInterestRepaymentsSubTrans) -> "VAT Return 2nd LPP RPI",
     ("4626", testVatLPISubTrans) -> "VAT Return POA LPI",
     ("4627", testVatRPISubTrans) -> "VAT Return POA RPI",
     ("4628", testVatLPISubTrans) -> "VAT Return POA 1st LPP LPI",
+    ("4629", vatInterestRepaymentsSubTrans) -> "VAT Return POA 1st LPP RPI",
     ("4630", testVatLPISubTrans) -> "VAT Return POA 2nd LPP LPI",
+    ("4631", vatInterestRepaymentsSubTrans) -> "VAT Return POA 2nd LPP RPI",
     ("4632", testVatLPISubTrans) -> "VAT Return AA LPI",
     ("4633", testVatRPISubTrans) -> "VAT Return AA RPI",
     ("4634", testVatLPISubTrans) -> "VAT Return AA 1st LPP LPI",
@@ -355,11 +359,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is true" must {
 
-      "have 162 charge types" in {
+      "have 165 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 162
+        val expectedResult = 165
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -378,11 +382,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is false" must {
 
-      "have 152 charge types" in {
+      "have 155 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 152
+        val expectedResult = 155
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
