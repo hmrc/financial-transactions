@@ -154,6 +154,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4766", testPenaltyDebitSubTrans) -> "VAT FTN Mat Change Post 2010",
     ("4767", testVatLPISubTrans) -> "VAT FTN Mat Chg Post 2010 LPI",
     ("4770", testPenaltyDebitSubTrans) -> "VAT Inaccuracies in EC Sales",
+    ("4771", testVatLPISubTrans) -> "VAT Inaccur in EC Sales LPI",
     ("4773", testPenaltyDebitSubTrans) -> "VAT Failure to Submit EC Sales",
     ("4774", testVatLPISubTrans) -> "VAT Fail to Sub EC Sales LPI",
     ("4775", testPenaltyDebitSubTrans) -> "VAT Carter Penalty",
@@ -168,6 +169,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4788", testVatLPISubTrans) -> "VAT Manual LPP LPI",
     ("4789", testVatRPISubTrans) -> "VAT Manual LPP RPI",
     ("4790", testPenaltyDebitSubTrans) -> "VAT FTN RCSL",
+    ("4791", testVatLPISubTrans) -> "VAT FTN RCSL LPI",
     ("4793", testPenaltyDebitSubTrans) -> "VAT Failure to submit RCSL",
     ("4794", testVatLPISubTrans) -> "VAT Failure to Submit RCSL LPI",
     ("4796", testPenaltyDebitSubTrans) -> "VAT MP pre 2009",
@@ -364,11 +366,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is true" must {
 
-      "have 170 charge types" in {
+      "have 172 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 170
+        val expectedResult = 172
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -387,11 +389,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is false" must {
 
-      "have 160 charge types" in {
+      "have 162 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 160
+        val expectedResult = 162
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
