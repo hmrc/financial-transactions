@@ -19,6 +19,7 @@ package utils.API1811
 import base.SpecBase
 import org.scalatest.BeforeAndAfterAll
 import play.api.test.FakeRequest
+import utils.API1811.ChargeTypes.vatInterestRepaymentsSubTrans
 import utils.API1811.TestConstants.{fullDocumentDetails, lineItemDetailsFull}
 
 class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
@@ -49,14 +50,19 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4622", testVatLPISubTrans) -> "VAT Return 1st LPP LPI",
     ("4623", testVatRPISubTrans) -> "VAT Return 1st LPP RPI",
     ("4624", testVatLPISubTrans) -> "VAT Return 2nd LPP LPI",
+    ("4625", vatInterestRepaymentsSubTrans) -> "VAT Return 2nd LPP RPI",
     ("4626", testVatLPISubTrans) -> "VAT Return POA LPI",
     ("4627", testVatRPISubTrans) -> "VAT Return POA RPI",
     ("4628", testVatLPISubTrans) -> "VAT Return POA 1st LPP LPI",
+    ("4629", vatInterestRepaymentsSubTrans) -> "VAT Return POA 1st LPP RPI",
     ("4630", testVatLPISubTrans) -> "VAT Return POA 2nd LPP LPI",
+    ("4631", vatInterestRepaymentsSubTrans) -> "VAT Return POA 2nd LPP RPI",
     ("4632", testVatLPISubTrans) -> "VAT Return AA LPI",
     ("4633", testVatRPISubTrans) -> "VAT Return AA RPI",
     ("4634", testVatLPISubTrans) -> "VAT Return AA 1st LPP LPI",
+    ("4635", vatInterestRepaymentsSubTrans) -> "VAT Return AA 1st LPP RPI",
     ("4636", testVatLPISubTrans) -> "VAT Return AA 2nd LPP LPI",
+    ("4637", vatInterestRepaymentsSubTrans) -> "VAT Return AA 2nd LPP RPI",
     ("4652", testVatLPISubTrans) -> "VAT Central Assessment LPI",
     ("4654", testVatLPISubTrans) -> "VAT CA 1st LPP LPI",
     ("4656", testVatLPISubTrans) -> "VAT CA 2nd LPP LPI",
@@ -69,9 +75,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4666", testVatLPISubTrans) -> "VAT Error Correct 1st LPP LPI",
     ("4668", testVatLPISubTrans) -> "VAT Error Correct 2nd LPP LPI",
     ("4670", testVatLPISubTrans) -> "VAT Additional Assessment LPI",
+    ("4671", testVatRPISubTrans) -> "VAT Additional Assessment RPI",
     ("4672", testVatLPISubTrans) -> "VAT AA 1st LPP LPI",
     ("4674", testVatLPISubTrans) -> "VAT AA 2nd LPP LPI",
     ("4676", testVatLPISubTrans) -> "VAT Protective Assessment LPI",
+    ("4677", testVatRPISubTrans) -> "VAT Protective Assessment RPI",
     ("4678", testVatLPISubTrans) -> "VAT PA 1st LPP LPI",
     ("4680", testVatLPISubTrans) -> "VAT PA 2nd LPP LPI",
     ("4682", testVatLPISubTrans) -> "VAT Miscellaneous Penalty LPI",
@@ -155,6 +163,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4780", testPenaltyDebitSubTrans) -> "VAT OA Inaccuracies from 2009",
     ("4781", testVatLPISubTrans) -> "VAT OA Inaccur from 2009 LPI",
     ("4783", testPenaltyDebitSubTrans) -> "VAT Inaccuracy return replaced",
+    ("4784", testVatLPISubTrans) -> "VAT Inaccuracy Return Replaced LPI",
     ("4786", testPenaltyDebitSubTrans) -> "VAT BNP of Reg Pre 2010",
     ("4787", testPenaltyDebitSubTrans) -> "VAT Manual LPP",
     ("4788", testVatLPISubTrans) -> "VAT Manual LPP LPI",
@@ -357,11 +366,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is true" must {
 
-      "have 164 charge types" in {
+      "have 172 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 164
+        val expectedResult = 172
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -380,11 +389,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is false" must {
 
-      "have 154 charge types" in {
+      "have 162 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 154
+        val expectedResult = 162
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
