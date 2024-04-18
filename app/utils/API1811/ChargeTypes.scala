@@ -55,6 +55,7 @@ object ChargeTypes extends LoggerUtil {
     ("4635", vatInterestRepaymentsSubTrans) -> "VAT Return AA 1st LPP RPI",
     ("4636", vatLPISubTrans) -> "VAT Return AA 2nd LPP LPI",
     ("4637", vatInterestRepaymentsSubTrans) -> "VAT Return AA 2nd LPP RPI",
+    ("4638", vatLPISubTrans) -> "VAT Manual LPI",
     ("4639", vatInterestRepaymentsSubTrans) -> "VAT Manual RPI",
     ("4652", vatLPISubTrans) -> "VAT Central Assessment LPI",
     ("4653", vatInterestRepaymentsSubTrans) -> "VAT Central Assessment RPI",
