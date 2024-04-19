@@ -230,10 +230,10 @@ object ChargeTypes extends LoggerUtil {
 
   def supportedChargeTypesExt()(implicit appConfig: AppConfig, request: Request[_]): Map[(String, String), String] = {
     if (appConfig.features.penaltyReformChargeTypesEnabled.apply()) {
-      infoLog("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is true. Using Penalty Reform charge types")
+      logger.debug("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is true. Using Penalty Reform charge types")
       supportedChargeTypes ++ penaltyReformChargeTypes
     } else {
-      infoLog("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is false. NOT using Penalty Reform charge types")
+      logger.debug("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is false. NOT using Penalty Reform charge types")
       supportedChargeTypes
     }
   }
@@ -270,11 +270,24 @@ object ChargeTypes extends LoggerUtil {
         }
         document.lineItemDetails.length == filteredCharges.length
       }
-    val removedTransactions = transactions.diff(filteredTransactions)
+    val removedTransactions: Seq[DocumentDetails] = transactions.diff(filteredTransactions)
 
     if (removedTransactions.nonEmpty) {
+
+      val logDetails: Seq[String] =
+        removedTransactions.map { transaction =>
+          val transactionCodes: Seq[String] = transaction.lineItemDetails.map { details =>
+            s"main: ${details.mainTransaction.getOrElse("")} sub: ${details.subTransaction.getOrElse("")} "
+          }
+
+          s"Charge ref: ${transaction.chargeReferenceNumber.getOrElse("")}" +
+            s"\n Transaction codes: ${transactionCodes.map(code => s"\n $code")}"
+        }
+
       warnLog(s"[ChargeTypes][removeInvalidCharges]" +
-        s"Charges removed: ${removedTransactions.length} Charge refs: ${removedTransactions.map(_.chargeReferenceNumber)}"
+        s" Charges removed: ${removedTransactions.length}" +
+        s"\n Removed transaction details:" +
+        s"\n ${logDetails.map(details => s"\n $details")}"
       )
     }
     filteredTransactions

@@ -353,15 +353,28 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
         ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails)
       }
 
-      "there are multiple supported charge types" in {
+      "there are multiple supported charge types in different documents" in {
 
         val lineItems = Seq(
           lineItemDetailsFull,
           lineItemDetailsFull.copy(mainTransaction = Some("4757"), subTransaction = Some("1174")),
           lineItemDetailsFull.copy(mainTransaction = Some("4702"), subTransaction = Some("1177"))
         )
-        val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
-        ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+
+        val lineItems2 = Seq(
+          lineItemDetailsFull,
+          lineItemDetailsFull.copy(mainTransaction = Some("4761"), subTransaction = Some("1090")),
+          lineItemDetailsFull.copy(mainTransaction = Some("4797"), subTransaction = Some("1176"))
+        )
+
+        val dDetails = Seq(
+          fullDocumentDetails.copy(lineItemDetails = lineItems),
+          fullDocumentDetails.copy(lineItemDetails = lineItems2)
+        )
+        ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(
+          fullDocumentDetails.copy(lineItemDetails = lineItems),
+          fullDocumentDetails.copy(lineItemDetails = lineItems2)
+        )
       }
 
       "for each supported charge type" when {
@@ -371,6 +384,46 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
             val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
             ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
           }
+        }
+      }
+    }
+
+    "filter unsupported charges" when {
+
+      "there are only unsupported charge types" must {
+
+        "return Seq()" in {
+
+          val lineItems = Seq(
+            lineItemDetailsFull,
+            lineItemDetailsFull.copy(mainTransaction = Some("XXXX"), subTransaction = Some("XXXX")),
+            lineItemDetailsFull.copy(mainTransaction = Some("YYYY"), subTransaction = Some("YYYY"))
+          )
+          val dDetails = Seq(fullDocumentDetails.copy(lineItemDetails = lineItems))
+          ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq()
+        }
+      }
+
+      "there are unsupported charge types in one document and supported charge types in another" must {
+
+        "return the supported document" in {
+
+          val lineItems = Seq(
+            lineItemDetailsFull,
+            lineItemDetailsFull.copy(mainTransaction = Some("XXXX"), subTransaction = Some("XXXX")),
+            lineItemDetailsFull.copy(mainTransaction = Some("YYYY"), subTransaction = Some("YYYY"))
+          )
+
+          val lineItems2 = Seq(
+            lineItemDetailsFull,
+            lineItemDetailsFull.copy(mainTransaction = Some("4757"), subTransaction = Some("1174")),
+            lineItemDetailsFull.copy(mainTransaction = Some("4702"), subTransaction = Some("1177"))
+          )
+          val dDetails = Seq(
+            fullDocumentDetails.copy(lineItemDetails = lineItems),
+            fullDocumentDetails.copy(lineItemDetails = lineItems2)
+          )
+          ChargeTypes.removeInvalidCharges(dDetails) shouldBe Seq(fullDocumentDetails.copy(lineItemDetails = lineItems2))
         }
       }
     }
