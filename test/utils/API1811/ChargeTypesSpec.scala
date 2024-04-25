@@ -62,6 +62,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
     ("4635", testVatRPISubTrans) -> "VAT Return AA 1st LPP RPI",
     ("4636", testVatLPISubTrans) -> "VAT Return AA 2nd LPP LPI",
     ("4637", testVatRPISubTrans) -> "VAT Return AA 2nd LPP RPI",
+    ("4638", testVatLPISubTrans) -> "VAT Manual LPI",
     ("4639", testVatRPISubTrans) -> "VAT Manual RPI",
     ("4652", testVatLPISubTrans) -> "VAT Central Assessment LPI",
     ("4653", testVatRPISubTrans) -> "VAT Central Assessment RPI",
@@ -433,12 +434,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is true" must {
 
-      "have 187 charge types" in {
+      "have 188 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
-        val expectedResult = 187
-
+        val expectedResult = 188
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
@@ -457,12 +457,11 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
     "penaltyReformChargeTypesEnabled is false" must {
 
-      "have 177 charge types" in {
+      "have 178 charge types" in {
 
         mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
 
-        val expectedResult = 177
-
+        val expectedResult = 178
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
 
         expectedResult shouldBe actualResult
