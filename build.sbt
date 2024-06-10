@@ -57,11 +57,6 @@ def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "org.scalamock"     %% "scalamock"                    % "5.2.0"                 % scope
 )
 
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests.map { test =>
-    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
-  }
-
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
   .disablePlugins(JUnitXmlReportPlugin)
@@ -89,6 +84,5 @@ lazy val microservice = Project(appName, file("."))
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
     IntegrationTest / parallelExecution := false
   )
