@@ -229,7 +229,7 @@ object ChargeTypes extends LoggerUtil {
     ("6058", vatInterestRepaymentsSubTrans) -> "VAT Overpayments 2nd LPP RPI"
   )
 
-  def supportedChargeTypesExt()(implicit appConfig: AppConfig, request: Request[_]): Map[(String, String), String] = {
+  def supportedChargeTypesExt()(implicit appConfig: AppConfig): Map[(String, String), String] = {
     if (appConfig.features.penaltyReformChargeTypesEnabled.apply()) {
       logger.debug("[ChargeTypes][supportedChargeTypesExt] penaltyReformChargeTypesEnabled is true. Using Penalty Reform charge types")
       supportedChargeTypes ++ penaltyReformChargeTypes
