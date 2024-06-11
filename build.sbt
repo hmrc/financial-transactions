@@ -24,7 +24,7 @@ val appName: String = "financial-transactions"
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
 
-val bootstrapPlayVersion = "7.15.0"
+val bootstrapPlayVersion = "8.6.0"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys
@@ -48,19 +48,14 @@ lazy val coverageSettings: Seq[Setting[_]] = {
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-28" % bootstrapPlayVersion
+  "uk.gov.hmrc"       %% "bootstrap-backend-play-30" % bootstrapPlayVersion
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"       %% "bootstrap-test-play-28"       % bootstrapPlayVersion    % scope,
+  "uk.gov.hmrc"       %% "bootstrap-test-play-30"       % bootstrapPlayVersion    % scope,
   "org.scalatestplus" %% "mockito-3-4"                  % "3.2.9.0"               % scope,
   "org.scalamock"     %% "scalamock"                    % "5.2.0"                 % scope
 )
-
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]): Seq[Group] =
-  tests.map { test =>
-    Group(test.name, Seq(test), SubProcess(ForkOptions().withRunJVMOptions(Vector(s"-Dtest.name=${test.name}"))))
-  }
 
 lazy val microservice = Project(appName, file("."))
   .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
@@ -71,7 +66,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings(): _*)
   .settings(
     PlayKeys.playDefaultPort := 9085,
-    scalaVersion := "2.13.8",
+    scalaVersion := "2.13.12",
     libraryDependencies ++= appDependencies,
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Wconf:cat=unused-imports&src=.*routes.*:s"),
     retrieveManaged := true,
@@ -89,6 +84,5 @@ lazy val microservice = Project(appName, file("."))
     IntegrationTest / Keys.fork := false,
     IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
-    IntegrationTest / testGrouping := oneForkedJvmPerTest((IntegrationTest / definedTests).value),
     IntegrationTest / parallelExecution := false
   )
