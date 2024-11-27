@@ -23,10 +23,6 @@ import utils.API1811.TestConstants.{fullDocumentDetails, lineItemDetailsFull}
 
 class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
-  override def afterAll(): Unit = {
-    mockAppConfig.features.penaltyReformChargeTypesEnabled.reset()
-  }
-
   implicit val request: FakeRequest[_] = fakeRequest
 
   val testVatDebitSubTrans = "1174"
@@ -432,11 +428,9 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
   "supportedChargeTypesExt" when {
 
-    "penaltyReformChargeTypesEnabled is true" must {
+    "penaltyReformChargeTypesEnabled is true by default" must {
 
       "have 188 charge types" in {
-
-        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
 
         val expectedResult = 188
         val actualResult = ChargeTypes.supportedChargeTypesExt().size
@@ -446,32 +440,7 @@ class ChargeTypesSpec extends SpecBase with BeforeAndAfterAll {
 
       "contain the penalty reform charge types" in {
 
-        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(true)
-
         val expectedResult = testSupportedChargeTypes ++ testPenaltyReformChargeTypes
-        val actualResult = ChargeTypes.supportedChargeTypesExt()
-
-        expectedResult shouldBe actualResult
-      }
-    }
-
-    "penaltyReformChargeTypesEnabled is false" must {
-
-      "have 178 charge types" in {
-
-        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
-
-        val expectedResult = 178
-        val actualResult = ChargeTypes.supportedChargeTypesExt().size
-
-        expectedResult shouldBe actualResult
-      }
-
-      "contain the penalty reform charge types" in {
-
-        mockAppConfig.features.penaltyReformChargeTypesEnabled.apply(false)
-
-        val expectedResult = testSupportedChargeTypes
         val actualResult = ChargeTypes.supportedChargeTypesExt()
 
         expectedResult shouldBe actualResult
