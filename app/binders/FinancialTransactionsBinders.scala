@@ -18,16 +18,21 @@ package binders
 
 import java.net.URLEncoder
 import java.time.LocalDate
-import models.FinancialRequestQueryParameters._
 import models.FinancialRequestQueryParameters
 import play.api.mvc.QueryStringBindable
 import scala.util.{Failure, Success, Try}
 
 object FinancialTransactionsBinders {
 
+  private val dateFromKey = "dateFrom"
+  private val dateToKey = "dateTo"
+  private val onlyOpenItemsKey = "onlyOpenItems"
+
   implicit def financialDataQueryBinder: QueryStringBindable[FinancialRequestQueryParameters] = {
     new QueryStringBindable[FinancialRequestQueryParameters] {
       override def bind(key: String, params: Map[String, Seq[String]]): Option[Either[String, FinancialRequestQueryParameters]] = {
+
+
         val bindFrom = dateBind(dateFromKey, params)
         val bindTo = dateBind(dateToKey, params)
         val bindOnlyOpenItems = boolBind(onlyOpenItemsKey, params)

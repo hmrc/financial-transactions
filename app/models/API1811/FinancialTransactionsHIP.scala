@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package config.featureSwitch
+package models.API1811
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json._
 
-@Singleton
-class Features @Inject()(implicit config: Configuration){
 
-  private val featureSwitch: String = "feature-switch"
-  lazy val staticDate = new Feature(s"$featureSwitch.staticDate")
-  lazy val enable1811HIPCall= new Feature(s"$featureSwitch.enable1811HIPCall")
+case class FinancialTransactionsHIP(
+                                            processingDate: String,
+                                            financialData: FinancialTransactions)
 
-  lazy val allSwitches: Seq[Feature] = Seq(
-    staticDate,
-    enable1811HIPCall
-  )
-  def resetAll(): Unit = allSwitches.foreach(_.reset())
+object FinancialTransactionsHIP {
+  implicit val reads: Reads[FinancialTransactionsHIP] = (
+    (JsPath \ "success" \ "processingDate").read[String] and
+      (JsPath \ "success" \ "financialData").read[FinancialTransactions]
+    )(FinancialTransactionsHIP.apply _)
+
 }

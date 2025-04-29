@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package config.featureSwitch
+package models.API1811
 
-import javax.inject.{Inject, Singleton}
-import play.api.Configuration
+import play.api.libs.json.{Format, Json}
 
-@Singleton
-class Features @Inject()(implicit config: Configuration){
+case class TechnicalError(
+                           code: String,
+                           message: String,
+                           logId: String)
 
-  private val featureSwitch: String = "feature-switch"
-  lazy val staticDate = new Feature(s"$featureSwitch.staticDate")
-  lazy val enable1811HIPCall= new Feature(s"$featureSwitch.enable1811HIPCall")
-
-  lazy val allSwitches: Seq[Feature] = Seq(
-    staticDate,
-    enable1811HIPCall
-  )
-  def resetAll(): Unit = allSwitches.foreach(_.reset())
+object TechnicalError {
+  implicit val format: Format[TechnicalError] = Json.format[TechnicalError]
 }

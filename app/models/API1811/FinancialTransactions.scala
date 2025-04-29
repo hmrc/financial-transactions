@@ -21,6 +21,7 @@ import play.api.libs.json._
 import play.api.mvc.Request
 import services.DateService
 
+
 case class FinancialTransactions(documentDetails: Seq[DocumentDetails])
 
 object FinancialTransactions {
