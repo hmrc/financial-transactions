@@ -17,11 +17,22 @@
 package models
 
 import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{Format,Json}
 
 case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
                                            toDate: Option[LocalDate] = None,
-                                           onlyOpenItems: Option[Boolean] = None) {
+                                           onlyOpenItems: Option[Boolean] = None,
+                                           includeClearedItems: Option[Boolean] = None,
+                                           includeStatisticalItems: Option[Boolean] = None,
+                                           includePaymentOnAccount: Option[Boolean] = None,
+                                           addRegimeTotalisation: Option[Boolean] = None,
+                                           addLockInformation: Option[Boolean] = None,
+                                           addPenaltyDetails: Option[Boolean] = None,
+                                           addPostedInterestDetails: Option[Boolean] = None,
+                                           addAccruingInterestDetails: Option[Boolean] = None,
+                                           searchType: Option[String] = None,
+                                           searchItem: Option[String] = None
+                                          ) {
 
   import FinancialRequestQueryParameters._
 
