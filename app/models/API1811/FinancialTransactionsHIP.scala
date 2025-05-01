@@ -18,16 +18,16 @@ package models.API1811
 
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
-
+import models.API1811.FinancialTransactions.hipReads
 
 case class FinancialTransactionsHIP(
                                             processingDate: String,
-                                            financialData: FinancialTransactions)
+                                            FinancialData: FinancialTransactions)
 
 object FinancialTransactionsHIP {
   implicit val reads: Reads[FinancialTransactionsHIP] = (
     (JsPath \ "success" \ "processingDate").read[String] and
-      (JsPath \ "success" \ "financialData").read[FinancialTransactions]
+      (JsPath \ "success" \ "FinancialData").read(hipReads)
     )(FinancialTransactionsHIP.apply _)
 
 }

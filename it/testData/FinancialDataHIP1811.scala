@@ -15,7 +15,7 @@
  */
 package testData
 
-import models.API1811.{DocumentDetails, DocumentPenaltyTotals, Error, FinancialTransactions, LineItemDetails, LineItemLockDetails}
+import models.API1811.{DocumentDetails, DocumentPenaltyTotals, Error, FinancialTransactions, FinancialTransactionsHIP, LineItemDetails, LineItemLockDetails}
 import play.api.http.Status
 import play.api.libs.json.{JsObject, Json}
 
@@ -103,6 +103,42 @@ object FinancialDataHIP1811 {
       )
     )
   )
+  val lineItems: LineItemDetails = LineItemDetails(
+    mainTransaction = Some("4700"),
+    subTransaction = Some("1174"),
+    periodFromDate = Some(LocalDate.parse("2022-01-01")),
+    periodToDate = Some(LocalDate.parse("2022-01-31")),
+    periodKey = Some("22A1"),
+    netDueDate = Some(LocalDate.parse("2022-02-08")),
+    amount = Some(3420.0),
+    ddCollectionInProgress = Some(true),
+    clearingDate = Some(LocalDate.parse("2022-02-09")),
+    clearingReason = Some("Payment at External Payment Collector Reported"),
+    clearingDocument = Some("719283701921"),
+    lineItemLockDetails = Seq(LineItemLockDetails("Some payment lock"))
+  )
+
+  val documentPenaltyTotals: DocumentPenaltyTotals = DocumentPenaltyTotals(
+    penaltyType = Some("LPP1"),
+    penaltyStatus = Some("ACCRUING"),
+    penaltyAmount = Some(10.01)
+  )
+
+  val fullFinancialTransactionsHIP: FinancialTransactionsHIP = FinancialTransactionsHIP(
+    processingDate = "2024-12-31T13:34:56Z",
+    FinancialData = FinancialTransactions(Seq(
+      DocumentDetails(
+        chargeReferenceNumber = Some("XP001286394838"),
+        documentTotalAmount = Some(100.00),
+        documentOutstandingAmount = Some(0.0),
+        documentClearedAmount = Some(100.0),
+        lineItemDetails = Seq(lineItems),
+        interestAccruingAmount = Some(12.10),
+        documentPenaltyTotals = Some(Seq(documentPenaltyTotals))
+      )
+    ))
+  )
+
   val singleErrorHIP: JsObject = Json.obj(
     "error" -> Json.obj(
       "code" -> "TECH_ERROR",
@@ -128,4 +164,5 @@ object FinancialDataHIP1811 {
   )
 
   val multipleErrorsHIPModel: Error = Error(Status.BAD_REQUEST, multipleErrorsHIP.toString())
+
 }

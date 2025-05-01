@@ -41,7 +41,7 @@ class FinancialTransactionsService @Inject()(val connector: FinancialDataConnect
         case Right(financialTransactionsHIP) =>
           logger.debug("[FinancialTransactionsService][getFinancialTransactions] - Successfully retrieved HIP financial transactions.")
           val mappedToIf = FinancialTransactions(
-            documentDetails = financialTransactionsHIP.financialData.documentDetails
+            documentDetails = financialTransactionsHIP.FinancialData.documentDetails
           )
           Right(mappedToIf)
 

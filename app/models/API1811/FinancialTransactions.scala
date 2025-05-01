@@ -21,7 +21,6 @@ import play.api.libs.json._
 import play.api.mvc.Request
 import services.DateService
 
-
 case class FinancialTransactions(documentDetails: Seq[DocumentDetails])
 
 object FinancialTransactions {
@@ -41,6 +40,10 @@ object FinancialTransactions {
 
   implicit val reads: Reads[FinancialTransactions] =
     (__ \ "getFinancialData" \ "financialDetails" \ "documentDetails").read[Seq[DocumentDetails]]
+      .map(FinancialTransactions.apply)
+
+  val hipReads: Reads[FinancialTransactions] =
+    (JsPath \ "documentDetails").read[Seq[DocumentDetails]]
       .map(FinancialTransactions.apply)
 
   implicit def writes(implicit appConfig: AppConfig, request: Request[_]): Writes[FinancialTransactions] = Writes { model =>

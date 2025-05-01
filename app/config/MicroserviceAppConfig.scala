@@ -52,7 +52,7 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
 
   lazy val enable1811HIPCall: Boolean = features.enable1811HIPCall()
 
-  lazy val hipBaseUrl: String = servicesConfig.baseUrl("hip")
+  lazy val hipBaseUrl: String = servicesConfig.getString("microservice.services.hip.url")
 
   private val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
   private val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
