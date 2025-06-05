@@ -34,9 +34,10 @@ case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyChargeReference: Option[String],
                               timeToPay: Option[Seq[TimeToPay]]) {
 
-  def hasTimeToPay(implicit appConfig: AppConfig): Boolean = timeToPay.fold(false)(_.exists { ttp =>
-    !ttp.TTPStartDate.isAfter(DateService.now) && !ttp.TTPEndDate.isBefore(DateService.now)
-  })
+  def hasTimeToPay(implicit appConfig: AppConfig): Boolean = {
+    timeToPay.fold(false)(_.exists(ttp => ttp.TTPStartDate.isDefined && !ttp.TTPStartDate.get.isAfter(DateService.now)
+      && ttp.TTPEndDate.isDefined && !ttp.TTPEndDate.get.isBefore(DateService.now)))
+  }
 }
 
 object LatePaymentPenalty {
