@@ -28,6 +28,14 @@ object TestConstantsAPI1812 {
     "TTPEndDate" -> "2018-08-31"
   )
 
+  val timeToPayJsonOptionalEndDate: JsObject = Json.obj(
+    "TTPStartDate" -> "2018-04-05"
+  )
+
+  val timeToPayJsonOptionalStartDate: JsObject = Json.obj(
+    "TTPEndDate" -> "2018-08-31"
+  )
+
   val LPPJsonMax: JsObject = Json.obj(
     "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
     "penaltyCategory" -> "LPP1",
@@ -81,7 +89,7 @@ object TestConstantsAPI1812 {
     Some("31"),
     Some(5.5),
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
-    Some(Seq(TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-08-31"))))
+    Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))))
   )
 
   val LPPModelMin: LatePaymentPenalty = LatePaymentPenalty(
@@ -117,22 +125,21 @@ object TestConstantsAPI1812 {
   val outOfBS        : BreathingSpace = BreathingSpace(LocalDate.parse("2018-03-01"), LocalDate.parse("2018-04-01"))
   val futureBS       : BreathingSpace = BreathingSpace(LocalDate.parse("2018-07-01"), LocalDate.parse("2018-08-01"))
 
-  val outOfTTP        : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07"))))
-  val inTTP           : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-07-07"))))
-  val firstDayTTP     : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-05-01"), LocalDate.parse("2018-07-01"))))
-  val lastDayTTP      : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-03-16"), LocalDate.parse("2018-05-01"))))
-  val TTPEndYesterday : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-03-07"), LocalDate.parse("2018-04-30"))))
-  val TTPBeginTomorrow: Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-05-02"), LocalDate.parse("2018-07-04"))))
-  val futureTTP       : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-09-05"))))
+  val outOfTTP        : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-01-07")), Some(LocalDate.parse("2018-02-07")))))
+  val inTTP           : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-07")), Some(LocalDate.parse("2018-07-07")))))
+  val firstDayTTP     : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-05-01")), Some(LocalDate.parse("2018-07-01")))))
+  val lastDayTTP      : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-03-16")), Some(LocalDate.parse("2018-05-01")))))
+  val TTPEndYesterday : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-03-07")), Some(LocalDate.parse("2018-04-30")))))
+  val TTPBeginTomorrow: Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-05-02")), Some(LocalDate.parse("2018-07-04")))))
+  val futureTTP       : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-06-18")), Some(LocalDate.parse("2018-09-05")))))
   val betweenTTPS     : Option[Seq[TimeToPay]] = Some(Seq(
-      TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07")),
-      TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-08-07"))
+      TimeToPay(Some(LocalDate.parse("2018-01-07")), Some(LocalDate.parse("2018-02-07"))),
+      TimeToPay(Some(LocalDate.parse("2018-06-18")), Some(LocalDate.parse("2018-08-07")))
   ))
   val firstOfTwoTTPS  : Option[Seq[TimeToPay]] = Some(Seq(
-    TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-07-07")),
-    TimeToPay(LocalDate.parse("2018-09-05"), LocalDate.parse("2018-11-07"))
+    TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-07-07"))),
+    TimeToPay(Some(LocalDate.parse("2018-09-05")), Some(LocalDate.parse("2018-11-07")))
   ))
-
   val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)))
   val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None)
   val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)))

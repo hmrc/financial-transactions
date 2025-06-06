@@ -30,6 +30,10 @@ object PenaltyDetailsTestData {
     "TTPEndDate" -> "2018-08-31"
   )
 
+  val timeToPayJson2: JsObject = Json.obj(
+    "TTPStartDate" -> "2018-04-08",
+  )
+
   val LPPJson: JsObject = Json.obj(
     "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
     "penaltyCategory" -> "LPP1",
@@ -42,7 +46,7 @@ object PenaltyDetailsTestData {
     "LPP2Days" -> "31",
     "LPP2Percentage" -> 5.5,
     "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
-    "timeToPay" -> Json.arr(timeToPayJson)
+    "timeToPay" -> Json.arr(timeToPayJson, timeToPayJson2)
   )
 
   val LPPJsonWritten: JsObject = Json.obj(
@@ -97,7 +101,8 @@ object PenaltyDetailsTestData {
     Some("31"),
     Some(5.5),
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
-    Some(Seq(TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-08-31"))))
+    Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-07")), Some(LocalDate.parse("2018-08-31"))),
+             TimeToPay(Some(LocalDate.parse("2018-04-08")), None)))
   )
 
   val penaltyDetailsModel: PenaltyDetails = PenaltyDetails(
