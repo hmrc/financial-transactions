@@ -18,8 +18,6 @@ package services.API1811
 
 import base.SpecBase
 import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
-import mocks.connectors.Mock1811FinancialDataConnector
-import mocks.connectors.Mock1811FinancialDataHIPConnector
 import models.API1811.{Error, FinancialTransactions}
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import org.mockito.Mockito.{mock, when}
@@ -29,7 +27,7 @@ import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.API1811.TestConstants.{fullDocumentDetails, fullFinancialTransactions, lineItemDetailsFull}
 
 import java.time.LocalDate
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class FinancialTransactionsServiceSpec extends SpecBase  {
 
