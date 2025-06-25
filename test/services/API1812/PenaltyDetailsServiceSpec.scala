@@ -28,7 +28,7 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
 
   "The .getPenaltyDetails method" when {
 
-    val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some(2))
+    val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some("02"))
     val regime: TaxRegime = VatRegime("123456789")
     val service = new PenaltyDetailsService(mockPenaltyDetailsConnector)
 

@@ -36,7 +36,7 @@ class PenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
     "return a 502 error when there is a HTTP exception" in {
       val exception = new RequestTimeoutException("Request timed out!!!")
-      setupMockHttpGet(connector.penaltyDetailsUrl(vatRegime))(Future.failed(exception))
+      setupMockHttpGet(connector.penaltyDetailsUrl())(Future.failed(exception))
       val result = connector.getPenaltyDetails(vatRegime, queryParams)
       await(result) shouldBe Left(Error(BAD_GATEWAY, exception.message))
     }

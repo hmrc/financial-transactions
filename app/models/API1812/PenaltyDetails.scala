@@ -34,8 +34,8 @@ case class PenaltyDetails(LPPDetails: Option[Seq[LatePaymentPenalty]],
 object PenaltyDetails {
 
   implicit val reads: Reads[PenaltyDetails] = (
-    (__ \ "latePaymentPenalty" \ "details").readNullable[Seq[LatePaymentPenalty]] and
-    (__ \ "breathingSpace").readNullable[Seq[BreathingSpace]]
+    (__ \ "success" \ "penaltyData" \ "lpp" \ "lppDetails").readNullable[Seq[LatePaymentPenalty]] and
+    (__ \ "success" \ "penaltyData" \ "breathingSpace").readNullable[Seq[BreathingSpace]]
   )(PenaltyDetails.apply _)
 
   implicit def writes(implicit appConfig: AppConfig): Writes[PenaltyDetails] = { model =>

@@ -39,9 +39,9 @@ class PenaltyDetailsBindersSpec extends SpecBase {
 
       "return a PenaltyDetailsQueryParameters instance with correct parameters" when {
 
-        "the value is 0 (lower boundary)" in {
-          val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("0"))
-          val expected = Some(Right(PenaltyDetailsQueryParameters(Some(0))))
+        "the value is 00 (lower boundary)" in {
+          val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("00"))
+          val expected = Some(Right(PenaltyDetailsQueryParameters(Some("00"))))
           val actual = PenaltyDetailsBinders.penaltyDetailsQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -49,15 +49,15 @@ class PenaltyDetailsBindersSpec extends SpecBase {
 
         "the value is 99 (upper boundary)" in {
           val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("99"))
-          val expected = Some(Right(PenaltyDetailsQueryParameters(Some(99))))
+          val expected = Some(Right(PenaltyDetailsQueryParameters(Some("99"))))
           val actual = PenaltyDetailsBinders.penaltyDetailsQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
         }
 
-        "the value is between 0 and 99" in {
+        "the value is between 00 and 99" in {
           val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("47"))
-          val expected = Some(Right(PenaltyDetailsQueryParameters(Some(47))))
+          val expected = Some(Right(PenaltyDetailsQueryParameters(Some("47"))))
           val actual = PenaltyDetailsBinders.penaltyDetailsQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -66,25 +66,25 @@ class PenaltyDetailsBindersSpec extends SpecBase {
 
       "return an error message with details of the error" when {
 
-        "the value is negative" in {
-          val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("-1"))
-          val expected = Some(Left(s"Failed to bind '$dateLimitKey=-1' valid values are between 0 and 99 inclusive."))
+        "the value is not 2 digits" in {
+          val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("1"))
+          val expected = Some(Left(s"Failed to bind '$dateLimitKey=1' valid values are 2-digit strings between 00 and 99 inclusive."))
           val actual = PenaltyDetailsBinders.penaltyDetailsQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
         }
 
-        "the value is greater than 99" in {
+        "the value is more than 2 digits" in {
           val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("100"))
-          val expected = Some(Left(s"Failed to bind '$dateLimitKey=100' valid values are between 0 and 99 inclusive."))
+          val expected = Some(Left(s"Failed to bind '$dateLimitKey=100' valid values are 2-digit strings between 00 and 99 inclusive."))
           val actual = PenaltyDetailsBinders.penaltyDetailsQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
         }
 
         "the value is not numeric" in {
-          val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("hello"))
-          val expected = Some(Left(s"Failed to bind '$dateLimitKey=hello' valid values are between 0 and 99 inclusive."))
+          val queryParams: Map[String, Seq[String]] = Map(dateLimitKey -> Seq("ab"))
+          val expected = Some(Left(s"Failed to bind '$dateLimitKey=ab' valid values are 2-digit strings between 00 and 99 inclusive."))
           val actual = PenaltyDetailsBinders.penaltyDetailsQueryBinder.bind("", queryParams)
 
           actual shouldBe expected
@@ -107,10 +107,10 @@ class PenaltyDetailsBindersSpec extends SpecBase {
   "The PenaltyDetailsBinders.penaltyDetailsQueryBinder.unbind method" should {
 
     "unbind query parameters correctly" in {
-      val queryParams = PenaltyDetailsQueryParameters(Some(1))
+      val queryParams = PenaltyDetailsQueryParameters(Some("01"))
       val result = PenaltyDetailsBinders.penaltyDetailsQueryBinder.unbind("", queryParams)
 
-      result shouldBe "dateLimit=1"
+      result shouldBe "dateLimit=01"
     }
   }
 }

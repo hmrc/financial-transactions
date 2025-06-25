@@ -25,7 +25,12 @@ class PenaltyDetailsSpec extends SpecBase {
   "PenaltyDetails" should {
 
     "parse JSON to an empty sequence when no LPP details exist" in {
-      val result = Json.obj().as[PenaltyDetails]
+      val result = Json.obj(
+        "success" -> Json.obj(
+          "processingDate" -> "2023-11-28T10:15:10Z",
+          "penaltyData" -> Json.obj()
+        )
+      ).as[PenaltyDetails]
       result.LPPDetails.isEmpty shouldBe true
     }
 

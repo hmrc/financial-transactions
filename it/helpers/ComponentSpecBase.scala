@@ -50,7 +50,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.auth.host" -> mockHost,
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.des.url" -> mockUrl,
-    "microservice.services.eis.url" -> mockUrl
+    "microservice.services.eis.url" -> mockUrl,
+    "microservice.services.hip.url" -> mockUrl
   )
 
   def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =

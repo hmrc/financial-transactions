@@ -31,7 +31,7 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
   val vatRegime: TaxRegime = VatRegime(id = "123456789")
   val queryParameters: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
-  val url: String = "/penalty/details/VATC/VRN/123456789"
+  val url: String = "/RESTAdapter/cross-regime/taxpayer/penalties?taxRegime=VATC&idType=VRN&idNumber=123456789"
 
   "getPenaltyDetails" should {
 
@@ -59,7 +59,16 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
         stubGetRequest(
           url,
           OK,
-          Json.obj("latePaymentPenalty" -> Json.obj("details" -> "f")).toString()
+          Json.obj(
+            "success" -> Json.obj(
+              "processingDate" -> "2023-11-28T10:15:10Z",
+              "penaltyData" -> Json.obj(
+                "lpp" -> Json.obj(
+                  "lppDetails" -> "invalid content"
+                )
+              )
+            )
+          ).toString()
         )
 
         val expectedResult = Left(Error(BAD_REQUEST,

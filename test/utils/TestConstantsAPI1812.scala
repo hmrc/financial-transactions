@@ -148,10 +148,15 @@ object TestConstantsAPI1812 {
   val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None)
 
   def apiLPPJson(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
-    "latePaymentPenalty" -> Json.obj(
-      "details" -> Json.arr(LPPJson)
-    ),
-    "breathingSpace" -> Json.arr(bsJson)
+    "success" -> Json.obj(
+      "processingDate" -> "2023-11-28T10:15:10Z",
+      "penaltyData" -> Json.obj(
+        "lpp" -> Json.obj(
+          "lppDetails" -> Json.arr(LPPJson)
+        ),
+        "breathingSpace" -> Json.arr(bsJson)
+      )
+    )
   )
 
   val breathingSpaceJSON: JsObject = Json.obj(
@@ -165,7 +170,12 @@ object TestConstantsAPI1812 {
   )
 
   val apiLPPJsonNoPen: JsValue = Json.obj(
-    "breathingSpace" -> Json.arr(breathingSpaceJSONAfterBS),
+    "success" -> Json.obj(
+      "processingDate" -> "2023-11-28T10:15:10Z",
+      "penaltyData" -> Json.obj(
+        "breathingSpace" -> Json.arr(breathingSpaceJSONAfterBS)
+      )
+    )
   )
 
 }
