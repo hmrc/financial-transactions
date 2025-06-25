@@ -45,11 +45,14 @@ object PenaltyDetailsBinders {
         case (paramKey, paramValue) => s"$paramKey=${URLEncoder.encode(paramValue, "utf-8")}"
       }.mkString("&")
 
-      private[binders] def dateLimitBind(key: String, params: Map[String, Seq[String]]) = params.get(key) match {
-        case Some(values) => Try(values.head.toInt) match {
-          case Success(x) if x >= 0 & x <= 99 => Right(Some(x))
-          case _ => Left(s"Failed to bind '$key=${values.headOption.getOrElse("")}' valid values are between 0 and 99 inclusive.")
-        }
+      private[binders] def dateLimitBind(key: String, params: Map[String, Seq[String]]): Either[String, Option[String]] = params.get(key) match {
+        case Some(values) => 
+          val value = values.head
+          if (value.length >= 2 && value.length <= 2 && value.matches("\\d{2}")) {
+            Right(Some(value))
+          } else {
+            Left(s"Failed to bind '$key=$value' valid values are 2-digit strings between 00 and 99 inclusive.")
+          }
         case _ => Right(None)
       }
     }
