@@ -21,7 +21,6 @@ import models.PenaltyDetailsQueryParameters.dateLimitKey
 import play.api.mvc.QueryStringBindable
 
 import java.net.URLEncoder
-import scala.util.{Success, Try}
 
 object PenaltyDetailsBinders {
 
