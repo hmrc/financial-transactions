@@ -18,11 +18,12 @@ package controllers
 
 import config.RegimeKeys
 import helpers.ComponentSpecBase
-import helpers.servicemocks.HIPPenaltyDetailsStub
+import helpers.servicemocks.EISPenaltyDetailsStub
 import models.{PenaltyDetailsQueryParameters, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import testData.PenaltyDetailsTestData
+
 
 class PenaltyDetailsComponentSpec extends ComponentSpecBase {
 
@@ -38,7 +39,7 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
         isAuthorised()
 
         And("I wiremock stub a successful Get Penalty Details response")
-        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
           vatRegime, queryParameters)(OK, PenaltyDetailsTestData.penaltyDetailsAPIJson)
 
         When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
@@ -58,7 +59,7 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
 
         isAuthorised()
         And("I wiremock stub a successful Get Penalty Details response")
-        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
           vatRegime, queryParameters)(OK, PenaltyDetailsTestData.penaltyDetailsAPIJsonBSOnly)
         When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
         val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
@@ -78,7 +79,7 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
 
         isAuthorised()
         And("I wiremock stub a successful Get Penalty Details response")
-        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(
           vatRegime, queryParameters)(OK, Json.obj())
         When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
         val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)
@@ -102,7 +103,7 @@ class PenaltyDetailsComponentSpec extends ComponentSpecBase {
         isAuthorised()
 
         And("I wiremock stub a bad request response from Get Financial Data")
-        HIPPenaltyDetailsStub.stubGetPenaltyDetails(vatRegime, queryParameters)(BAD_REQUEST, PenaltyDetailsTestData.errorJson)
+        EISPenaltyDetailsStub.stubGetPenaltyDetails(vatRegime, queryParameters)(BAD_REQUEST, PenaltyDetailsTestData.errorJson)
 
         When(s"I call GET /financial-transactions/penalty/${RegimeKeys.VAT}/${vatRegime.id}")
         val res = PenaltyDetails.getPenaltyDetails(RegimeKeys.VAT, vatRegime.id, queryParameters)

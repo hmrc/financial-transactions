@@ -18,20 +18,23 @@ package connectors.API1812
 
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
 import helpers.ComponentSpecBase
+import helpers.servicemocks.HIPPenaltyDetailsStub
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK, REQUEST_TIMEOUT}
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testData.PenaltyDetailsTestData.{penaltyDetailsAPIJson, penaltyDetailsModel}
+import testData.HIPPenaltyDetailsTestData.{penaltyDetailsAPIJson, penaltyDetailsModel}
 
-class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
+import connectors.API1812.HIPPenaltyDetailsConnector
 
-  val connector: PenaltyDetailsConnector = new PenaltyDetailsConnector(httpClient, appConfig)
+class HIPPenaltyDetailsConnectorISpec extends ComponentSpecBase {
+
+  val connector: HIPPenaltyDetailsConnector = new HIPPenaltyDetailsConnector(httpClient, appConfig)
 
   val vatRegime: TaxRegime = VatRegime(id = "123456789")
   val queryParameters: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
-  val url: String = "/penalty/details/VATC/VRN/123456789"
+  val url: String = "/RESTAdapter/cross-regime/taxpayer/penalties?taxRegime=VATC&idType=VRN&idNumber=123456789"
 
   "getPenaltyDetails" should {
 
@@ -39,11 +42,8 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
       s"an $OK response is received and the response can be parsed" in {
 
-        stubGetRequest(
-          url,
-          OK,
-          penaltyDetailsAPIJson.toString()
-        )
+        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(OK, penaltyDetailsAPIJson)
 
         val expectedResult = penaltyDetailsModel
         val result: PenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))
@@ -56,11 +56,17 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
       s"a $OK response is received, but the response is in an unexpected format" in {
 
-        stubGetRequest(
-          url,
-          OK,
-          Json.obj("latePaymentPenalty" -> Json.obj("details" -> "f")).toString()
-        )
+        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(OK, Json.obj(
+            "success" -> Json.obj(
+              "processingDate" -> "2023-11-28T10:15:10Z",
+              "penaltyData" -> Json.obj(
+                "lpp" -> Json.obj(
+                  "lppDetails" -> "invalid content"
+                )
+              )
+            )
+          ))
 
         val expectedResult = Left(Error(BAD_REQUEST,
           "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
@@ -71,11 +77,8 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
       s"a $BAD_REQUEST response is received" in {
 
-        stubGetRequest(
-          url,
-          BAD_REQUEST,
-          Json.obj("code" -> BAD_REQUEST, "reason" -> "BAD REQUEST").toString()
-        )
+        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(BAD_REQUEST, Json.obj("code" -> BAD_REQUEST, "reason" -> "BAD REQUEST"))
 
         val expectedResult = Left(Error(BAD_REQUEST, """{"code":400,"reason":"BAD REQUEST"}"""))
         val result: PenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))
@@ -85,11 +88,8 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
       s"a $NOT_FOUND response is received" in {
 
-        stubGetRequest(
-          url,
-          NOT_FOUND,
-          Json.obj("code" -> NOT_FOUND, "reason" -> "A not found error has been received").toString()
-        )
+        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(NOT_FOUND, Json.obj("code" -> NOT_FOUND, "reason" -> "A not found error has been received"))
 
         val expectedResult = Left(Error(NOT_FOUND, """{"code":404,"reason":"A not found error has been received"}"""))
         val result: PenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))
@@ -99,13 +99,10 @@ class PenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
       "an unexpected response is received" in {
 
-        stubGetRequest(
-          url,
-          REQUEST_TIMEOUT,
-          "AN UNKNOWN ERROR HAS OCCURRED"
-        )
+        HIPPenaltyDetailsStub.stubGetPenaltyDetails(
+          vatRegime, queryParameters)(REQUEST_TIMEOUT, Json.obj("error" -> "AN UNKNOWN ERROR HAS OCCURRED"))
 
-        val expectedResult = Left(Error(REQUEST_TIMEOUT, "AN UNKNOWN ERROR HAS OCCURRED"))
+        val expectedResult = Left(Error(REQUEST_TIMEOUT, """{"error":"AN UNKNOWN ERROR HAS OCCURRED"}"""))
         val result: PenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))
 
         result shouldBe expectedResult

@@ -22,20 +22,21 @@ import helpers.WiremockHelper.stubGet
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import play.api.libs.json.JsValue
 
-object EISPenaltyDetailsStub {
+object HIPPenaltyDetailsStub {
 
   private def penaltyDetailsUrl(regime: TaxRegime, requestQueryParams: PenaltyDetailsQueryParameters): String = {
-    val baseUrl = s"/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}"
+    val baseUrl = "/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
+    val regimeParams = s"taxRegime=${regime.regimeType}&idType=${regime.idType}&idNumber=${regime.id}"
     
     if(requestQueryParams.hasQueryParameters) {
       val additionalParams = PenaltyDetailsBinders.penaltyDetailsQueryBinder.unbind("", requestQueryParams)
-      s"$baseUrl?$additionalParams"
+      s"$baseUrl?$regimeParams&$additionalParams"
     } else {
-      baseUrl
+      s"$baseUrl?$regimeParams"
     }
   }
 
   def stubGetPenaltyDetails(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
                           (status: Int, response: JsValue): StubMapping =
     stubGet(penaltyDetailsUrl(regime, queryParams), status, response.toString())
-}
+} 

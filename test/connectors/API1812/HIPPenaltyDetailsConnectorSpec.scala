@@ -26,19 +26,33 @@ import uk.gov.hmrc.http.RequestTimeoutException
 
 import scala.concurrent.Future
 
-class PenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
+class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
-  val connector = new PenaltyDetailsConnector(mockHttpGet, mockAppConfig)
+  val connector = new HIPPenaltyDetailsConnector(mockHttpGet, mockAppConfig)
   val vatRegime: VatRegime = VatRegime("555555555")
   val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
 
-  "The PenaltyDetailsConnector" should {
+  "The HIPPenaltyDetailsConnector" should {
 
     "return a 502 error when there is a HTTP exception" in {
       val exception = new RequestTimeoutException("Request timed out!!!")
       setupMockHttpGet(connector.penaltyDetailsUrl(vatRegime))(Future.failed(exception))
       val result = connector.getPenaltyDetails(vatRegime, queryParams)
       await(result) shouldBe Left(Error(BAD_GATEWAY, exception.message))
+    }
+
+    "construct the correct URL for VAT regime" in {
+      connector.penaltyDetailsUrl(vatRegime) shouldBe s"${mockAppConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
+    }
+
+    "include the correct query parameters" in {
+      val queryParamsWithDateLimit = PenaltyDetailsQueryParameters(dateLimit = Some("12"))
+      connector.penaltyDetailsUrl(vatRegime) should include("/etmp/RESTAdapter/cross-regime/taxpayer/penalties")
+    }
+
+    "include the correct HIP headers" in {
+
+      connector.penaltyDetailsUrl(vatRegime) should include("/etmp/RESTAdapter/cross-regime/taxpayer/penalties")
     }
   }
 }

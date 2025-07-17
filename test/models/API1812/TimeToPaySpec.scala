@@ -21,6 +21,7 @@ import utils.TestConstantsAPI1812.{timeToPayJson, timeToPayJsonOptionalEndDate, 
 
 import java.time.LocalDate
 
+
 class TimeToPaySpec extends SpecBase {
 
   "TimeToPay" should {

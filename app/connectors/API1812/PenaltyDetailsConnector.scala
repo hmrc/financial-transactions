@@ -23,8 +23,6 @@ import models.API1812.Error
 import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
-
-import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -32,39 +30,29 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
-  private[connectors] def penaltyDetailsUrl() =
-    s"${appConfig.hipUrl}/RESTAdapter/cross-regime/taxpayer/penalties"
+  private[connectors] def penaltyDetailsUrl(regime: TaxRegime) =
+    s"${appConfig.eisUrl}/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}"
 
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
                        (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
 
     val correlationID = randomUUID().toString
-    val receiptDate = LocalDateTime.now(ZoneOffset.UTC).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
-    val hipHeaders = Seq(
-      "Authorization" -> s"Bearer ${appConfig.hipToken}",
-      "correlationid" -> correlationID,
-      "Environment" -> appConfig.hipEnvironment,
-      "X-Originating-System" -> appConfig.hipServiceOriginatorIdKey,
-      "X-Receipt-Date" -> receiptDate,
-      "X-Transmitting-System" -> appConfig.hipServiceOriginatorId
+    val eisHeaders = Seq(
+      "Authorization" -> s"Bearer ${appConfig.eisToken}",
+      "CorrelationId" -> correlationID,
+      "Environment" -> appConfig.eisEnvironment
     )
 
     val hc = headerCarrier.copy(authorization = None)
-    val url = penaltyDetailsUrl()
-
-    val hipQueryParams = Seq(
-      "taxRegime" -> regime.regimeType,
-      "idType" -> regime.idType,
-      "idNumber" -> regime.id
-    ) ++ queryParameters.toSeqQueryParams
+    val url = penaltyDetailsUrl(regime)
 
     logger.debug("[PenaltyDetailsConnector][getPenaltyDetails] - " +
-      s"Calling GET $url \nHeaders: $hipHeaders\n QueryParams: $hipQueryParams")
+      s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
 
-    http.GET(url, hipQueryParams, hipHeaders)(PenaltyDetailsReads, hc, ec).map {
+    http.GET(url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads, hc, ec).map {
       case Left(error) if error.code != NOT_FOUND =>
-        logger.warn(s"[PenaltyDetailsConnector][getPenaltyDetails] Unexpected error returned by HIP. " +
+        logger.warn(s"[PenaltyDetailsConnector][getPenaltyDetails] Unexpected error returned by EIS. " +
           s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
         Left(error)
       case expectedResponse => expectedResponse

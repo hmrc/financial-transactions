@@ -17,9 +17,9 @@
 package utils
 
 import java.time.LocalDate
-import models.API1812.{BreathingSpace, PenaltyDetails, TimeToPay}
-import models.API1812.latePaymentPenalty._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
+import models.API1812.{PenaltyDetails, BreathingSpace, TimeToPay}
 
 object TestConstantsAPI1812 {
 
@@ -144,10 +144,25 @@ object TestConstantsAPI1812 {
   val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None)
   val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)))
   val penaltyDetailsModelNoPen: PenaltyDetails = PenaltyDetails(None, Some(Seq(outOfBS)))
+  val penaltyDetailsModelEmptyLPP: PenaltyDetails = PenaltyDetails(Some(Seq()), Some(Seq(outOfBS))) // EIS returns Some(List()) for empty array
   val penaltyDetailsModelInBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)))
   val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None)
 
-  def apiLPPJson(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
+  def apiLPPJsonEIS(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
+    "latePaymentPenalty" -> Json.obj(
+      "details" -> Json.arr(LPPJson)
+    ),
+    "breathingSpace" -> Json.arr(bsJson)
+  )
+
+  def apiLPPJsonEISNoLPP(bsJson: JsObject): JsValue = Json.obj(
+    "latePaymentPenalty" -> Json.obj(
+      "details" -> Json.arr()
+    ),
+    "breathingSpace" -> Json.arr(bsJson)
+  )
+
+  def apiLPPJsonHIP(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
     "success" -> Json.obj(
       "processingDate" -> "2023-11-28T10:15:10Z",
       "penaltyData" -> Json.obj(

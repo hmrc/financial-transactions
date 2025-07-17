@@ -20,6 +20,7 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
+
 class PenaltyDetailsSpec extends SpecBase {
 
   "PenaltyDetails" should {
@@ -35,18 +36,17 @@ class PenaltyDetailsSpec extends SpecBase {
     }
 
     "parse JSON to an empty array and breathing space details when BS json is in the response" in {
-      val result = apiLPPJsonNoPen.as[PenaltyDetails]
-      result shouldBe penaltyDetailsModelNoPen
+      apiLPPJsonEISNoLPP(breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelEmptyLPP
     }
 
     "parse a JSON array of LPP details to a sequence correctly" when {
 
       "optional fields are present" in {
-        apiLPPJson(LPPJsonMax, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
+        apiLPPJsonEIS(LPPJsonMax, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
       }
 
       "optional fields are missing" in {
-        apiLPPJson(LPPJsonMin, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
+        apiLPPJsonEIS(LPPJsonMin, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
       }
     }
 

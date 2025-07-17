@@ -17,7 +17,8 @@
 package services.API1812
 
 import com.google.inject.Inject
-import connectors.API1812.PenaltyDetailsConnector
+import config.featureSwitch.Features
+import connectors.API1812.{HIPPenaltyDetailsConnector, PenaltyDetailsConnector}
 import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -25,9 +26,19 @@ import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PenaltyDetailsService @Inject()(connector: PenaltyDetailsConnector) extends LoggerUtil {
+class PenaltyDetailsService @Inject()(eisConnector: PenaltyDetailsConnector, 
+                                     hipConnector: HIPPenaltyDetailsConnector,
+                                     features: Features) extends LoggerUtil {
 
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] =
-    connector.getPenaltyDetails(regime, queryParameters)
+                       (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
+    
+    if (features.CallAPI1812HIP()) {
+      logger.debug("[PenaltyDetailsService][getPenaltyDetails] - Using HIP connector (feature flag enabled)")
+      hipConnector.getPenaltyDetails(regime, queryParameters)
+    } else {
+      logger.debug("[PenaltyDetailsService][getPenaltyDetails] - Using EIS connector (feature flag disabled)")
+      eisConnector.getPenaltyDetails(regime, queryParameters)
+    }
+  }
 }

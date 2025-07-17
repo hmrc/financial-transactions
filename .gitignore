@@ -37,3 +37,4 @@ bin
 .bsp
 
 migrations/*.sh
+project/metals.sbt

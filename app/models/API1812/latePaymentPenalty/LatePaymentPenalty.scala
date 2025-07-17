@@ -20,6 +20,7 @@ import config.AppConfig
 import models.API1812.TimeToPay
 import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
 import services.DateService
+import models.API1812.latePaymentPenalty.LPPPenaltyCategoryEnum
 
 case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyCategory: LPPPenaltyCategoryEnum.Value,
