@@ -17,10 +17,11 @@
 package helpers.servicemocks
 
 import binders.PenaltyDetailsBinders
+import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import helpers.WiremockHelper.stubGet
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 
 object HIPPenaltyDetailsStub {
 
@@ -39,4 +40,63 @@ object HIPPenaltyDetailsStub {
   def stubGetPenaltyDetails(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
                           (status: Int, response: JsValue): StubMapping =
     stubGet(penaltyDetailsUrl(regime, queryParams), status, response.toString())
+
+  def stubGetPenaltyDetailsWithHeaderValidation(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
+                                              (status: Int, response: JsValue): StubMapping = {
+    stubFor(get(urlEqualTo(penaltyDetailsUrl(regime, queryParams)))
+      .withHeader("Authorization", matching("Bearer .*"))
+      .withHeader("correlationid", matching("^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"))
+      .withHeader("Environment", matching(".*"))
+      .withHeader("X-Originating-System", matching(".*"))
+      .withHeader("X-Receipt-Date", matching("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"))
+      .withHeader("X-Transmitting-System", matching(".*"))
+      .willReturn(aResponse()
+        .withStatus(status)
+        .withHeader("correlationid", "12345678-1234-1234-1234-123456789012")
+        .withHeader("Content-Type", "application/json")
+        .withBody(response.toString())
+      )
+    )
+  }
+
+  def businessErrorResponse(code: String, text: String): JsValue = Json.obj(
+    "errors" -> Json.obj(
+      "processingDate" -> "2025-01-31T09:30:47Z",
+      "code" -> code,
+      "text" -> text
+    )
+  )
+
+  def technicalErrorResponse(code: String, message: String, logId: String = "C0000AB8190C333200000002000007A6"): JsValue = Json.obj(
+    "error" -> Json.obj(
+      "code" -> code,
+      "message" -> message,
+      "logID" -> logId
+    )
+  )
+
+  def hipWrappedErrorResponse(errorType: String, reason: String): JsValue = Json.obj(
+    "response" -> Json.arr(Json.obj(
+      "type" -> errorType,
+      "reason" -> reason
+    ))
+  )
+
+  def noDataSuccessResponse(): JsValue = Json.obj(
+    "success" -> Json.obj(
+      "processingDate" -> "2025-01-31T09:30:47Z"
+    )
+  )
+
+  def stubGetPenaltyDetailsEmptyBody(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
+                                   (status: Int): StubMapping = {
+    stubFor(get(urlEqualTo(penaltyDetailsUrl(regime, queryParams)))
+      .willReturn(aResponse()
+        .withStatus(status)
+        .withHeader("correlationid", "12345678-1234-1234-1234-123456789012")
+        .withHeader("Content-Type", "application/json")
+        .withBody("")
+      )
+    )
+  }
 } 
