@@ -26,7 +26,7 @@ import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class PenaltyDetailsService @Inject()(eisConnector: PenaltyDetailsConnector, 
+class PenaltyDetailsService @Inject()(eisConnector: PenaltyDetailsConnector,
                                      hipConnector: HIPPenaltyDetailsConnector,
                                      features: Features) extends LoggerUtil {
 
@@ -34,10 +34,10 @@ class PenaltyDetailsService @Inject()(eisConnector: PenaltyDetailsConnector,
                        (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[PenaltyDetailsResponse] = {
     
     if (features.CallAPI1812HIP()) {
-      logger.debug("[PenaltyDetailsService][getPenaltyDetails] - Using HIP connector (feature flag enabled)")
+      logger.info("[PenaltyDetailsService][getPenaltyDetails] - Using HIP connector (feature flag enabled)")
       hipConnector.getPenaltyDetails(regime, queryParameters)
     } else {
-      logger.debug("[PenaltyDetailsService][getPenaltyDetails] - Using EIS connector (feature flag disabled)")
+      logger.info("[PenaltyDetailsService][getPenaltyDetails] - Using EIS connector (feature flag disabled)")
       eisConnector.getPenaltyDetails(regime, queryParameters)
     }
   }

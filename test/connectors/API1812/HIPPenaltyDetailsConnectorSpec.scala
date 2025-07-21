@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,12 +40,12 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
   val testPenaltyDetails = models.API1812.PenaltyDetails(LPPDetails = None, breathingSpace = None)
   val testSuccessResponse = Right(testPenaltyDetails)
   val testHttpResponse = HttpResponse(OK, "{}")
-  val testErrorResponse = Left(Error(BAD_REQUEST, "Test error"))
+  val testErrorResponse = Left(Error(INTERNAL_SERVER_ERROR, "Test error"))
 
   "The HIPPenaltyDetailsConnector" should {
 
-    "construct the correct URL for VAT regime" in {
-      connector.penaltyDetailsUrl(vatRegime) shouldBe s"${mockAppConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
+    "construct the correct URL" in {
+      connector.penaltyDetailsUrl shouldBe s"${mockAppConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
     }
 
     "make a successful call with correct headers and query parameters" in {
@@ -69,8 +69,8 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
       capturedHeaders should contain("Authorization" -> s"Bearer ${mockAppConfig.hipToken}")
       capturedHeaders.exists(_._1 == "correlationid") shouldBe true
       capturedHeaders should contain("Environment" -> mockAppConfig.hipEnvironment)
-      capturedHeaders should contain("X-Originating-System" -> mockAppConfig.hipServiceOriginatorIdKey)
-      capturedHeaders should contain("X-Transmitting-System" -> mockAppConfig.hipServiceOriginatorId)
+      capturedHeaders should contain("X-Originating-System" -> "MDTP")
+      capturedHeaders should contain("X-Transmitting-System" -> "HIP")
       capturedHeaders.exists(_._1 == "X-Receipt-Date") shouldBe true
 
       val correlationId = capturedHeaders.find(_._1 == "correlationid").map(_._2).get
@@ -174,8 +174,8 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
       result shouldBe Left(error)
     }
 
-    "return error for 500 Internal Server Error" in {
-      val error = Error(INTERNAL_SERVER_ERROR, "Internal Server Error")
+    "return error for 500 Internal Server Error (unexpected JSON format)" in {
+      val error = Error(INTERNAL_SERVER_ERROR, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format.")
       when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
         .thenReturn(Future.successful(Left(error)))
 

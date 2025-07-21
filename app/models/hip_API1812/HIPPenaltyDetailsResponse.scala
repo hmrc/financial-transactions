@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,10 @@ case class HIPSuccess(processingDate: String, penaltyData: Option[HIPPenaltyData
 
 case class HIPPenaltyData(lpp: Option[HIPLpp], breathingSpace: Option[Seq[BreathingSpace]])
 
-case class HIPLpp(lppDetails: Option[Seq[LatePaymentPenalty]], manualLPPIndicator: Option[Boolean])
+case class HIPLpp(
+  lppDetails: Option[Seq[LatePaymentPenalty]],
+  manualLPPIndicator: Boolean
+)
 
 object HIPSuccessResponse {
   implicit val reads: Reads[HIPSuccessResponse] = Json.reads[HIPSuccessResponse]

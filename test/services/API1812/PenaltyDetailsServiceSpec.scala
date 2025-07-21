@@ -33,40 +33,7 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
     val regime: TaxRegime = VatRegime("123456789")
     val service = new PenaltyDetailsService(mockPenaltyDetailsConnector, mockHIPPenaltyDetailsConnector, mockAppConfig.features)
 
-    "the connector returns a success response with LPP, breathing space items in the array and time to pay items in the array" should {
-
-      "return the same response" in {
-        val successResponse = Right(penaltyDetailsModelMax)
-        setupPenaltyDetailsCall(regime, queryParams)(successResponse)
-        val actual = await(service.getPenaltyDetails(regime, queryParams))
-
-        actual shouldBe successResponse
-      }
-    }
-
-    "the connector returns a success response with no LPP but breathing space items and time to pay items" should {
-
-      "return the same response" in {
-        val successResponse = Right(penaltyDetailsModelNoPen)
-        setupPenaltyDetailsCall(regime, queryParams)(successResponse)
-        val actual = await(service.getPenaltyDetails(regime, queryParams))
-
-        actual shouldBe successResponse
-      }
-    }
-
-    "the connector returns a failure response" should {
-
-      "return the same response" in {
-        val failureResponse = Left(Error(Status.INTERNAL_SERVER_ERROR, "error"))
-        setupPenaltyDetailsCall(regime, queryParams)(failureResponse)
-        val actual = await(service.getPenaltyDetails(regime, queryParams))
-
-        actual shouldBe failureResponse
-      }
-    }
-
-    "feature flag is enabled" should {
+    "HIP feature flag is enabled" should {
 
       "use HIP connector" in {
         mockAppConfig.features.CallAPI1812HIP(true)
@@ -87,7 +54,7 @@ class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnecto
       }
     }
 
-    "feature flag is disabled" should {
+    "HIP feature flag is disabled" should {
 
       "use EIS connector" in {
         mockAppConfig.features.CallAPI1812HIP(false)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,19 @@ import play.api.libs.json.{Json, Reads}
 
 case class HIPErrorResponse(errors: HIPBusinessError)
 
-case class HIPBusinessError(processingDate: Option[String], code: String, text: String)
+case class HIPBusinessError(processingDate: String, code: String, text: String)
 
 case class HIPTechnicalErrorResponse(error: HIPTechnicalError)
 
-case class HIPTechnicalError(code: String, message: String, logID: Option[String])
+case class HIPTechnicalError(code: String, message: String, logID: String)
 
 case class HIPWrappedErrorResponse(response: Seq[HIPWrappedError])
 
 case class HIPWrappedError(`type`: String, reason: String)
+
+case class HIPFailure(`type`: String, reason: String)
+case class HIPFailureResponse(failures: Seq[HIPFailure])
+case class HIPOriginResponse(origin: String, response: HIPFailureResponse)
 
 object HIPErrorResponse {
   implicit val reads: Reads[HIPErrorResponse] = Json.reads[HIPErrorResponse]
@@ -52,4 +56,14 @@ object HIPWrappedErrorResponse {
 
 object HIPWrappedError {
   implicit val reads: Reads[HIPWrappedError] = Json.reads[HIPWrappedError]
+}
+
+object HIPFailure {
+  implicit val reads: Reads[HIPFailure] = Json.reads[HIPFailure]
+}
+object HIPFailureResponse {
+  implicit val reads: Reads[HIPFailureResponse] = Json.reads[HIPFailureResponse]
+}
+object HIPOriginResponse {
+  implicit val reads: Reads[HIPOriginResponse] = Json.reads[HIPOriginResponse]
 }

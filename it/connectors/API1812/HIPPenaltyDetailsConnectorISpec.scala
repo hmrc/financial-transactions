@@ -87,7 +87,7 @@ class HIPPenaltyDetailsConnectorISpec extends ComponentSpecBase {
         HIPPenaltyDetailsStub.stubGetPenaltyDetailsWithHeaderValidation(
           vatRegime, queryParameters)(OK, invalidJson)
 
-        val expectedResult = Left(Error(BAD_REQUEST,
+        val expectedResult = Left(Error(INTERNAL_SERVER_ERROR,
           "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
         val result: HIPPenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))
 
@@ -131,11 +131,11 @@ class HIPPenaltyDetailsConnectorISpec extends ComponentSpecBase {
          result.left.map(_.reason) shouldBe Left("No penalty details found")
        }
 
-      "a 404 NOT_FOUND response is received with Invalid ID Number (code 016)" in {
+      "a 422 UNPROCESSABLE_ENTITY response is received with Invalid ID Number (code 016)" in {
         val businessError = HIPPenaltyDetailsStub.businessErrorResponse("016", "Invalid ID Number")
 
         HIPPenaltyDetailsStub.stubGetPenaltyDetailsWithHeaderValidation(
-          vatRegime, queryParameters)(NOT_FOUND, businessError)
+          vatRegime, queryParameters)(UNPROCESSABLE_ENTITY, businessError)
 
         val expectedResult = Left(Error(NOT_FOUND, "No penalty details found"))
         val result: HIPPenaltyDetailsResponse = await(connector.getPenaltyDetails(vatRegime, queryParameters))

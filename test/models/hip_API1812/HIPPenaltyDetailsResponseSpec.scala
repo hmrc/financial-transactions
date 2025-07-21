@@ -147,18 +147,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
 
       val result = json.as[HIPLpp]
       result.lppDetails shouldBe defined
-      result.manualLPPIndicator shouldBe defined
-      result.manualLPPIndicator.get shouldBe true
-    }
-
-    "read from JSON with only lppDetails" in {
-      val json = Json.obj(
-        "lppDetails" -> Json.arr()
-      )
-
-      val result = json.as[HIPLpp]
-      result.lppDetails shouldBe defined
-      result.manualLPPIndicator shouldBe None
+      result.manualLPPIndicator shouldBe true
     }
 
     "read from JSON with only manualLPPIndicator" in {
@@ -168,8 +157,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
 
       val result = json.as[HIPLpp]
       result.lppDetails shouldBe None
-      result.manualLPPIndicator shouldBe defined
-      result.manualLPPIndicator.get shouldBe false
+      result.manualLPPIndicator shouldBe false
     }
   }
 }

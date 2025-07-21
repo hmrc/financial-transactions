@@ -47,7 +47,7 @@ object PenaltyDetailsBinders {
       private[binders] def dateLimitBind(key: String, params: Map[String, Seq[String]]): Either[String, Option[String]] = params.get(key) match {
         case Some(values) => 
           val value = values.head
-          if (value.length >= 2 && value.length <= 2 && value.matches("\\d{2}")) {
+          if (value.length == 2 && value.matches("\\d{2}")) {
             Right(Some(value))
           } else {
             Left(s"Failed to bind '$key=$value' valid values are 2-digit strings between 00 and 99 inclusive.")

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
-  private[connectors] def penaltyDetailsUrl(vatRegime: TaxRegime) =
+  private[connectors] def penaltyDetailsUrl() =
     s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
 
   def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
@@ -44,13 +44,13 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
       "Authorization" -> s"Bearer ${appConfig.hipToken}",
       "correlationid" -> correlationID,
       "Environment" -> appConfig.hipEnvironment,
-      "X-Originating-System" -> appConfig.hipServiceOriginatorIdKey,
+      "X-Originating-System" -> "MDTP",
       "X-Receipt-Date" -> receiptDate,
-      "X-Transmitting-System" -> appConfig.hipServiceOriginatorId
+      "X-Transmitting-System" -> "HIP"
     )
 
     val hc = headerCarrier.copy(authorization = None)
-    val url = penaltyDetailsUrl(regime)
+    val url = penaltyDetailsUrl()
 
     val hipQueryParams = Seq(
       "taxRegime" -> regime.regimeType,
@@ -58,7 +58,7 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
       "idNumber" -> regime.id
     ) ++ queryParameters.toSeqQueryParams
 
-    logger.debug("[HIPPenaltyDetailsConnector][getPenaltyDetails] - " +
+    logger.info("[HIPPenaltyDetailsConnector][getPenaltyDetails] - " +
       s"Calling GET $url \nHeaders: $hipHeaders\n QueryParams: $hipQueryParams")
 
     http.GET(url, hipQueryParams, hipHeaders)(HIPPenaltyDetailsReads, hc, ec).map {

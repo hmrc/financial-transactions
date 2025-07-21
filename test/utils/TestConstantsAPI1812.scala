@@ -167,7 +167,8 @@ object TestConstantsAPI1812 {
       "processingDate" -> "2023-11-28T10:15:10Z",
       "penaltyData" -> Json.obj(
         "lpp" -> Json.obj(
-          "lppDetails" -> Json.arr(LPPJson)
+          "lppDetails" -> Json.arr(LPPJson),
+          "manualLPPIndicator" -> true
         ),
         "breathingSpace" -> Json.arr(bsJson)
       )

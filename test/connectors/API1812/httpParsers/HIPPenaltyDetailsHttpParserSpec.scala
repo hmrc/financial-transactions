@@ -66,7 +66,7 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
           )
         )
       ).toString)
-      val expected = Left(Error(BAD_REQUEST,
+      val expected = Left(Error(INTERNAL_SERVER_ERROR,
         "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
       val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
 
@@ -86,7 +86,7 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
       }
     }
 
-    "the http response status is 404 NOT_FOUND with business error code 016" should {
+    "the http response status is 404 NOT_FOUND with any body" should {
 
       val httpResponse = HttpResponse(NOT_FOUND, Json.obj(
         "errors" -> Json.obj(
@@ -94,26 +94,10 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
           "text" -> "Invalid ID Number"
         )
       ).toString)
-      val expected = Left(Error(NOT_FOUND, "No penalty details found"))
+      val expected = Left(Error(NOT_FOUND, "URL not found"))
       val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
 
-      "return a NOT_FOUND error with no data found message" in {
-        result shouldEqual expected
-      }
-    }
-
-    "the http response status is 404 NOT_FOUND with other business error" should {
-
-      val httpResponse = HttpResponse(NOT_FOUND, Json.obj(
-        "errors" -> Json.obj(
-          "code" -> "003",
-          "text" -> "Request could not be processed"
-        )
-      ).toString)
-      val expected = Left(Error(NOT_FOUND, """{"errors":{"code":"003","text":"Request could not be processed"}}"""))
-      val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
-
-      "return a NOT_FOUND error with the response body" in {
+      "return a NOT_FOUND error with URL not found message (404 means URL is wrong)" in {
         result shouldEqual expected
       }
     }
@@ -134,7 +118,8 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
       val httpResponse = HttpResponse(BAD_REQUEST, Json.obj(
         "error" -> Json.obj(
           "code" -> "400",
-          "message" -> "Bad request error"
+          "message" -> "Bad request error",
+          "logID" -> "log-123"
         )
       ).toString)
       val expected = Left(Error(BAD_REQUEST, "Bad request error"))
@@ -145,10 +130,28 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
       }
     }
 
-    "the http response status is 422 UNPROCESSABLE_ENTITY with business error" should {
+    "the http response status is 422 UNPROCESSABLE_ENTITY with business error code 016" should {
 
       val httpResponse = HttpResponse(UNPROCESSABLE_ENTITY, Json.obj(
         "errors" -> Json.obj(
+          "processingDate" -> "2023-11-28T10:15:10Z",
+          "code" -> "016",
+          "text" -> "Invalid ID Number"
+        )
+      ).toString)
+      val expected = Left(Error(NOT_FOUND, "No penalty details found"))
+      val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
+
+      "return a NOT_FOUND error with no data found message (422 with 016 means no data)" in {
+        result shouldEqual expected
+      }
+    }
+
+    "the http response status is 422 UNPROCESSABLE_ENTITY with other business error" should {
+
+      val httpResponse = HttpResponse(UNPROCESSABLE_ENTITY, Json.obj(
+        "errors" -> Json.obj(
+          "processingDate" -> "2023-11-28T10:15:10Z",
           "code" -> "002",
           "text" -> "Invalid Tax Regime"
         )
@@ -175,6 +178,69 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
       val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
 
       "return an INTERNAL_SERVER_ERROR with the HIP wrapped error reason" in {
+        result shouldEqual expected
+      }
+    }
+
+    "the http response status is 503 SERVICE_UNAVAILABLE with double-wrapped error" should {
+
+      val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, Json.obj(
+        "origin" -> "HIP",
+        "response" -> Json.obj(
+          "failures" -> Json.arr(
+            Json.obj(
+              "type" -> "TechnicalError",
+              "reason" -> "Service temporarily unavailable"
+            )
+          )
+        )
+      ).toString)
+      val expected = Left(Error(SERVICE_UNAVAILABLE, "Service temporarily unavailable"))
+      val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
+
+      "return a SERVICE_UNAVAILABLE with the double-wrapped error reason" in {
+        result shouldEqual expected
+      }
+    }
+
+    "the http response status is 503 SERVICE_UNAVAILABLE with double-wrapped error and multiple failures" should {
+
+      val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, Json.obj(
+        "origin" -> "HIP",
+        "response" -> Json.obj(
+          "failures" -> Json.arr(
+            Json.obj(
+              "type" -> "TechnicalError",
+              "reason" -> "Primary error"
+            ),
+            Json.obj(
+              "type" -> "BusinessError", 
+              "reason" -> "Secondary error"
+            )
+          )
+        )
+      ).toString)
+      val expected = Left(Error(SERVICE_UNAVAILABLE, "Primary error"))
+      val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
+
+      "return a SERVICE_UNAVAILABLE with the first failure reason" in {
+        result shouldEqual expected
+      }
+    }
+
+    "the http response status is 503 SERVICE_UNAVAILABLE with double-wrapped error but empty failures" should {
+
+      val responseBody = Json.obj(
+        "origin" -> "HIP",
+        "response" -> Json.obj(
+          "failures" -> Json.arr()
+        )
+      ).toString
+      val httpResponse = HttpResponse(SERVICE_UNAVAILABLE, responseBody)
+      val expected = Left(Error(SERVICE_UNAVAILABLE, responseBody))
+      val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
+
+      "return a SERVICE_UNAVAILABLE with the response body when no failures" in {
         result shouldEqual expected
       }
     }

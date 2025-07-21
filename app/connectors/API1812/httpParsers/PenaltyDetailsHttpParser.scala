@@ -33,17 +33,17 @@ object PenaltyDetailsHttpParser extends LoggerUtil {
           response.json.validate[PenaltyDetails].fold(
             invalid => {
               logger.warn("[PenaltyDetailsReads][read] Json Error Parsing Successful EIS Response")
-              logger.debug(s"[PenaltyDetailsReads][read] EIS Response: ${response.json}\nJson Errors: $invalid")
+              logger.info(s"[PenaltyDetailsReads][read] EIS Response: ${response.json}\nJson Errors: $invalid")
               Left(Error(BAD_REQUEST, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
             },
             valid => {
-              logger.debug(s"[PenaltyDetailsReads][read] EIS Response: \n\n${response.json}")
-              logger.debug(s"[PenaltyDetailsReads][read] Get Penalty Details Model: \n\n$valid")
+              logger.info(s"[PenaltyDetailsReads][read] EIS Response: \n\n${response.json}")
+              logger.info(s"[PenaltyDetailsReads][read] Get Penalty Details Model: \n\n$valid")
               Right(valid)
             }
           )
         case NOT_FOUND =>
-          logger.debug("[PenaltyDetailsReads][read] Error received: " + response)
+          logger.info("[PenaltyDetailsReads][read] Error received: " + response)
           Left(Error(response.status,response.body))
         case _ =>
           Left(Error(response.status, response.body))

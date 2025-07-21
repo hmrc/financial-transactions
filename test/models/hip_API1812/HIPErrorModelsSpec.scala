@@ -32,7 +32,7 @@ class HIPErrorModelsSpec extends SpecBase {
       )
 
       val result = json.as[HIPErrorResponse]
-      result.errors.processingDate shouldBe Some("2023-11-28T10:15:10Z")
+      result.errors.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.errors.code shouldBe "016"
       result.errors.text shouldBe "Invalid ID Number"
     }
@@ -40,13 +40,14 @@ class HIPErrorModelsSpec extends SpecBase {
     "read from JSON without processing date" in {
       val json = Json.obj(
         "errors" -> Json.obj(
+          "processingDate" -> "2023-11-28T10:15:10Z",
           "code" -> "003",
           "text" -> "Request could not be processed"
         )
       )
 
       val result = json.as[HIPErrorResponse]
-      result.errors.processingDate shouldBe None
+      result.errors.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.errors.code shouldBe "003"
       result.errors.text shouldBe "Request could not be processed"
     }
@@ -61,19 +62,20 @@ class HIPErrorModelsSpec extends SpecBase {
       )
 
       val result = json.as[HIPBusinessError]
-      result.processingDate shouldBe Some("2023-11-28T10:15:10Z")
+      result.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.code shouldBe "002"
       result.text shouldBe "Invalid Tax Regime"
     }
 
     "read from JSON without processing date" in {
       val json = Json.obj(
+        "processingDate" -> "2023-11-28T10:15:10Z",
         "code" -> "015",
         "text" -> "Invalid ID Type"
       )
 
       val result = json.as[HIPBusinessError]
-      result.processingDate shouldBe None
+      result.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.code shouldBe "015"
       result.text shouldBe "Invalid ID Type"
     }
@@ -92,21 +94,22 @@ class HIPErrorModelsSpec extends SpecBase {
       val result = json.as[HIPTechnicalErrorResponse]
       result.error.code shouldBe "500"
       result.error.message shouldBe "Internal server error"
-      result.error.logID shouldBe Some("C0000AB8190C333200000002000007A6")
+      result.error.logID shouldBe "C0000AB8190C333200000002000007A6"
     }
 
     "read from JSON without logID" in {
       val json = Json.obj(
         "error" -> Json.obj(
           "code" -> "400",
-          "message" -> "Bad request"
+          "message" -> "Bad request",
+          "logID" -> "log-123"
         )
       )
 
       val result = json.as[HIPTechnicalErrorResponse]
       result.error.code shouldBe "400"
       result.error.message shouldBe "Bad request"
-      result.error.logID shouldBe None
+      result.error.logID shouldBe "log-123"
     }
   }
 
@@ -121,19 +124,20 @@ class HIPErrorModelsSpec extends SpecBase {
       val result = json.as[HIPTechnicalError]
       result.code shouldBe "500"
       result.message shouldBe "Internal server error"
-      result.logID shouldBe Some("C0000AB8190C333200000002000007A6")
+      result.logID shouldBe "C0000AB8190C333200000002000007A6"
     }
 
     "read from JSON without logID" in {
       val json = Json.obj(
         "code" -> "400",
-        "message" -> "Bad request"
+        "message" -> "Bad request",
+        "logID" -> "log-123"
       )
 
       val result = json.as[HIPTechnicalError]
       result.code shouldBe "400"
       result.message shouldBe "Bad request"
-      result.logID shouldBe None
+      result.logID shouldBe "log-123"
     }
   }
 

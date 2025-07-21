@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package connectors.API1812.httpParsers
 
 import models.API1812.{Error, PenaltyDetails}
 import models.hip_API1812.{HIPSuccessResponse, HIPSuccess, HIPPenaltyData, HIPLpp}
-import models.hip_API1812.{HIPErrorResponse, HIPBusinessError, HIPTechnicalErrorResponse, HIPTechnicalError, HIPWrappedErrorResponse, HIPWrappedError}
+import models.hip_API1812.{HIPErrorResponse, HIPBusinessError, HIPTechnicalErrorResponse, HIPTechnicalError, HIPWrappedErrorResponse, HIPWrappedError, HIPOriginResponse, HIPFailureResponse, HIPFailure}
 import play.api.http.Status._
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -38,12 +38,14 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
         case NOT_FOUND if response.body.nonEmpty =>
           parseNotFoundResponse(response.json)
         case NOT_FOUND =>
-          logger.debug("[HIPPenaltyDetailsReads][read] NOT_FOUND with empty body")
+          logger.info("[HIPPenaltyDetailsReads][read] NOT_FOUND with empty body")
           Left(Error(NOT_FOUND, "No penalty details found"))
         case NO_CONTENT =>
           logger.info("[HIPPenaltyDetailsReads][read] Received no content from HIP call")
           Left(Error(NOT_FOUND, "No penalty details found"))
-        case status @ (BAD_REQUEST | FORBIDDEN | CONFLICT | UNPROCESSABLE_ENTITY | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) =>
+        case UNPROCESSABLE_ENTITY =>
+          parse422Response(response)
+        case status @ (BAD_REQUEST | FORBIDDEN | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) =>
           logger.error(s"[HIPPenaltyDetailsReads][read] Received $status when trying to call HIP PenaltyDetails - with body: ${response.body}")
           parseErrorResponse(response)
         case status =>
@@ -57,31 +59,33 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     json.validate[HIPSuccessResponse].fold(
       errors => {
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Error parsing HIP success response: $errors")
-        Left(Error(BAD_REQUEST, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
+        Left(Error(INTERNAL_SERVER_ERROR, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
       },
       hipResponse => {
-        logger.debug(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Parsed HIP response: $hipResponse")
+        logger.info(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Parsed HIP response: $hipResponse")
         val penaltyDetails = transformToPenaltyDetails(hipResponse)
-        logger.debug(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Transformed to PenaltyDetails: $penaltyDetails")
+        logger.info(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Transformed to PenaltyDetails: $penaltyDetails")
         Right(penaltyDetails)
       }
     )
   }
 
   private def parseNotFoundResponse(json: JsValue): Either[Error, PenaltyDetails] = {
-    Try {
-      json.validate[HIPErrorResponse].asOpt match {
-        case Some(errorResponse) if errorResponse.errors.code == "016" =>
-          logger.debug("[HIPPenaltyDetailsHttpParser][parseNotFoundResponse] Invalid ID Number - treating as no data found")
-          Left(Error(NOT_FOUND, "No penalty details found"))
-        case _ =>
-          logger.error(s"[HIPPenaltyDetailsHttpParser][parseNotFoundResponse] Unable to parse 404 body: $json")
-          Left(Error(NOT_FOUND, json.toString))
-      }
-    }.recover { case ex =>
-      logger.error(s"[HIPPenaltyDetailsHttpParser][parseNotFoundResponse] Error parsing 404 response: ${ex.getMessage}")
-      Left(Error(NOT_FOUND, json.toString))
-    }.get
+    logger.error(s"[HIPPenaltyDetailsHttpParser][parseNotFoundResponse] 404 - URL not found: $json")
+    Left(Error(NOT_FOUND, "URL not found"))
+  }
+
+  private def parse422Response(response: HttpResponse): Either[Error, PenaltyDetails] = {
+    val json = Try(response.json).getOrElse(Json.obj())
+    
+    json.validate[HIPErrorResponse].asOpt match {
+      case Some(errorResponse) if errorResponse.errors.code == "016" =>
+        logger.info("[HIPPenaltyDetailsHttpParser][parse422Response] Invalid ID Number (016) - treating as no data found")
+        Left(Error(NOT_FOUND, "No penalty details found"))
+      case _ =>
+        logger.error(s"[HIPPenaltyDetailsHttpParser][parse422Response] 422 error: ${response.body}")
+        parseErrorResponse(response)
+    }
   }
 
   private def parseErrorResponse(response: HttpResponse): Either[Error, PenaltyDetails] = {
@@ -90,19 +94,24 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     val technicalError = json.validate[HIPTechnicalErrorResponse].asOpt
     val businessError = json.validate[HIPErrorResponse].asOpt  
     val wrappedError = json.validate[HIPWrappedErrorResponse].asOpt
+    val doubleWrappedError = json.validate[HIPOriginResponse].asOpt
 
-    (technicalError, businessError, wrappedError) match {
-      case (Some(techError), _, _) =>
+    (technicalError, businessError, wrappedError, doubleWrappedError) match {
+      case (Some(techError), _, _, _) =>
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] Technical error: ${techError.error.code} - ${techError.error.message}")
         Left(Error(response.status, techError.error.message))
-      case (_, Some(bizError), _) =>
+      case (_, Some(bizError), _, _) =>
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] Business error: ${bizError.errors.code} - ${bizError.errors.text}")
         Left(Error(response.status, bizError.errors.text))
-      case (_, _, Some(wrapError)) =>
+      case (_, _, Some(wrapError), _) =>
         val errorMessage = wrapError.response.map(_.reason).mkString(", ")
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] HIP wrapped errors: $errorMessage")
         Left(Error(response.status, errorMessage))
-      case (None, None, None) =>
+      case (_, _, _, Some(doubleWrap)) =>
+        val errorMessage = doubleWrap.response.failures.headOption.map(_.reason).getOrElse(response.body)
+        logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] Double-wrapped HIP errors: $errorMessage")
+        Left(Error(response.status, errorMessage))
+      case (None, None, None, None) =>
         logger.error("[HIPPenaltyDetailsHttpParser][parseErrorResponse] No recognizable error structure found")
         Left(Error(response.status, response.body))
     }
@@ -114,8 +123,8 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     val lppDetails = penaltyData.flatMap(_.lpp).flatMap(_.lppDetails)
     val breathingSpace = penaltyData.flatMap(_.breathingSpace)
 
-    logger.debug(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] LPP details: $lppDetails")
-    logger.debug(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] Breathing space: $breathingSpace")
+    logger.info(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] LPP details: $lppDetails")
+    logger.info(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] Breathing space: $breathingSpace")
 
     PenaltyDetails(
       LPPDetails = lppDetails,
