@@ -21,26 +21,26 @@ import play.api.libs.json.{Json, OWrites}
 case class FinancialRequestHIP(
                                 taxRegime: String,
                                 taxpayerInformation: TaxpayerInformation,
-                                targetedSearch: TargetedSearch,
-                                selectionCriteria: SelectionCriteria,
-                                dataEnrichment: DataEnrichment
+                                targetedSearch: Option[TargetedSearch],
+                                selectionCriteria: Option[SelectionCriteria],
+                                dataEnrichment: Option[DataEnrichment]
                               )
 
 case class TaxpayerInformation(idType: String, idNumber: String)
-case class TargetedSearch(searchType: Option[String], searchItem: Option[String])
+case class TargetedSearch(searchType: String, searchItem: String)
 case class SelectionCriteria(
-                              dateRange: Option[DateRange],
-                              includeClearedItems: Option[Boolean],
-                              includeStatisticalItems: Option[Boolean],
-                              includePaymentOnAccount: Option[Boolean]
+                              dateRange: DateRange,
+                              includeClearedItems: Boolean,
+                              includeStatisticalItems: Boolean,
+                              includePaymentOnAccount: Boolean
                             )
-case class DateRange(fromDate: Option[String], toDate: Option[String])
+case class DateRange(dateFrom: String, dateTo: String)
 case class DataEnrichment(
-                           addRegimeTotalisation: Option[Boolean],
-                           addLockInformation: Option[Boolean],
-                           addPenaltyDetails: Option[Boolean],
-                           addPostedInterestDetails: Option[Boolean],
-                           addAccruingInterestDetails: Option[Boolean]
+                           addRegimeTotalisation: Boolean,
+                           addLockInformation: Boolean,
+                           addPenaltyDetails: Boolean,
+                           addPostedInterestDetails: Boolean,
+                           addAccruingInterestDetails: Boolean
                          )
 
 object FinancialRequestHIP {

@@ -16,13 +16,4 @@
 
 package models.API1811
 
-import play.api.libs.json.{Format, Json}
-
-case class TechnicalError(
-                           code: String,
-                           message: String,
-                           logId: String) extends ErrorResponse
-
-object TechnicalError {
-  implicit val format: Format[TechnicalError] = Json.format[TechnicalError]
-}
+trait ErrorResponse

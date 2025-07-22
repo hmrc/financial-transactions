@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.MicroserviceAppConfig
 import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import models.API1811.{Error, FinancialTransactions}
+import models.API1811.{BusinessError, Error, FinancialTransactions, TechnicalError}
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status
 import play.api.mvc.Request
@@ -46,11 +46,11 @@ class FinancialTransactionsService @Inject()(val connector: FinancialDataConnect
           )
           Right(mappedToIf)
 
-        case Left(Left(businessError)) =>
+        case Left(businessError: BusinessError) =>
           logger.warn(s"[FinancialTransactionsService] HIP returned BusinessError: ${businessError.code} - ${businessError.text}")
           Left(Error(Status.BAD_REQUEST, s"${businessError.code}: ${businessError.text}"))
 
-        case Left(Right(technicalError)) =>
+        case Left(technicalError: TechnicalError) =>
           logger.error(s"[FinancialTransactionsService] HIP returned TechnicalError: ${technicalError.code} - ${technicalError.message}")
           Left(Error(Status.INTERNAL_SERVER_ERROR, s"${technicalError.code}: ${technicalError.message}"))
       }

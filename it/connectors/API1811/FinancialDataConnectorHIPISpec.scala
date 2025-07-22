@@ -34,11 +34,11 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
 
     "return a FinancialTransactionsHIPModel" when {
 
-      s"a $OK response is received from financial transactions and the response can be parsed" in {
+      s"a $CREATED response is received from financial transactions and the response can be parsed" in {
 
         stubPostRequest(
           url = s"/RESTAdapter/cross-regime/taxpayer/financial-data/query",
-          responseStatus = OK,
+          responseStatus = CREATED,
           responseBody = fullFinancialTransactionsJsonHIP.toString()
         )
 
@@ -60,7 +60,7 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
 
           val result: FinancialTransactionsHIPResponse =
             await(connector.getFinancialDataHIP(vatRegime, queryParameters))
-          result shouldBe Left(Right(singleErrorHIPModel))
+          result shouldBe Left(singleErrorHIPModel)
         }
       }
 
@@ -73,7 +73,7 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
 
           val result: FinancialTransactionsHIPResponse =
             await(connector.getFinancialDataHIP(vatRegime, queryParameters))
-          result shouldBe Left(Left(multipleErrorsHIPModel))
+          result shouldBe Left(multipleErrorsHIPModel)
         }
       }
     }

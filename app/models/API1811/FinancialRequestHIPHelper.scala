@@ -27,25 +27,37 @@ object FinancialRequestHIPHelper {
         idType = regime.idType,
         idNumber = regime.id
       ),
-      targetedSearch = TargetedSearch(
-        searchType = queryParams.searchType,
-        searchItem = queryParams.searchItem
+      targetedSearch = for {
+        sType <- queryParams.searchType
+        sItem <- queryParams.searchItem
+      } yield TargetedSearch(
+        searchType = sType,
+        searchItem = sItem
       ),
-      selectionCriteria = SelectionCriteria(
-        dateRange = Some(DateRange(
-          fromDate = queryParams.fromDate.map(_.toString),
-          toDate = queryParams.toDate.map(_.toString)
-        )),
-        includeClearedItems = queryParams.includeClearedItems,
-        includeStatisticalItems = queryParams.includeStatisticalItems,
-        includePaymentOnAccount = queryParams.includePaymentOnAccount
+      selectionCriteria = for {
+        from <- queryParams.fromDate.map(_.toString)
+        to <- queryParams.toDate.map(_.toString)
+        clearedItems <- queryParams.includeClearedItems
+        statisticalItems <- queryParams.includeStatisticalItems
+        paymentonAccount <- queryParams.includePaymentOnAccount
+      } yield SelectionCriteria(
+        dateRange = DateRange(dateFrom = from, dateTo = to),
+        includeClearedItems = clearedItems,
+        includeStatisticalItems = statisticalItems,
+        includePaymentOnAccount = paymentonAccount
       ),
-      dataEnrichment = DataEnrichment(
-        addRegimeTotalisation = queryParams.addRegimeTotalisation,
-        addLockInformation = queryParams.addLockInformation,
-        addPenaltyDetails = queryParams.addPenaltyDetails,
-        addPostedInterestDetails = queryParams.addPostedInterestDetails,
-        addAccruingInterestDetails = queryParams.addAccruingInterestDetails
+      dataEnrichment = for {
+        regimeTotalisation <- queryParams.addRegimeTotalisation
+        lockInformation <- queryParams.addLockInformation
+        penaltyDetails <- queryParams.addPenaltyDetails
+        postedInterestDetails <- queryParams.addPostedInterestDetails
+        accruingInterestDetails <- queryParams.addAccruingInterestDetails
+      } yield DataEnrichment(
+        addRegimeTotalisation = regimeTotalisation,
+        addLockInformation = lockInformation,
+        addPenaltyDetails = penaltyDetails,
+        addPostedInterestDetails = postedInterestDetails,
+        addAccruingInterestDetails = accruingInterestDetails
       )
     )
 }

@@ -61,6 +61,4 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
   val hipServiceOriginatorIdKeyV1: String = servicesConfig.getString("microservice.services.hip.originator-id-key")
   val hipServiceOriginatorIdV1: String    = servicesConfig.getString("microservice.services.hip.originator-id-value")
 
-  lazy val hipEnvironmentHeader: (String, String) =
-    "Environment" -> servicesConfig.getString("microservice.services.hip.environment")
 }

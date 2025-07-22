@@ -18,11 +18,8 @@ package models.API1811
 
 import play.api.libs.json.{Format, Json}
 
-case class TechnicalError(
-                           code: String,
-                           message: String,
-                           logId: String) extends ErrorResponse
+case class HipWrappedError(`type`: String, reason: String)
 
-object TechnicalError {
-  implicit val format: Format[TechnicalError] = Json.format[TechnicalError]
+object HipWrappedError {
+  implicit val format: Format[HipWrappedError] = Json.format[HipWrappedError]
 }

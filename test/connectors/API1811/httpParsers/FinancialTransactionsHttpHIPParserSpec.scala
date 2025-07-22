@@ -29,7 +29,7 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
 
       "charge types are returned" should {
 
-        val httpResponse = HttpResponse(Status.OK, fullFinancialTransactionsHIPJson.toString)
+        val httpResponse = HttpResponse(Status.CREATED, fullFinancialTransactionsHIPJson.toString)
 
         val expected = Right(fullFinancialTransactionsHIP)
 
@@ -43,7 +43,7 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
 
     "return BusinessError when status is 400 or 404" in {
       val httpResponse = HttpResponse(Status.BAD_REQUEST, businessErrorJson.toString)
-      val expected = Left(Left(businessErrorModel))
+      val expected = Left(businessErrorModel)
       val result = FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("", "", httpResponse)
 
       result shouldEqual expected
@@ -51,7 +51,7 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
 
     "return TechnicalError when status is 500 or 503" in {
       val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, technicalErrorJson.toString)
-      val expected = Left(Right(technicalErrorModel))
+      val expected = Left(technicalErrorModel)
       val result = FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("", "", httpResponse)
 
       result shouldEqual expected

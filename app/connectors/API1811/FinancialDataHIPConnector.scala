@@ -24,6 +24,9 @@ import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
 
+import java.time.Instant
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -51,16 +54,15 @@ class FinancialDataHIPConnector @Inject()(http: HttpClient)
     ).recover {
       case ex: Exception =>
         logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] HIP HTTP exception received: ${ex.getMessage}")
-        Left(Right(TechnicalError("EXCEPTION", ex.getMessage, "no-log-id")))
+        Left(TechnicalError("EXCEPTION", ex.getMessage, "no-log-id"))
     }
   }
   private def buildHIPHeaders(correlationId: String): Seq[(String, String)] = Seq(
     "Authorization" -> s"Basic ${appConfig.hipAuthorisationToken}",
-    appConfig.hipEnvironmentHeader,
     appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
-    "CorrelationId" -> correlationId,
+    "correlationid" -> correlationId,
     "X-Originating-System" -> "MDTP",
-    "X-Request-Date" -> java.time.Instant.now().toString,
+    "X-Receipt-Date"       -> DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
     "X-Transmitting-System" -> "HIP"
   )
 }
