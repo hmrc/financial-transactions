@@ -43,7 +43,6 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
     val hipHeaders = Seq(
       "Authorization" -> s"Bearer ${appConfig.hipToken}",
       "correlationid" -> correlationID,
-      "Environment" -> appConfig.hipEnvironment,
       "X-Originating-System" -> "MDTP",
       "X-Receipt-Date" -> receiptDate,
       "X-Transmitting-System" -> "HIP"
@@ -61,13 +60,8 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
     logger.info("[HIPPenaltyDetailsConnector][getPenaltyDetails] - " +
       s"Calling GET $url \nHeaders: $hipHeaders\n QueryParams: $hipQueryParams")
 
-    http.GET(url, hipQueryParams, hipHeaders)(HIPPenaltyDetailsReads, hc, ec).map {
-      case Left(error) if error.code != NOT_FOUND =>
-        logger.warn(s"[HIPPenaltyDetailsConnector][getPenaltyDetails] Unexpected error returned by HIP. " +
-          s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
-        Left(error)
-      case expectedResponse => expectedResponse
-    }.recover {
+    http.GET(url, hipQueryParams, hipHeaders)(HIPPenaltyDetailsReads, hc, ec)
+    .recover {
       case ex: HttpException =>
         logger.warn(s"[HIPPenaltyDetailsConnector][getPenaltyDetails] - HTTP exception received: ${ex.message}")
         Left(Error(BAD_GATEWAY, ex.message))

@@ -17,8 +17,8 @@
 package connectors.API1812.httpParsers
 
 import models.API1812.{Error, PenaltyDetails}
-import models.hip_API1812.{HIPSuccessResponse, HIPSuccess, HIPPenaltyData, HIPLpp}
-import models.hip_API1812.{HIPErrorResponse, HIPBusinessError, HIPTechnicalErrorResponse, HIPTechnicalError, HIPWrappedErrorResponse, HIPWrappedError, HIPOriginResponse, HIPFailureResponse, HIPFailure}
+import models.hip_API1812.{HIPSuccessResponse}
+import models.hip_API1812.{HIPErrorResponse, HIPTechnicalErrorResponse, HIPOriginResponse, HIPFailureResponse}
 import play.api.http.Status._
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -35,17 +35,12 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
       response.status match {
         case OK =>
           parseSuccessResponse(response.json)
-        case NOT_FOUND if response.body.nonEmpty =>
-          parseNotFoundResponse(response.json)
-        case NOT_FOUND =>
-          logger.info("[HIPPenaltyDetailsReads][read] NOT_FOUND with empty body")
-          Left(Error(NOT_FOUND, "No penalty details found"))
         case NO_CONTENT =>
           logger.info("[HIPPenaltyDetailsReads][read] Received no content from HIP call")
           Left(Error(NOT_FOUND, "No penalty details found"))
         case UNPROCESSABLE_ENTITY =>
           parse422Response(response)
-        case status @ (BAD_REQUEST | FORBIDDEN | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) =>
+        case status @ (BAD_REQUEST | FORBIDDEN | CONFLICT | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE | NOT_FOUND) =>
           logger.error(s"[HIPPenaltyDetailsReads][read] Received $status when trying to call HIP PenaltyDetails - with body: ${response.body}")
           parseErrorResponse(response)
         case status =>
@@ -70,16 +65,10 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     )
   }
 
-  private def parseNotFoundResponse(json: JsValue): Either[Error, PenaltyDetails] = {
-    logger.error(s"[HIPPenaltyDetailsHttpParser][parseNotFoundResponse] 404 - URL not found: $json")
-    Left(Error(NOT_FOUND, "URL not found"))
-  }
-
   private def parse422Response(response: HttpResponse): Either[Error, PenaltyDetails] = {
-    val json = Try(response.json).getOrElse(Json.obj())
     
-    json.validate[HIPErrorResponse].asOpt match {
-      case Some(errorResponse) if errorResponse.errors.code == "016" =>
+    response.json.validate[HIPErrorResponse] match {
+      case JsSuccess(errorResponse, _) if errorResponse.errors.code == "016" =>
         logger.info("[HIPPenaltyDetailsHttpParser][parse422Response] Invalid ID Number (016) - treating as no data found")
         Left(Error(NOT_FOUND, "No penalty details found"))
       case _ =>
@@ -93,10 +82,10 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
 
     val technicalError = json.validate[HIPTechnicalErrorResponse].asOpt
     val businessError = json.validate[HIPErrorResponse].asOpt  
-    val wrappedError = json.validate[HIPWrappedErrorResponse].asOpt
-    val doubleWrappedError = json.validate[HIPOriginResponse].asOpt
+    val failureResponse = json.validate[HIPFailureResponse].asOpt
+    val originResponse = json.validate[HIPOriginResponse].asOpt
 
-    (technicalError, businessError, wrappedError, doubleWrappedError) match {
+    (technicalError, businessError, failureResponse, originResponse) match {
       case (Some(techError), _, _, _) =>
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] Technical error: ${techError.error.code} - ${techError.error.message}")
         Left(Error(response.status, techError.error.message))
@@ -104,7 +93,7 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] Business error: ${bizError.errors.code} - ${bizError.errors.text}")
         Left(Error(response.status, bizError.errors.text))
       case (_, _, Some(wrapError), _) =>
-        val errorMessage = wrapError.response.map(_.reason).mkString(", ")
+        val errorMessage = wrapError.failures.map(_.reason).mkString(", ")
         logger.warn(s"[HIPPenaltyDetailsHttpParser][parseErrorResponse] HIP wrapped errors: $errorMessage")
         Left(Error(response.status, errorMessage))
       case (_, _, _, Some(doubleWrap)) =>

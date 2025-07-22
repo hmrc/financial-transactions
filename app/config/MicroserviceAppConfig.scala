@@ -45,12 +45,9 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
   lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
 
   lazy val hipUrl: String = servicesConfig.getString("microservice.services.hip.url")
-  lazy val hipEnvironment: String = servicesConfig.getString("microservice.services.hip.environment")
   lazy val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
   lazy val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
   lazy val hipToken: String = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
-  lazy val hipServiceOriginatorIdKey: String = servicesConfig.getString("microservice.services.hip.originator-id-key")
-  lazy val hipServiceOriginatorId: String    = servicesConfig.getString("microservice.services.hip.originator-id-value")
 
   override lazy val staticDateValue: String = servicesConfig.getString("date-service.staticDateValue")
   override lazy val familiarisationPeriodEndDate: LocalDate =

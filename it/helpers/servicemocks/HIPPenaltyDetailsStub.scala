@@ -46,7 +46,6 @@ object HIPPenaltyDetailsStub {
     stubFor(get(urlEqualTo(penaltyDetailsUrl(regime, queryParams)))
       .withHeader("Authorization", matching("Bearer .*"))
       .withHeader("correlationid", matching("^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"))
-      .withHeader("Environment", matching(".*"))
       .withHeader("X-Originating-System", matching(".*"))
       .withHeader("X-Receipt-Date", matching("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"))
       .withHeader("X-Transmitting-System", matching(".*"))
@@ -76,10 +75,13 @@ object HIPPenaltyDetailsStub {
   )
 
   def hipWrappedErrorResponse(errorType: String, reason: String): JsValue = Json.obj(
-    "response" -> Json.arr(Json.obj(
-      "type" -> errorType,
-      "reason" -> reason
-    ))
+    "origin" -> "HIP",
+    "response" -> Json.obj(
+      "failures" -> Json.arr(Json.obj(
+        "type" -> errorType,
+        "reason" -> reason
+      ))
+    )
   )
 
   def noDataSuccessResponse(): JsValue = Json.obj(

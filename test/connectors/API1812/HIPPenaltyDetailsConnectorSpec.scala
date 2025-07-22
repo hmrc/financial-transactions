@@ -68,7 +68,6 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
       capturedHeaders should contain("Authorization" -> s"Bearer ${mockAppConfig.hipToken}")
       capturedHeaders.exists(_._1 == "correlationid") shouldBe true
-      capturedHeaders should contain("Environment" -> mockAppConfig.hipEnvironment)
       capturedHeaders should contain("X-Originating-System" -> "MDTP")
       capturedHeaders should contain("X-Transmitting-System" -> "HIP")
       capturedHeaders.exists(_._1 == "X-Receipt-Date") shouldBe true

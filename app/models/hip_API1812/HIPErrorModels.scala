@@ -26,10 +26,6 @@ case class HIPTechnicalErrorResponse(error: HIPTechnicalError)
 
 case class HIPTechnicalError(code: String, message: String, logID: String)
 
-case class HIPWrappedErrorResponse(response: Seq[HIPWrappedError])
-
-case class HIPWrappedError(`type`: String, reason: String)
-
 case class HIPFailure(`type`: String, reason: String)
 case class HIPFailureResponse(failures: Seq[HIPFailure])
 case class HIPOriginResponse(origin: String, response: HIPFailureResponse)
@@ -48,14 +44,6 @@ object HIPTechnicalErrorResponse {
 
 object HIPTechnicalError {
   implicit val reads: Reads[HIPTechnicalError] = Json.reads[HIPTechnicalError]
-}
-
-object HIPWrappedErrorResponse {
-  implicit val reads: Reads[HIPWrappedErrorResponse] = Json.reads[HIPWrappedErrorResponse]
-}
-
-object HIPWrappedError {
-  implicit val reads: Reads[HIPWrappedError] = Json.reads[HIPWrappedError]
 }
 
 object HIPFailure {

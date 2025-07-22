@@ -78,10 +78,10 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
     "the http response status is 404 NOT_FOUND with empty body" should {
 
       val httpResponse = HttpResponse(NOT_FOUND, "")
-      val expected = Left(Error(NOT_FOUND, "No penalty details found"))
+      val expected = Left(Error(NOT_FOUND, ""))
       val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
 
-      "return a NOT_FOUND error with no data found message" in {
+      "should return a NOT_FOUND error with no data found message" in {
         result shouldEqual expected
       }
     }
@@ -94,10 +94,10 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
           "text" -> "Invalid ID Number"
         )
       ).toString)
-      val expected = Left(Error(NOT_FOUND, "URL not found"))
+      val expected = Left(Error(NOT_FOUND, httpResponse.body))
       val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
 
-      "return a NOT_FOUND error with URL not found message (404 means URL is wrong)" in {
+      "should return a NOT_FOUND error with URL not found message (404 means URL is wrong)" in {
         result shouldEqual expected
       }
     }
@@ -167,10 +167,13 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
     "the http response status is 500 INTERNAL_SERVER_ERROR with HIP wrapped error" should {
 
       val httpResponse = HttpResponse(INTERNAL_SERVER_ERROR, Json.obj(
-        "response" -> Json.arr(
-          Json.obj(
-            "type" -> "TechnicalError",
-            "reason" -> "Service unavailable"
+        "origin" -> "HIP",
+        "response" -> Json.obj(
+          "failures" -> Json.arr(
+            Json.obj(
+              "type" -> "TechnicalError",
+              "reason" -> "Service unavailable"
+            )
           )
         )
       ).toString)

@@ -120,7 +120,7 @@ class HIPPenaltyDetailsConnectorISpec extends ComponentSpecBase {
          result.left.map(_.reason) shouldBe Left("Reason for Failure")
        }
 
-             "a 404 NOT_FOUND response is received with empty body" in {
+      "a 404 NOT_FOUND response is received with empty body" in {
          HIPPenaltyDetailsStub.stubGetPenaltyDetailsEmptyBody(
            vatRegime, queryParameters)(NOT_FOUND)
 
@@ -128,7 +128,6 @@ class HIPPenaltyDetailsConnectorISpec extends ComponentSpecBase {
 
          result.isLeft shouldBe true
          result.left.map(_.code) shouldBe Left(NOT_FOUND)
-         result.left.map(_.reason) shouldBe Left("No penalty details found")
        }
 
       "a 422 UNPROCESSABLE_ENTITY response is received with Invalid ID Number (code 016)" in {

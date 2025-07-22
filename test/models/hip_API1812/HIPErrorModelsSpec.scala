@@ -141,57 +141,26 @@ class HIPErrorModelsSpec extends SpecBase {
     }
   }
 
-  "HIPWrappedErrorResponse" should {
-    "read from JSON with wrapped errors" in {
-      val json = Json.obj(
-        "response" -> Json.arr(
-          Json.obj(
-            "type" -> "TechnicalError",
-            "reason" -> "Service unavailable"
-          ),
-          Json.obj(
-            "type" -> "ValidationError", 
-            "reason" -> "Invalid parameters"
-          )
-        )
-      )
-
-      val result = json.as[HIPWrappedErrorResponse]
-      result.response should have size 2
-      result.response.head.`type` shouldBe "TechnicalError"
-      result.response.head.reason shouldBe "Service unavailable"
-      result.response(1).`type` shouldBe "ValidationError"
-      result.response(1).reason shouldBe "Invalid parameters"
-    }
-
-    "read from JSON with single error" in {
-      val json = Json.obj(
-        "response" -> Json.arr(
-          Json.obj(
-            "type" -> "BusinessError",
-            "reason" -> "No data found"
-          )
-        )
-      )
-
-      val result = json.as[HIPWrappedErrorResponse]
-      result.response should have size 1
-      result.response.head.`type` shouldBe "BusinessError"
-      result.response.head.reason shouldBe "No data found"
-    }
-  }
-
-  "HIPWrappedError" should {
-    "read from JSON" in {
-      val json = Json.obj(
-        "type" -> "TechnicalError",
-        "reason" -> "Service unavailable"
-      )
-
-      val result = json.as[HIPWrappedError]
-      result.`type` shouldBe "TechnicalError"
-      result.reason shouldBe "Service unavailable"
-    }
+  "should parse HIPOriginResponse with failures array" in {
+    val json = Json.parse(
+      """
+        |{
+        |  "origin": "HIP",
+        |  "response": {
+        |    "failures": [
+        |      { "type": "Type of Failure", "reason": "Internal Server Error" },
+        |      { "type": "Another Failure", "reason": "Another Reason" }
+        |    ]
+        |  }
+        |}
+      """.stripMargin)
+    val result = json.as[HIPOriginResponse]
+    result.origin shouldBe "HIP"
+    result.response.failures should have size 2
+    result.response.failures.head.`type` shouldBe "Type of Failure"
+    result.response.failures.head.reason shouldBe "Internal Server Error"
+    result.response.failures(1).`type` shouldBe "Another Failure"
+    result.response.failures(1).reason shouldBe "Another Reason"
   }
 }
 
