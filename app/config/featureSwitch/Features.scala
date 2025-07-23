@@ -24,9 +24,11 @@ class Features @Inject()(implicit config: Configuration){
 
   private val featureSwitch: String = "feature-switch"
   lazy val staticDate = new Feature(s"$featureSwitch.staticDate")
+  lazy val CallAPI1812HIP= new Feature(s"$featureSwitch.call-api-1812-hip")
 
   lazy val allSwitches: Seq[Feature] = Seq(
-    staticDate
+    staticDate,
+    CallAPI1812HIP
   )
   def resetAll(): Unit = allSwitches.foreach(_.reset())
 }

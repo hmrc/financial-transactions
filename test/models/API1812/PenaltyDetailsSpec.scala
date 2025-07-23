@@ -20,28 +20,33 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
+
 class PenaltyDetailsSpec extends SpecBase {
 
   "PenaltyDetails" should {
 
     "parse JSON to an empty sequence when no LPP details exist" in {
-      val result = Json.obj().as[PenaltyDetails]
+      val result = Json.obj(
+        "success" -> Json.obj(
+          "processingDate" -> "2023-11-28T10:15:10Z",
+          "penaltyData" -> Json.obj()
+        )
+      ).as[PenaltyDetails]
       result.LPPDetails.isEmpty shouldBe true
     }
 
     "parse JSON to an empty array and breathing space details when BS json is in the response" in {
-      val result = apiLPPJsonNoPen.as[PenaltyDetails]
-      result shouldBe penaltyDetailsModelNoPen
+      apiLPPJsonEISNoLPP(breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelEmptyLPP
     }
 
     "parse a JSON array of LPP details to a sequence correctly" when {
 
       "optional fields are present" in {
-        apiLPPJson(LPPJsonMax, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
+        apiLPPJsonEIS(LPPJsonMax, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMax
       }
 
       "optional fields are missing" in {
-        apiLPPJson(LPPJsonMin, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
+        apiLPPJsonEIS(LPPJsonMin, breathingSpaceJSONAfterBS).as[PenaltyDetails] shouldBe penaltyDetailsModelMin
       }
     }
 

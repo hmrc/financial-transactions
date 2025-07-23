@@ -24,13 +24,16 @@ import play.api.libs.json.JsValue
 
 object EISPenaltyDetailsStub {
 
-  private def penaltyDetailsUrl(regime: TaxRegime, requestQueryParams: PenaltyDetailsQueryParameters): String =
+  private def penaltyDetailsUrl(regime: TaxRegime, requestQueryParams: PenaltyDetailsQueryParameters): String = {
+    val baseUrl = s"/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}"
+    
     if(requestQueryParams.hasQueryParameters) {
-      s"/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}" +
-        s"?${PenaltyDetailsBinders.penaltyDetailsQueryBinder.unbind("", requestQueryParams)}"
+      val additionalParams = PenaltyDetailsBinders.penaltyDetailsQueryBinder.unbind("", requestQueryParams)
+      s"$baseUrl?$additionalParams"
     } else {
-      s"/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}"
+      baseUrl
     }
+  }
 
   def stubGetPenaltyDetails(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
                           (status: Int, response: JsValue): StubMapping =

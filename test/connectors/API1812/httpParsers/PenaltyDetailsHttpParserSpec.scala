@@ -22,7 +22,7 @@ import models.API1812.{Error, PenaltyDetails}
 import play.api.http.Status.{BAD_REQUEST, INTERNAL_SERVER_ERROR, NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstantsAPI1812.{LPPJsonMax, apiLPPJson, breathingSpaceJSONAfterBS, penaltyDetailsModelMax}
+import utils.TestConstantsAPI1812.{LPPJsonMax, apiLPPJsonEIS, breathingSpaceJSONAfterBS, penaltyDetailsModelMax}
 
 class PenaltyDetailsHttpParserSpec extends SpecBase {
 
@@ -30,7 +30,7 @@ class PenaltyDetailsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and contains relevant LPP and breathing space JSON" should {
 
-      val httpResponse = HttpResponse(OK, apiLPPJson(LPPJsonMax, breathingSpaceJSONAfterBS).toString)
+      val httpResponse = HttpResponse(OK, apiLPPJsonEIS(LPPJsonMax, breathingSpaceJSONAfterBS).toString)
       val expected = Right(penaltyDetailsModelMax)
       val result = PenaltyDetailsReads.read("", "", httpResponse)
 
@@ -52,7 +52,7 @@ class PenaltyDetailsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK but the response is in an invalid format" should {
 
-      val httpResponse = HttpResponse(OK, apiLPPJson(Json.obj("f" -> "f"), Json.obj("g" -> "g")).toString)
+      val httpResponse = HttpResponse(OK, apiLPPJsonEIS(Json.obj("f" -> "f"), Json.obj("g" -> "g")).toString)
       val expected = Left(Error(BAD_REQUEST,
         "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
       val result = PenaltyDetailsReads.read("", "", httpResponse)

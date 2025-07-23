@@ -24,12 +24,13 @@ import play.api.http.Status._
 import play.api.libs.json.Json
 import testData.PenaltyDetailsTestData
 
+
 class PenaltyDetailsComponentSpec extends ComponentSpecBase {
 
   "Sending a request to /financial-transactions/penalty/:regime/:identifier (FinancialTransactions controller)" when {
 
     val vatRegime = VatRegime("123456789")
-    lazy val queryParameters = PenaltyDetailsQueryParameters(dateLimit = Some(2))
+    lazy val queryParameters = PenaltyDetailsQueryParameters(dateLimit = Some("02"))
 
     "a successful response is returned by the API" should {
 

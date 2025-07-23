@@ -53,7 +53,7 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
 
   private def retrieveFinancialTransactionsAPI1811(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
                                                   (implicit hc: HeaderCarrier, request: Request[_]): Future[Result] = {
-    logger.debug(s"[FinancialTransactionsController][retrieveFinancialTransactionsAPI1811] " +
+    logger.info(s"[FinancialTransactionsController][retrieveFinancialTransactionsAPI1811] " +
       "Calling API1811.FinancialTransactionsService.getFinancialTransactions")
 
     api1811Service.getFinancialTransactions(regime, queryParams).map {
@@ -65,7 +65,7 @@ class FinancialTransactionsController @Inject()(authenticate: AuthAction,
   def checkDirectDebitExists(vrn: String): Action[AnyContent] =
     authenticate.async {
       implicit authorisedUser =>
-        logger.debug(s"[FinancialTransactionsController][checkDirectDebitExists] " +
+        logger.info(s"[FinancialTransactionsController][checkDirectDebitExists] " +
           "Calling directDebitService.checkDirectDebitExists")
         directDebitService.checkDirectDebitExists(vrn).map {
           case _@Right(directDebitExists) =>

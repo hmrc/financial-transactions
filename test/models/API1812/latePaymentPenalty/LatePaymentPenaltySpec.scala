@@ -20,6 +20,7 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
+
 class LatePaymentPenaltySpec extends SpecBase {
 
   "LatePaymentPenalty" should {

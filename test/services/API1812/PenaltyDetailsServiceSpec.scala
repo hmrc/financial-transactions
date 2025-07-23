@@ -17,47 +17,57 @@
 package services.API1812
 
 import base.SpecBase
-import mocks.connectors.MockPenaltyDetailsConnector
+import mocks.connectors.{MockPenaltyDetailsConnector, MockHIPPenaltyDetailsConnector}
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.TestConstantsAPI1812.{penaltyDetailsModelMax, penaltyDetailsModelNoPen}
+import config.featureSwitch.Features
 
-class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnector {
+class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnector with MockHIPPenaltyDetailsConnector {
 
   "The .getPenaltyDetails method" when {
 
-    val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some(2))
+    val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some("02"))
     val regime: TaxRegime = VatRegime("123456789")
-    val service = new PenaltyDetailsService(mockPenaltyDetailsConnector)
+    val service = new PenaltyDetailsService(mockPenaltyDetailsConnector, mockHIPPenaltyDetailsConnector, mockAppConfig.features)
 
-    "the connector returns a success response with LPP, breathing space items in the array and time to pay items in the array" should {
+    "HIP feature flag is enabled" should {
 
-      "return the same response" in {
+      "use HIP connector" in {
+        mockAppConfig.features.CallAPI1812HIP(true)
         val successResponse = Right(penaltyDetailsModelMax)
-        setupPenaltyDetailsCall(regime, queryParams)(successResponse)
+        setupHIPPenaltyDetailsCall(regime, queryParams)(successResponse)
         val actual = await(service.getPenaltyDetails(regime, queryParams))
 
         actual shouldBe successResponse
       }
+
+      "return HIP connector error response" in {
+        mockAppConfig.features.CallAPI1812HIP(true)
+        val failureResponse = Left(Error(Status.INTERNAL_SERVER_ERROR, "HIP error"))
+        setupHIPPenaltyDetailsCall(regime, queryParams)(failureResponse)
+        val actual = await(service.getPenaltyDetails(regime, queryParams))
+
+        actual shouldBe failureResponse
+      }
     }
 
-    "the connector returns a success response with no LPP but breathing space items and time to pay items" should {
+    "HIP feature flag is disabled" should {
 
-      "return the same response" in {
+      "use EIS connector" in {
+        mockAppConfig.features.CallAPI1812HIP(false)
         val successResponse = Right(penaltyDetailsModelNoPen)
         setupPenaltyDetailsCall(regime, queryParams)(successResponse)
         val actual = await(service.getPenaltyDetails(regime, queryParams))
 
         actual shouldBe successResponse
       }
-    }
 
-    "the connector returns a failure response" should {
-
-      "return the same response" in {
-        val failureResponse = Left(Error(Status.INTERNAL_SERVER_ERROR, "error"))
+      "return EIS connector error response" in {
+        mockAppConfig.features.CallAPI1812HIP(false)
+        val failureResponse = Left(Error(Status.BAD_REQUEST, "EIS error"))
         setupPenaltyDetailsCall(regime, queryParams)(failureResponse)
         val actual = await(service.getPenaltyDetails(regime, queryParams))
 
