@@ -18,6 +18,8 @@ package models.API1812.latePaymentPenalty
 
 import base.SpecBase
 import play.api.libs.json.{JsString, Json}
+import models.API1812.latePaymentPenalty.LPPPenaltyCategoryEnum
+
 
 class LPPPenaltyCategoryEnumSpec extends SpecBase {
 

@@ -17,14 +17,22 @@
 package utils
 
 import java.time.LocalDate
-import models.API1812.{BreathingSpace, PenaltyDetails, TimeToPay}
-import models.API1812.latePaymentPenalty._
 import play.api.libs.json.{JsObject, JsValue, Json}
+import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
+import models.API1812.{PenaltyDetails, BreathingSpace, TimeToPay}
 
 object TestConstantsAPI1812 {
 
   val timeToPayJson: JsObject = Json.obj(
     "TTPStartDate" -> "2018-04-05",
+    "TTPEndDate" -> "2018-08-31"
+  )
+
+  val timeToPayJsonOptionalEndDate: JsObject = Json.obj(
+    "TTPStartDate" -> "2018-04-05"
+  )
+
+  val timeToPayJsonOptionalStartDate: JsObject = Json.obj(
     "TTPEndDate" -> "2018-08-31"
   )
 
@@ -81,7 +89,7 @@ object TestConstantsAPI1812 {
     Some("31"),
     Some(5.5),
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
-    Some(Seq(TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-08-31"))))
+    Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))))
   )
 
   val LPPModelMin: LatePaymentPenalty = LatePaymentPenalty(
@@ -117,34 +125,54 @@ object TestConstantsAPI1812 {
   val outOfBS        : BreathingSpace = BreathingSpace(LocalDate.parse("2018-03-01"), LocalDate.parse("2018-04-01"))
   val futureBS       : BreathingSpace = BreathingSpace(LocalDate.parse("2018-07-01"), LocalDate.parse("2018-08-01"))
 
-  val outOfTTP        : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07"))))
-  val inTTP           : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-04-07"), LocalDate.parse("2018-07-07"))))
-  val firstDayTTP     : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-05-01"), LocalDate.parse("2018-07-01"))))
-  val lastDayTTP      : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-03-16"), LocalDate.parse("2018-05-01"))))
-  val TTPEndYesterday : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-03-07"), LocalDate.parse("2018-04-30"))))
-  val TTPBeginTomorrow: Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-05-02"), LocalDate.parse("2018-07-04"))))
-  val futureTTP       : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-09-05"))))
+  val outOfTTP        : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-01-07")), Some(LocalDate.parse("2018-02-07")))))
+  val inTTP           : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-07")), Some(LocalDate.parse("2018-07-07")))))
+  val firstDayTTP     : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-05-01")), Some(LocalDate.parse("2018-07-01")))))
+  val lastDayTTP      : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-03-16")), Some(LocalDate.parse("2018-05-01")))))
+  val TTPEndYesterday : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-03-07")), Some(LocalDate.parse("2018-04-30")))))
+  val TTPBeginTomorrow: Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-05-02")), Some(LocalDate.parse("2018-07-04")))))
+  val futureTTP       : Option[Seq[TimeToPay]] = Some(Seq(TimeToPay(Some(LocalDate.parse("2018-06-18")), Some(LocalDate.parse("2018-09-05")))))
   val betweenTTPS     : Option[Seq[TimeToPay]] = Some(Seq(
-      TimeToPay(LocalDate.parse("2018-01-07"), LocalDate.parse("2018-02-07")),
-      TimeToPay(LocalDate.parse("2018-06-18"), LocalDate.parse("2018-08-07"))
+      TimeToPay(Some(LocalDate.parse("2018-01-07")), Some(LocalDate.parse("2018-02-07"))),
+      TimeToPay(Some(LocalDate.parse("2018-06-18")), Some(LocalDate.parse("2018-08-07")))
   ))
   val firstOfTwoTTPS  : Option[Seq[TimeToPay]] = Some(Seq(
-    TimeToPay(LocalDate.parse("2018-04-05"), LocalDate.parse("2018-07-07")),
-    TimeToPay(LocalDate.parse("2018-09-05"), LocalDate.parse("2018-11-07"))
+    TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-07-07"))),
+    TimeToPay(Some(LocalDate.parse("2018-09-05")), Some(LocalDate.parse("2018-11-07")))
   ))
-
   val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)))
   val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None)
   val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)))
   val penaltyDetailsModelNoPen: PenaltyDetails = PenaltyDetails(None, Some(Seq(outOfBS)))
+  val penaltyDetailsModelEmptyLPP: PenaltyDetails = PenaltyDetails(Some(Seq()), Some(Seq(outOfBS))) // EIS returns Some(List()) for empty array
   val penaltyDetailsModelInBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(inBS)))
   val penaltyDetailsModelNone: PenaltyDetails = PenaltyDetails(None, None)
 
-  def apiLPPJson(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
+  def apiLPPJsonEIS(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
     "latePaymentPenalty" -> Json.obj(
       "details" -> Json.arr(LPPJson)
     ),
     "breathingSpace" -> Json.arr(bsJson)
+  )
+
+  def apiLPPJsonEISNoLPP(bsJson: JsObject): JsValue = Json.obj(
+    "latePaymentPenalty" -> Json.obj(
+      "details" -> Json.arr()
+    ),
+    "breathingSpace" -> Json.arr(bsJson)
+  )
+
+  def apiLPPJsonHIP(LPPJson: JsObject, bsJson: JsObject): JsValue = Json.obj(
+    "success" -> Json.obj(
+      "processingDate" -> "2023-11-28T10:15:10Z",
+      "penaltyData" -> Json.obj(
+        "lpp" -> Json.obj(
+          "lppDetails" -> Json.arr(LPPJson),
+          "manualLPPIndicator" -> true
+        ),
+        "breathingSpace" -> Json.arr(bsJson)
+      )
+    )
   )
 
   val breathingSpaceJSON: JsObject = Json.obj(
@@ -158,7 +186,12 @@ object TestConstantsAPI1812 {
   )
 
   val apiLPPJsonNoPen: JsValue = Json.obj(
-    "breathingSpace" -> Json.arr(breathingSpaceJSONAfterBS),
+    "success" -> Json.obj(
+      "processingDate" -> "2023-11-28T10:15:10Z",
+      "penaltyData" -> Json.obj(
+        "breathingSpace" -> Json.arr(breathingSpaceJSONAfterBS)
+      )
+    )
   )
 
 }

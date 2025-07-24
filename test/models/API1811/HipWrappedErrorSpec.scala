@@ -16,4 +16,22 @@
 
 package models.API1811
 
-trait ErrorResponse
+import base.SpecBase
+import play.api.libs.json.{JsValue, Json}
+
+class HipWrappedErrorSpec extends SpecBase {
+
+  val model: HipWrappedError = HipWrappedError("type", "reason")
+  val json: JsValue          = Json.parse("""{"type":"type", "reason":"reason"}""")
+
+  "HipWrappedError" should {
+    "be writable to JSON" in {
+      val result = Json.toJson(model)
+      result shouldBe json
+    }
+    "be readable from JSON" in {
+      val result = Json.fromJson(json)(HipWrappedError.format)
+      result.get shouldBe model
+    }
+  }
+}

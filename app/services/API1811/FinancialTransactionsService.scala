@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.MicroserviceAppConfig
 import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import models.API1811.{BusinessError, Error, FinancialTransactions, TechnicalError}
+import models.API1811.{BusinessError, Error, FinancialTransactions, HipWrappedError, TechnicalError}
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status
 import play.api.mvc.Request
@@ -53,6 +53,10 @@ class FinancialTransactionsService @Inject()(val connector: FinancialDataConnect
         case Left(technicalError: TechnicalError) =>
           logger.error(s"[FinancialTransactionsService] HIP returned TechnicalError: ${technicalError.code} - ${technicalError.message}")
           Left(Error(Status.INTERNAL_SERVER_ERROR, s"${technicalError.code}: ${technicalError.message}"))
+
+        case Left(otherFailure) =>
+          logger.error(s"[FinancialTransactionsService] Unexpected HIP error: $otherFailure")
+          Left(Error(Status.INTERNAL_SERVER_ERROR, "Unexpected HIP failure occurred"))
       }
     } else {
       logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +

@@ -17,15 +17,20 @@
 package connectors.API1811.httpParsers
 
 import base.SpecBase
+import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser._
 import play.api.http.Status
+import play.api.http.Status._
 import uk.gov.hmrc.http.HttpResponse
 import utils.API1811.TestConstantsHIP._
 
 class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
 
+  def financialTransactionsParserReads(httpResponse: HttpResponse): FinancialTransactionsHIPResponse =
+    FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("GET", "/", httpResponse)
+
   "The FinancialTransactionsHttpParser" when {
 
-    "the http response status is 200 OK and matches expected Schema" when {
+    "the http response status is 201 and matches expected Schema" when {
 
       "charge types are returned" should {
 
@@ -41,20 +46,87 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
       }
     }
 
-    "return BusinessError when status is 400 or 404" in {
-      val httpResponse = HttpResponse(Status.BAD_REQUEST, businessErrorJson.toString)
-      val expected = Left(businessErrorModel)
-      val result = FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("", "", httpResponse)
+    "parsing an UNPROCESSABLE_ENTITY response" should {
+      def errorResponse(responseBody: String): HttpResponse = HttpResponse.apply(status = UNPROCESSABLE_ENTITY, responseBody)
 
-      result shouldEqual expected
+      "return a FinancialTransactionsNoContent response" when {
+        "able to validate a HIP BusinessError body with a '016' failure code and text" in {
+          val noDataFailureResponseBody = """{"errors":{"processingDate":"2025-03-03", "code":"016", "text":"Invalid ID Number"}}"""
+          val notFoundHttpResponse = errorResponse(noDataFailureResponseBody)
+
+          val result = financialTransactionsParserReads(notFoundHttpResponse)
+          result shouldBe Left(FinancialTransactionsNoContent)
+        }
+        "able to validate a HIP BusinessError body with a '018' failure code and text" in {
+          val noDataFailureResponseBody = """{"errors":{"processingDate":"2025-03-03", "code":"018", "text":"No Data Identified"}}"""
+          val notFoundHttpResponse = errorResponse(noDataFailureResponseBody)
+
+          val result = financialTransactionsParserReads(notFoundHttpResponse)
+          result shouldBe Left(FinancialTransactionsNoContent)
+        }
+      }
+      "return a 422 FinancialTransactionsFailureResponse" when {
+        "HIP BusinessError body does not have correct '016' failure code" in {
+          val bodyWithInvalidCode = """{"errors":{"processingDate":"2025-03-03", "code":"16", "text":"Invalid ID Number"}}"""
+          val notFoundNoBodyHttpResponse = errorResponse(bodyWithInvalidCode)
+
+          val result = financialTransactionsParserReads(notFoundNoBodyHttpResponse)
+          result shouldBe Left(FinancialTransactionsFailureResponse(UNPROCESSABLE_ENTITY))
+        }
+      }
+
+      "HIP BusinessError body does not have correct '016' failure text" in {
+        val bodyWithInvalidText = """{"errors":{"processingDate":"2025-03-03", "code":"016", "text":"Invalid id num."}}"""
+        val notFoundNoBodyHttpResponse = errorResponse(bodyWithInvalidText)
+
+        val result = financialTransactionsParserReads(notFoundNoBodyHttpResponse)
+
+        result shouldBe Left(FinancialTransactionsFailureResponse(UNPROCESSABLE_ENTITY))
+      }
     }
+    "response body cannot be validated as a BusinessError" in {
+      val invalidBody = """{"notGood":"isWrong"}"""
+      val notFoundHttpResponse = HttpResponse.apply(status = UNPROCESSABLE_ENTITY, body = invalidBody)
 
-    "return TechnicalError when status is 500 or 503" in {
-      val httpResponse = HttpResponse(Status.INTERNAL_SERVER_ERROR, technicalErrorJson.toString)
-      val expected = Left(technicalErrorModel)
-      val result = FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("", "", httpResponse)
-
-      result shouldEqual expected
+      val result = financialTransactionsParserReads(notFoundHttpResponse)
+      result shouldBe Left(FinancialTransactionsFailureResponse(UNPROCESSABLE_ENTITY))
     }
   }
+
+  "will return a HIPFinancialDetailsFailureResponse" when {
+    "parsing an error with a TechnicalError response body" in {
+      val technicalError = """{"response":{"error":{"code":"errorCode","message":"errorMessage","logId":"errorLogId"}}}"""
+      val technicalErrorResponse = HttpResponse(status = INTERNAL_SERVER_ERROR, body = technicalError)
+
+        val result = financialTransactionsParserReads(technicalErrorResponse)
+        result shouldBe Left(FinancialTransactionsFailureResponse(INTERNAL_SERVER_ERROR))
+      }
+    }
+
+    "parsing an error with an array of HipWrappedError response body" in {
+      val hipWrappedError =
+        """{"response":{"failures":[
+          |{"type": "errorType", "reason": "errorReason"},
+          |{"type": "errorType2", "reason": "errorReason2"}
+          |]}}""".stripMargin
+      val technicalErrorResponse = HttpResponse(status = BAD_REQUEST, body = hipWrappedError)
+
+        val result = financialTransactionsParserReads(technicalErrorResponse)
+        result shouldBe Left(FinancialTransactionsFailureResponse(BAD_REQUEST))
+    }
+
+    "response body cannot be parsed as expected error format" in {
+      val invalidBody = """{"notGood":"isWrong"}"""
+      val notFoundHttpResponse = HttpResponse.apply(status = CONFLICT, body = invalidBody)
+
+      val result = financialTransactionsParserReads(notFoundHttpResponse)
+      result shouldBe Left(FinancialTransactionsFailureResponse(CONFLICT))
+    }
+
+    "parsing an unknown error (e.g. IM A TEAPOT - 418) - and log a PagerDuty" in {
+      val imATeapotHttpResponse = HttpResponse.apply(status = IM_A_TEAPOT, body = "I'm a teapot.")
+
+      val result = financialTransactionsParserReads(imATeapotHttpResponse)
+      result shouldBe Left(FinancialTransactionsFailureResponse(IM_A_TEAPOT))
+    }
 }

@@ -38,8 +38,8 @@ class PenaltyDetailsQueryParametersSpec extends SpecBase {
       }
 
       "for the 'dateLimit' query param, has the expected key/value" in {
-        val queryParams = PenaltyDetailsQueryParameters(dateLimit = Some(1))
-        queryParams.toSeqQueryParams shouldBe Seq(dateLimitKey -> "1")
+        val queryParams = PenaltyDetailsQueryParameters(dateLimit = Some("01"))
+        queryParams.toSeqQueryParams shouldBe Seq(dateLimitKey -> "01")
       }
     }
   }

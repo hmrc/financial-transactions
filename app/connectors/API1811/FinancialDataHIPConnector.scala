@@ -17,9 +17,10 @@
 package connectors.API1811
 
 import config.MicroserviceAppConfig
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
-import models.API1811.{FinancialRequestHIP, FinancialRequestHIPHelper, TechnicalError}
+import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsFailureResponse, FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
+import models.API1811.{FinancialRequestHIP, FinancialRequestHIPHelper}
 import models.{FinancialRequestQueryParameters, TaxRegime}
+import play.api.http.Status.INTERNAL_SERVER_ERROR
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utils.LoggerUtil
@@ -42,7 +43,7 @@ class FinancialDataHIPConnector @Inject()(http: HttpClient)
     val correlationId = UUID.randomUUID().toString
     val hipHeaders = buildHIPHeaders(correlationId)
 
-    val url = s"${appConfig.hipBaseUrl}/RESTAdapter/cross-regime/taxpayer/financial-data/query"
+    val url = s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query"
     val requestBody : FinancialRequestHIP = FinancialRequestHIPHelper.HIPRequestBody(regime, queryParameters)
     val jsonBody = Json.toJson(requestBody)
 
@@ -54,11 +55,11 @@ class FinancialDataHIPConnector @Inject()(http: HttpClient)
     ).recover {
       case ex: Exception =>
         logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] HIP HTTP exception received: ${ex.getMessage}")
-        Left(TechnicalError("EXCEPTION", ex.getMessage, "no-log-id"))
+        Left(FinancialTransactionsFailureResponse(INTERNAL_SERVER_ERROR))
     }
   }
   private def buildHIPHeaders(correlationId: String): Seq[(String, String)] = Seq(
-    "Authorization" -> s"Basic ${appConfig.hipAuthorisationToken}",
+    "Authorization" -> s"Basic ${appConfig.hipToken}",
     appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
     "correlationid" -> correlationId,
     "X-Originating-System" -> "MDTP",

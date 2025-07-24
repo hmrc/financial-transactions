@@ -16,14 +16,22 @@
 
 package models.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsFailure
-import play.api.libs.json.{Format, Json}
+import base.SpecBase
+import play.api.libs.json.{JsValue, Json}
 
-case class BusinessError(
-                          processingDate: String,
-                          code: String,
-                          text: String) extends FinancialTransactionsFailure
+class BusinessErrorSpec extends SpecBase {
 
-object BusinessError {
-  implicit val format: Format[BusinessError] = Json.format[BusinessError]
+  val model: BusinessError = BusinessError("processingDate", "code", "text")
+  val json: JsValue        = Json.parse("""{"processingDate":"processingDate", "code":"code", "text":"text"}""")
+
+  "BusinessError" should {
+    "be writable to JSON" in {
+      val result = Json.toJson(model)
+      result shouldBe json
+    }
+    "be readable from JSON" in {
+      val result = Json.fromJson(json)(BusinessError.format)
+      result.get shouldBe model
+    }
+  }
 }

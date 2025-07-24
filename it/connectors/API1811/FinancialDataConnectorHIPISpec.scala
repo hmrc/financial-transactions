@@ -16,12 +16,13 @@
 
 package connectors.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
+import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsFailureResponse, FinancialTransactionsHIPResponse}
 import helpers.ComponentSpecBase
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testData.FinancialDataHIP1811.{fullFinancialTransactionsHIP, fullFinancialTransactionsJsonHIP, multipleErrorsHIP, multipleErrorsHIPModel, singleErrorHIP, singleErrorHIPModel}
+import testData.FinancialDataHIP1811.{fullFinancialTransactionsHIP, fullFinancialTransactionsJsonHIP}
 
 class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
 
@@ -37,7 +38,7 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
       s"a $CREATED response is received from financial transactions and the response can be parsed" in {
 
         stubPostRequest(
-          url = s"/RESTAdapter/cross-regime/taxpayer/financial-data/query",
+          url = s"/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query",
           responseStatus = CREATED,
           responseBody = fullFinancialTransactionsJsonHIP.toString()
         )
@@ -49,32 +50,23 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
         result shouldBe Right(expectedResult)
       }
 
-      "return an HIPErrorModel" when {
+      s"a $BAD_REQUEST response is received from financial transactions" in {
 
-        "return a TechnicalError model when a HIP error is returned" in {
-          stubPostRequest(
-            url = s"/RESTAdapter/cross-regime/taxpayer/financial-data/query",
-            responseStatus = BAD_REQUEST,
-            responseBody = singleErrorHIP.toString()
-          )
+        stubPostRequest(
+          url = s"/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query",
+          responseStatus = BAD_REQUEST,
+          Json.obj("code" -> 400,
+            "reason" -> "BAD REQUEST").toString()
+        )
 
-          val result: FinancialTransactionsHIPResponse =
-            await(connector.getFinancialDataHIP(vatRegime, queryParameters))
-          result shouldBe Left(singleErrorHIPModel)
-        }
-      }
+        val expectedResult = Left(FinancialTransactionsFailureResponse(BAD_REQUEST))
 
-        "return a  BusinessError model when a HIP errors is returned" in {
-          stubPostRequest(
-            url = s"/RESTAdapter/cross-regime/taxpayer/financial-data/query",
-            responseStatus = BAD_REQUEST,
-            responseBody = multipleErrorsHIP.toString()
-          )
-
-          val result: FinancialTransactionsHIPResponse =
-            await(connector.getFinancialDataHIP(vatRegime, queryParameters))
-          result shouldBe Left(multipleErrorsHIPModel)
-        }
+        val result: FinancialTransactionsHIPResponse =
+          await(connector.getFinancialDataHIP(vatRegime, queryParameters))
+        result shouldBe expectedResult
       }
     }
+  }
 }
+
+

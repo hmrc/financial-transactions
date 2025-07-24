@@ -23,7 +23,6 @@ import models.API1812.Error
 import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
-
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -48,7 +47,7 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
     val hc = headerCarrier.copy(authorization = None)
     val url = penaltyDetailsUrl(regime)
 
-    logger.debug("[PenaltyDetailsConnector][getPenaltyDetails] - " +
+    logger.info("[PenaltyDetailsConnector][getPenaltyDetails] - " +
       s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
 
     http.GET(url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads, hc, ec).map {

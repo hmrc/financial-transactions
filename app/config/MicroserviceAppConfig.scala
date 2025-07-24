@@ -44,6 +44,14 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
   lazy val eisToken: String = servicesConfig.getString("microservice.services.eis.auth-token")
   lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
 
+  lazy val hipUrl: String = servicesConfig.getString("microservice.services.hip.url")
+  lazy val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
+  lazy val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
+  lazy val hipToken: String = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
+  val hipServiceOriginatorIdKeyV1: String = servicesConfig.getString("microservice.services.hip.originator-id-key")
+  val hipServiceOriginatorIdV1: String    = servicesConfig.getString("microservice.services.hip.originator-id-value")
+
+
   override lazy val staticDateValue: String = servicesConfig.getString("date-service.staticDateValue")
   override lazy val familiarisationPeriodEndDate: LocalDate =
     LocalDate.parse(servicesConfig.getString("date-service.familiarisationPeriodEndDate"))
@@ -51,14 +59,5 @@ class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implic
   override val features = new Features
 
   lazy val enable1811HIPCall: Boolean = features.enable1811HIPCall()
-
-  lazy val hipBaseUrl: String = servicesConfig.getString("microservice.services.hip.url")
-
-  private val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
-  private val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
-  def hipAuthorisationToken: String = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
-
-  val hipServiceOriginatorIdKeyV1: String = servicesConfig.getString("microservice.services.hip.originator-id-key")
-  val hipServiceOriginatorIdV1: String    = servicesConfig.getString("microservice.services.hip.originator-id-value")
 
 }

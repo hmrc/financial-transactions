@@ -146,7 +146,6 @@ object FinancialDataHIP1811 {
     )
   )
 
-  val singleErrorHIPModel: TechnicalError = (singleErrorHIP \ "error").as[TechnicalError]
 
   val multipleErrorsHIP: JsObject = Json.obj(
     "errors" -> Json.arr(
@@ -157,6 +156,4 @@ object FinancialDataHIP1811 {
       )
     )
   )
-  val multipleErrorsHIPModel: BusinessError = (multipleErrorsHIP \ "errors").as[Seq[BusinessError]].head
-
 }

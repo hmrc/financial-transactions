@@ -20,8 +20,8 @@ import play.api.libs.json.{Json, Reads}
 
 import java.time.LocalDate
 
-case class TimeToPay(TTPStartDate: LocalDate,
-                     TTPEndDate: LocalDate)
+case class TimeToPay(TTPStartDate: Option[LocalDate],
+                     TTPEndDate: Option[LocalDate])
 
 object TimeToPay {
   implicit val reads: Reads[TimeToPay] = Json.reads[TimeToPay]
