@@ -32,7 +32,7 @@ case class FinancialRequestQueryParameters(fromDate: Option[LocalDate] = None,
                                            addAccruingInterestDetails: Option[Boolean] = None,
                                            searchType: Option[String] = None,
                                            searchItem: Option[String] = None,
-                                           dateType: Option[String] = None,
+                                           dateType: Option[String] = None
                                           ) {
 
   import FinancialRequestQueryParameters._
