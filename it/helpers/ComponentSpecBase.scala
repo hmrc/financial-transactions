@@ -17,7 +17,7 @@
 package helpers
 
 import binders.{FinancialTransactionsBinders, PenaltyDetailsBinders}
-import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, stubFor}
+import com.github.tomakehurst.wiremock.client.WireMock.{aResponse, get, post, stubFor}
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.MicroserviceAppConfig
 import helpers.servicemocks.AuthStub
@@ -51,7 +51,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.auth.port" -> mockPort,
     "microservice.services.des.url" -> mockUrl,
     "microservice.services.eis.url" -> mockUrl,
-    "microservice.services.hip.url" -> mockUrl
+    "microservice.services.hip.url" -> mockUrl,
+    "microservice.services.hip.port" -> mockPort
   )
 
   def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =
@@ -59,6 +60,13 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
       aResponse()
         .withStatus(returnStatus)
         .withBody(returnBody)
+    ))
+
+  def stubPostRequest(url: String, responseStatus: Int, responseBody: String): StubMapping =
+    stubFor(post(url).willReturn(
+      aResponse()
+        .withStatus(responseStatus)
+        .withBody(responseBody)
     ))
 
   override implicit lazy val app: Application = new GuiceApplicationBuilder()

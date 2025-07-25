@@ -42,6 +42,10 @@ object FinancialTransactions {
     (__ \ "getFinancialData" \ "financialDetails" \ "documentDetails").read[Seq[DocumentDetails]]
       .map(FinancialTransactions.apply)
 
+  val hipReads: Reads[FinancialTransactions] =
+    (JsPath \ "documentDetails").read[Seq[DocumentDetails]]
+      .map(FinancialTransactions.apply)
+
   implicit def writes(implicit appConfig: AppConfig, request: Request[_]): Writes[FinancialTransactions] = Writes { model =>
     Json.obj(
       "financialTransactions" -> Json.toJsFieldJsValueWrapper(model.documentDetails),

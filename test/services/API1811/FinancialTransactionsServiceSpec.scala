@@ -17,21 +17,31 @@
 package services.API1811
 
 import base.SpecBase
-import mocks.connectors.Mock1811FinancialDataConnector
+import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
 import models.API1811.{Error, FinancialTransactions}
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
+import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.API1811.TestConstants.{fullDocumentDetails, fullFinancialTransactions, lineItemDetailsFull}
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
-class FinancialTransactionsServiceSpec extends SpecBase with Mock1811FinancialDataConnector {
+class FinancialTransactionsServiceSpec extends SpecBase  {
 
   implicit val request: FakeRequest[_] = fakeRequest
+  val mockFinancialDataConnector: FinancialDataConnector = mock(classOf[FinancialDataConnector])
+  val mockFinancialDataHIPConnector: FinancialDataHIPConnector = mock(classOf[FinancialDataHIPConnector])
 
-  object Service extends FinancialTransactionsService(mockFinancialDataConnector, ec)
+  object Service extends FinancialTransactionsService(mockFinancialDataConnector,mockFinancialDataHIPConnector, ec)
+  def setupMockGetFinancialData(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)
+                               (response: Either[Error, FinancialTransactions]): Unit = {
+    when(mockFinancialDataConnector.getFinancialData(regime, queryParams))
+      .thenReturn(Future.successful(response))
+
+  }
 
   "The FinancialTransactionsService.getFinancialTransactions method" when {
 
