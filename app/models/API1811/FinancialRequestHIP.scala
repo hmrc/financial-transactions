@@ -29,12 +29,12 @@ case class FinancialRequestHIP(
 case class TaxpayerInformation(idType: String, idNumber: String)
 case class TargetedSearch(searchType: String, searchItem: String)
 case class SelectionCriteria(
-                              dateRange: DateRange,
+                              dateRange: Option[DateRange],
                               includeClearedItems: Boolean,
                               includeStatisticalItems: Boolean,
                               includePaymentOnAccount: Boolean
                             )
-case class DateRange(dateFrom: String, dateTo: String)
+case class DateRange(dateType: String, dateFrom: String, dateTo: String)
 case class DataEnrichment(
                            addRegimeTotalisation: Boolean,
                            addLockInformation: Boolean,

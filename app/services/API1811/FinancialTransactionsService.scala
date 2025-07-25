@@ -37,10 +37,10 @@ class FinancialTransactionsService @Inject()(val connector: FinancialDataConnect
                               )(implicit headerCarrier: HeaderCarrier, appConfig: MicroserviceAppConfig, request: Request[_]): Future[FinancialTransactionsResponse] = {
 
     if (appConfig.features.enable1811HIPCall()) {
-      logger.debug("[FinancialTransactionsService][getFinancialTransactions] - HIP Call enabled, calling FinancialDataHIPConnector")
+      logger.info("[FinancialTransactionsService][getFinancialTransactions] - HIP Call enabled, calling FinancialDataHIPConnector")
       hipConnector.getFinancialDataHIP(regime, queryParameters).map {
         case Right(financialTransactionsHIP) =>
-          logger.debug("[FinancialTransactionsService][getFinancialTransactions] - Successfully retrieved HIP financial transactions.")
+          logger.info("[FinancialTransactionsService][getFinancialTransactions] - Successfully retrieved HIP financial transactions.")
           val mappedToIf = FinancialTransactions(
             documentDetails = financialTransactionsHIP.financialData.documentDetails
           )

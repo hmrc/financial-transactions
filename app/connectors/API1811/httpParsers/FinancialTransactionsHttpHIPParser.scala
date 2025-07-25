@@ -58,10 +58,10 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
       logger.info(s"[FinancialTransactionsHIPReads][read] Success 201 response returned from API#5327")
       json.validate[FinancialTransactionsHIP] match {
         case JsSuccess(valid, _) =>
-          logger.debug(s"[HIP Parser] Parsed FinancialTransactionsHIP: $valid")
+          logger.info(s"[FinancialTransactionsHIPReads][read] FinancialTransactions successfully validated from success response")
           Right(valid)
         case JsError(errors) =>
-          logger.debug(s"[FinancialTransactionsHIPParser][FinancialTransactionsHIPReads][read] Unable to validate HIP response with CREATED status: $errors")
+          logger.error(s"[FinancialTransactionsHIPReads][read] Json validation of 201 body failed with errors: $errors")
           Left(FinancialTransactionsMalformed)
       }
     }

@@ -35,13 +35,14 @@ object FinancialRequestHIPHelper {
         searchItem = sItem
       ),
       selectionCriteria = for {
+        dateType <- queryParams.dateType
         from <- queryParams.fromDate.map(_.toString)
         to <- queryParams.toDate.map(_.toString)
         clearedItems <- queryParams.includeClearedItems
         statisticalItems <- queryParams.includeStatisticalItems
         paymentonAccount <- queryParams.includePaymentOnAccount
       } yield SelectionCriteria(
-        dateRange = DateRange(dateFrom = from, dateTo = to),
+        dateRange = Some(DateRange(dateType, dateFrom = from, dateTo = to)),
         includeClearedItems = clearedItems,
         includeStatisticalItems = statisticalItems,
         includePaymentOnAccount = paymentonAccount
