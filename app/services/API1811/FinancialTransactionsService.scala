@@ -18,9 +18,10 @@ package services.API1811
 
 import com.google.inject.Inject
 import config.MicroserviceAppConfig
-import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
+import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsNoContent
 import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import models.API1811.{BusinessError, Error, FinancialTransactions, HipWrappedError, TechnicalError}
+import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
+import models.API1811.{BusinessError, Error, FinancialTransactions, TechnicalError}
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status
 import play.api.mvc.Request
@@ -41,10 +42,13 @@ class FinancialTransactionsService @Inject()(val connector: FinancialDataConnect
       hipConnector.getFinancialDataHIP(regime, queryParameters).map {
         case Right(financialTransactionsHIP) =>
           logger.info("[FinancialTransactionsService][getFinancialTransactions] - Successfully retrieved HIP financial transactions.")
-          val mappedToIf = FinancialTransactions(
-            documentDetails = financialTransactionsHIP.financialData.documentDetails
-          )
+          val filteredDocumentDetails = ChargeTypes.removeInvalidCharges(financialTransactionsHIP.financialData.documentDetails)
+          val mappedToIf = FinancialTransactions(documentDetails = filteredDocumentDetails)
           Right(mappedToIf)
+
+        case Left(FinancialTransactionsNoContent) =>
+          logger.warn(s"[FinancialTransactionsService] 404 - Financial data not found for ${regime.idType} ${regime.id}")
+          Left(Error(Status.NOT_FOUND, s"${Status.NOT_FOUND}: Financial data not found for ${regime.idType} ${regime.id}"))
 
         case Left(businessError: BusinessError) =>
           logger.warn(s"[FinancialTransactionsService] HIP returned BusinessError: ${businessError.code} - ${businessError.text}")

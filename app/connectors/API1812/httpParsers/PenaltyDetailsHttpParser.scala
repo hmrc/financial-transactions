@@ -20,7 +20,6 @@ import models.API1812.{Error, PenaltyDetails}
 import play.api.http.Status.{BAD_REQUEST, NOT_FOUND, OK}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil
-import models.API1812.{Error, PenaltyDetails}
 
 object PenaltyDetailsHttpParser extends LoggerUtil {
 

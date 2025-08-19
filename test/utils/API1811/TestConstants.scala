@@ -16,7 +16,7 @@
 
 package utils.API1811
 
-import models.API1811.{DocumentDetails, DocumentPenaltyTotals, FinancialTransactions, LineItemDetails, LineItemLockDetails}
+import models.API1811.{DocumentDetails, DocumentPenaltyTotals, FinancialTransactions, FinancialTransactionsHIP, LineItemDetails, LineItemLockDetails}
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate
@@ -184,9 +184,8 @@ object TestConstants {
   val fullFinancialTransactionsJsonEIS: JsObject = fullFTJson(fullDocumentDetailsJson)
   val filteredFinancialJson: JsObject = fullFTJson(fullDocumentDetailsJsonBadCharge)
 
-  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(
-    documentDetails = Seq(fullDocumentDetails)
-  )
+  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(documentDetails = Seq(fullDocumentDetails))
+  val fullFinancialTransactionsHIP: FinancialTransactionsHIP = FinancialTransactionsHIP("processingDate", fullFinancialTransactions)
 
   val fullLineItemDetailsOutputJson: JsObject = Json.obj(
     "dueDate" -> "2018-02-14",

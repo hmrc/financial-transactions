@@ -18,11 +18,12 @@ package connectors.API1812
 
 import config.MicroserviceAppConfig
 import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.{HIPPenaltyDetailsReads, HIPPenaltyDetailsResponse}
-import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import models.API1812.Error
-import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND}
+import models.{PenaltyDetailsQueryParameters, TaxRegime}
+import play.api.http.Status.BAD_GATEWAY
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
+
 import java.time.{LocalDateTime, ZoneOffset}
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
