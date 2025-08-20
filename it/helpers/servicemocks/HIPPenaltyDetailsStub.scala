@@ -44,7 +44,7 @@ object HIPPenaltyDetailsStub {
   def stubGetPenaltyDetailsWithHeaderValidation(regime: TaxRegime, queryParams: PenaltyDetailsQueryParameters)
                                               (status: Int, response: JsValue): StubMapping = {
     stubFor(get(urlEqualTo(penaltyDetailsUrl(regime, queryParams)))
-      .withHeader("Authorization", matching("Bearer .*"))
+      .withHeader("Authorization", matching("Basic .*"))
       .withHeader("correlationid", matching("^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"))
       .withHeader("X-Originating-System", matching(".*"))
       .withHeader("X-Receipt-Date", matching("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"))

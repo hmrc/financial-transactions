@@ -42,7 +42,7 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
     val receiptDate = LocalDateTime.now(ZoneOffset.UTC).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
     val hipHeaders = Seq(
-      "Authorization" -> s"Bearer ${appConfig.hipToken}",
+      "Authorization" -> s"Basic ${appConfig.hipToken}",
       "correlationid" -> correlationID,
       "X-Originating-System" -> "MDTP",
       "X-Receipt-Date" -> receiptDate,
