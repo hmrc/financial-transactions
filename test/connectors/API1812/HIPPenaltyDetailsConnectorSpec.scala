@@ -66,7 +66,7 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
       val capturedHeaders = headerCaptor.getValue
       val capturedQueryParams = queryParamCaptor.getValue
 
-      capturedHeaders should contain("Authorization" -> s"Bearer ${mockAppConfig.hipToken}")
+      capturedHeaders should contain("Authorization" -> s"Basic ${mockAppConfig.hipToken}")
       capturedHeaders.exists(_._1 == "correlationid") shouldBe true
       capturedHeaders should contain("X-Originating-System" -> "MDTP")
       capturedHeaders should contain("X-Transmitting-System" -> "HIP")
