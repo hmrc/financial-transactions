@@ -18,9 +18,8 @@ package models.API1812.latePaymentPenalty
 
 import config.AppConfig
 import models.API1812.TimeToPay
-import play.api.libs.json.{JsNull, JsObject, Json, Reads, Writes}
+import play.api.libs.json._
 import services.DateService
-import models.API1812.latePaymentPenalty.LPPPenaltyCategoryEnum
 
 case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyCategory: LPPPenaltyCategoryEnum.Value,
@@ -35,10 +34,11 @@ case class LatePaymentPenalty(principalChargeReference: String,
                               penaltyChargeReference: Option[String],
                               timeToPay: Option[Seq[TimeToPay]]) {
 
-  def hasTimeToPay(implicit appConfig: AppConfig): Boolean = {
-    timeToPay.fold(false)(_.exists(ttp => ttp.TTPStartDate.exists(!_.isAfter(DateService.now))
-      && ttp.TTPEndDate.exists(!_.isBefore(DateService.now))))
-  }
+  def hasTimeToPay(implicit appConfig: AppConfig): Boolean =
+    timeToPay.fold(false)(
+      _.exists(ttp =>
+        ttp.TTPStartDate.exists(!_.isAfter(DateService.now))
+          && ttp.TTPEndDate.exists(!_.isBefore(DateService.now))))
 }
 
 object LatePaymentPenalty {
@@ -46,19 +46,85 @@ object LatePaymentPenalty {
   implicit val reads: Reads[LatePaymentPenalty] = Json.reads[LatePaymentPenalty]
 
   implicit def writes(implicit appConfig: AppConfig): Writes[LatePaymentPenalty] = { model =>
-    JsObject(Json.obj(
-      "principalChargeReference" -> model.principalChargeReference,
-      "penaltyCategory" -> model.penaltyCategory,
-      "LPP1LRCalculationAmount" -> model.LPP1LRCalculationAmount,
-      "LPP1LRDays" -> model.LPP1LRDays,
-      "LPP1LRPercentage" -> model.LPP1LRPercentage,
-      "LPP1HRCalculationAmount" -> model.LPP1HRCalculationAmount,
-      "LPP1HRDays" -> model.LPP1HRDays,
-      "LPP1HRPercentage" -> model.LPP1HRPercentage,
-      "LPP2Days" -> model.LPP2Days,
-      "LPP2Percentage" -> model.LPP2Percentage,
-      "penaltyChargeReference" -> model.penaltyChargeReference,
-      "timeToPay" -> model.hasTimeToPay
-    ).fields.filterNot(_._2 == JsNull))
+    JsObject(
+      Json
+        .obj(
+          "principalChargeReference" -> model.principalChargeReference,
+          "penaltyCategory"          -> model.penaltyCategory,
+          "LPP1LRCalculationAmount"  -> model.LPP1LRCalculationAmount,
+          "LPP1LRDays"               -> model.LPP1LRDays,
+          "LPP1LRPercentage"         -> model.LPP1LRPercentage,
+          "LPP1HRCalculationAmount"  -> model.LPP1HRCalculationAmount,
+          "LPP1HRDays"               -> model.LPP1HRDays,
+          "LPP1HRPercentage"         -> model.LPP1HRPercentage,
+          "LPP2Days"                 -> model.LPP2Days,
+          "LPP2Percentage"           -> model.LPP2Percentage,
+          "penaltyChargeReference"   -> model.penaltyChargeReference,
+          "timeToPay"                -> model.hasTimeToPay
+        )
+        .fields
+        .filterNot(_._2 == JsNull))
   }
+}
+
+case class HipLatePaymentPenalty(principalChargeReference: String,
+                                 penaltyCategory: LPPPenaltyCategoryEnum.Value,
+                                 lpp1LRCalculationAmt: Option[BigDecimal],
+                                 lpp1LRDays: Option[String],
+                                 lpp1LRPercentage: Option[Double],
+                                 lpp1HRCalculationAmount: Option[BigDecimal],
+                                 lpp1HRDays: Option[String],
+                                 lpp1HRPercentage: Option[Double],
+                                 lpp2Days: Option[String],
+                                 lpp2Percentage: Option[Double],
+                                 penaltyChargeReference: Option[String],
+                                 timeToPay: Option[Seq[TimeToPay]]) {
+
+  def hasTimeToPay(implicit appConfig: AppConfig): Boolean =
+    timeToPay.fold(false)(
+      _.exists(ttp =>
+        ttp.TTPStartDate.exists(!_.isAfter(DateService.now))
+          && ttp.TTPEndDate.exists(!_.isBefore(DateService.now))))
+
+  val toLatePaymentPenalty: LatePaymentPenalty = LatePaymentPenalty(
+    principalChargeReference,
+    penaltyCategory,
+    lpp1LRCalculationAmt,
+    lpp1LRDays,
+    lpp1LRPercentage,
+    lpp1HRCalculationAmount,
+    lpp1HRDays,
+    lpp1HRPercentage,
+    lpp2Days,
+    lpp2Percentage,
+    penaltyChargeReference,
+    timeToPay
+  )
+}
+
+object HipLatePaymentPenalty {
+
+  implicit val reads: Reads[HipLatePaymentPenalty] = Json.reads[HipLatePaymentPenalty]
+
+  implicit def writes(implicit appConfig: AppConfig): Writes[HipLatePaymentPenalty] = { model =>
+    JsObject(
+      Json
+        .obj(
+          "principalChargeReference" -> model.principalChargeReference,
+          "penaltyCategory"          -> model.penaltyCategory,
+          "LPP1LRCalculationAmount"  -> model.lpp1HRCalculationAmount,
+          "LPP1LRDays"               -> model.lpp1LRDays,
+          "LPP1LRPercentage"         -> model.lpp1LRPercentage,
+          "LPP1HRCalculationAmount"  -> model.lpp1HRCalculationAmount,
+          "LPP1HRDays"               -> model.lpp1HRDays,
+          "LPP1HRPercentage"         -> model.lpp1HRPercentage,
+          "LPP2Days"                 -> model.lpp2Days,
+          "LPP2Percentage"           -> model.lpp2Percentage,
+          "penaltyChargeReference"   -> model.penaltyChargeReference,
+          "timeToPay"                -> model.hasTimeToPay
+        )
+        .fields
+        .filterNot(_._2 == JsNull))
+  }
+
 }

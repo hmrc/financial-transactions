@@ -16,10 +16,11 @@
 
 package utils
 
-import java.time.LocalDate
-import play.api.libs.json.{JsObject, JsValue, Json}
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
-import models.API1812.{PenaltyDetails, BreathingSpace, TimeToPay}
+import models.API1812.{BreathingSpace, PenaltyDetails, TimeToPay}
+import play.api.libs.json.{JsObject, JsValue, Json}
+
+import java.time.LocalDate
 
 object TestConstantsAPI1812 {
 
@@ -47,6 +48,20 @@ object TestConstantsAPI1812 {
     "LPP1HRPercentage" -> 4.2,
     "LPP2Days" -> "31",
     "LPP2Percentage" -> 5.5,
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> Json.arr(timeToPayJson)
+  )
+  val hipLppJsonMax: JsObject = Json.obj(
+    "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
+    "penaltyCategory" -> "LPP1",
+    "lpp1LRCalculationAmt" -> 100.11,
+    "lpp1LRDays" -> "15",
+    "lpp1LRPercentage" -> 2.4,
+    "lpp1HRCalculationAmount" -> 200.22,
+    "lpp1HRDays" -> "30",
+    "lpp1HRPercentage" -> 4.2,
+    "lpp2Days" -> "31",
+    "lpp2Percentage" -> 5.5,
     "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
     "timeToPay" -> Json.arr(timeToPayJson)
   )
