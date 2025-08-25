@@ -16,7 +16,7 @@
 
 package utils
 
-import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
+import models.API1812.latePaymentPenalty.{HipLatePaymentPenalty, LPPPenaltyCategoryEnum, LatePaymentPenalty}
 import models.API1812.{BreathingSpace, PenaltyDetails, TimeToPay}
 import play.api.libs.json.{JsObject, JsValue, Json}
 
@@ -57,7 +57,7 @@ object TestConstantsAPI1812 {
     "lpp1LRCalculationAmt" -> 100.11,
     "lpp1LRDays" -> "15",
     "lpp1LRPercentage" -> 2.4,
-    "lpp1HRCalculationAmount" -> 200.22,
+    "lpp1HRCalculationAmt" -> 200.22,
     "lpp1HRDays" -> "30",
     "lpp1HRPercentage" -> 4.2,
     "lpp2Days" -> "31",
@@ -106,8 +106,36 @@ object TestConstantsAPI1812 {
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
     Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))))
   )
+  val hipLppModelMax: HipLatePaymentPenalty = HipLatePaymentPenalty(
+    principalChargeReference = "ABCDEFGHIJKLMNOP",
+    penaltyCategory = LPPPenaltyCategoryEnum.firstPenalty,
+    Some(100.11),
+    Some("15"),
+    Some(2.4),
+    Some(200.22),
+    Some("30"),
+    Some(4.2),
+    Some("31"),
+    Some(5.5),
+    penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
+    Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))))
+  )
 
   val LPPModelMin: LatePaymentPenalty = LatePaymentPenalty(
+    principalChargeReference = "ABCDEFGHIJKLMNOP",
+    penaltyCategory = LPPPenaltyCategoryEnum.firstPenalty,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None,
+    None
+  )
+  val hipLppModelMin: HipLatePaymentPenalty = HipLatePaymentPenalty(
     principalChargeReference = "ABCDEFGHIJKLMNOP",
     penaltyCategory = LPPPenaltyCategoryEnum.firstPenalty,
     None,

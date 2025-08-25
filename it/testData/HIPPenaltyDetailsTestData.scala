@@ -54,7 +54,7 @@ object HIPPenaltyDetailsTestData {
     "lpp1LRCalculationAmt" -> 100.11,
     "lpp1LRDays" -> "15",
     "lpp1LRPercentage" -> 2.4,
-    "lpp1HRCalculationAmount" -> 200.22,
+    "lpp1HRCalculationAmt" -> 200.22,
     "lpp1HRDays" -> "30",
     "lpp1HRPercentage" -> 4.2,
     "lpp2Days" -> "31",
