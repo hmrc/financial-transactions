@@ -17,10 +17,9 @@
 package models.API1812
 
 import base.SpecBase
-import utils.TestConstantsAPI1812.{timeToPayJson, timeToPayJsonOptionalEndDate, timeToPayJsonOptionalStartDate}
+import utils.TestConstantsAPI1812._
 
 import java.time.LocalDate
-
 
 class TimeToPaySpec extends SpecBase {
 
@@ -34,6 +33,20 @@ class TimeToPaySpec extends SpecBase {
     }
     "parse from JSON correctly in optional StartDate" in {
       timeToPayJsonOptionalStartDate.as[TimeToPay] shouldBe TimeToPay(None, Some(LocalDate.parse("2018-08-31")))
+    }
+
+  }
+
+  "HipTimeToPay" should {
+
+    "parse from JSON correctly" in {
+      hipTimeToPayJson.as[HipTimeToPay] shouldBe HipTimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))
+    }
+    "parse from JSON correctly in optional EndDate" in {
+      hipTimeToPayJsonOptionalEndDate.as[HipTimeToPay] shouldBe HipTimeToPay(Some(LocalDate.parse("2018-04-05")), None)
+    }
+    "parse from JSON correctly in optional StartDate" in {
+      hipTimeToPayJsonOptionalStartDate.as[HipTimeToPay] shouldBe HipTimeToPay(None, Some(LocalDate.parse("2018-08-31")))
     }
 
   }

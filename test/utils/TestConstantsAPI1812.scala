@@ -17,7 +17,7 @@
 package utils
 
 import models.API1812.latePaymentPenalty.{HipLatePaymentPenalty, LPPPenaltyCategoryEnum, LatePaymentPenalty}
-import models.API1812.{BreathingSpace, PenaltyDetails, TimeToPay}
+import models.API1812.{BreathingSpace, HipTimeToPay, PenaltyDetails, TimeToPay}
 import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
@@ -28,13 +28,23 @@ object TestConstantsAPI1812 {
     "TTPStartDate" -> "2018-04-05",
     "TTPEndDate" -> "2018-08-31"
   )
+  val hipTimeToPayJson: JsObject = Json.obj(
+    "ttpStartDate" -> "2018-04-05",
+    "ttpEndDate" -> "2018-08-31"
+  )
 
   val timeToPayJsonOptionalEndDate: JsObject = Json.obj(
     "TTPStartDate" -> "2018-04-05"
   )
+  val hipTimeToPayJsonOptionalEndDate: JsObject = Json.obj(
+    "ttpStartDate" -> "2018-04-05"
+  )
 
   val timeToPayJsonOptionalStartDate: JsObject = Json.obj(
     "TTPEndDate" -> "2018-08-31"
+  )
+  val hipTimeToPayJsonOptionalStartDate: JsObject = Json.obj(
+    "ttpEndDate" -> "2018-08-31"
   )
 
   val LPPJsonMax: JsObject = Json.obj(
@@ -63,7 +73,7 @@ object TestConstantsAPI1812 {
     "lpp2Days" -> "31",
     "lpp2Percentage" -> 5.5,
     "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
-    "timeToPay" -> Json.arr(timeToPayJson)
+    "timeToPay" -> Json.arr(hipTimeToPayJson)
   )
 
   val LPPJsonMaxWritten: JsObject = Json.obj(
@@ -118,7 +128,7 @@ object TestConstantsAPI1812 {
     Some("31"),
     Some(5.5),
     penaltyChargeReference = Some("BCDEFGHIJKLMNOPQ"),
-    Some(Seq(TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))))
+    Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-08-31")))))
   )
 
   val LPPModelMin: LatePaymentPenalty = LatePaymentPenalty(
@@ -183,6 +193,23 @@ object TestConstantsAPI1812 {
     TimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-07-07"))),
     TimeToPay(Some(LocalDate.parse("2018-09-05")), Some(LocalDate.parse("2018-11-07")))
   ))
+
+  val outOfTtpHip        : Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-01-07")), Some(LocalDate.parse("2018-02-07")))))
+  val inTtpHip           : Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-04-07")), Some(LocalDate.parse("2018-07-07")))))
+  val firstDayTtpHip     : Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-05-01")), Some(LocalDate.parse("2018-07-01")))))
+  val lastDayTtpHip      : Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-03-16")), Some(LocalDate.parse("2018-05-01")))))
+  val TtpHipEndYesterday : Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-03-07")), Some(LocalDate.parse("2018-04-30")))))
+  val TtpHipBeginTomorrow: Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-05-02")), Some(LocalDate.parse("2018-07-04")))))
+  val futureTtpHip       : Option[Seq[HipTimeToPay]] = Some(Seq(HipTimeToPay(Some(LocalDate.parse("2018-06-18")), Some(LocalDate.parse("2018-09-05")))))
+  val betweenTtpsHip     : Option[Seq[HipTimeToPay]] = Some(Seq(
+      HipTimeToPay(Some(LocalDate.parse("2018-01-07")), Some(LocalDate.parse("2018-02-07"))),
+      HipTimeToPay(Some(LocalDate.parse("2018-06-18")), Some(LocalDate.parse("2018-08-07")))
+  ))
+  val firstOfTwoTtpsHip  : Option[Seq[HipTimeToPay]] = Some(Seq(
+    HipTimeToPay(Some(LocalDate.parse("2018-04-05")), Some(LocalDate.parse("2018-07-07"))),
+    HipTimeToPay(Some(LocalDate.parse("2018-09-05")), Some(LocalDate.parse("2018-11-07")))
+  ))
+
   val penaltyDetailsModelMax: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMax)), Some(Seq(outOfBS)))
   val penaltyDetailsModelMinNoBS: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), None)
   val penaltyDetailsModelMin: PenaltyDetails = PenaltyDetails(Some(Seq(LPPModelMin)), Some(Seq(outOfBS)))

@@ -1,0 +1,115 @@
+{
+  "success": {
+    "processingDate": "2025-08-19T10:30:08Z",
+    "penaltyData": {
+      "lsp": {
+        "lspSummary": {
+          "activePenaltyPoints": 2,
+          "inactivePenaltyPoints": 2,
+          "pocAchievementDate": "2024-02-29",
+          "regimeThreshold": 5,
+          "penaltyChargeAmount": 0
+        },
+        "lspDetails": [
+          {
+            "penaltyNumber": "004000000628",
+            "penaltyOrder": "01",
+            "penaltyCategory": "P",
+            "penaltyStatus": "ACTIVE",
+            "penaltyCreationDate": "2023-07-15",
+            "triggeringProcess": "ICRU",
+            "penaltyExpiryDate": "2025-07-31",
+            "lateSubmissions": [
+              {
+                "lateSubmissionID": "001",
+                "taxPeriod": "23AE",
+                "taxReturnStatus": "Fulfilled",
+                "taxPeriodStartDate": "2023-05-01",
+                "taxPeriodEndDate": "2023-05-31",
+                "taxPeriodDueDate": "2023-07-07",
+                "returnReceiptDate": "2023-07-15"
+              }
+            ],
+            "appealInformation": [
+              {
+                "appealStatus": "A",
+                "appealLevel": "01",
+                "appealDescription": "Review (Statutory)"
+              }
+            ]
+          },
+          {
+            "penaltyNumber": "003000000650",
+            "penaltyOrder": "02",
+            "penaltyCategory": "P",
+            "penaltyStatus": "ACTIVE",
+            "penaltyCreationDate": "2023-08-15",
+            "triggeringProcess": "ICRU",
+            "penaltyExpiryDate": "2025-08-31",
+            "lateSubmissions": [
+              {
+                "lateSubmissionID": "001",
+                "taxPeriod": "23AF",
+                "taxReturnStatus": "Fulfilled",
+                "taxPeriodStartDate": "2023-06-01",
+                "taxPeriodEndDate": "2023-06-30",
+                "taxPeriodDueDate": "2023-08-07",
+                "returnReceiptDate": "2023-08-15"
+              }
+            ],
+            "appealInformation": [
+              {
+                "appealStatus": "C",
+                "appealLevel": "01",
+                "appealDescription": "Review (Statutory)"
+              }
+            ]
+          },
+          {
+            "penaltyNumber": "001000000585",
+            "penaltyStatus": "INACTIVE",
+            "penaltyCreationDate": "2023-06-15",
+            "triggeringProcess": "ICRU",
+            "penaltyExpiryDate": "2025-06-30",
+            "lateSubmissions": [
+              {
+                "lateSubmissionID": "001",
+                "taxPeriod": "23AD",
+                "taxReturnStatus": "Fulfilled",
+                "taxPeriodStartDate": "2023-04-01",
+                "taxPeriodEndDate": "2023-04-30",
+                "taxPeriodDueDate": "2023-06-07",
+                "returnReceiptDate": "2023-06-15"
+              }
+            ],
+            "appealInformation": [
+              {
+                "appealStatus": "C",
+                "appealLevel": "01",
+                "appealDescription": "Review (Statutory)"
+              }
+            ]
+          },
+          {
+            "penaltyNumber": "003000000649",
+            "penaltyStatus": "INACTIVE",
+            "penaltyCreationDate": "2023-04-15",
+            "triggeringProcess": "ICRU",
+            "penaltyExpiryDate": "2025-04-30",
+            "lateSubmissions": [
+              {
+                "lateSubmissionID": "001",
+                "taxPeriod": "23AB",
+                "taxReturnStatus": "Fulfilled",
+                "taxPeriodStartDate": "2023-02-01",
+                "taxPeriodEndDate": "2023-02-28",
+                "taxPeriodDueDate": "2023-04-07",
+                "returnReceiptDate": "2023-04-15"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

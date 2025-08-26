@@ -17,7 +17,7 @@
 package models.API1812.latePaymentPenalty
 
 import config.AppConfig
-import models.API1812.TimeToPay
+import models.API1812.{HipTimeToPay, TimeToPay}
 import play.api.libs.json._
 import services.DateService
 
@@ -78,13 +78,13 @@ case class HipLatePaymentPenalty(principalChargeReference: String,
                                  lpp2Days: Option[String],
                                  lpp2Percentage: Option[Double],
                                  penaltyChargeReference: Option[String],
-                                 timeToPay: Option[Seq[TimeToPay]]) {
+                                 timeToPay: Option[Seq[HipTimeToPay]]) {
 
   def hasTimeToPay(implicit appConfig: AppConfig): Boolean =
     timeToPay.fold(false)(
       _.exists(ttp =>
-        ttp.TTPStartDate.exists(!_.isAfter(DateService.now))
-          && ttp.TTPEndDate.exists(!_.isBefore(DateService.now))))
+        ttp.ttpStartDate.exists(!_.isAfter(DateService.now))
+          && ttp.ttpEndDate.exists(!_.isBefore(DateService.now))))
 
   val toLatePaymentPenalty: LatePaymentPenalty = LatePaymentPenalty(
     principalChargeReference,
@@ -98,7 +98,7 @@ case class HipLatePaymentPenalty(principalChargeReference: String,
     lpp2Days,
     lpp2Percentage,
     penaltyChargeReference,
-    timeToPay
+    timeToPay.map(_.map(ttp => TimeToPay(ttp.ttpStartDate, ttp.ttpEndDate)))
   )
 }
 
