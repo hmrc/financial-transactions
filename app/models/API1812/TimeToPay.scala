@@ -26,3 +26,10 @@ case class TimeToPay(TTPStartDate: Option[LocalDate],
 object TimeToPay {
   implicit val reads: Reads[TimeToPay] = Json.reads[TimeToPay]
 }
+
+case class HipTimeToPay(ttpStartDate: Option[LocalDate],
+                        ttpEndDate: Option[LocalDate])
+
+object HipTimeToPay {
+  implicit val reads: Reads[HipTimeToPay] = Json.reads[HipTimeToPay]
+}

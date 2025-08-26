@@ -18,16 +18,15 @@ package connectors.API1812
 
 import base.SpecBase
 import mocks.MockHttp
+import models.API1812.{Error, PenaltyDetails}
 import models.{PenaltyDetailsQueryParameters, VatRegime}
-import models.API1812.Error
-import play.api.http.Status._
-import play.api.libs.json.Json
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, RequestTimeoutException}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{verify, when}
-import org.mockito.ArgumentCaptor
+import play.api.http.Status._
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, RequestTimeoutException}
+
 import scala.concurrent.Future
 
 class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
@@ -37,15 +36,15 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
   val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
   val queryParamsWithDateLimit: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some("12"))
 
-  val testPenaltyDetails = models.API1812.PenaltyDetails(LPPDetails = None, breathingSpace = None)
-  val testSuccessResponse = Right(testPenaltyDetails)
-  val testHttpResponse = HttpResponse(OK, "{}")
-  val testErrorResponse = Left(Error(INTERNAL_SERVER_ERROR, "Test error"))
+  val testPenaltyDetails: PenaltyDetails = models.API1812.PenaltyDetails(LPPDetails = None, breathingSpace = None)
+  val testSuccessResponse: Right[Nothing, PenaltyDetails] = Right(testPenaltyDetails)
+  val testHttpResponse: HttpResponse = HttpResponse(OK, "{}")
+  val testErrorResponse: Left[Error, Nothing] = Left(Error(INTERNAL_SERVER_ERROR, "Test error"))
 
   "The HIPPenaltyDetailsConnector" should {
 
     "construct the correct URL" in {
-      connector.penaltyDetailsUrl shouldBe s"${mockAppConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
+      connector.penaltyDetailsUrl() shouldBe s"${mockAppConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
     }
 
     "make a successful call with correct headers and query parameters" in {

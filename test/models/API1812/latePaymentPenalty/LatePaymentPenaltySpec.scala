@@ -127,19 +127,19 @@ class LatePaymentPenaltySpec extends SpecBase {
     "return true" when {
 
       "user is well within time to pay" in {
-        hipLppModelMin.copy(timeToPay = inTTP).hasTimeToPay shouldBe true
+        hipLppModelMin.copy(timeToPay = inTtpHip).hasTimeToPay shouldBe true
       }
 
       "user is on the first day of time to pay" in {
-        hipLppModelMin.copy(timeToPay = firstDayTTP).hasTimeToPay shouldBe true
+        hipLppModelMin.copy(timeToPay = firstDayTtpHip).hasTimeToPay shouldBe true
       }
 
       "user is on the last day of time to pay" in {
-        hipLppModelMin.copy(timeToPay = lastDayTTP).hasTimeToPay shouldBe true
+        hipLppModelMin.copy(timeToPay = lastDayTtpHip).hasTimeToPay shouldBe true
       }
 
       "user is in the first of 2 time to pay periods" in {
-        hipLppModelMin.copy(timeToPay = firstOfTwoTTPS).hasTimeToPay shouldBe true
+        hipLppModelMin.copy(timeToPay = firstOfTwoTtpsHip).hasTimeToPay shouldBe true
       }
 
     }
@@ -147,19 +147,19 @@ class LatePaymentPenaltySpec extends SpecBase {
     "return false" when {
 
       "user's time to pay ended yesterday" in {
-        hipLppModelMin.copy(timeToPay = TTPEndYesterday).hasTimeToPay shouldBe false
+        hipLppModelMin.copy(timeToPay = TtpHipEndYesterday).hasTimeToPay shouldBe false
       }
 
       "user's time to pay will begin tomorrow" in {
-        hipLppModelMin.copy(timeToPay = TTPBeginTomorrow).hasTimeToPay shouldBe false
+        hipLppModelMin.copy(timeToPay = TtpHipBeginTomorrow).hasTimeToPay shouldBe false
       }
 
       "user has been out of time to pay for some time" in {
-        hipLppModelMin.copy(timeToPay = outOfTTP).hasTimeToPay shouldBe false
+        hipLppModelMin.copy(timeToPay = outOfTtpHip).hasTimeToPay shouldBe false
       }
 
       "user is due to go into time to pay in the future" in {
-        hipLppModelMin.copy(timeToPay = futureTTP).hasTimeToPay shouldBe false
+        hipLppModelMin.copy(timeToPay = futureTtpHip).hasTimeToPay shouldBe false
       }
 
       "user has no time to pay data" in {
@@ -167,7 +167,7 @@ class LatePaymentPenaltySpec extends SpecBase {
       }
 
       "user is between 2 time to pay periods" in {
-        hipLppModelMin.copy(timeToPay = betweenTTPS).hasTimeToPay shouldBe false
+        hipLppModelMin.copy(timeToPay = betweenTtpsHip).hasTimeToPay shouldBe false
       }
     }
   }
