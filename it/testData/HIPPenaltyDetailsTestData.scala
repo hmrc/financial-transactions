@@ -16,12 +16,12 @@
 
 package testData
 
-import java.time.LocalDate
-
-import models.API1812.{BreathingSpace, Error, PenaltyDetails, TimeToPay}
 import models.API1812.latePaymentPenalty.{LPPPenaltyCategoryEnum, LatePaymentPenalty}
-import play.api.libs.json.{JsObject, Json}
+import models.API1812.{BreathingSpace, Error, PenaltyDetails, TimeToPay}
 import play.api.http.Status
+import play.api.libs.json.{JsObject, Json}
+
+import java.time.LocalDate
 
 object HIPPenaltyDetailsTestData {
 
@@ -45,6 +45,20 @@ object HIPPenaltyDetailsTestData {
     "LPP1HRPercentage" -> 4.2,
     "LPP2Days" -> "31",
     "LPP2Percentage" -> 5.5,
+    "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
+    "timeToPay" -> Json.arr(timeToPayJson, timeToPayJson2)
+  )
+  val hipLppJson: JsObject = Json.obj(
+    "principalChargeReference" -> "ABCDEFGHIJKLMNOP",
+    "penaltyCategory" -> "LPP1",
+    "lpp1LRCalculationAmt" -> 100.11,
+    "lpp1LRDays" -> "15",
+    "lpp1LRPercentage" -> 2.4,
+    "lpp1HRCalculationAmt" -> 200.22,
+    "lpp1HRDays" -> "30",
+    "lpp1HRPercentage" -> 4.2,
+    "lpp2Days" -> "31",
+    "lpp2Percentage" -> 5.5,
     "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
     "timeToPay" -> Json.arr(timeToPayJson, timeToPayJson2)
   )
@@ -74,7 +88,7 @@ object HIPPenaltyDetailsTestData {
       "processingDate" -> "2023-11-28T10:15:10Z",
       "penaltyData" -> Json.obj(
         "lpp" -> Json.obj(
-          "lppDetails" -> Json.arr(LPPJson),
+          "lppDetails" -> Json.arr(hipLppJson),
           "manualLPPIndicator" -> true
         ),
         "breathingSpace" -> Json.arr(breathingSpaceJson)

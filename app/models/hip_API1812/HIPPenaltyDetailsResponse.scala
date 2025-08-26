@@ -16,8 +16,8 @@
 
 package models.hip_API1812
 
-import models.API1812.latePaymentPenalty.LatePaymentPenalty
 import models.API1812.BreathingSpace
+import models.API1812.latePaymentPenalty.HipLatePaymentPenalty
 import play.api.libs.json.{Json, Reads}
 
 case class HIPSuccessResponse(success: HIPSuccess)
@@ -27,7 +27,7 @@ case class HIPSuccess(processingDate: String, penaltyData: Option[HIPPenaltyData
 case class HIPPenaltyData(lpp: Option[HIPLpp], breathingSpace: Option[Seq[BreathingSpace]])
 
 case class HIPLpp(
-  lppDetails: Option[Seq[LatePaymentPenalty]],
+  lppDetails: Option[Seq[HipLatePaymentPenalty]],
   manualLPPIndicator: Boolean
 )
 

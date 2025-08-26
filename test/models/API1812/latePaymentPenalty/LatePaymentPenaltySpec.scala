@@ -20,7 +20,6 @@ import base.SpecBase
 import play.api.libs.json.Json
 import utils.TestConstantsAPI1812._
 
-
 class LatePaymentPenaltySpec extends SpecBase {
 
   "LatePaymentPenalty" should {
@@ -48,7 +47,7 @@ class LatePaymentPenaltySpec extends SpecBase {
     }
   }
 
-  "hasTimeToPay" should {
+  "LatePaymentPenalty.hasTimeToPay" should {
 
     "return true" when {
 
@@ -96,5 +95,87 @@ class LatePaymentPenaltySpec extends SpecBase {
         LPPModelMin.copy(timeToPay = betweenTTPS).hasTimeToPay shouldBe false
       }
     }
+  }
+
+  "HipLatePaymentPenalty" should {
+
+    "parse from JSON" when {
+
+      "optional fields are present" in {
+        hipLppJsonMax.as[HipLatePaymentPenalty] shouldBe hipLppModelMax
+      }
+
+      "optional fields are missing" in {
+        LPPJsonMin.as[HipLatePaymentPenalty] shouldBe hipLppModelMin
+      }
+    }
+
+    "serialize to JSON with parameter names that match LatePaymentPenalty, not HipLatePaymentPenalty" when {
+
+      "optional fields are present" in {
+        Json.toJson(hipLppModelMax) shouldBe LPPJsonMaxWritten
+      }
+
+      "optional fields are missing" in {
+        Json.toJson(hipLppModelMin) shouldBe LPPJsonMinWritten
+      }
+    }
+  }
+
+  "HipLatePaymentPenalty.hasTimeToPay" should {
+
+    "return true" when {
+
+      "user is well within time to pay" in {
+        hipLppModelMin.copy(timeToPay = inTTP).hasTimeToPay shouldBe true
+      }
+
+      "user is on the first day of time to pay" in {
+        hipLppModelMin.copy(timeToPay = firstDayTTP).hasTimeToPay shouldBe true
+      }
+
+      "user is on the last day of time to pay" in {
+        hipLppModelMin.copy(timeToPay = lastDayTTP).hasTimeToPay shouldBe true
+      }
+
+      "user is in the first of 2 time to pay periods" in {
+        hipLppModelMin.copy(timeToPay = firstOfTwoTTPS).hasTimeToPay shouldBe true
+      }
+
+    }
+
+    "return false" when {
+
+      "user's time to pay ended yesterday" in {
+        hipLppModelMin.copy(timeToPay = TTPEndYesterday).hasTimeToPay shouldBe false
+      }
+
+      "user's time to pay will begin tomorrow" in {
+        hipLppModelMin.copy(timeToPay = TTPBeginTomorrow).hasTimeToPay shouldBe false
+      }
+
+      "user has been out of time to pay for some time" in {
+        hipLppModelMin.copy(timeToPay = outOfTTP).hasTimeToPay shouldBe false
+      }
+
+      "user is due to go into time to pay in the future" in {
+        hipLppModelMin.copy(timeToPay = futureTTP).hasTimeToPay shouldBe false
+      }
+
+      "user has no time to pay data" in {
+        hipLppModelMin.hasTimeToPay shouldBe false
+      }
+
+      "user is between 2 time to pay periods" in {
+        hipLppModelMin.copy(timeToPay = betweenTTPS).hasTimeToPay shouldBe false
+      }
+    }
+  }
+
+  "HipLatePaymentPenalty.toLatePaymentPenalty" should {
+    "convert a HipLatePaymentPenalty to a LatePaymentPenalty" in {
+      hipLppModelMax.toLatePaymentPenalty shouldBe LPPModelMax
+    }
+
   }
 }

@@ -22,7 +22,7 @@ import models.API1812.{Error, PenaltyDetails}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpResponse
-import utils.TestConstantsAPI1812.{LPPJsonMax, apiLPPJsonHIP, breathingSpaceJSONAfterBS, penaltyDetailsModelMax}
+import utils.TestConstantsAPI1812.{apiLPPJsonHIP, breathingSpaceJSONAfterBS, hipLppJsonMax, penaltyDetailsModelMax}
 
 class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
 
@@ -30,7 +30,7 @@ class HIPPenaltyDetailsHttpParserSpec extends SpecBase {
 
     "the http response status is 200 OK and contains relevant LPP and breathing space JSON" should {
 
-      val httpResponse = HttpResponse(OK, apiLPPJsonHIP(LPPJsonMax, breathingSpaceJSONAfterBS).toString)
+      val httpResponse = HttpResponse(OK, apiLPPJsonHIP(hipLppJsonMax, breathingSpaceJSONAfterBS).toString)
       val expected = Right(penaltyDetailsModelMax)
       val result = HIPPenaltyDetailsReads.read("", "", httpResponse)
 

@@ -15,7 +15,7 @@
  */
 package testData
 
-import models.API1811.{BusinessError, DocumentDetails, DocumentPenaltyTotals, FinancialTransactions, FinancialTransactionsHIP, LineItemDetails, LineItemLockDetails, TechnicalError}
+import models.API1811._
 import play.api.libs.json.{JsObject, Json}
 
 import java.time.LocalDate

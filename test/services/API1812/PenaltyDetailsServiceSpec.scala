@@ -17,13 +17,12 @@
 package services.API1812
 
 import base.SpecBase
-import mocks.connectors.{MockPenaltyDetailsConnector, MockHIPPenaltyDetailsConnector}
+import mocks.connectors.{MockHIPPenaltyDetailsConnector, MockPenaltyDetailsConnector}
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.TestConstantsAPI1812.{penaltyDetailsModelMax, penaltyDetailsModelNoPen}
-import config.featureSwitch.Features
 
 class PenaltyDetailsServiceSpec extends SpecBase with MockPenaltyDetailsConnector with MockHIPPenaltyDetailsConnector {
 

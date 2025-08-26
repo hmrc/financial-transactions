@@ -17,11 +17,7 @@
 package models.hip_API1812
 
 import base.SpecBase
-import models.API1812.latePaymentPenalty.LatePaymentPenalty
-import models.API1812.BreathingSpace
 import play.api.libs.json.Json
-
-import java.time.LocalDate
 
 class HIPPenaltyDetailsResponseSpec extends SpecBase {
 

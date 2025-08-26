@@ -17,8 +17,7 @@
 package connectors.API1812.httpParsers
 
 import models.API1812.{Error, PenaltyDetails}
-import models.hip_API1812.{HIPSuccessResponse}
-import models.hip_API1812.{HIPErrorResponse, HIPTechnicalErrorResponse, HIPOriginResponse, HIPFailureResponse}
+import models.hip_API1812._
 import play.api.http.Status._
 import play.api.libs.json._
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
@@ -116,7 +115,7 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     logger.info(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] Breathing space: $breathingSpace")
 
     PenaltyDetails(
-      LPPDetails = lppDetails,
+      LPPDetails = lppDetails.map(_.map(_.toLatePaymentPenalty)),
       breathingSpace = breathingSpace
     )
   }
