@@ -60,7 +60,10 @@ object HIPPenaltyDetailsTestData {
     "lpp2Days" -> "31",
     "lpp2Percentage" -> 5.5,
     "penaltyChargeReference" -> "BCDEFGHIJKLMNOPQ",
-    "timeToPay" -> Json.arr(timeToPayJson, timeToPayJson2)
+    "timeToPay" -> Json.arr(
+      Json.obj("ttpStartDate" -> "2018-04-07", "ttpEndDate" -> "2018-08-31"),
+      Json.obj("ttpStartDate" -> "2018-04-08")
+    )
   )
 
   val LPPJsonWritten: JsObject = Json.obj(
