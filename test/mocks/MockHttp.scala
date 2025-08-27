@@ -24,24 +24,39 @@ import org.scalatestplus.mockito.MockitoSugar
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpecLike
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.{HttpClientV2, RequestBuilder}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait MockHttp extends AnyWordSpecLike with Matchers with OptionValues with BeforeAndAfterEach with MockitoSugar {
 
-  val mockHttpGet: HttpClient = mock[HttpClient]
+  val mockHttpClientV2: HttpClientV2 = mock[HttpClientV2]
+  val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
 
   override def beforeEach(): Unit = {
     super.beforeEach()
-    reset(mockHttpGet)
+    reset(mockHttpClientV2)
+    reset(mockRequestBuilder)
   }
 
-  def setupMockHttpGet[A](url: String)(response: Future[A]): OngoingStubbing[Future[A]] =
-    when(mockHttpGet.GET[A](ArgumentMatchers.eq(url), any(), any())(any(), any(), any()))
+  def setupMockHttpGetV2[A](url: java.net.URL)(response: Future[A]): Unit = {
+    when(mockHttpClientV2.get(ArgumentMatchers.eq(url))(any[HeaderCarrier]))
+      .thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.setHeader(any[(String, String)]))
+      .thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.execute[A](any[HttpReads[A]], any[ExecutionContext])(any[HeaderCarrier]))
       .thenReturn(response)
+  }
 
-  def setupMockHttpGet[A](url: String, queryParams: Seq[(String, String)])(response: Future[A]): OngoingStubbing[Future[A]] =
-    when(mockHttpGet.GET[A](ArgumentMatchers.eq(url), ArgumentMatchers.eq(queryParams), any())(any(),
-      any(), any())).thenReturn(response)
+  def setupMockHttpPostV2[I, O](url: java.net.URL)(response: Future[O]): Unit = {
+    when(mockHttpClientV2.post(ArgumentMatchers.eq(url))(any[HeaderCarrier]))
+      .thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.setHeader(any[(String, String)]))
+      .thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.withBody(any[I])(any(), any(), any()))
+      .thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.execute[O](any[HttpReads[O]], any[ExecutionContext])(any[HeaderCarrier]))
+      .thenReturn(response)
+  }
 }

@@ -21,8 +21,9 @@ import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{Financ
 import models.API1811.{FinancialRequestHIP, FinancialRequestHIPHelper}
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.LoggerUtil
 
 import java.time.Instant
@@ -33,7 +34,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataHIPConnector @Inject()(http: HttpClient)
+class FinancialDataHIPConnector @Inject()(http: HttpClientV2)
                                          (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
 
@@ -47,12 +48,10 @@ class FinancialDataHIPConnector @Inject()(http: HttpClient)
     val requestBody : FinancialRequestHIP = FinancialRequestHIPHelper.HIPRequestBody(regime, queryParameters)
     val jsonBody = Json.toJson(requestBody)
 
-    http.POST[JsValue, FinancialTransactionsHIPResponse](url, jsonBody, hipHeaders)(
-      implicitly,
-      implicitly,
-      headerCarrier,
-      ec
-    ).recover {
+    http.post(url"$url")(headerCarrier)
+      .setHeader(hipHeaders: _*)
+      .withBody(jsonBody)
+      .execute[FinancialTransactionsHIPResponse](FinancialTransactionsHIPReads, ec).recover {
       case ex: Exception =>
         logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] HIP HTTP exception received: ${ex.getMessage}")
         Left(FinancialTransactionsFailureResponse(INTERNAL_SERVER_ERROR))

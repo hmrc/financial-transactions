@@ -24,7 +24,7 @@ val appName: String = "financial-transactions"
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins] = Seq.empty
 
-val bootstrapPlayVersion = "8.6.0"
+val bootstrapPlayVersion = "10.1.0"
 
 lazy val coverageSettings: Seq[Setting[_]] = {
   import scoverage.ScoverageKeys

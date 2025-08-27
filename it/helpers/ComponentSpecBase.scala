@@ -29,7 +29,8 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.ws.WSResponse
 import play.api.{Application, Environment, Mode}
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.client.HttpClientV2
 
 import scala.concurrent.ExecutionContext
 
@@ -40,7 +41,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
   val mockHost: String = WiremockHelper.wiremockHost
   val mockPort: String = WiremockHelper.wiremockPort.toString
   val mockUrl = s"http://$mockHost:$mockPort"
-  val httpClient : HttpClient = app.injector.instanceOf[HttpClient]
+  val httpClient : HttpClientV2 = app.injector.instanceOf[HttpClientV2]
 
   implicit val appConfig: MicroserviceAppConfig = app.injector.instanceOf[MicroserviceAppConfig]
   implicit val hc: HeaderCarrier = HeaderCarrier()

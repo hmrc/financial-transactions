@@ -21,14 +21,15 @@ import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.{PenaltyDetailsRe
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import models.API1812.Error
 import play.api.http.Status.{BAD_GATEWAY, NOT_FOUND}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.LoggerUtil
 import java.util.UUID.randomUUID
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class PenaltyDetailsConnector @Inject()(val http: HttpClientV2, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def penaltyDetailsUrl(regime: TaxRegime) =
     s"${appConfig.eisUrl}/penalty/details/${regime.regimeType}/${regime.idType}/${regime.id}"
@@ -44,13 +45,15 @@ class PenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: Mic
       "Environment" -> appConfig.eisEnvironment
     )
 
-    val hc = headerCarrier.copy(authorization = None)
-    val url = penaltyDetailsUrl(regime)
+    val urlString = penaltyDetailsUrl(regime)
 
     logger.info("[PenaltyDetailsConnector][getPenaltyDetails] - " +
-      s"Calling GET $url \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
+      s"Calling GET $urlString \nHeaders: $eisHeaders\n QueryParams: $queryParameters")
 
-    http.GET(url, queryParameters.toSeqQueryParams, eisHeaders)(PenaltyDetailsReads, hc, ec).map {
+    val hc = headerCarrier.copy(authorization = None)
+    http.get(url"$urlString?${queryParameters.toSeqQueryParams}")(hc)
+      .setHeader(eisHeaders: _*)
+      .execute[PenaltyDetailsResponse](PenaltyDetailsReads, ec).map {
       case Left(error) if error.code != NOT_FOUND =>
         logger.warn(s"[PenaltyDetailsConnector][getPenaltyDetails] Unexpected error returned by EIS. " +
           s"Status code: ${error.code}, Body: ${error.reason.trim}, Correlation ID: $correlationID")
