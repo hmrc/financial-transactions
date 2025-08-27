@@ -25,13 +25,14 @@ import org.mockito.ArgumentMatchers.{any, eq => meq}
 import org.mockito.Mockito.{verify, when}
 import play.api.http.Status._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, RequestTimeoutException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, RequestTimeoutException, StringContextOps}
+import uk.gov.hmrc.http.HttpReads
 
 import scala.concurrent.Future
 
 class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
-  val connector = new HIPPenaltyDetailsConnector(mockHttpGet, mockAppConfig)
+  val connector = new HIPPenaltyDetailsConnector(mockHttpClientV2, mockAppConfig)
   val vatRegime: VatRegime = VatRegime("555555555")
   val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
   val queryParamsWithDateLimit: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some("12"))

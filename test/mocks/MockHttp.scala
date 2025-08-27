@@ -45,7 +45,7 @@ trait MockHttp extends AnyWordSpecLike with Matchers with OptionValues with Befo
       .thenReturn(mockRequestBuilder)
     when(mockRequestBuilder.setHeader(any[(String, String)]))
       .thenReturn(mockRequestBuilder)
-    when(mockRequestBuilder.execute[A](any[HttpReads[A]], any[ExecutionContext])(any[HeaderCarrier]))
+    when(mockRequestBuilder.execute[A](any[HttpReads[A]], any[ExecutionContext]))
       .thenReturn(response)
   }
 
@@ -56,7 +56,7 @@ trait MockHttp extends AnyWordSpecLike with Matchers with OptionValues with Befo
       .thenReturn(mockRequestBuilder)
     when(mockRequestBuilder.withBody(any[I])(any(), any(), any()))
       .thenReturn(mockRequestBuilder)
-    when(mockRequestBuilder.execute[O](any[HttpReads[O]], any[ExecutionContext])(any[HeaderCarrier]))
+    when(mockRequestBuilder.execute[O](any[HttpReads[O]], any[ExecutionContext]))
       .thenReturn(response)
   }
 }

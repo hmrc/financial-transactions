@@ -24,7 +24,7 @@ import models._
 import play.api.http.Status
 import play.api.http.Status.BAD_GATEWAY
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.RequestTimeoutException
+import uk.gov.hmrc.http.{RequestTimeoutException, StringContextOps}
 import utils.API1396.TestConstants.singleDirectDebits
 
 import scala.concurrent.Future
@@ -33,7 +33,7 @@ class DirectDebitDataConnectorSpec extends SpecBase with MockHttp {
 
   val vrn: String = "5555555555"
 
-  val connector = new DirectDebitDataConnector(mockHttpGet)
+  val connector = new DirectDebitDataConnector(mockHttpClientV2)
 
   "The DirectDebitDataConnector" should {
 
@@ -50,7 +50,7 @@ class DirectDebitDataConnectorSpec extends SpecBase with MockHttp {
       "a direct debit was found" in {
         val successResponse: HttpGetResult[DirectDebits] = Right(singleDirectDebits)
 
-        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.successful(successResponse))
+        setupMockHttpGetV2(url"${connector.directDebitUrl(vrn = vrn)}")(Future.successful(successResponse))
         val result: Future[HttpGetResult[DirectDebits]] =
           connector.checkDirectDebitExists(vrn = vrn)
         await(result) shouldBe successResponse
@@ -63,7 +63,7 @@ class DirectDebitDataConnectorSpec extends SpecBase with MockHttp {
         val badRequestSingleError: HttpGetResult[DirectDebits] =
           Left(ErrorResponse(Status.BAD_REQUEST, Error(code = "CODE", reason = "ERROR MESSAGE")))
 
-        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.successful(badRequestSingleError))
+        setupMockHttpGetV2(url"${connector.directDebitUrl(vrn = vrn)}")(Future.successful(badRequestSingleError))
         val result: Future[HttpGetResult[DirectDebits]] =
           connector.checkDirectDebitExists(vrn = vrn)
         await(result) shouldBe badRequestSingleError
@@ -78,7 +78,7 @@ class DirectDebitDataConnectorSpec extends SpecBase with MockHttp {
             )
           )))
 
-        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.successful(badRequestMultiError))
+        setupMockHttpGetV2(url"${connector.directDebitUrl(vrn = vrn)}")(Future.successful(badRequestMultiError))
         val result: Future[HttpGetResult[DirectDebits]] =
           connector.checkDirectDebitExists(vrn = vrn)
         await(result) shouldBe badRequestMultiError
@@ -87,7 +87,7 @@ class DirectDebitDataConnectorSpec extends SpecBase with MockHttp {
       "there is a HTTP exception" in {
         val exception = new RequestTimeoutException("Request timed out!!!")
 
-        setupMockHttpGet(connector.directDebitUrl(vrn = vrn))(Future.failed(exception))
+        setupMockHttpGetV2(url"${connector.directDebitUrl(vrn = vrn)}")(Future.failed(exception))
         val result: Future[HttpGetResult[DirectDebits]] =
           connector.checkDirectDebitExists(vrn = vrn)
         await(result) shouldBe Left(ErrorResponse(BAD_GATEWAY, Error("BAD_GATEWAY", exception.message)))
