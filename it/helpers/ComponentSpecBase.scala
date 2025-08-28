@@ -52,8 +52,7 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.des.url" -> mockUrl,
     "microservice.services.eis.url" -> mockUrl,
     "microservice.services.hip.url" -> mockUrl,
-    "microservice.services.hip.port" -> mockPort,
-    "feature-switch.enable1811HIPCall" -> false.toString
+    "microservice.services.hip.port" -> mockPort
   )
 
   def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =
