@@ -16,13 +16,9 @@
 
 package models.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsFailure
 import play.api.libs.json.{Format, Json}
 
-case class BusinessError(
-                          processingDate: String,
-                          code: String,
-                          text: String) extends FinancialTransactionsFailure
+case class BusinessError(processingDate: String, code: String, text: String)
 
 object BusinessError {
   implicit val format: Format[BusinessError] = Json.format[BusinessError]

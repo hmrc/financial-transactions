@@ -18,62 +18,110 @@ package controllers
 
 import config.RegimeKeys
 import helpers.ComponentSpecBase
-import helpers.servicemocks.EISFinancialDataStub
+import helpers.servicemocks.{EISFinancialDataStub, HIPFinancialDetailsStub}
+import models.API1811.Error
 import models.{FinancialRequestQueryParameters, VatRegime}
+import play.api.Application
 import play.api.http.Status._
-
-import testData.FinancialData1811
+import play.api.test.Helpers.running
+import testData.{FinancialData1811, FinancialDataHIP1811}
 
 class FinancialTransactionsComponentSpec extends ComponentSpecBase {
 
   "Sending a request to /financial-transactions/:regime/:identifier (FinancialTransactions controller)" when {
-
     val vatRegime = VatRegime("123456789")
 
-    "a successful response is returned by the API" should {
+    "calling the IF API" when {
+      val app: Application = buildApp(Map("feature-switch.enable1811HIPCall" -> "false"))
 
-      lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(false))
+      "a successful response is returned by the API" should {
+        lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(false))
+        "return a success response" in {
+          running(app) { implicit app: Application =>
+            isAuthorised()
 
-      "return a success response" in {
+            And("I wiremock stub a successful Get Financial Data response")
+            EISFinancialDataStub.stubGetFinancialData(vatRegime)(OK, FinancialData1811.fullFinancialTransactionsJsonEIS)
 
-        isAuthorised()
+            When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
+            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
 
-        And("I wiremock stub a successful Get Financial Data response")
-        EISFinancialDataStub.stubGetFinancialData(
-          vatRegime)(OK, FinancialData1811.fullFinancialTransactionsJsonEIS)
+            Then("a successful response is returned with expected JSON data")
+            res should have(
+              httpStatus(OK),
+              jsonBodyAs(FinancialData1811.fullFinancialTransactionsOutputJson)
+            )
+          }
+        }
+      }
 
-        When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
-        val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
+      "an unsuccessful response is returned by the API" should {
+        lazy val queryParameters = FinancialRequestQueryParameters()
+        "return a single error response" in {
+          running(app) { implicit app: Application =>
+            isAuthorised()
 
-        Then("a successful response is returned with expected JSON data")
-        res should have(
-          httpStatus(OK),
-          jsonBodyAs(FinancialData1811.fullFinancialTransactionsOutputJson)
-        )
+            And("I wiremock stub a bad request response from Get Financial Data")
+            EISFinancialDataStub.stubGetFinancialData(vatRegime)(BAD_REQUEST, FinancialData1811.errorJson)
+
+            When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
+            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+            Then("an error is returned by the API with expected JSON data")
+            res should have(
+              httpStatus(BAD_REQUEST),
+              jsonBodyAs[models.API1811.Error](FinancialData1811.errorModel)
+            )
+          }
+        }
       }
     }
 
-    "an unsuccessful response is returned by the API" should {
+    "calling the HIP API" when {
+      val app: Application = buildApp(Map("feature-switch.enable1811HIPCall" -> "true"))
 
-      lazy val queryParameters = FinancialRequestQueryParameters()
+      "a successful response is returned by the API" should {
+        lazy val queryParameters = FinancialRequestQueryParameters(onlyOpenItems = Some(false))
+        "return a success response" in {
+          running(app) { implicit app: Application =>
+            isAuthorised()
 
-      "return a single error response" in {
+            And("I wiremock stub a successful Get Financial Data response")
+            HIPFinancialDetailsStub.stubGetFinancialDetails(CREATED, FinancialDataHIP1811.financialDetailsInHipWrapperJson)
 
-        isAuthorised()
+            When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
+            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
 
-        And("I wiremock stub a bad request response from Get Financial Data")
-        EISFinancialDataStub.stubGetFinancialData(vatRegime)(BAD_REQUEST, FinancialData1811.errorJson)
+            Then("a successful response is returned with expected JSON data")
+            res should have(
+              httpStatus(OK),
+              jsonBodyAs(FinancialDataHIP1811.financialTransactionsResultJson)
+            )
+          }
+        }
+      }
 
-        When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
-        val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
+      "an unsuccessful response is returned by the API" should {
+        lazy val queryParameters = FinancialRequestQueryParameters()
+        "return a single error response" in {
+          running(app) { implicit app: Application =>
+            isAuthorised()
 
-        Then("an error is returned by the API with expected JSON data")
-        res should have(
-          httpStatus(BAD_REQUEST),
-          jsonBodyAs[models.API1811.Error](FinancialData1811.errorModel)
-        )
+            And("I wiremock stub a bad request response from Get Financial Data")
+            val error = HIPFinancialDetailsStub.businessErrorResponse("002", "Invalid")
+            HIPFinancialDetailsStub.stubGetFinancialDetails(BAD_REQUEST, error)
+
+            When(s"I call GET /financial-transactions/${RegimeKeys.VAT}/${vatRegime.id}")
+            val res = FinancialTransactions.getFinancialTransactions(RegimeKeys.VAT, vatRegime.id, queryParameters)
+
+            Then("an error is returned by the API with expected JSON data")
+            res should have(
+              httpStatus(BAD_REQUEST),
+              jsonBodyAs[models.API1811.Error](Error(BAD_REQUEST, "002 - Invalid"))
+            )
+          }
+        }
       }
     }
-
   }
 }

@@ -74,6 +74,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .configure(config)
     .build()
 
+  def buildApp(extraConfig: Map[String, String] = Map.empty): Application =
+    new GuiceApplicationBuilder()
+      .in(Environment.simple(mode = Mode.Dev))
+      .configure(config ++ extraConfig)
+      .build()
+
   override def beforeAll(): Unit = {
     super.beforeAll()
     startWiremock()

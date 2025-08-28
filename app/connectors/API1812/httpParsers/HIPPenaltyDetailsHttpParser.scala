@@ -80,7 +80,7 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     val json = Try(response.json).getOrElse(Json.obj())
 
     val technicalError = json.validate[HIPTechnicalErrorResponse].asOpt
-    val businessError = json.validate[HIPErrorResponse].asOpt  
+    val businessError = json.validate[HIPErrorResponse].asOpt
     val failureResponse = json.validate[HIPFailureResponse].asOpt
     val originResponse = json.validate[HIPOriginResponse].asOpt
 
