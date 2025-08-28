@@ -52,7 +52,8 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     "microservice.services.des.url" -> mockUrl,
     "microservice.services.eis.url" -> mockUrl,
     "microservice.services.hip.url" -> mockUrl,
-    "microservice.services.hip.port" -> mockPort
+    "microservice.services.hip.port" -> mockPort,
+    "feature-switch.enable1811HIPCall" -> false.toString
   )
 
   def stubGetRequest(url: String, returnStatus: Int, returnBody: String): StubMapping =
@@ -73,6 +74,12 @@ trait ComponentSpecBase extends TestSuite with CustomMatchers
     .in(Environment.simple(mode = Mode.Dev))
     .configure(config)
     .build()
+
+  def buildApp(extraConfig: Map[String, String] = Map.empty): Application =
+    new GuiceApplicationBuilder()
+      .in(Environment.simple(mode = Mode.Dev))
+      .configure(config ++ extraConfig)
+      .build()
 
   override def beforeAll(): Unit = {
     super.beforeAll()

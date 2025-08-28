@@ -17,16 +17,12 @@
 package services.API1811
 
 import base.SpecBase
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{
-  FinancialTransactionsFailure,
-  FinancialTransactionsMalformed,
-  FinancialTransactionsNoContent
-}
 import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
-import models.API1811.{BusinessError, Error, FinancialTransactions, FinancialTransactionsHIP, TechnicalError}
+import models.API1811.{Error, FinancialTransactions, FinancialTransactionsHIP}
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import org.mockito.Mockito.{mock, when}
 import play.api.http.Status
+import play.api.http.Status.NOT_FOUND
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import utils.API1811.TestConstants.{fullDocumentDetails, fullFinancialTransactions, fullFinancialTransactionsHIP, lineItemDetailsFull}
@@ -48,7 +44,7 @@ class FinancialTransactionsServiceSpec extends SpecBase {
       .thenReturn(Future.successful(response))
 
   def setupHipMockGetFinancialData(regime: TaxRegime, queryParams: FinancialRequestQueryParameters)(
-      response: Either[FinancialTransactionsFailure, FinancialTransactionsHIP]): Unit =
+      response: Either[Error, FinancialTransactionsHIP]): Unit =
     when(mockFinancialDataHIPConnector.getFinancialDataHIP(regime, queryParams))
       .thenReturn(Future.successful(response))
 
@@ -87,41 +83,14 @@ class FinancialTransactionsServiceSpec extends SpecBase {
         }
       }
 
-      "the connector returns a failure response" when {
-        "failure due to no data found, should return a FinancialTransactionsNoContent response" in {
+      "the connector returns a failure response" should {
+        "return the error response from the connector" in {
           mockAppConfig.features.enable1811HIPCall(true)
-          val connectorResponse = Left(FinancialTransactionsNoContent)
+          val connectorResponse = Left(Error(NOT_FOUND, "ID number did not match any penalty data"))
           setupHipMockGetFinancialData(regime, queryParams)(connectorResponse)
           val actual = await(Service.getFinancialTransactions(regime, queryParams))
 
-          actual shouldBe Left(Error(Status.NOT_FOUND, "404: Financial data not found for VRN 123456"))
-        }
-
-        "failure is a BusinessError, should return a BAD_REQUEST response" in {
-          mockAppConfig.features.enable1811HIPCall(true)
-          val connectorResponse = Left(BusinessError("processingDate", "015", "Bad Request result"))
-          setupHipMockGetFinancialData(regime, queryParams)(connectorResponse)
-          val actual = await(Service.getFinancialTransactions(regime, queryParams))
-
-          actual shouldBe Left(Error(Status.BAD_REQUEST, "015: Bad Request result"))
-        }
-
-        "failure is a TechnicalError, should return an INTERNAL_SERVER_ERROR response" in {
-          mockAppConfig.features.enable1811HIPCall(true)
-          val connectorResponse = Left(TechnicalError("002", "Invalid Tax Regime", "logId"))
-          setupHipMockGetFinancialData(regime, queryParams)(connectorResponse)
-          val actual = await(Service.getFinancialTransactions(regime, queryParams))
-
-          actual shouldBe Left(Error(Status.INTERNAL_SERVER_ERROR, "002: Invalid Tax Regime"))
-        }
-
-        "failure is a different kind of error, should resort to returning an INTERNAL_SERVER_ERROR response" in {
-          mockAppConfig.features.enable1811HIPCall(true)
-          val connectorResponse = Left(FinancialTransactionsMalformed)
-          setupHipMockGetFinancialData(regime, queryParams)(connectorResponse)
-          val actual = await(Service.getFinancialTransactions(regime, queryParams))
-
-          actual shouldBe Left(Error(Status.INTERNAL_SERVER_ERROR, "Unexpected HIP failure occurred"))
+          actual shouldBe Left(Error(Status.NOT_FOUND, "ID number did not match any penalty data"))
         }
       }
     }

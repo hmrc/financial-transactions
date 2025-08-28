@@ -16,13 +16,9 @@
 
 package models.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsFailure
 import play.api.libs.json.{Format, Json}
 
-case class TechnicalError(
-                           code: String,
-                           message: String,
-                           logId: String) extends FinancialTransactionsFailure
+case class TechnicalError(code: String, message: String, logId: String)
 
 object TechnicalError {
   implicit val format: Format[TechnicalError] = Json.format[TechnicalError]
