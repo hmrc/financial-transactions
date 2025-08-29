@@ -22,7 +22,7 @@ import java.time.LocalDate
 
 object FinancialDataHIP1811 {
 
-  val fullFinancialTransactionsJsonHIP: JsObject = Json.obj(
+  val financialDetailsInHipWrapperJson: JsObject = Json.obj(
     "success" -> Json.obj(
     "processingDate" -> "2024-12-31T13:34:56Z",
     "financialData" -> Json.obj(
@@ -102,6 +102,38 @@ object FinancialDataHIP1811 {
       )
     )
   )
+
+  val financialTransactionsResultJson: JsObject = Json.obj(
+    "financialTransactions" -> Json.arr(
+      Json.obj(
+        "chargeType" -> "VAT Return Debit Charge",
+        "periodKey" -> "22A1",
+        "taxPeriodFrom" -> "2022-01-01",
+        "taxPeriodTo" -> "2022-01-31",
+        "chargeReference" -> "XP001286394838",
+        "mainTransaction" -> "4700",
+        "subTransaction" -> "1174",
+        "originalAmount" -> 100,
+        "outstandingAmount" -> 0,
+        "clearedAmount" -> 100,
+        "items" -> Json.arr(
+          Json.obj(
+            "dueDate" -> "2022-02-08",
+            "amount" -> 3420,
+            "clearingDate" -> "2022-02-09",
+            "clearingReason" -> "Payment at External Payment Collector Reported",
+            "clearingSAPDocument" -> "719283701921",
+            "DDcollectionInProgress" -> true
+          )
+        ),
+        "accruingInterestAmount" -> 12.1,
+        "accruingPenaltyAmount" -> 10.01,
+        "penaltyType" -> "LPP1"
+      )
+    ),
+    "hasOverdueChargeAndNoTTP" -> false
+  )
+
   val lineItems: LineItemDetails = LineItemDetails(
     mainTransaction = Some("4700"),
     subTransaction = Some("1174"),

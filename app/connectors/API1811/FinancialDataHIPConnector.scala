@@ -17,13 +17,13 @@
 package connectors.API1811
 
 import config.MicroserviceAppConfig
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsFailureResponse, FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
-import models.API1811.{FinancialRequestHIP, FinancialRequestHIPHelper}
+import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
+import models.API1811.{Error, FinancialRequestHIP, FinancialRequestHIPHelper}
 import models.{FinancialRequestQueryParameters, TaxRegime}
-import play.api.http.Status.INTERNAL_SERVER_ERROR
-import play.api.libs.json.Json
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpClient, HttpException}
 import uk.gov.hmrc.http.client.HttpClientV2
+import play.api.http.Status.BAD_GATEWAY
+import play.api.libs.json.{JsValue, Json}
 import utils.LoggerUtil
 
 import java.time.Instant
@@ -52,9 +52,9 @@ class FinancialDataHIPConnector @Inject()(http: HttpClientV2)
       .setHeader(hipHeaders: _*)
       .withBody(jsonBody)
       .execute[FinancialTransactionsHIPResponse](FinancialTransactionsHIPReads, ec).recover {
-      case ex: Exception =>
-        logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] HIP HTTP exception received: ${ex.getMessage}")
-        Left(FinancialTransactionsFailureResponse(INTERNAL_SERVER_ERROR))
+      case ex: HttpException =>
+        logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] - HTTP exception received: ${ex.message}")
+        Left(Error(BAD_GATEWAY, ex.message))
     }
   }
   private def buildHIPHeaders(correlationId: String): Seq[(String, String)] = Seq(

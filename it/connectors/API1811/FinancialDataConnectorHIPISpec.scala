@@ -16,19 +16,20 @@
 
 package connectors.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsFailureResponse, FinancialTransactionsHIPResponse}
+import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
 import helpers.ComponentSpecBase
+import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
 import play.api.http.Status._
 import play.api.libs.json.Json
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import testData.FinancialDataHIP1811.{fullFinancialTransactionsHIP, fullFinancialTransactionsJsonHIP}
+import testData.FinancialDataHIP1811.{fullFinancialTransactionsHIP, financialDetailsInHipWrapperJson}
 
 class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
 
-  val connector: FinancialDataHIPConnector = app.injector.instanceOf[FinancialDataHIPConnector]
-  val regimeType = "VATC"
-  val vatRegime: TaxRegime = VatRegime(id = "123456789")
+  val connector: FinancialDataHIPConnector             = app.injector.instanceOf[FinancialDataHIPConnector]
+  val regimeType                                       = "VATC"
+  val vatRegime: TaxRegime                             = VatRegime(id = "123456789")
   val queryParameters: FinancialRequestQueryParameters = FinancialRequestQueryParameters()
 
   "getFinancialDataHIP" should {
@@ -40,7 +41,7 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
         stubPostRequest(
           url = s"/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query",
           responseStatus = CREATED,
-          responseBody = fullFinancialTransactionsJsonHIP.toString()
+          responseBody = financialDetailsInHipWrapperJson.toString()
         )
 
         val expectedResult = fullFinancialTransactionsHIP
@@ -52,14 +53,14 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
 
       s"a $BAD_REQUEST response is received from financial transactions" in {
 
+        val errorResponseBody = Json.obj("code" -> 400, "reason" -> "BAD REQUEST").toString()
         stubPostRequest(
           url = s"/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query",
           responseStatus = BAD_REQUEST,
-          Json.obj("code" -> 400,
-            "reason" -> "BAD REQUEST").toString()
+          errorResponseBody
         )
 
-        val expectedResult = Left(FinancialTransactionsFailureResponse(BAD_REQUEST))
+        val expectedResult = Left(Error(BAD_REQUEST, errorResponseBody))
 
         val result: FinancialTransactionsHIPResponse =
           await(connector.getFinancialDataHIP(vatRegime, queryParameters))
@@ -68,5 +69,3 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
     }
   }
 }
-
-
