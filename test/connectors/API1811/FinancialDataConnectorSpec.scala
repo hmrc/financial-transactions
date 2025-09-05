@@ -22,13 +22,13 @@ import models.{FinancialRequestQueryParameters, VatRegime}
 import models.API1811.Error
 import play.api.http.Status.BAD_GATEWAY
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.RequestTimeoutException
+import uk.gov.hmrc.http.{RequestTimeoutException, StringContextOps}
 
 import scala.concurrent.Future
 
 class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
-  val connector = new FinancialDataConnector(mockHttpGet)
+  val connector = new FinancialDataConnector(mockHttpClientV2)
   val vatRegime: VatRegime = VatRegime("555555555")
   val queryParams: FinancialRequestQueryParameters = FinancialRequestQueryParameters()
 
@@ -36,7 +36,8 @@ class FinancialDataConnectorSpec extends SpecBase with MockHttp {
 
     "return a 502 error when there is a HTTP exception" in {
       val exception = new RequestTimeoutException("Request timed out!!!")
-      setupMockHttpGet(connector.financialDataUrl(vatRegime), queryParams.queryParams1811)(Future.failed(exception))
+      val urlString = connector.financialDataUrl(vatRegime)
+      setupMockHttpGetV2(url"$urlString?${queryParams.queryParams1811}")(Future.failed(exception))
       val result = connector.getFinancialData(vatRegime, queryParams)
       await(result) shouldBe Left(Error(BAD_GATEWAY, exception.message))
     }

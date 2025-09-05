@@ -21,14 +21,15 @@ import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.{DirectDebitChe
 import models.API1396.DirectDebits
 import models.{Error, ErrorResponse}
 import play.api.http.Status.BAD_GATEWAY
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DirectDebitDataConnector @Inject()(http: HttpClient)
+class DirectDebitDataConnector @Inject()(http: HttpClientV2)
                                         (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def directDebitUrl(vrn: String) =
@@ -40,11 +41,11 @@ class DirectDebitDataConnector @Inject()(http: HttpClient)
   def checkDirectDebitExists(vrn: String)
                             (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[DirectDebits]] = {
 
-    val url = directDebitUrl(vrn)
-    val hc = headerCarrier.copy(authorization = None)
+    val urlString = directDebitUrl(vrn)
 
-    logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $url \nHeaders: $desHeaders\n Vrn: $vrn")
-    http.GET(url, headers = desHeaders)(DirectDebitCheckReads, hc, ec).map {
+    logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $urlString \nHeaders: $desHeaders\n Vrn: $vrn")
+    val hc = headerCarrier.copy(authorization = None)
+    http.get(url"$urlString")(hc).setHeader(desHeaders: _*).execute[HttpGetResult[DirectDebits]](DirectDebitCheckReads, ec).map {
       case directDebitStatus@Right(_) => directDebitStatus
       case error@Left(message) =>
         logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)

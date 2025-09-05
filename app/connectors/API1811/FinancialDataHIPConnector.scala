@@ -20,9 +20,10 @@ import config.MicroserviceAppConfig
 import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
 import models.API1811.{Error, FinancialRequestHIP, FinancialRequestHIPHelper}
 import models.{FinancialRequestQueryParameters, TaxRegime}
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpClient, HttpException}
+import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status.BAD_GATEWAY
 import play.api.libs.json.{JsValue, Json}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
 import utils.LoggerUtil
 
 import java.time.Instant
@@ -33,7 +34,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataHIPConnector @Inject()(http: HttpClient)
+class FinancialDataHIPConnector @Inject()(http: HttpClientV2)
                                          (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
 
@@ -47,12 +48,10 @@ class FinancialDataHIPConnector @Inject()(http: HttpClient)
     val requestBody : FinancialRequestHIP = FinancialRequestHIPHelper.HIPRequestBody(regime, queryParameters)
     val jsonBody = Json.toJson(requestBody)
 
-    http.POST[JsValue, FinancialTransactionsHIPResponse](url, jsonBody, hipHeaders)(
-      implicitly,
-      implicitly,
-      headerCarrier,
-      ec
-    ).recover {
+    http.post(url"$url")(headerCarrier)
+      .setHeader(hipHeaders: _*)
+      .withBody(jsonBody)
+      .execute[FinancialTransactionsHIPResponse](FinancialTransactionsHIPReads, ec).recover {
       case ex: HttpException =>
         logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] - HTTP exception received: ${ex.message}")
         Left(Error(BAD_GATEWAY, ex.message))
