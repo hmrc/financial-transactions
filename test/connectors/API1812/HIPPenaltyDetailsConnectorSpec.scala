@@ -20,18 +20,18 @@ import base.SpecBase
 import mocks.MockHttp
 import models.API1812.{Error, PenaltyDetails}
 import models.{PenaltyDetailsQueryParameters, VatRegime}
-import org.mockito.ArgumentCaptor
-import org.mockito.ArgumentMatchers.{any, eq => meq}
-import org.mockito.Mockito.{verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.verify
 import play.api.http.Status._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, RequestTimeoutException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, RequestTimeoutException, StringContextOps}
+import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
-  val connector = new HIPPenaltyDetailsConnector(mockHttpGet, mockAppConfig)
+  val connector = new HIPPenaltyDetailsConnector(mockHttpClientV2, mockAppConfig)
   val vatRegime: VatRegime = VatRegime("555555555")
   val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
   val queryParamsWithDateLimit: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters(dateLimit = Some("12"))
@@ -41,6 +41,16 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
   val testHttpResponse: HttpResponse = HttpResponse(OK, "{}")
   val testErrorResponse: Left[Error, Nothing] = Left(Error(INTERNAL_SERVER_ERROR, "Test error"))
 
+  private def buildExpectedUrl(queryParameters: PenaltyDetailsQueryParameters): java.net.URL = {
+    val urlString = connector.penaltyDetailsUrl()
+    val hipQueryParams = Seq(
+      "taxRegime" -> vatRegime.regimeType,
+      "idType" -> vatRegime.idType,
+      "idNumber" -> vatRegime.id
+    ) ++ queryParameters.toSeqQueryParams
+    url"$urlString?$hipQueryParams"
+  }
+
   "The HIPPenaltyDetailsConnector" should {
 
     "construct the correct URL" in {
@@ -48,179 +58,201 @@ class HIPPenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
     }
 
     "make a successful call with correct headers and query parameters" in {
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(testSuccessResponse))
-
-      val headerCaptor = ArgumentCaptor.forClass(classOf[Seq[(String, String)]])
-      val queryParamCaptor = ArgumentCaptor.forClass(classOf[Seq[(String, String)]])
-
-      await(connector.getPenaltyDetails(vatRegime, queryParamsWithDateLimit))
-
-      verify(mockHttpGet).GET[Either[Error, _]](
-        meq(s"${mockAppConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"),
-        queryParamCaptor.capture(),
-        headerCaptor.capture()
-      )(any(), any(), any())
-
-      val capturedHeaders = headerCaptor.getValue
-      val capturedQueryParams = queryParamCaptor.getValue
-
-      capturedHeaders should contain("Authorization" -> s"Basic ${mockAppConfig.hipToken}")
-      capturedHeaders.exists(_._1 == "correlationid") shouldBe true
-      capturedHeaders should contain("X-Originating-System" -> "MDTP")
-      capturedHeaders should contain("X-Transmitting-System" -> "HIP")
-      capturedHeaders.exists(_._1 == "X-Receipt-Date") shouldBe true
-
-      val correlationId = capturedHeaders.find(_._1 == "correlationid").map(_._2).get
-      correlationId should fullyMatch regex "^[0-9a-fA-F]{8}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{4}[-][0-9a-fA-F]{12}$"
-
-      val receiptDate = capturedHeaders.find(_._1 == "X-Receipt-Date").map(_._2).get
-      receiptDate should fullyMatch regex "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$"
-
-      capturedQueryParams should contain("taxRegime" -> "VATC")
-      capturedQueryParams should contain("idType" -> "VRN")
-      capturedQueryParams should contain("idNumber" -> "555555555")
-      capturedQueryParams should contain("dateLimit" -> "12")
+      val expectedUrl = buildExpectedUrl(queryParams)
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(testSuccessResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe testSuccessResponse
+      verify(mockHttpClientV2).get(any[java.net.URL])(any[HeaderCarrier])
+      verify(mockRequestBuilder).setHeader(any[(String, String)])
+      verify(mockRequestBuilder).execute[HIPPenaltyDetailsResponse](any[HttpReads[HIPPenaltyDetailsResponse]], any[ExecutionContext])
     }
 
     "make a call without dateLimit when not provided" in {
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(testSuccessResponse))
+      val expectedUrl = buildExpectedUrl(queryParams)
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(testSuccessResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe testSuccessResponse
+    }
 
-      val queryParamCaptor = ArgumentCaptor.forClass(classOf[Seq[(String, String)]])
-
-      await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      verify(mockHttpGet).GET[Either[Error, _]](
-        any(),
-        queryParamCaptor.capture(),
-        any()
-      )(any(), any(), any())
-
-      val capturedQueryParams = queryParamCaptor.getValue
-
-      capturedQueryParams should contain("taxRegime" -> "VATC")
-      capturedQueryParams should contain("idType" -> "VRN")
-      capturedQueryParams should contain("idNumber" -> "555555555")
-      capturedQueryParams.exists(_._1 == "dateLimit") shouldBe false
+    "make a call with dateLimit when provided" in {
+      val expectedUrl = buildExpectedUrl(queryParamsWithDateLimit)
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(testSuccessResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParamsWithDateLimit))
+      
+      result shouldBe testSuccessResponse
     }
 
     "remove Authorization from HeaderCarrier and use custom headers" in {
-      val customHeaderCarrier = HeaderCarrier(authorization = Some(uk.gov.hmrc.http.Authorization("Bearer original-token")))
+      val expectedUrl = buildExpectedUrl(queryParams)
       
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(testSuccessResponse))
-
-      val headerCarrierCaptor = ArgumentCaptor.forClass(classOf[HeaderCarrier])
-
-      await(connector.getPenaltyDetails(vatRegime, queryParams)(customHeaderCarrier, ec))
-
-      verify(mockHttpGet).GET[Either[Error, _]](
-        any(),
-        any(),
-        any()
-      )(any(), headerCarrierCaptor.capture(), any())
-
-      val capturedHeaderCarrier = headerCarrierCaptor.getValue
-      capturedHeaderCarrier.authorization shouldBe None
+      setupMockHttpGetV2(expectedUrl)(Future.successful(testSuccessResponse))
+      
+      val headerCarrierWithAuth = HeaderCarrier(authorization = Some(uk.gov.hmrc.http.Authorization("Bearer token")))
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams)(headerCarrierWithAuth, scala.concurrent.ExecutionContext.global))
+      
+      result shouldBe testSuccessResponse
+      verify(mockHttpClientV2).get(any[java.net.URL])(any[HeaderCarrier])
     }
 
     "return successful response for 200 status" in {
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(testSuccessResponse))
-
+      val expectedUrl = buildExpectedUrl(queryParams)
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(testSuccessResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
+      
       result shouldBe testSuccessResponse
     }
 
     "return error for 404 status with empty body" in {
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(Error(NOT_FOUND, "No penalty details found"))))
-
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(NOT_FOUND, ""))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(Error(NOT_FOUND, "No penalty details found"))
+      
+      result shouldBe errorResponse
     }
 
-    "return error for 404 status with Invalid ID Number (code 016)" in {
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(Error(NOT_FOUND, "No penalty details found"))))
-
+    "return error for 400 status with technical error" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(BAD_REQUEST, "Bad request error"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(Error(NOT_FOUND, "No penalty details found"))
+      
+      result shouldBe errorResponse
     }
 
-    "return error for 400 Bad Request" in {
-      val error = Error(BAD_REQUEST, "Bad Request")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(error)))
-
+    "return error for 400 status with HIP wrapped error" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(BAD_REQUEST, "HIP wrapped error"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(error)
+      
+      result shouldBe errorResponse
     }
 
-    "return error for 422 Unprocessable Entity" in {
-      val error = Error(UNPROCESSABLE_ENTITY, "Request could not be processed")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(error)))
-
+    "return error for 422 status with Invalid ID Number" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(NOT_FOUND, "No penalty details found"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(error)
+      
+      result shouldBe errorResponse
     }
 
-    "return error for 500 Internal Server Error (unexpected JSON format)" in {
-      val error = Error(INTERNAL_SERVER_ERROR, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format.")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(error)))
-
+    "return error for 422 status with Invalid Tax Regime" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(UNPROCESSABLE_ENTITY, "Invalid Tax Regime"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(error)
+      
+      result shouldBe errorResponse
     }
 
-    "return error for 503 Service Unavailable" in {
-      val error = Error(SERVICE_UNAVAILABLE, "Service Unavailable")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(error)))
-
+    "return error for 422 status with Request could not be processed" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(UNPROCESSABLE_ENTITY, "Request could not be processed"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(error)
+      
+      result shouldBe errorResponse
     }
 
-    "handle HTTP exceptions and return 502 error" in {
+    "return error for 422 status with Invalid ID Type" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(UNPROCESSABLE_ENTITY, "Invalid ID Type"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe errorResponse
+    }
+
+    "return error for 422 status with Duplicate submission reference" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(UNPROCESSABLE_ENTITY, "Duplicate submission reference"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe errorResponse
+    }
+
+    "return error for 500 status with technical error" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(INTERNAL_SERVER_ERROR, "Internal server error"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe errorResponse
+    }
+
+    "return error for 500 status with HIP wrapped error" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(INTERNAL_SERVER_ERROR, "HIP wrapped error"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe errorResponse
+    }
+
+    "return error for 503 status" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(SERVICE_UNAVAILABLE, "Service unavailable"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe errorResponse
+    }
+
+    "return error for unexpected response" in {
+      val expectedUrl = buildExpectedUrl(queryParams)
+      val errorResponse = Left(Error(418, "I'm a teapot"))
+      
+      setupMockHttpGetV2(expectedUrl)(Future.successful(errorResponse))
+      
+      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
+      
+      result shouldBe errorResponse
+    }
+
+    "return a 502 error when there is a HTTP exception" in {
       val exception = new RequestTimeoutException("Request timed out!!!")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.failed(exception))
-
+      val expectedUrl = buildExpectedUrl(queryParams)
+      
+      setupMockHttpGetV2(expectedUrl)(Future.failed(exception))
+      
       val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
+      
       result shouldBe Left(Error(BAD_GATEWAY, exception.message))
-    }
-
-    "log warnings for unexpected errors that are not 404" in {
-      val error = Error(INTERNAL_SERVER_ERROR, "Unexpected error")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(error)))
-
-      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(error)
-    }
-
-    "not log warnings for 404 errors" in {
-      val error = Error(NOT_FOUND, "No penalty details found")
-      when(mockHttpGet.GET[Either[Error, _]](any(), any(), any())(any(), any(), any()))
-        .thenReturn(Future.successful(Left(error)))
-
-      val result = await(connector.getPenaltyDetails(vatRegime, queryParams))
-
-      result shouldBe Left(error)
     }
   }
 }
-

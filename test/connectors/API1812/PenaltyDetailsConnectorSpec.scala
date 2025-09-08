@@ -22,13 +22,13 @@ import models.{PenaltyDetailsQueryParameters, VatRegime}
 import models.API1812.Error
 import play.api.http.Status.BAD_GATEWAY
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import uk.gov.hmrc.http.RequestTimeoutException
+import uk.gov.hmrc.http.{RequestTimeoutException, StringContextOps}
 
 import scala.concurrent.Future
 
 class PenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
-  val connector = new PenaltyDetailsConnector(mockHttpGet, mockAppConfig)
+  val connector = new PenaltyDetailsConnector(mockHttpClientV2, mockAppConfig)
   val vatRegime: VatRegime = VatRegime("555555555")
   val queryParams: PenaltyDetailsQueryParameters = PenaltyDetailsQueryParameters()
 
@@ -36,7 +36,8 @@ class PenaltyDetailsConnectorSpec extends SpecBase with MockHttp {
 
     "return a 502 error when there is a HTTP exception" in {
       val exception = new RequestTimeoutException("Request timed out!!!")
-      setupMockHttpGet(connector.penaltyDetailsUrl(vatRegime))(Future.failed(exception))
+      val urlString = connector.penaltyDetailsUrl(vatRegime)
+      setupMockHttpGetV2(url"$urlString?${queryParams.toSeqQueryParams}")(Future.failed(exception))
       val result = connector.getPenaltyDetails(vatRegime, queryParams)
       await(result) shouldBe Left(Error(BAD_GATEWAY, exception.message))
     }

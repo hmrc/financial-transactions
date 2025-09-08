@@ -21,7 +21,8 @@ import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.{HIPPenaltyDet
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import play.api.http.Status.BAD_GATEWAY
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.LoggerUtil
 
 import java.time.{LocalDateTime, ZoneOffset}
@@ -30,7 +31,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class HIPPenaltyDetailsConnector @Inject()(val http: HttpClientV2, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def penaltyDetailsUrl() =
     s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
@@ -49,8 +50,7 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
       "X-Transmitting-System" -> "HIP"
     )
 
-    val hc = headerCarrier.copy(authorization = None)
-    val url = penaltyDetailsUrl()
+    val urlString = penaltyDetailsUrl()
 
     val hipQueryParams = Seq(
       "taxRegime" -> regime.regimeType,
@@ -59,9 +59,12 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClient, val appConfig: 
     ) ++ queryParameters.toSeqQueryParams
 
     logger.info("[HIPPenaltyDetailsConnector][getPenaltyDetails] - " +
-      s"Calling GET $url \nHeaders: $hipHeaders\n QueryParams: $hipQueryParams")
+      s"Calling GET $urlString \nHeaders: $hipHeaders\n QueryParams: $hipQueryParams")
 
-    http.GET(url, hipQueryParams, hipHeaders)(HIPPenaltyDetailsReads, hc, ec)
+    val hc = headerCarrier.copy(authorization = None)
+    http.get(url"$urlString?$hipQueryParams")(hc)
+      .setHeader(hipHeaders: _*)
+      .execute[HIPPenaltyDetailsResponse](HIPPenaltyDetailsReads, ec)
     .recover {
       case ex: HttpException =>
         logger.warn(s"[HIPPenaltyDetailsConnector][getPenaltyDetails] - HTTP exception received: ${ex.message}")
