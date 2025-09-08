@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import sbt.Tests.{Group, SubProcess}
-import uk.gov.hmrc.DefaultBuildSettings._
+import uk.gov.hmrc.DefaultBuildSettings.*
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
@@ -26,7 +25,7 @@ lazy val plugins: Seq[Plugins] = Seq.empty
 
 val bootstrapPlayVersion = "10.1.0"
 
-lazy val coverageSettings: Seq[Setting[_]] = {
+lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
 
   val excludedPackages = Seq(
@@ -53,17 +52,17 @@ val compile = Seq(
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
   "uk.gov.hmrc"       %% "bootstrap-test-play-30"       % bootstrapPlayVersion    % scope,
-  "org.scalatestplus" %% "mockito-3-4"                  % "3.2.9.0"               % scope,
-  "org.scalamock"     %% "scalamock"                    % "5.2.0"                 % scope
+  "org.scalatestplus" %% "mockito-3-4"                  % "3.2.10.0"               % scope,
+  "org.scalamock"     %% "scalamock"                    % "7.4.1"                 % scope
 )
 
 lazy val microservice = Project(appName, file("."))
-  .enablePlugins(Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins: _*)
+  .enablePlugins((Seq(play.sbt.PlayScala, SbtDistributablesPlugin) ++ plugins) *)
   .disablePlugins(JUnitXmlReportPlugin)
-  .settings(scalaSettings: _*)
+  .settings(scalaSettings *)
   .settings(majorVersion := 0)
-  .settings(coverageSettings: _*)
-  .settings(defaultSettings(): _*)
+  .settings(coverageSettings *)
+  .settings(defaultSettings() *)
   .settings(
     PlayKeys.playDefaultPort := 9085,
     scalaVersion := "2.13.16",
