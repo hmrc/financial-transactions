@@ -18,12 +18,11 @@ package connectors.API1811
 
 import config.MicroserviceAppConfig
 import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
-import models.API1811.{Error, FinancialRequestHIP, FinancialRequestHIPHelper}
+import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime}
-import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps, HttpClient, HttpException}
-import uk.gov.hmrc.http.client.HttpClientV2
 import play.api.http.Status.BAD_GATEWAY
-import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
 import utils.LoggerUtil
 
 import java.time.Instant
@@ -34,35 +33,34 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FinancialDataHIPConnector @Inject()(http: HttpClientV2)
-                                         (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
-
-  def getFinancialDataHIP(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
-                      (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[FinancialTransactionsHIPResponse] = {
+  def getFinancialDataHIP(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)(implicit
+      headerCarrier: HeaderCarrier,
+      ec: ExecutionContext): Future[FinancialTransactionsHIPResponse] = {
 
     val correlationId = UUID.randomUUID().toString
-    val hipHeaders = buildHIPHeaders(correlationId)
+    val hipHeaders    = buildHIPHeaders(correlationId)
 
-    val url = s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query"
-    val requestBody : FinancialRequestHIP = FinancialRequestHIPHelper.HIPRequestBody(regime, queryParameters)
-    val jsonBody = Json.toJson(requestBody)
+    val url             = s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query"
+    val jsonRequestBody = queryParameters.toQueryRequestBody(regime)
 
-    http.post(url"$url")(headerCarrier)
+    http
+      .post(url"$url")(headerCarrier)
       .setHeader(hipHeaders: _*)
-      .withBody(jsonBody)
-      .execute[FinancialTransactionsHIPResponse](FinancialTransactionsHIPReads, ec).recover {
-      case ex: HttpException =>
+      .withBody(jsonRequestBody)
+      .execute[FinancialTransactionsHIPResponse](FinancialTransactionsHIPReads, ec)
+      .recover { case ex: HttpException =>
         logger.warn(s"[FinancialDataHIPConnector][getFinancialDataHIP] - HTTP exception received: ${ex.message}")
         Left(Error(BAD_GATEWAY, ex.message))
-    }
+      }
   }
   private def buildHIPHeaders(correlationId: String): Seq[(String, String)] = Seq(
-    "Authorization" -> s"Basic ${appConfig.hipToken}",
+    "Authorization"                       -> s"Basic ${appConfig.hipToken}",
     appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
-    "correlationid" -> correlationId,
-    "X-Originating-System" -> "MDTP",
-    "X-Receipt-Date"       -> DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
-    "X-Transmitting-System" -> "HIP"
+    "correlationid"                       -> correlationId,
+    "X-Originating-System"                -> "MDTP",
+    "X-Receipt-Date"                      -> DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
+    "X-Transmitting-System"               -> "HIP"
   )
 }

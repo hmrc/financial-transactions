@@ -77,6 +77,7 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
       }
     }
   }
+
   "The FinancialDataQueryParameters.queryParams1811 method" should {
 
     "output the expected sequence of key value pairs" when {
