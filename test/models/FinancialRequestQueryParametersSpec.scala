@@ -17,8 +17,8 @@
 package models
 
 import base.SpecBase
-
-import FinancialRequestQueryParameters._
+import models.FinancialRequestQueryParameters._
+import play.api.libs.json.{JsObject, JsValue, Json}
 
 import java.time.LocalDate
 
@@ -70,8 +70,8 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           onlyOpenItems = Some(false)
         )
         queryParams.queryParams1166 shouldBe Seq(
-          dateFromKey -> "2017-04-06",
-          dateToKey -> "2018-04-05",
+          dateFromKey      -> "2017-04-06",
+          dateToKey        -> "2018-04-05",
           onlyOpenItemsKey -> "false"
         )
       }
@@ -89,17 +89,17 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           onlyOpenItems = Some(true)
         )
         queryParams.queryParams1811 shouldBe Seq(
-          dateTypeKey -> "POSTING",
-          dateFromKey -> "2017-04-06",
-          dateToKey -> "2018-04-05",
-          includeClearedItemsKey -> "false",
-          includeStatisticalItemsKey -> "true",
-          includePaymentOnAccountKey -> "true",
-          addRegimeTotalisationKey -> "true",
-          addLockInformationKey -> "true",
-          penaltyDetailsKey -> "true",
+          dateTypeKey                 -> "POSTING",
+          dateFromKey                 -> "2017-04-06",
+          dateToKey                   -> "2018-04-05",
+          includeClearedItemsKey      -> "false",
+          includeStatisticalItemsKey  -> "true",
+          includePaymentOnAccountKey  -> "true",
+          addRegimeTotalisationKey    -> "true",
+          addLockInformationKey       -> "true",
+          penaltyDetailsKey           -> "true",
           addPostedInterestDetailsKey -> "true",
-          addAccruingInterestKey -> "true"
+          addAccruingInterestKey      -> "true"
         )
       }
 
@@ -110,17 +110,17 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           None
         )
         queryParams.queryParams1811 shouldBe Seq(
-          dateTypeKey -> "POSTING",
-          dateFromKey -> "2017-04-06",
-          dateToKey -> "2018-04-05",
-          includeClearedItemsKey -> "true",
-          includeStatisticalItemsKey -> "true",
-          includePaymentOnAccountKey -> "true",
-          addRegimeTotalisationKey -> "true",
-          addLockInformationKey -> "true",
-          penaltyDetailsKey -> "true",
+          dateTypeKey                 -> "POSTING",
+          dateFromKey                 -> "2017-04-06",
+          dateToKey                   -> "2018-04-05",
+          includeClearedItemsKey      -> "true",
+          includeStatisticalItemsKey  -> "true",
+          includePaymentOnAccountKey  -> "true",
+          addRegimeTotalisationKey    -> "true",
+          addLockInformationKey       -> "true",
+          penaltyDetailsKey           -> "true",
           addPostedInterestDetailsKey -> "true",
-          addAccruingInterestKey -> "true"
+          addAccruingInterestKey      -> "true"
         )
       }
 
@@ -131,15 +131,178 @@ class FinancialRequestQueryParametersSpec extends SpecBase {
           onlyOpenItems = Some(true)
         )
         queryParams.queryParams1811 shouldBe Seq(
-          includeClearedItemsKey -> "false",
-          includeStatisticalItemsKey -> "true",
-          includePaymentOnAccountKey -> "true",
-          addRegimeTotalisationKey -> "true",
-          addLockInformationKey -> "true",
-          penaltyDetailsKey -> "true",
+          includeClearedItemsKey      -> "false",
+          includeStatisticalItemsKey  -> "true",
+          includePaymentOnAccountKey  -> "true",
+          addRegimeTotalisationKey    -> "true",
+          addLockInformationKey       -> "true",
+          penaltyDetailsKey           -> "true",
           addPostedInterestDetailsKey -> "true",
-          addAccruingInterestKey -> "true"
+          addAccruingInterestKey      -> "true"
         )
+      }
+    }
+  }
+
+  private val taxRegime = VatRegime("123456789")
+  private val fullQueryParameters = FinancialRequestQueryParameters(
+    fromDate = Some(LocalDate.of(2022, 1, 1)),
+    toDate = Some(LocalDate.of(2025, 1, 1)),
+    onlyOpenItems = Some(false),
+    includeClearedItems = Some(true),
+    includeStatisticalItems = Some(true),
+    includePaymentOnAccount = Some(true),
+    addRegimeTotalisation = Some(true),
+    addLockInformation = Some(true),
+    addPenaltyDetails = Some(true),
+    addPostedInterestDetails = Some(true),
+    addAccruingInterestDetails = Some(true),
+    searchType = Some("CHGREF"),
+    searchItem = Some("XC00178236592"),
+    dateType = Some("POSTING")
+  )
+  private val emptyQueryParameters = FinancialRequestQueryParameters()
+
+  private val targetedSearchJson = Json.obj(
+    "searchType" -> "CHGREF",
+    "searchItem" -> "XC00178236592"
+  )
+
+  private def selectionCriteriaJsonWithoutDateRange(includeClearedItemsValue: Boolean): JsObject = Json.obj(
+    "includeClearedItems"     -> includeClearedItemsValue,
+    "includeStatisticalItems" -> true,
+    "includePaymentOnAccount" -> true
+  )
+
+  private val selectionCriteriaJsonWithDateRange = Json.obj(
+    "dateRange" -> Json.obj(
+      "dateType" -> "POSTING",
+      "dateFrom" -> "2022-01-01",
+      "dateTo"   -> "2025-01-01"
+    ),
+    "includeClearedItems"     -> true,
+    "includeStatisticalItems" -> true,
+    "includePaymentOnAccount" -> true
+  )
+
+  private def buildJsonBody(hasDateRange: Boolean, hasTargetedSearch: Boolean, includeClearedItemsValue: Boolean = true): JsValue = {
+    val selectionCriteria =
+      if (hasDateRange) selectionCriteriaJsonWithDateRange else selectionCriteriaJsonWithoutDateRange(includeClearedItemsValue)
+
+    val baseJson = Json.obj(
+      "taxRegime" -> "VATC",
+      "taxpayerInformation" -> Json.obj(
+        "idType"   -> "VRN",
+        "idNumber" -> "123456789"
+      )
+    )
+    val defaultFiltersJson = Json.obj(
+      "selectionCriteria" -> selectionCriteria,
+      "dataEnrichment" -> Json.obj(
+        "addRegimeTotalisation"      -> true,
+        "addLockInformation"         -> true,
+        "addPenaltyDetails"          -> true,
+        "addPostedInterestDetails"   -> true,
+        "addAccruingInterestDetails" -> true
+      )
+    )
+
+    if (hasTargetedSearch) {
+      baseJson ++ Json.obj("targetedSearch" -> targetedSearchJson) ++ defaultFiltersJson
+    } else {
+      baseJson ++ defaultFiltersJson
+    }
+  }
+
+  "toQueryRequestBody" should {
+    "return Json body with full values" when {
+      "all query parameters are given" in {
+        val expectedJson = buildJsonBody(hasDateRange = true, hasTargetedSearch = true)
+
+        fullQueryParameters.toQueryRequestBody(taxRegime) shouldBe expectedJson
+      }
+    }
+
+    "return Json body with 'dateRange' in the 'selectionCriteria'" when {
+      "'fromDate' and 'toDate' query parameters are given" in {
+        val queryParameters = emptyQueryParameters.copy(
+          fromDate = Some(LocalDate.of(2022, 1, 1)),
+          toDate = Some(LocalDate.of(2025, 1, 1))
+        )
+        val expectedJson = buildJsonBody(hasDateRange = true, hasTargetedSearch = false)
+
+        queryParameters.toQueryRequestBody(taxRegime) shouldBe expectedJson
+      }
+    }
+
+    "return Json body with 'targetedSearch'" when {
+      "'searchType' and 'searchItem' query parameters are given" in {
+        val queryParameters = emptyQueryParameters.copy(
+          searchType = Some("CHGREF"),
+          searchItem = Some("XC00178236592")
+        )
+        val expectedJson = buildJsonBody(hasDateRange = false, hasTargetedSearch = true)
+
+        queryParameters.toQueryRequestBody(taxRegime) shouldBe expectedJson
+      }
+    }
+
+    "return the minimum Json body with only ID and default values" when {
+      val minimumDefaultJsonBody = buildJsonBody(hasDateRange = false, hasTargetedSearch = false)
+      "no query parameters are given" in {
+        emptyQueryParameters.toQueryRequestBody(taxRegime) shouldBe minimumDefaultJsonBody
+      }
+
+      "one of 'fromDate' or 'toDate' are given but not both" in {
+        val queryWithFromDate = emptyQueryParameters.copy(
+          fromDate = Some(LocalDate.of(2022, 1, 1)),
+          toDate = None
+        )
+        val queryWithToDate = emptyQueryParameters.copy(
+          fromDate = None,
+          toDate = Some(LocalDate.of(2025, 1, 1))
+        )
+
+        queryWithFromDate.toQueryRequestBody(taxRegime) shouldBe minimumDefaultJsonBody
+        queryWithToDate.toQueryRequestBody(taxRegime) shouldBe minimumDefaultJsonBody
+      }
+
+      "one of 'searchType' or 'searchItem' are given but not both" in {
+        val queryWithSearchType = emptyQueryParameters.copy(
+          searchType = Some("CHGREF"),
+          searchItem = None
+        )
+        val queryWithSearchItem = emptyQueryParameters.copy(
+          searchType = None,
+          searchItem = Some("XC00178236592")
+        )
+
+        queryWithSearchType.toQueryRequestBody(taxRegime) shouldBe minimumDefaultJsonBody
+        queryWithSearchItem.toQueryRequestBody(taxRegime) shouldBe minimumDefaultJsonBody
+      }
+    }
+
+    "return Json body with 'includeClearedItems' as 'true" when {
+      "'onlyOpenItems' is 'false'" in {
+        val queryParameters = emptyQueryParameters.copy(onlyOpenItems = Some(false))
+        val expectedJson    = buildJsonBody(hasDateRange = false, hasTargetedSearch = false, includeClearedItemsValue = true)
+
+        queryParameters.toQueryRequestBody(taxRegime) shouldBe expectedJson
+      }
+      "'onlyOpenItems' is not present" in {
+        val queryParameters = emptyQueryParameters.copy(onlyOpenItems = None)
+        val expectedJson    = buildJsonBody(hasDateRange = false, hasTargetedSearch = false, includeClearedItemsValue = true)
+
+        queryParameters.toQueryRequestBody(taxRegime) shouldBe expectedJson
+      }
+    }
+
+    "return Json body with 'includeClearedItems' as 'false" when {
+      "'onlyOpenItems' is 'true'" in {
+        val queryParameters = emptyQueryParameters.copy(onlyOpenItems = Some(true))
+        val expectedJson    = buildJsonBody(hasDateRange = false, hasTargetedSearch = false, includeClearedItemsValue = false)
+
+        queryParameters.toQueryRequestBody(taxRegime) shouldBe expectedJson
       }
     }
   }
