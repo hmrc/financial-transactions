@@ -45,6 +45,10 @@ class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfi
     val url             = s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/financial-data/query"
     val jsonRequestBody = queryParameters.toQueryRequestBody(regime)
 
+    logger.info(
+      "[FinancialDataHIPConnector][getFinancialDataHIP] - " +
+        s"Calling POST $url \nHeaders: $hipHeaders\n QueryParamBody: $jsonRequestBody")
+
     http
       .post(url"$url")(headerCarrier)
       .setHeader(hipHeaders: _*)
