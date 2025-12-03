@@ -47,7 +47,7 @@ class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfi
 
     logger.info(
       "[FinancialDataHIPConnector][getFinancialDataHIP] - " +
-        s"Calling POST $url \nHeaders: $hipHeaders\n QueryParamBody: $jsonRequestBody")
+        s"Calling POST $url\nCorrelation ID: $correlationId\nQueryBody: $jsonRequestBody")
 
     http
       .post(url"$url")(headerCarrier)
@@ -60,11 +60,10 @@ class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfi
       }
   }
   private def buildHIPHeaders(correlationId: String): Seq[(String, String)] = Seq(
-    "Authorization"                       -> s"Basic ${appConfig.hipToken}",
-    appConfig.hipServiceOriginatorIdKeyV1 -> appConfig.hipServiceOriginatorIdV1,
-    "correlationid"                       -> correlationId,
-    "X-Originating-System"                -> "MDTP",
-    "X-Receipt-Date"                      -> DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
-    "X-Transmitting-System"               -> "HIP"
+    "Authorization"         -> s"Basic ${appConfig.hipToken}",
+    "correlationid"         -> correlationId,
+    "X-Originating-System"  -> "MDTP",
+    "X-Receipt-Date"        -> DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
+    "X-Transmitting-System" -> "HIP"
   )
 }

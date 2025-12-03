@@ -21,8 +21,8 @@ import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.{HIPPenaltyDet
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import play.api.http.Status.BAD_GATEWAY
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
 import utils.LoggerUtil
 
 import java.time.{LocalDateTime, ZoneOffset}
@@ -31,22 +31,22 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class HIPPenaltyDetailsConnector @Inject()(val http: HttpClientV2, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class HIPPenaltyDetailsConnector @Inject() (val http: HttpClientV2, val appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
-  private[connectors] def penaltyDetailsUrl() =
-    s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
+  private[connectors] def penaltyDetailsUrl() = s"${appConfig.hipUrl}/etmp/RESTAdapter/cross-regime/taxpayer/penalties"
 
-  def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                       (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HIPPenaltyDetailsResponse] = {
+  def getPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)(implicit
+      headerCarrier: HeaderCarrier,
+      ec: ExecutionContext): Future[HIPPenaltyDetailsResponse] = {
 
     val correlationID = randomUUID().toString
-    val receiptDate = LocalDateTime.now(ZoneOffset.UTC).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+    val receiptDate   = LocalDateTime.now(ZoneOffset.UTC).format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
 
     val hipHeaders = Seq(
-      "Authorization" -> s"Basic ${appConfig.hipToken}",
-      "correlationid" -> correlationID,
-      "X-Originating-System" -> "MDTP",
-      "X-Receipt-Date" -> receiptDate,
+      "Authorization"         -> s"Basic ${appConfig.hipToken}",
+      "correlationid"         -> correlationID,
+      "X-Originating-System"  -> "MDTP",
+      "X-Receipt-Date"        -> receiptDate,
       "X-Transmitting-System" -> "HIP"
     )
 
@@ -54,21 +54,22 @@ class HIPPenaltyDetailsConnector @Inject()(val http: HttpClientV2, val appConfig
 
     val hipQueryParams = Seq(
       "taxRegime" -> regime.regimeType,
-      "idType" -> regime.idType,
-      "idNumber" -> regime.id
+      "idType"    -> regime.idType,
+      "idNumber"  -> regime.id
     ) ++ queryParameters.toSeqQueryParams
 
-    logger.info("[HIPPenaltyDetailsConnector][getPenaltyDetails] - " +
-      s"Calling GET $urlString \nHeaders: $hipHeaders\n QueryParams: $hipQueryParams")
+    logger.info(
+      "[HIPPenaltyDetailsConnector][getPenaltyDetails] - " +
+        s"Calling GET $urlString \nCorrelation ID: $correlationID\nQueryParams: $hipQueryParams")
 
     val hc = headerCarrier.copy(authorization = None)
-    http.get(url"$urlString?$hipQueryParams")(hc)
+    http
+      .get(url"$urlString?$hipQueryParams")(hc)
       .setHeader(hipHeaders: _*)
       .execute[HIPPenaltyDetailsResponse](HIPPenaltyDetailsReads, ec)
-    .recover {
-      case ex: HttpException =>
+      .recover { case ex: HttpException =>
         logger.warn(s"[HIPPenaltyDetailsConnector][getPenaltyDetails] - HTTP exception received: ${ex.message}")
         Left(Error(BAD_GATEWAY, ex.message))
-    }
+      }
   }
 }

@@ -17,13 +17,12 @@
 package config
 
 import config.featureSwitch.Features
-
-import javax.inject.{Inject, Singleton}
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.LocalDate
 import java.util.Base64
+import javax.inject.{Inject, Singleton}
 
 trait AppConfig {
   val features: Features
@@ -32,25 +31,22 @@ trait AppConfig {
 }
 
 @Singleton
-class MicroserviceAppConfig @Inject()(val servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
+class MicroserviceAppConfig @Inject() (val servicesConfig: ServicesConfig)(implicit val conf: Configuration) extends AppConfig {
 
   lazy val appName: String = servicesConfig.getString("appName")
 
   lazy val desEnvironment: String = servicesConfig.getString("microservice.services.des.environment")
-  lazy val desToken: String = servicesConfig.getString("microservice.services.des.auth-token")
-  lazy val desUrl: String = servicesConfig.getString("microservice.services.des.url")
+  lazy val desToken: String       = servicesConfig.getString("microservice.services.des.auth-token")
+  lazy val desUrl: String         = servicesConfig.getString("microservice.services.des.url")
 
   lazy val eisEnvironment: String = servicesConfig.getString("microservice.services.eis.environment")
-  lazy val eisToken: String = servicesConfig.getString("microservice.services.eis.auth-token")
-  lazy val eisUrl: String = servicesConfig.getString("microservice.services.eis.url")
+  lazy val eisToken: String       = servicesConfig.getString("microservice.services.eis.auth-token")
+  lazy val eisUrl: String         = servicesConfig.getString("microservice.services.eis.url")
 
-  lazy val hipUrl: String = servicesConfig.getString("microservice.services.hip.url")
+  lazy val hipUrl: String     = servicesConfig.getString("microservice.services.hip.url")
   lazy val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
   lazy val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
-  lazy val hipToken: String = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
-  val hipServiceOriginatorIdKeyV1: String = servicesConfig.getString("microservice.services.hip.originator-id-key")
-  val hipServiceOriginatorIdV1: String    = servicesConfig.getString("microservice.services.hip.originator-id-value")
-
+  lazy val hipToken: String   = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
 
   override lazy val staticDateValue: String = servicesConfig.getString("date-service.staticDateValue")
   override lazy val familiarisationPeriodEndDate: LocalDate =
