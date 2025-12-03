@@ -21,9 +21,9 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 val appName: String = "financial-transactions"
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
-lazy val plugins: Seq[Plugins] = Seq.empty
+lazy val plugins: Seq[Plugins]          = Seq.empty
 
-val bootstrapPlayVersion = "10.1.0"
+val bootstrapPlayVersion = "10.4.0"
 
 lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
@@ -40,20 +40,20 @@ lazy val coverageSettings: Seq[Setting[?]] = {
   Seq(
     ScoverageKeys.coverageExcludedPackages := excludedPackages.mkString(";"),
     ScoverageKeys.coverageMinimumStmtTotal := 95,
-    ScoverageKeys.coverageHighlighting := true,
-    ScoverageKeys.coverageFailOnMinimum := true
+    ScoverageKeys.coverageHighlighting     := true,
+    ScoverageKeys.coverageFailOnMinimum    := true
   )
 }
 
 val compile = Seq(
   ws,
-  "uk.gov.hmrc"       %% "bootstrap-backend-play-30" % bootstrapPlayVersion
+  "uk.gov.hmrc" %% "bootstrap-backend-play-30" % bootstrapPlayVersion
 )
 
 def test(scope: String = "test,it"): Seq[ModuleID] = Seq(
-  "uk.gov.hmrc"       %% "bootstrap-test-play-30"       % bootstrapPlayVersion    % scope,
-  "org.scalatestplus" %% "mockito-3-4"                  % "3.2.10.0"               % scope,
-  "org.scalamock"     %% "scalamock"                    % "7.4.1"                 % scope
+  "uk.gov.hmrc"       %% "bootstrap-test-play-30" % bootstrapPlayVersion % scope,
+  "org.scalatestplus" %% "mockito-3-4"            % "3.2.10.0"           % scope,
+  "org.scalamock"     %% "scalamock"              % "7.5.2"              % scope
 )
 
 lazy val microservice = Project(appName, file("."))
@@ -65,7 +65,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings() *)
   .settings(
     PlayKeys.playDefaultPort := 9085,
-    scalaVersion := "2.13.16",
+    scalaVersion             := "2.13.16",
     libraryDependencies ++= appDependencies,
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Wconf:cat=unused-imports&src=.*routes.*:s"),
     retrieveManaged := true,
@@ -74,14 +74,13 @@ lazy val microservice = Project(appName, file("."))
     routesGenerator := InjectedRoutesGenerator
   )
   .settings(
-    javaOptions +="-Dlogger.resource=logback-test.xml"
+    javaOptions += "-Dlogger.resource=logback-test.xml"
   )
-
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    IntegrationTest / Keys.fork := false,
-    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory) (base => Seq(base / "it")).value,
+    IntegrationTest / Keys.fork                  := false,
+    IntegrationTest / unmanagedSourceDirectories := (IntegrationTest / baseDirectory)(base => Seq(base / "it")).value,
     addTestReportOption(IntegrationTest, "int-test-reports"),
     IntegrationTest / parallelExecution := false
   )
