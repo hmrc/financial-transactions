@@ -21,16 +21,15 @@ import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.{DirectDebitChe
 import models.API1396.DirectDebits
 import models.{Error, ErrorResponse}
 import play.api.http.Status.BAD_GATEWAY
-import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
 import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpException, StringContextOps}
 import utils.LoggerUtil
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class DirectDebitDataConnector @Inject()(http: HttpClientV2)
-                                        (implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
+class DirectDebitDataConnector @Inject() (http: HttpClientV2)(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
   private[connectors] def directDebitUrl(vrn: String) =
     s"${appConfig.desUrl}/cross-regime/direct-debits/vatc/vrn/$vrn"
@@ -38,22 +37,25 @@ class DirectDebitDataConnector @Inject()(http: HttpClientV2)
   val desHeaders: Seq[(String, String)] =
     Seq("Authorization" -> s"Bearer ${appConfig.desToken}", "Environment" -> appConfig.desEnvironment)
 
-  def checkDirectDebitExists(vrn: String)
-                            (implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[DirectDebits]] = {
+  def checkDirectDebitExists(vrn: String)(implicit headerCarrier: HeaderCarrier, ec: ExecutionContext): Future[HttpGetResult[DirectDebits]] = {
 
     val urlString = directDebitUrl(vrn)
 
-    logger.debug(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $urlString \nHeaders: $desHeaders\n Vrn: $vrn")
+    logger.info(s"[FinancialDataConnector][checkDirectDebitExists] - Calling GET $urlString")
     val hc = headerCarrier.copy(authorization = None)
-    http.get(url"$urlString")(hc).setHeader(desHeaders: _*).execute[HttpGetResult[DirectDebits]](DirectDebitCheckReads, ec).map {
-      case directDebitStatus@Right(_) => directDebitStatus
-      case error@Left(message) =>
-        logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
-        error
-    }.recover {
-      case ex: HttpException =>
+    http
+      .get(url"$urlString")(hc)
+      .setHeader(desHeaders: _*)
+      .execute[HttpGetResult[DirectDebits]](DirectDebitCheckReads, ec)
+      .map {
+        case directDebitStatus @ Right(_) => directDebitStatus
+        case error @ Left(message) =>
+          logger.warn("[FinancialDataConnector][checkDirectDebitExists] DES Error Received. Message: " + message)
+          error
+      }
+      .recover { case ex: HttpException =>
         logger.warn(s"[DirectDebitDataConnector][checkDirectDebitExists] - HTTP exception received: ${ex.message}")
         Left(ErrorResponse(BAD_GATEWAY, Error("BAD_GATEWAY", ex.message)))
-    }
+      }
   }
 }
