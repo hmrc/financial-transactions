@@ -23,7 +23,7 @@ val appName: String = "financial-transactions"
 lazy val appDependencies: Seq[ModuleID] = compile ++ test()
 lazy val plugins: Seq[Plugins]          = Seq.empty
 
-val bootstrapPlayVersion = "10.4.0"
+val bootstrapPlayVersion = "10.7.0"
 
 lazy val coverageSettings: Seq[Setting[?]] = {
   import scoverage.ScoverageKeys
@@ -65,7 +65,7 @@ lazy val microservice = Project(appName, file("."))
   .settings(defaultSettings() *)
   .settings(
     PlayKeys.playDefaultPort := 9085,
-    scalaVersion             := "2.13.16",
+    scalaVersion             := "2.13.18",
     libraryDependencies ++= appDependencies,
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-Wconf:cat=unused-imports&src=.*routes.*:s"),
     retrieveManaged := true,
