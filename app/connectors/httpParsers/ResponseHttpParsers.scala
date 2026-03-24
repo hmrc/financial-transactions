@@ -46,7 +46,7 @@ trait ResponseHttpParsers extends LoggerUtil {
         parseXml(body, status)
 
       case HtmlBody =>
-        ErrorResponse(status, Error("GATEWAY_ERROR", "HTML error response (502/503 likely)"))
+        ErrorResponse(status, Error("GATEWAY_ERROR", "Received HTML response instead of expected JSON"))
 
       case Unknown =>
         ErrorResponse(status, Error("UNKNOWN_FORMAT", body.take(INTERNAL_SERVER_ERROR)))

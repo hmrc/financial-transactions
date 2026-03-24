@@ -29,6 +29,19 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
 
   type FinancialTransactionsHIPResponse = Either[Error, FinancialTransactionsHIP]
 
+  private val HandledErrorStatuses = Set(
+    BAD_REQUEST,
+    FORBIDDEN,
+    NOT_FOUND,
+    CONFLICT,
+    INTERNAL_SERVER_ERROR,
+    SERVICE_UNAVAILABLE,
+    BAD_GATEWAY,
+    GATEWAY_TIMEOUT
+  )
+
+  private val MaxBodyLength = 300
+
   implicit object FinancialTransactionsHIPReads extends HttpReads[FinancialTransactionsHIPResponse] {
 
     override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsHIPResponse = {
@@ -52,8 +65,7 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
             case None => fallbackError(response)
           }
 
-        case BAD_REQUEST | FORBIDDEN | NOT_FOUND | CONFLICT |
-             INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE =>
+        case s if HandledErrorStatuses.contains(s) =>
           logger.error(s"[FinancialTransactionsHIPReads] error status=$status body=$body")
           handleJsonOrFallback(response)
 
@@ -72,7 +84,7 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
 
         case JsError(errors) =>
           logger.error(s"[FinancialTransactionsHIPReads] validation failed: $errors")
-          invalidJsonError("UNEXPECTED_JSON_FORMAT")
+          invalidJsonError(s"UNEXPECTED_JSON_FORMAT - $errors")
       }
 
     private def invalidJsonError(msg: String): Left[Error, Nothing] = {
@@ -144,7 +156,7 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
         case b if b.contains("502 Bad Gateway") => "GATEWAY_ERROR - Bad Gateway"
         case b if b.toLowerCase.contains("<html") => "GATEWAY_ERROR - HTML response"
         case b if b.isEmpty => "EMPTY_RESPONSE"
-        case b => b.take(MULTIPLE_CHOICES)
+        case b => b.take(MaxBodyLength)
       }
 
       logger.error(s"[FinancialTransactionsHIPReads] fallback error: $message")
