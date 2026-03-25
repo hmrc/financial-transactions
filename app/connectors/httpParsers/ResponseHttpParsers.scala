@@ -30,6 +30,8 @@ trait ResponseHttpParsers extends LoggerUtil {
 
   type HttpGetResult[T] = Either[ErrorResponse, T]
 
+  private val MaxBodyLength = 300
+
   protected def handleErrorResponse(httpResponse: HttpResponse): Left[ErrorResponse, Nothing] = {
     val status = httpResponse.status
     val body   = Option(httpResponse.body).getOrElse("").trim
@@ -46,10 +48,10 @@ trait ResponseHttpParsers extends LoggerUtil {
         parseXml(body, status)
 
       case HtmlBody =>
-        ErrorResponse(status, Error("GATEWAY_ERROR", "Received HTML response instead of expected JSON"))
+        ErrorResponse(status, Error("GATEWAY_ERROR", s"Received HTML response instead of expected JSON: ${body.take(MaxBodyLength)}"))
 
       case Unknown =>
-        ErrorResponse(status, Error("UNKNOWN_FORMAT", body.take(INTERNAL_SERVER_ERROR)))
+        ErrorResponse(status, Error("UNKNOWN_FORMAT", body.take(MaxBodyLength)))
     }
 
     Left(errorResponse)
