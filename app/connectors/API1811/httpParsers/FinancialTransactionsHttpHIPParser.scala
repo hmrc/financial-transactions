@@ -19,76 +19,152 @@ package connectors.API1811.httpParsers
 import models.API1811.{BusinessError, Error, FinancialTransactionsHIP, HipWrappedError, TechnicalError}
 import play.api.http.Status._
 import play.api.libs.json.Format.GenericFormat
-import play.api.libs.json.{JsError, JsSuccess, JsValue}
+import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import uk.gov.hmrc.http.{HttpReads, HttpResponse}
 import utils.LoggerUtil
+
+import scala.util.Try
 
 object FinancialTransactionsHttpHIPParser extends LoggerUtil {
 
   type FinancialTransactionsHIPResponse = Either[Error, FinancialTransactionsHIP]
 
+  private val HandledErrorStatuses = Set(
+    BAD_REQUEST,
+    FORBIDDEN,
+    NOT_FOUND,
+    CONFLICT,
+    INTERNAL_SERVER_ERROR,
+    SERVICE_UNAVAILABLE,
+    BAD_GATEWAY,
+    GATEWAY_TIMEOUT
+  )
+
+  private val MaxBodyLength = 300
+
   implicit object FinancialTransactionsHIPReads extends HttpReads[FinancialTransactionsHIPResponse] {
-    override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsHIPResponse =
-      response.status match {
+
+    override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsHIPResponse = {
+
+      val status = response.status
+      val body = Option(response.body).getOrElse("")
+
+      logger.info(s"[FinancialTransactionsHIPReads] status=$status")
+
+      status match {
+
         case CREATED =>
-          handleSuccessResponse(response.json)
+          parseJson(body) match {
+            case Some(json) => handleSuccess(json)
+            case None => invalidJsonError("Invalid JSON in success response")
+          }
 
         case UNPROCESSABLE_ENTITY =>
-          extractErrorResponseBodyFrom422(response)
+          parseJson(body) match {
+            case Some(json) => handle422(json, response)
+            case None => fallbackError(response)
+          }
 
-        case status @ (BAD_REQUEST | FORBIDDEN | NOT_FOUND | CONFLICT | UNPROCESSABLE_ENTITY | INTERNAL_SERVER_ERROR | SERVICE_UNAVAILABLE) =>
-          logger.error(
-            s"[FinancialTransactionsHIPReads][read] Received $status when trying to call HIP FinancialTransactions - with body: ${response.body}")
-          handleErrorResponse(response)
+        case s if HandledErrorStatuses.contains(s) =>
+          logger.error(s"[FinancialTransactionsHIPReads] error status=$status body=$body")
+          handleJsonOrFallback(response)
 
-        case status =>
-          logger.error(
-            s"[FinancialTransactionsHIPReads][read] Received unexpected response from HIP FinancialTransactions," +
-              s" status code: $status and body: ${response.body}")
-          Left(Error(response.status, response.body))
-      }
-
-    private def handleSuccessResponse(json: JsValue): FinancialTransactionsHIPResponse = {
-      logger.info(s"[FinancialTransactionsHIPReads][read] Success 201 response returned from API#5327")
-      json.validate[FinancialTransactionsHIP] match {
-        case JsSuccess(valid, _) =>
-          logger.info(s"[FinancialTransactionsHIPReads][read] FinancialTransactions successfully validated from success response")
-          Right(valid)
-        case JsError(errors) =>
-          logger.error(s"[FinancialTransactionsHIPReads][read] Json validation of 201 body failed with errors: $errors")
-          Left(
-            Error(
-              INTERNAL_SERVER_ERROR,
-              "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
-      }
-    }
-
-    private def extractErrorResponseBodyFrom422(response: HttpResponse): Left[Error, Nothing] =
-      (response.json \ "errors").validate[BusinessError] match {
-        case JsSuccess(error, _) if error.code == "016" && error.text == "Invalid ID Number" =>
-          logger.error(s"[FinancialTransactionsHIPReads][read] - Error: ID number did not match any penalty data")
-          Left(Error(NOT_FOUND, "ID number did not match any penalty data"))
-        case JsSuccess(error, _) if error.code == "018" && error.text == "No Data Identified" =>
-          logger.error(s"[FinancialTransactionsHIPReads][read] - Error: ID number did not match any financial data")
-          Left(Error(NOT_FOUND, "ID number did not match any financial data"))
         case _ =>
-          logger.error(s"[FinancialTransactionsHIPReads][read] - 422 error: ${response.body}")
-          handleErrorResponse(response)
+          logger.error(s"[FinancialTransactionsHIPReads] unexpected status=$status body=$body")
+          fallbackError(response)
+      }
+    }
+
+    private def handleSuccess(json: JsValue): FinancialTransactionsHIPResponse =
+      json.validate[FinancialTransactionsHIP] match {
+
+        case JsSuccess(value, _) =>
+          logger.info("[FinancialTransactionsHIPReads] success parsed")
+          Right(value)
+
+        case JsError(errors) =>
+          logger.error(s"[FinancialTransactionsHIPReads] validation failed: $errors")
+          invalidJsonError(s"UNEXPECTED_JSON_FORMAT - $errors")
       }
 
-    private def handleErrorResponse(response: HttpResponse): Left[Error, Nothing] = {
-      val status        = response.status
-      val error         = (response.json \ "response" \ "error").validate[TechnicalError]
-      val errors        = (response.json \ "response" \ "failures").validate[Seq[HipWrappedError]]
-      val businessError = (response.json \ "errors").validate[BusinessError]
-      val errorMsg = (error, errors, businessError) match {
-        case (JsSuccess(error, _), _, _)  => s"${error.code} - ${error.message}"
-        case (_, JsSuccess(errors, _), _) => errors.map(err => s"${err.`type`} - ${err.reason}").mkString(",\n")
-        case (_, _, JsSuccess(error, _))  => s"${error.code} - ${error.text}"
-        case _                            => response.json.toString()
-      }
-      logger.error(s"[FinancialTransactionsHIPReads][read] $status error: $errorMsg")
-      Left(Error(status, errorMsg))
+    private def invalidJsonError(msg: String): Left[Error, Nothing] = {
+      logger.error(s"[FinancialTransactionsHIPReads] $msg")
+      Left(Error(INTERNAL_SERVER_ERROR, msg))
     }
+
+    private def handle422(json: JsValue, response: HttpResponse): Left[Error, Nothing] =
+      (json \ "errors").validate[BusinessError] match {
+
+        case JsSuccess(err, _) =>
+          (err.code, err.text) match {
+
+            case ("016", _) =>
+              Left(Error(NOT_FOUND, "ID number did not match any penalty data"))
+
+            case ("018", _) =>
+              Left(Error(NOT_FOUND, "ID number did not match any financial data"))
+
+            case _ =>
+              logger.error(s"[FinancialTransactionsHIPReads] unknown 422 error: ${response.body}")
+              handleJsonOrFallback(response)
+          }
+
+        case _ =>
+          logger.error(s"[FinancialTransactionsHIPReads] invalid 422 format")
+          handleJsonOrFallback(response)
+      }
+
+    private def handleJsonOrFallback(response: HttpResponse): Left[Error, Nothing] =
+      parseJson(response.body) match {
+
+        case Some(json) => extractJsonError(json, response.status)
+
+        case None => fallbackError(response)
+      }
+
+    private def extractJsonError(json: JsValue, status: Int): Left[Error, Nothing] = {
+
+      val error = (json \ "response" \ "error").validate[TechnicalError]
+      val failures = (json \ "response" \ "failures").validate[Seq[HipWrappedError]]
+      val businessError = (json \ "errors").validate[BusinessError]
+
+      val message = (error, failures, businessError) match {
+
+        case (JsSuccess(e, _), _, _) =>
+          s"${e.code} - ${e.message}"
+
+        case (_, JsSuccess(fs, _), _) =>
+          fs.map(f => s"${f.`type`} - ${f.reason}").mkString(", ")
+
+        case (_, _, JsSuccess(e, _)) =>
+          s"${e.code} - ${e.text}"
+
+        case _ =>
+          json.toString()
+      }
+
+      logger.error(s"[FinancialTransactionsHIPReads] parsed error: $message")
+      Left(Error(status, message))
+    }
+
+    private def fallbackError(response: HttpResponse): Left[Error, Nothing] = {
+
+      val body = Option(response.body).getOrElse("")
+
+      val message = body match {
+        case b if b.contains("Send timeout") => "TIMEOUT - Downstream timeout"
+        case b if b.contains("502 Bad Gateway") => "GATEWAY_ERROR - Bad Gateway"
+        case b if b.toLowerCase.contains("<html") => "GATEWAY_ERROR - HTML response"
+        case b if b.isEmpty => "EMPTY_RESPONSE"
+        case b => b.take(MaxBodyLength)
+      }
+
+      logger.error(s"[FinancialTransactionsHIPReads] fallback error: $message")
+
+      Left(Error(response.status, message))
+    }
+
+    private def parseJson(body: String): Option[JsValue] =
+      Try(Json.parse(body)).toOption
   }
 }

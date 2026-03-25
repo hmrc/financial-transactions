@@ -82,7 +82,7 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
 
         val result = financialTransactionsParserReads(notFoundNoBodyHttpResponse)
 
-        result shouldBe Left(Error(UNPROCESSABLE_ENTITY, "016 - Invalid id num."))
+        result shouldBe Left(Error(NOT_FOUND, "ID number did not match any penalty data"))
       }
     }
     "response body cannot be validated as a BusinessError" in {
@@ -113,7 +113,7 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
       val technicalErrorResponse = HttpResponse(status = BAD_REQUEST, body = hipWrappedError)
 
         val result = financialTransactionsParserReads(technicalErrorResponse)
-        result shouldBe Left(Error(BAD_REQUEST, "errorType - errorReason,\nerrorType2 - errorReason2"))
+        result shouldBe Left(Error(BAD_REQUEST, "errorType - errorReason, errorType2 - errorReason2"))
     }
 
     "response body cannot be parsed as expected error format" in {
@@ -130,4 +130,24 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
       val result = financialTransactionsParserReads(imATeapotHttpResponse)
       result shouldBe Left(Error(IM_A_TEAPOT, "I'm a teapot."))
     }
+
+   "parsing an unexpected response with BAD Gateway HTML" in {
+     val gatewayTimeoutHtml =
+       """<html> <head><title>502 Bad Gateway</title></head>
+         | <body> <center><h1>502 Bad Gateway</h1>
+         |</center> <hr><center>nginx/1.29.6</center> </body> </html>""".stripMargin
+     val gatewayTimeoutHtmlResponse = HttpResponse(status = BAD_GATEWAY, body = gatewayTimeoutHtml)
+
+     val result = financialTransactionsParserReads(gatewayTimeoutHtmlResponse)
+     result shouldBe Left(Error(BAD_GATEWAY, "GATEWAY_ERROR - Bad Gateway"))
+   }
+
+  "parsing an unexpected response with an invalid json" in {
+    val errorResponseJson =
+      """{"origin":"HoD","response":{"error":{"code":"500","message":"Error","logID":"C0000AB98804F09C0000000300000A6B"}""".stripMargin
+    val errorResponse = HttpResponse(status = BAD_GATEWAY, body = errorResponseJson)
+
+    val result = financialTransactionsParserReads(errorResponse)
+    result shouldBe Left(Error(BAD_GATEWAY, errorResponseJson))
+  }
 }
