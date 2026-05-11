@@ -43,8 +43,8 @@ object FinancialTransactions {
       .map(FinancialTransactions.apply)
 
   val hipReads: Reads[FinancialTransactions] =
-    (JsPath \ "documentDetails").read[Seq[DocumentDetails]]
-      .map(FinancialTransactions.apply)
+    (JsPath \ "documentDetails").readNullable[Seq[DocumentDetails]]
+      .map(docs => FinancialTransactions(docs.getOrElse(Seq.empty)))
 
   implicit def writes(implicit appConfig: AppConfig, request: Request[_]): Writes[FinancialTransactions] = Writes { model =>
     Json.obj(
