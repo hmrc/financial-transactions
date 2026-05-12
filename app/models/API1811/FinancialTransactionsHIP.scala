@@ -27,7 +27,7 @@ case class FinancialTransactionsHIP(
 object FinancialTransactionsHIP {
   implicit val reads: Reads[FinancialTransactionsHIP] = (
     (JsPath \ "success" \ "processingDate").read[String] and
-      (JsPath \ "success" \ "financialData").read(hipReads)
-    )(FinancialTransactionsHIP.apply _)
-
+      (JsPath \ "success" \ "financialData").readNullable(hipReads)
+        .map(_.getOrElse(FinancialTransactions(Seq.empty))
+    )
 }
