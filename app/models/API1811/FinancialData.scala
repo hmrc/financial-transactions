@@ -21,9 +21,9 @@ import play.api.libs.json._
 import play.api.mvc.Request
 import services.DateService
 
-case class FinancialTransactions(documentDetails: Seq[DocumentDetails])
+case class FinancialData(documentDetails: Seq[DocumentDetails])
 
-object FinancialTransactions {
+object FinancialData {
 
   def hasOverdueChargeAndNoTTP(documentDetails: Seq[DocumentDetails])(implicit appConfig: AppConfig): Boolean = {
     val currentDate = DateService.now
@@ -34,21 +34,16 @@ object FinancialTransactions {
 
     (hasOverdueCharge, hasTTPLock) match {
       case (true, false) => true
-      case _ => false
+      case _             => false
     }
   }
 
-  implicit val reads: Reads[FinancialTransactions] =
-    (__ \ "getFinancialData" \ "financialDetails" \ "documentDetails").read[Seq[DocumentDetails]]
-      .map(FinancialTransactions.apply)
+  implicit val reads: Reads[FinancialData] =
+    (__ \ "documentDetails").read[Seq[DocumentDetails]].map(FinancialData.apply)
 
-  val hipReads: Reads[FinancialTransactions] =
-    (JsPath \ "documentDetails").read[Seq[DocumentDetails]]
-      .map(FinancialTransactions.apply)
-
-  implicit def writes(implicit appConfig: AppConfig, request: Request[_]): Writes[FinancialTransactions] = Writes { model =>
+  implicit def writes(implicit appConfig: AppConfig, request: Request[_]): Writes[FinancialData] = Writes { model =>
     Json.obj(
-      "financialTransactions" -> Json.toJsFieldJsValueWrapper(model.documentDetails),
+      "financialTransactions"    -> Json.toJsFieldJsValueWrapper(model.documentDetails),
       "hasOverdueChargeAndNoTTP" -> hasOverdueChargeAndNoTTP(model.documentDetails)
     )
   }

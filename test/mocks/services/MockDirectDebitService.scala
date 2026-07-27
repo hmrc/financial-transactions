@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
+import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
 import models.API1396.DirectDebits
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.{reset, when}

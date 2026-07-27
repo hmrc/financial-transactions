@@ -16,7 +16,7 @@
 
 package mocks.services
 
-import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
+import connectors.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
@@ -30,8 +30,8 @@ trait MockPenaltyDetailsService {
 
   val mockPenaltyDetailsService: PenaltyDetailsService = mock[PenaltyDetailsService]
 
-  def setupMockGetPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                                (response: PenaltyDetailsResponse): OngoingStubbing[Future[PenaltyDetailsResponse]] =
+  def setupMockGetPenaltyDetails(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)(
+      response: HIPPenaltyDetailsResponse): OngoingStubbing[Future[HIPPenaltyDetailsResponse]] =
     when(
       mockPenaltyDetailsService.getPenaltyDetails(
         ArgumentMatchers.eq(regime),

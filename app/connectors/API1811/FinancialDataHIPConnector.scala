@@ -17,7 +17,7 @@
 package connectors.API1811
 
 import config.MicroserviceAppConfig
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
+import connectors.httpParsers.FinancialTransactionsHttpHIPParser.{FinancialTransactionsHIPReads, FinancialTransactionsHIPResponse}
 import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.http.Status.BAD_GATEWAY
@@ -35,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfig: MicroserviceAppConfig) extends LoggerUtil {
 
-  def getFinancialDataHIP(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)(implicit
+  def getFinancialData(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)(implicit
       headerCarrier: HeaderCarrier,
       ec: ExecutionContext): Future[FinancialTransactionsHIPResponse] = {
 
@@ -59,6 +59,7 @@ class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfi
         Left(Error(BAD_GATEWAY, ex.message))
       }
   }
+
   private def buildHIPHeaders(correlationId: String): Seq[(String, String)] = Seq(
     "Authorization"         -> s"Basic ${appConfig.hipToken}",
     "correlationid"         -> correlationId,
@@ -66,4 +67,5 @@ class FinancialDataHIPConnector @Inject() (http: HttpClientV2)(implicit appConfi
     "X-Receipt-Date"        -> DateTimeFormatter.ISO_INSTANT.format(Instant.now().truncatedTo(ChronoUnit.SECONDS)),
     "X-Transmitting-System" -> "HIP"
   )
+
 }

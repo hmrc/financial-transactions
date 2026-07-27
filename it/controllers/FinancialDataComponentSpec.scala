@@ -26,7 +26,7 @@ import play.api.http.Status._
 import play.api.test.Helpers.running
 import testData.{FinancialData1811, FinancialDataHIP1811}
 
-class FinancialTransactionsComponentSpec extends ComponentSpecBase {
+class FinancialDataComponentSpec extends ComponentSpecBase {
 
   "Sending a request to /financial-transactions/:regime/:identifier (FinancialTransactions controller)" when {
     val vatRegime = VatRegime("123456789")

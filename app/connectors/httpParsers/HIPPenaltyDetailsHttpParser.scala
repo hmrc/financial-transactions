@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package connectors.API1812.httpParsers
+package connectors.httpParsers
 
 import models.API1812.{Error, PenaltyDetails}
 import models.hip_API1812._
@@ -30,7 +30,7 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
   type HIPPenaltyDetailsResponse = Either[Error, PenaltyDetails]
 
   implicit object HIPPenaltyDetailsReads extends HttpReads[HIPPenaltyDetailsResponse] {
-    override def read(method: String, url: String, response: HttpResponse): HIPPenaltyDetailsResponse = {
+    override def read(method: String, url: String, response: HttpResponse): HIPPenaltyDetailsResponse =
       response.status match {
         case OK =>
           parseSuccessResponse(response.json)
@@ -43,29 +43,27 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
           logger.error(s"[HIPPenaltyDetailsReads][read] Received $status when trying to call HIP PenaltyDetails - with body: ${response.body}")
           parseErrorResponse(response)
         case status =>
-          logger.error(s"[HIPPenaltyDetailsReads][read] Received unexpected response from HIP PenaltyDetails, status code: $status and body: ${response.body}")
+          logger.error(
+            s"[HIPPenaltyDetailsReads][read] Received unexpected response from HIP PenaltyDetails, status code: $status and body: ${response.body}")
           Left(Error(status, response.body))
       }
-    }
   }
 
-  private def parseSuccessResponse(json: JsValue): Either[Error, PenaltyDetails] = {
-    json.validate[HIPSuccessResponse].fold(
-      errors => {
-        logger.warn(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Error parsing HIP success response: $errors")
-        Left(Error(INTERNAL_SERVER_ERROR, "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
-      },
-      hipResponse => {
-        logger.info(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Parsed HIP response: $hipResponse")
-        val penaltyDetails = transformToPenaltyDetails(hipResponse)
-        logger.info(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Transformed to PenaltyDetails: $penaltyDetails")
-        Right(penaltyDetails)
-      }
-    )
-  }
+  private def parseSuccessResponse(json: JsValue): Either[Error, PenaltyDetails] =
+    json
+      .validate[PenaltyDetailsSuccessResponse]
+      .fold(
+        errors => {
+          logger.warn(s"[HIPPenaltyDetailsHttpParser][parseSuccessResponse] Error parsing HIP success response: $errors")
+          Left(
+            Error(
+              INTERNAL_SERVER_ERROR,
+              "UNEXPECTED_JSON_FORMAT - The downstream service responded with json which did not match the expected format."))
+        },
+        hipResponse => Right(hipResponse.success.toPenaltyDetailsModel)
+      )
 
-  private def parse422Response(response: HttpResponse): Either[Error, PenaltyDetails] = {
-    
+  private def parse422Response(response: HttpResponse): Either[Error, PenaltyDetails] =
     response.json.validate[HIPErrorResponse] match {
       case JsSuccess(errorResponse, _) if errorResponse.errors.code == "016" =>
         logger.info("[HIPPenaltyDetailsHttpParser][parse422Response] Invalid ID Number (016) - treating as no data found")
@@ -74,15 +72,14 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
         logger.error(s"[HIPPenaltyDetailsHttpParser][parse422Response] 422 error: ${response.body}")
         parseErrorResponse(response)
     }
-  }
 
   private def parseErrorResponse(response: HttpResponse): Either[Error, PenaltyDetails] = {
     val json = Try(response.json).getOrElse(Json.obj())
 
-    val technicalError = json.validate[HIPTechnicalErrorResponse].asOpt
-    val businessError = json.validate[HIPErrorResponse].asOpt
+    val technicalError  = json.validate[HIPTechnicalErrorResponse].asOpt
+    val businessError   = json.validate[HIPErrorResponse].asOpt
     val failureResponse = json.validate[HIPFailureResponse].asOpt
-    val originResponse = json.validate[HIPOriginResponse].asOpt
+    val originResponse  = json.validate[HIPOriginResponse].asOpt
 
     (technicalError, businessError, failureResponse, originResponse) match {
       case (Some(techError), _, _, _) =>
@@ -105,18 +102,4 @@ object HIPPenaltyDetailsHttpParser extends LoggerUtil {
     }
   }
 
-  private def transformToPenaltyDetails(hipResponse: HIPSuccessResponse): PenaltyDetails = {
-    val penaltyData = hipResponse.success.penaltyData
-
-    val lppDetails = penaltyData.flatMap(_.lpp).flatMap(_.lppDetails)
-    val breathingSpace = penaltyData.flatMap(_.breathingSpace)
-
-    logger.info(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] LPP details: $lppDetails")
-    logger.info(s"[HIPPenaltyDetailsHttpParser][transformToPenaltyDetails] Breathing space: $breathingSpace")
-
-    PenaltyDetails(
-      LPPDetails = lppDetails.map(_.map(_.toLatePaymentPenalty)),
-      breathingSpace = breathingSpace
-    )
-  }
 }

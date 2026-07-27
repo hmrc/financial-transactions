@@ -39,21 +39,17 @@ class MicroserviceAppConfig @Inject() (val servicesConfig: ServicesConfig)(impli
   lazy val desToken: String       = servicesConfig.getString("microservice.services.des.auth-token")
   lazy val desUrl: String         = servicesConfig.getString("microservice.services.des.url")
 
-  lazy val eisEnvironment: String = servicesConfig.getString("microservice.services.eis.environment")
-  lazy val eisToken: String       = servicesConfig.getString("microservice.services.eis.auth-token")
-  lazy val eisUrl: String         = servicesConfig.getString("microservice.services.eis.url")
+  lazy val eisToken: String = servicesConfig.getString("microservice.services.eis.auth-token")
 
-  lazy val hipUrl: String     = servicesConfig.getString("microservice.services.hip.url")
-  lazy val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
-  lazy val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
-  lazy val hipToken: String   = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
+  lazy val hipUrl: String             = servicesConfig.getString("microservice.services.hip.url")
+  private lazy val clientIdV1: String = servicesConfig.getString("microservice.services.hip.client-id")
+  private lazy val secretV1: String   = servicesConfig.getString("microservice.services.hip.client-secret")
+  lazy val hipToken: String           = Base64.getEncoder.encodeToString(s"$clientIdV1:$secretV1".getBytes("UTF-8"))
 
   override lazy val staticDateValue: String = servicesConfig.getString("date-service.staticDateValue")
   override lazy val familiarisationPeriodEndDate: LocalDate =
     LocalDate.parse(servicesConfig.getString("date-service.familiarisationPeriodEndDate"))
 
   override val features = new Features
-
-  lazy val enable1811HIPCall: Boolean = features.enable1811HIPCall()
 
 }

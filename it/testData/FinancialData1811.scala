@@ -15,7 +15,7 @@
  */
 package testData
 
-import models.API1811.{DocumentDetails, DocumentPenaltyTotals, Error, FinancialTransactions, LineItemDetails, LineItemLockDetails}
+import models.API1811.{DocumentDetails, DocumentPenaltyTotals, Error, FinancialData, LineItemDetails, LineItemLockDetails}
 import play.api.libs.json.{JsObject, Json}
 import play.api.http.Status
 
@@ -124,7 +124,7 @@ object FinancialData1811 {
     penaltyAmount = Some(10.01)
   )
 
-  val fullFinancialTransactions: FinancialTransactions = FinancialTransactions(Seq(
+  val fullFinancialTransactions: FinancialData = FinancialData(Seq(
     DocumentDetails(
       chargeReferenceNumber = Some("XP001286394838"),
       documentTotalAmount = Some(100.00),

@@ -18,9 +18,9 @@ package services.API1811
 
 import com.google.inject.Inject
 import config.MicroserviceAppConfig
-import connectors.API1811.httpParsers.FinancialTransactionsHttpParser.FinancialTransactionsResponse
-import connectors.API1811.{FinancialDataConnector, FinancialDataHIPConnector}
-import models.API1811.{Error, FinancialTransactions}
+import connectors.API1811.FinancialDataHIPConnector
+import connectors.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
+import models.API1811.{Error, FinancialData}
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import play.api.mvc.Request
 import uk.gov.hmrc.http.HeaderCarrier
@@ -29,35 +29,18 @@ import utils.LoggerUtil
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialTransactionsService @Inject() (val connector: FinancialDataConnector,
-                                              val hipConnector: FinancialDataHIPConnector,
-                                              implicit val ec: ExecutionContext)
-    extends LoggerUtil {
+class FinancialTransactionsService @Inject() (val connector: FinancialDataHIPConnector, implicit val ec: ExecutionContext) extends LoggerUtil {
   def getFinancialTransactions(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)(implicit
       headerCarrier: HeaderCarrier,
       appConfig: MicroserviceAppConfig,
-      request: Request[_]): Future[FinancialTransactionsResponse] = {
+      request: Request[_]): Future[FinancialTransactionsHIPResponse] =
 
-    if (appConfig.features.enable1811HIPCall()) {
-      logger.info("[FinancialTransactionsService][getFinancialTransactions] - HIP Call enabled, calling FinancialDataHIPConnector")
-      hipConnector.getFinancialDataHIP(regime, queryParameters).map {
-        case Right(financialTransactionsHIP) =>
-          logger.info("[FinancialTransactionsService][getFinancialTransactions] - Successfully retrieved HIP financial transactions.")
-          val filteredDocumentDetails = ChargeTypes.removeInvalidCharges(financialTransactionsHIP.financialData.documentDetails)
-          Right(FinancialTransactions(documentDetails = filteredDocumentDetails))
+    connector.getFinancialData(regime, queryParameters).map {
+      case Right(financialTransactions) =>
+        logger.info("[FinancialTransactionsService][getFinancialTransactions] - Successfully retrieved financial transactions")
+        val filteredDocumentDetails = ChargeTypes.removeInvalidCharges(financialTransactions.documentDetails)
+        Right(FinancialData(documentDetails = filteredDocumentDetails))
 
-        case Left(error: Error) => Left(error)
-      }
-    } else {
-      logger.debug("[FinancialTransactionsService][getFinancialTransactions] " +
-        s"Calling financialDataConnector with Regime: $regime\nParams: $queryParameters")
-      connector.getFinancialData(regime, queryParameters).map {
-        case Right(financialTransactions) =>
-          infoLog(s"[FinancialTransactionsService][getFinancialTransactions] " +
-            s"successfully retrieved financial transactions. Attempting to remove invalid charges")
-          Right(financialTransactions.copy(documentDetails = ChargeTypes.removeInvalidCharges(financialTransactions.documentDetails)))
-        case response: FinancialTransactionsResponse => response
-      }
+      case Left(error: Error) => Left(error)
     }
-  }
 }

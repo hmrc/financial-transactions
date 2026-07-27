@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package connectors.API1811.httpParsers
+package connectors.httpParsers
 
-import models.API1811.{BusinessError, Error, FinancialTransactionsHIP, HipWrappedError, TechnicalError}
+import models.API1811.{BusinessError, Error, FinancialData, FinancialTransactionsHIP, HipWrappedError, TechnicalError}
 import play.api.http.Status._
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsError, JsSuccess, JsValue}
@@ -25,7 +25,7 @@ import utils.LoggerUtil
 
 object FinancialTransactionsHttpHIPParser extends LoggerUtil {
 
-  type FinancialTransactionsHIPResponse = Either[Error, FinancialTransactionsHIP]
+  type FinancialTransactionsHIPResponse = Either[Error, FinancialData]
 
   implicit object FinancialTransactionsHIPReads extends HttpReads[FinancialTransactionsHIPResponse] {
     override def read(method: String, url: String, response: HttpResponse): FinancialTransactionsHIPResponse =
@@ -53,7 +53,7 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
       json.validate[FinancialTransactionsHIP] match {
         case JsSuccess(valid, _) =>
           logger.info(s"[FinancialTransactionsHIPReads][read] FinancialTransactions successfully validated from success response")
-          Right(valid)
+          Right(valid.financialData)
         case JsError(errors) =>
           logger.error(s"[FinancialTransactionsHIPReads][read] Json validation of 201 body failed with errors: $errors")
           Left(

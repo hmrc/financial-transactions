@@ -16,7 +16,7 @@
 
 package connectors.API1812
 
-import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
+import connectors.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
 import helpers.ComponentSpecBase
 import helpers.servicemocks.HIPPenaltyDetailsStub
 import models.API1812.Error

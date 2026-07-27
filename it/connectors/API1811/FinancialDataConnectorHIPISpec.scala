@@ -16,7 +16,7 @@
 
 package connectors.API1811
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
+import connectors.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
 import helpers.ComponentSpecBase
 import models.API1811.Error
 import models.{FinancialRequestQueryParameters, TaxRegime, VatRegime}
@@ -35,7 +35,6 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
   "getFinancialDataHIP" should {
 
     "return a FinancialTransactionsHIPModel" when {
-
       s"a $CREATED response is received from financial transactions and the response can be parsed" in {
 
         stubPostRequest(
@@ -44,11 +43,9 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
           responseBody = financialDetailsInHipWrapperJson.toString()
         )
 
-        val expectedResult = fullFinancialTransactionsHIP
-
         val result: FinancialTransactionsHIPResponse =
-          await(connector.getFinancialDataHIP(vatRegime, queryParameters))
-        result shouldBe Right(expectedResult)
+          await(connector.getFinancialData(vatRegime, queryParameters))
+        result shouldBe Right(fullFinancialTransactionsHIP.financialData)
       }
 
       s"a $BAD_REQUEST response is received from financial transactions" in {
@@ -63,7 +60,7 @@ class FinancialDataConnectorHIPISpec extends ComponentSpecBase {
         val expectedResult = Left(Error(BAD_REQUEST, errorResponseBody))
 
         val result: FinancialTransactionsHIPResponse =
-          await(connector.getFinancialDataHIP(vatRegime, queryParameters))
+          await(connector.getFinancialData(vatRegime, queryParameters))
         result shouldBe expectedResult
       }
     }

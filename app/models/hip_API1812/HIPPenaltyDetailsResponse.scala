@@ -16,33 +16,38 @@
 
 package models.hip_API1812
 
-import models.API1812.BreathingSpace
-import models.API1812.latePaymentPenalty.HipLatePaymentPenalty
+import models.API1812.latePaymentPenalty.{HipLatePaymentPenalty, LatePaymentPenalty}
+import models.API1812.{BreathingSpace, PenaltyDetails}
 import play.api.libs.json.{Json, Reads}
 
-case class HIPSuccessResponse(success: HIPSuccess)
+case class PenaltyDetailsSuccessResponse(success: PenaltyDetailsSuccess)
 
-case class HIPSuccess(processingDate: String, penaltyData: Option[HIPPenaltyData])
+case class PenaltyDetailsSuccess(processingDate: String, penaltyData: Option[PenaltyData]) {
+  def toPenaltyDetailsModel: PenaltyDetails = {
+    val lppDetails: Option[Seq[LatePaymentPenalty]] = penaltyData.flatMap(_.lpp.flatMap(_.lppDetails.map(_.map(_.toLatePaymentPenalty))))
+    PenaltyDetails(LPPDetails = lppDetails, breathingSpace = penaltyData.flatMap(_.breathingSpace))
+  }
+}
 
-case class HIPPenaltyData(lpp: Option[HIPLpp], breathingSpace: Option[Seq[BreathingSpace]])
+case class PenaltyData(lpp: Option[Lpp], breathingSpace: Option[Seq[BreathingSpace]])
 
-case class HIPLpp(
-  lppDetails: Option[Seq[HipLatePaymentPenalty]],
-  manualLPPIndicator: Boolean
+case class Lpp(
+    lppDetails: Option[Seq[HipLatePaymentPenalty]],
+    manualLPPIndicator: Boolean
 )
 
-object HIPSuccessResponse {
-  implicit val reads: Reads[HIPSuccessResponse] = Json.reads[HIPSuccessResponse]
+object PenaltyDetailsSuccessResponse {
+  implicit val reads: Reads[PenaltyDetailsSuccessResponse] = Json.reads[PenaltyDetailsSuccessResponse]
 }
 
-object HIPSuccess {
-  implicit val reads: Reads[HIPSuccess] = Json.reads[HIPSuccess]
+object PenaltyDetailsSuccess {
+  implicit val reads: Reads[PenaltyDetailsSuccess] = Json.reads[PenaltyDetailsSuccess]
 }
 
-object HIPPenaltyData {
-  implicit val reads: Reads[HIPPenaltyData] = Json.reads[HIPPenaltyData]
+object PenaltyData {
+  implicit val reads: Reads[PenaltyData] = Json.reads[PenaltyData]
 }
 
-object HIPLpp {
-  implicit val reads: Reads[HIPLpp] = Json.reads[HIPLpp]
+object Lpp {
+  implicit val reads: Reads[Lpp] = Json.reads[Lpp]
 }

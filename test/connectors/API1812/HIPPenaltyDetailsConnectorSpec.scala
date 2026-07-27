@@ -25,7 +25,7 @@ import org.mockito.Mockito.verify
 import play.api.http.Status._
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, RequestTimeoutException, StringContextOps}
-import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
+import connectors.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 

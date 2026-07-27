@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.API1396.DirectDebitDataConnector
-import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
+import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
 import models.API1396.DirectDebits
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito._

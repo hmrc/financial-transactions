@@ -58,7 +58,7 @@ object TestConstantsHIP {
 
   val fullFinancialTransactionsHIP: FinancialTransactionsHIP = FinancialTransactionsHIP(
     processingDate = "2024-05-10",
-    financialData = FinancialTransactions(
+    financialData = FinancialData(
       documentDetails = Seq(TestConstants.fullDocumentDetails)
     )
   )

@@ -17,7 +17,7 @@
 package mocks.connectors
 
 import connectors.API1812.HIPPenaltyDetailsConnector
-import connectors.API1812.httpParsers.PenaltyDetailsHttpParser.PenaltyDetailsResponse
+import connectors.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsResponse
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.when
@@ -30,8 +30,8 @@ trait MockHIPPenaltyDetailsConnector {
 
   val mockHIPPenaltyDetailsConnector: HIPPenaltyDetailsConnector = mock[HIPPenaltyDetailsConnector]
 
-  def setupHIPPenaltyDetailsCall(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)
-                                (response: PenaltyDetailsResponse): OngoingStubbing[Future[PenaltyDetailsResponse]] =
+  def setupHIPPenaltyDetailsCall(regime: TaxRegime, queryParameters: PenaltyDetailsQueryParameters)(
+      response: HIPPenaltyDetailsResponse): OngoingStubbing[Future[HIPPenaltyDetailsResponse]] =
     when(
       mockHIPPenaltyDetailsConnector.getPenaltyDetails(
         ArgumentMatchers.eq(regime),
@@ -39,4 +39,3 @@ trait MockHIPPenaltyDetailsConnector {
       )(ArgumentMatchers.any(), ArgumentMatchers.any())
     ).thenReturn(Future.successful(response))
 }
-
