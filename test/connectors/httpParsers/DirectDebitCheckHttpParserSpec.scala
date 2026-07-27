@@ -133,7 +133,13 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
 
       val httpResponse = HttpResponse(Status.BAD_REQUEST, "Banana")
 
-      val expected = Left(InvalidJsonResponse)
+      val expected = Left(ErrorResponse(
+        Status.BAD_REQUEST,
+        Error(
+          code = "UNKNOWN_FORMAT",
+          reason = "Banana"
+        )
+      ))
 
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
@@ -176,6 +182,30 @@ class DirectDebitCheckHttpParserSpec extends SpecBase {
       val result = DirectDebitCheckReads.read("", "", httpResponse)
 
       "return an unexpected error" in {
+        result shouldEqual expected
+      }
+
+    }
+
+    "the http response is an xml and not a json" should {
+
+      val httpResponse = HttpResponse(Status.BAD_REQUEST,
+        """
+          |<am:fault xmlns:am="http://wso2.org/apimanager"><am:code>101504</am:code><am:type>Status report</am:type>
+          |<am:message>Runtime Error</am:message><am:description>Send timeout</am:description></am:fault>
+          |""".stripMargin)
+
+      val expected = Left(ErrorResponse(
+        Status.BAD_REQUEST,
+        Error(
+          code = "TIMEOUT",
+          reason = "Runtime Error - Send timeout"
+        )
+      ))
+
+      val result = DirectDebitCheckReads.read("", "", httpResponse)
+
+      "return an UnexpectedJsonFormat instance" in {
         result shouldEqual expected
       }
 
