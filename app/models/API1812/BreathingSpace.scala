@@ -16,12 +16,11 @@
 
 package models.API1812
 
-import java.time.LocalDate
-
 import play.api.libs.json.{Json, Reads}
 
-case class BreathingSpace(BSStartDate: LocalDate,
-                          BSEndDate: LocalDate)
+import java.time.LocalDate
+
+case class BreathingSpace(bsStartDate: LocalDate, bsEndDate: LocalDate)
 
 object BreathingSpace {
   implicit val read: Reads[BreathingSpace] = Json.reads[BreathingSpace]

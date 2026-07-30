@@ -38,8 +38,8 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
             ),
             "breathingSpace" -> Json.arr(
               Json.obj(
-                "BSStartDate" -> "2018-04-01",
-                "BSEndDate" -> "2018-06-30"
+                "bsStartDate" -> "2018-04-01",
+                "bsEndDate" -> "2018-06-30"
               )
             )
           )

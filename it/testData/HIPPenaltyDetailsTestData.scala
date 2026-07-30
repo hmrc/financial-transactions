@@ -82,8 +82,8 @@ object HIPPenaltyDetailsTestData {
   )
 
   val breathingSpaceJson: JsObject = Json.obj(
-    "BSStartDate" -> "2017-04-06",
-    "BSEndDate" -> "2017-06-30"
+    "bsStartDate" -> "2017-04-06",
+    "bsEndDate" -> "2017-06-30"
   )
 
   val penaltyDetailsAPIJson: JsObject = Json.obj(

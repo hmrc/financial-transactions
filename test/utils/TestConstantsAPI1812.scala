@@ -246,13 +246,13 @@ object TestConstantsAPI1812 {
   )
 
   val breathingSpaceJSON: JsObject = Json.obj(
-    "BSStartDate" -> "2017-04-06",
-    "BSEndDate" -> "2017-06-30"
+    "bsStartDate" -> "2017-04-06",
+    "bsEndDate" -> "2017-06-30"
   )
 
   val breathingSpaceJSONAfterBS: JsObject = Json.obj(
-    "BSStartDate" -> "2018-03-01",
-    "BSEndDate" -> "2018-04-01"
+    "bsStartDate" -> "2018-03-01",
+    "bsEndDate" -> "2018-04-01"
   )
 
   val apiLPPJsonNoPen: JsValue = Json.obj(
