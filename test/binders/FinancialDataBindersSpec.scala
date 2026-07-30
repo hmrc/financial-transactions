@@ -22,7 +22,7 @@ import models.FinancialRequestQueryParameters
 
 import java.time.LocalDate
 
-class FinancialTransactionsBindersSpec extends SpecBase {
+class FinancialDataBindersSpec extends SpecBase {
 
   "The FinancialTransactionsBinder.financialDataQueryBinder.bind method" should {
 

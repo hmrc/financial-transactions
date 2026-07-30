@@ -157,7 +157,7 @@ object FinancialDataHIP1811 {
 
   val fullFinancialTransactionsHIP: FinancialTransactionsHIP = FinancialTransactionsHIP(
     processingDate = "2024-12-31T13:34:56Z",
-    financialData = FinancialTransactions(Seq(
+    financialData = FinancialData(Seq(
       DocumentDetails(
         chargeReferenceNumber = Some("XP001286394838"),
         documentTotalAmount = Some(100.00),

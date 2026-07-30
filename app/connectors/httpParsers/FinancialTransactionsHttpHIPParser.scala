@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package connectors.API1811.httpParsers
+package connectors.httpParsers
 
-import models.API1811.{BusinessError, Error, FinancialTransactionsHIP, HipWrappedError, TechnicalError}
+import models.API1811.{BusinessError, Error, FinancialData, FinancialTransactionsHIP, HipWrappedError, TechnicalError}
 import play.api.http.Status._
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
@@ -27,7 +27,7 @@ import scala.util.Try
 
 object FinancialTransactionsHttpHIPParser extends LoggerUtil {
 
-  type FinancialTransactionsHIPResponse = Either[Error, FinancialTransactionsHIP]
+  type FinancialTransactionsHIPResponse = Either[Error, FinancialData]
 
   private val HandledErrorStatuses = Set(
     BAD_REQUEST,
@@ -79,8 +79,7 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
       json.validate[FinancialTransactionsHIP] match {
 
         case JsSuccess(value, _) =>
-          logger.info("[FinancialTransactionsHIPReads] success parsed")
-          Right(value)
+          Right(value.financialData)
 
         case JsError(errors) =>
           logger.error(s"[FinancialTransactionsHIPReads] validation failed: $errors")
@@ -159,9 +158,10 @@ object FinancialTransactionsHttpHIPParser extends LoggerUtil {
         case b => b.take(MaxBodyLength)
       }
 
+      val overrideStatus = if (message == "GATEWAY_ERROR - Bad Gateway") BAD_GATEWAY else response.status
       logger.error(s"[FinancialTransactionsHIPReads] fallback error: $message")
 
-      Left(Error(response.status, message))
+      Left(Error(overrideStatus, message))
     }
 
     private def parseJson(body: String): Option[JsValue] =

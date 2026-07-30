@@ -17,7 +17,7 @@
 package controllers
 
 import utils.API1396.TestConstants.multipleDirectDebits
-import utils.API1811.TestConstants.{fullFinancialTransactionsOutputJson, fullFinancialTransactions => fullFinancialTransactions1811}
+import utils.API1811.TestConstants.{fullFinancialTransactionsOutputJson, fullFinancialData => fullFinancialTransactions1811}
 import base.SpecBase
 import controllers.actions.AuthActionImpl
 import mocks.auth.MockMicroserviceAuthorisedFunctions
@@ -31,7 +31,7 @@ import play.api.test.Helpers.{contentAsJson, defaultAwaitTimeout, status}
 
 import scala.concurrent.Future
 
-class FinancialTransactionsControllerSpec extends SpecBase
+class FinancialDataControllerSpec extends SpecBase
   with MockDirectDebitService
   with Mock1811FinancialTransactionsService
   with MockMicroserviceAuthorisedFunctions {

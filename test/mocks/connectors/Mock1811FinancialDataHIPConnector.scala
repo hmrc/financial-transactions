@@ -16,7 +16,7 @@
 
 package mocks.connectors
 
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
+import connectors.httpParsers.FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPResponse
 import connectors.API1811.FinancialDataHIPConnector
 import models.{FinancialRequestQueryParameters, TaxRegime}
 import org.mockito.ArgumentMatchers
@@ -33,7 +33,7 @@ trait Mock1811FinancialDataHIPConnector {
   def setupMockGetFinancialDataHIP(regime: TaxRegime, queryParameters: FinancialRequestQueryParameters)
                                (response: FinancialTransactionsHIPResponse): OngoingStubbing[Future[FinancialTransactionsHIPResponse]] =
     when(
-      mockFinancialDataHIPConnector.getFinancialDataHIP(
+      mockFinancialDataHIPConnector.getFinancialData(
         ArgumentMatchers.eq(regime),
         ArgumentMatchers.eq(queryParameters)
       )(ArgumentMatchers.any(), ArgumentMatchers.any())

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package connectors.API1812.httpParsers
+package connectors.httpParsers
 
 import base.SpecBase
-import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsReads
+import connectors.httpParsers.HIPPenaltyDetailsHttpParser.HIPPenaltyDetailsReads
 import models.API1812.{Error, PenaltyDetails}
 import play.api.http.Status._
 import play.api.libs.json.Json

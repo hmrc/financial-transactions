@@ -17,7 +17,7 @@
 package connectors.API1396
 
 import base.SpecBase
-import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
+import connectors.httpParsers.DirectDebitCheckHttpParser.HttpGetResult
 import mocks.MockHttp
 import models.API1396._
 import models._

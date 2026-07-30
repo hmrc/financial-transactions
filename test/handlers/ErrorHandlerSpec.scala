@@ -18,7 +18,7 @@ package handlers
 
 import base.SpecBase
 import config.MicroserviceAppConfig
-import models.API1811.FinancialTransactions
+import models.API1811.FinancialData
 import models.Error
 import play.api.http.Status
 import play.api.libs.json.Json
@@ -133,7 +133,7 @@ class ErrorHandlerSpec extends SpecBase {
       "Return an ISE (500) result" which {
 
         val request = FakeRequest("","/test/path")
-        val error = new JsValidationException("method", "/url", FinancialTransactions.getClass, "errors")
+        val error = new JsValidationException("method", "/url", FinancialData.getClass, "errors")
         lazy val result = TestErrorHandler.onServerError(request, error)
 
         "has the status ISE (500)" in {
@@ -142,7 +142,7 @@ class ErrorHandlerSpec extends SpecBase {
 
         "has the expected error response body" in {
           contentAsJson(result) shouldBe Json.toJson(Error(Status.INTERNAL_SERVER_ERROR.toString,
-            "method of '/url' returned invalid json. Attempting to convert to models.API1811.FinancialTransactions$ gave errors: errors"))
+            "method of '/url' returned invalid json. Attempting to convert to models.API1811.FinancialData$ gave errors: errors"))
         }
       }
 

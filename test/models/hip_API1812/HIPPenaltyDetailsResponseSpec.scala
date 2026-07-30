@@ -46,7 +46,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         )
       )
 
-      val result = json.as[HIPSuccessResponse]
+      val result = json.as[PenaltyDetailsSuccessResponse]
       result.success.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.success.penaltyData shouldBe defined
       result.success.penaltyData.get.lpp shouldBe defined
@@ -60,7 +60,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         )
       )
 
-      val result = json.as[HIPSuccessResponse]
+      val result = json.as[PenaltyDetailsSuccessResponse]
       result.success.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.success.penaltyData shouldBe None
     }
@@ -79,7 +79,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         )
       )
 
-      val result = json.as[HIPSuccess]
+      val result = json.as[PenaltyDetailsSuccess]
       result.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.penaltyData shouldBe defined
     }
@@ -89,7 +89,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         "processingDate" -> "2023-11-28T10:15:10Z"
       )
 
-      val result = json.as[HIPSuccess]
+      val result = json.as[PenaltyDetailsSuccess]
       result.processingDate shouldBe "2023-11-28T10:15:10Z"
       result.penaltyData shouldBe None
     }
@@ -105,7 +105,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         "breathingSpace" -> Json.arr()
       )
 
-      val result = json.as[HIPPenaltyData]
+      val result = json.as[PenaltyData]
       result.lpp shouldBe defined
       result.breathingSpace shouldBe defined
     }
@@ -118,7 +118,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         )
       )
 
-      val result = json.as[HIPPenaltyData]
+      val result = json.as[PenaltyData]
       result.lpp shouldBe defined
       result.breathingSpace shouldBe None
     }
@@ -128,7 +128,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         "breathingSpace" -> Json.arr()
       )
 
-      val result = json.as[HIPPenaltyData]
+      val result = json.as[PenaltyData]
       result.lpp shouldBe None
       result.breathingSpace shouldBe defined
     }
@@ -141,7 +141,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         "manualLPPIndicator" -> true
       )
 
-      val result = json.as[HIPLpp]
+      val result = json.as[Lpp]
       result.lppDetails shouldBe defined
       result.manualLPPIndicator shouldBe true
     }
@@ -151,7 +151,7 @@ class HIPPenaltyDetailsResponseSpec extends SpecBase {
         "manualLPPIndicator" -> false
       )
 
-      val result = json.as[HIPLpp]
+      val result = json.as[Lpp]
       result.lppDetails shouldBe None
       result.manualLPPIndicator shouldBe false
     }

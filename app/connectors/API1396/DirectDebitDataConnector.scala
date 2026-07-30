@@ -17,7 +17,7 @@
 package connectors.API1396
 
 import config.MicroserviceAppConfig
-import connectors.API1396.httpParsers.DirectDebitCheckHttpParser.{DirectDebitCheckReads, HttpGetResult}
+import connectors.httpParsers.DirectDebitCheckHttpParser.{DirectDebitCheckReads, HttpGetResult}
 import models.API1396.DirectDebits
 import models.{Error, ErrorResponse}
 import play.api.http.Status.BAD_GATEWAY

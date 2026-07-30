@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package connectors.API1811.httpParsers
+package connectors.httpParsers
 
 import base.SpecBase
-import connectors.API1811.httpParsers.FinancialTransactionsHttpHIPParser._
+import connectors.httpParsers.FinancialTransactionsHttpHIPParser._
 import models.API1811.Error
 import play.api.http.Status
 import play.api.http.Status._
 import uk.gov.hmrc.http.HttpResponse
 import utils.API1811.TestConstantsHIP._
 
-class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
+class FinancialDataHttpHIPParserSpec extends SpecBase {
 
   def financialTransactionsParserReads(httpResponse: HttpResponse): FinancialTransactionsHIPResponse =
     FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("GET", "/", httpResponse)
 
-  "The FinancialTransactionsHttpParser" when {
+  "The FinancialTransactionsHttpHIPParser" when {
 
     "the http response status is 201 and matches expected Schema" when {
 
@@ -37,7 +37,7 @@ class FinancialTransactionsHttpHIPParserSpec extends SpecBase {
 
         val httpResponse = HttpResponse(Status.CREATED, fullFinancialTransactionsHIPJson.toString)
 
-        val expected = Right(fullFinancialTransactionsHIP)
+        val expected = Right(fullFinancialTransactionsHIP.financialData)
 
         val result = FinancialTransactionsHttpHIPParser.FinancialTransactionsHIPReads.read("", "", httpResponse)
 

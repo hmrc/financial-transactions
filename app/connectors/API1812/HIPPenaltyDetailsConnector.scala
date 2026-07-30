@@ -17,7 +17,7 @@
 package connectors.API1812
 
 import config.MicroserviceAppConfig
-import connectors.API1812.httpParsers.HIPPenaltyDetailsHttpParser.{HIPPenaltyDetailsReads, HIPPenaltyDetailsResponse}
+import connectors.httpParsers.HIPPenaltyDetailsHttpParser.{HIPPenaltyDetailsReads, HIPPenaltyDetailsResponse}
 import models.API1812.Error
 import models.{PenaltyDetailsQueryParameters, TaxRegime}
 import play.api.http.Status.BAD_GATEWAY
